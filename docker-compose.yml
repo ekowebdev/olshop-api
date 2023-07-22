@@ -28,7 +28,6 @@ services:
 
   phpmyadmin:
     image: phpmyadmin:latest
-    restart: always
     ports:
       - 3600:80
     environment:
