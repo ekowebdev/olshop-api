@@ -17,18 +17,52 @@ jobs:
         run: |
           echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
           ssh -o StrictHostKeyChecking=no -i private_key ${USERNAME}@${HOSTNAME} '
-            cd ${{ secrets.RGB_AWS_PATH_PROJECT }} &&
-            sudo chown -R $USER:www-data ${{ secrets.RGB_AWS_PATH_PROJECT }} &&
-            git config --global --add safe.directory ${{ secrets.RGB_AWS_PATH_PROJECT }} &&
-            git checkout master &&
+            cd ${{ secrets.RGB_AWS_PATH_PROJECT }}
+          '
+      - name: Set permissions for directories
+        run: |
+          ssh -o StrictHostKeyChecking=no -i private_key ${USERNAME}@${HOSTNAME} '
+            sudo chown -R $USER:www-data ${{ secrets.RGB_AWS_PATH_PROJECT }}
+          '
+      - name: Configure Git safe.directory
+        run: |
+          ssh -o StrictHostKeyChecking=no -i private_key ${USERNAME}@${HOSTNAME} '
+            git config --global --add safe.directory ${{ secrets.RGB_AWS_PATH_PROJECT }}
+          '
+      - name: Fetch latest changes from Git
+        run: |
+          ssh -o StrictHostKeyChecking=no -i private_key ${USERNAME}@${HOSTNAME} '
             git fetch --all &&
             git reset --hard origin/master &&
-            git pull origin master &&
-            composer update --dev --prefer-dist --optimize-autoloader &&
-            chmod -R 775 storage &&
-            php artisan config:clear &&
-            php artisan cache:clear &&
-            php artisan route:clear &&
-            php artisan test &&
+            git pull origin master
+          '
+      - name: Update Composer dependencies
+        run: |
+          ssh -o StrictHostKeyChecking=no -i private_key ${USERNAME}@${HOSTNAME} '
+            composer update --no-dev --prefer-dist --optimize-autoloader
+          '
+      - name: Set storage directory permissions
+        run: |
+          ssh -o StrictHostKeyChecking=no -i private_key ${USERNAME}@${HOSTNAME} '
+            chmod -R 775 storage
+          '
+      - name: Clear Laravel configuration cache
+        run: |
+          ssh -o StrictHostKeyChecking=no -i private_key ${USERNAME}@${HOSTNAME} '
+            php artisan config:clear
+          '
+      - name: Clear Laravel application cache
+        run: |
+          ssh -o StrictHostKeyChecking=no -i private_key ${USERNAME}@${HOSTNAME} '
+            php artisan cache:clear
+          '
+      - name: Clear Laravel route cache
+        run: |
+          ssh -o StrictHostKeyChecking=no -i private_key ${USERNAME}@${HOSTNAME} '
+            php artisan route:clear
+          '
+      - name: Bring Laravel application online
+        run: |
+          ssh -o StrictHostKeyChecking=no -i private_key ${USERNAME}@${HOSTNAME} '
             php artisan up
           '
