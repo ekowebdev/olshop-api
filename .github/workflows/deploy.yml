@@ -24,11 +24,11 @@ jobs:
             git fetch --all &&
             git reset --hard origin/master &&
             git pull origin master &&
-            composer update --no-dev --prefer-dist --optimize-autoloader &&
+            composer update --dev --prefer-dist --optimize-autoloader &&
             chmod -R 775 storage &&
-            php artisan test &&
             php artisan config:clear &&
             php artisan cache:clear &&
             php artisan route:clear &&
+            php artisan test &&
             php artisan up
           '
