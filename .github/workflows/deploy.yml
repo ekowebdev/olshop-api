@@ -26,7 +26,7 @@ jobs:
             git pull origin master &&
             composer update --no-dev --prefer-dist --optimize-autoloader &&
             chmod -R 775 storage &&
-            vendor/bin/phpunit &&
+            php artisan test &&
             php artisan config:clear &&
             php artisan cache:clear &&
             php artisan route:clear &&
