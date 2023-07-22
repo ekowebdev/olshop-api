@@ -1,0 +1,1653 @@
+{
+	"info": {
+		"_postman_id": "7d0e8b91-f8f7-482e-845f-39ba6e52415b",
+		"name": "Rolling Glory API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "5431329"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "username",
+									"value": "siadmin",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "1q2w3e",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}/{{locale}}/login",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{locale}}",
+								"login"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Login",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "username",
+											"value": "siadmin",
+											"type": "text"
+										},
+										{
+											"key": "password",
+											"value": "1q2w3e",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/{{locale}}/login",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{locale}}",
+										"login"
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": "{\r\n    \"message\": \"Login success\",\r\n    \"data\": {\r\n        \"username\": \"siadmin\",\r\n        \"token_type\": \"Bearer\",\r\n        \"expires_in\": 2698,\r\n        \"access_token\": \"eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiI0IiwianRpIjoiMmYzZTExMGY5YjIwZWZjODY2ZjgwNGZhMjE4MWIyMjc2NTllNTg1NjY3NzcwMTVhZDAwZDgxNmU5YzI2ZDFmZmFkOTVhMTc1NGZjYjI1YTgiLCJpYXQiOjE2ODk0MzE1MjIuNTQ2NDUsIm5iZiI6MTY4OTQzMTUyMi41NDY0NTcsImV4cCI6MTY4OTQzNDIyMC41NTgyNTIsInN1YiI6IjEiLCJzY29wZXMiOltdfQ.cR0xbxnlUI7r6nPLbkPxeb-Z3z_XXnao6tr27cUpUUaxC9newmMQDtyzoHQ-XYBZm2JQI2kJa0IMERAAjj3MvBXoMk6wmrEd1VoM-9rufXNADQ7Q4fz1aWWKzvLbRXIXwXT6fIJcOSfaWgWWDpeKfAPUw_oyOzC_NWDoHq9NarW3IM8BQP5jHQph3zWWV1C6oNJ5cufixXgQxqPqH21oPTi_3w7oIbhRmFA82YA1I2MME-VViZrGwwMMbbHTku_AxtPAaXFRIfsGKpFuwWP-x2-muJZLW4bi8TnzximPpsUihV0yKyt3sO1qL_BM8JQhTsSq3iumMXxaJGBJ1mZPsi-nQeDY_4vkkk538kK5qV27A3WNNYmMzjlxEY-igCg3N_AEMu6SBrSIN4MkqIkFmS_EBkka2kudVcLXGtQ97PTb6lIJx42Kvnf22mZFVvPDueETm1CivP9TqN290se8KDS8qox8HkeqpWpkBqgHPZlVCgV48qc48RMotIEhgRJDPvvuzwZic-0KD7rkDfKuo53V8-JxnLRTx4l_f1LskeXA0BMJWyJXjtqIwzXXdN-WBXD7hCo4AUb-OYBCqmHQ7gj8TWIeXmDZRE0tQTZXzZ0S2lJrJl7y9NYs6PyAdGyGXScMGk-dVyHSyFxGXK5pbBJWQJ0amQygxsb0ehEFIg8\",\r\n        \"refresh_token\": \"def50200fac2f3fb68cf4c06337bf57640c26de8b0018e7436a100ce210c6f6d721d0e6ad9bad77f8be4e6a1817ffd85164d602d9024a682a40c09ef7b7955c6e5485678663507854e09d57911d5a2d468109d18405406377b01929f2285b2e406c1896d054ac46d82cca920f3fd8adbf806ee5c01f7d00841bf469302a5ba9e95a3f10c7749d6cd9de99b45bb85aa10769c2c2ad92a90ff45837ad0c4b9bbd86fd1f1849ee96e060c51a440d8399b0581143ec4ef1c82bbc2ace59e5efe64acdbe0bc23d3bd51e4a0d7ccbf6323a384f9cbae378bf5a325f09fa43b167dc743917c2078201f6c247ce218887aa704504fd0254cb3d97b555ad111febbb748d4347a99633b32c98ce537025c514443c7c2503a1eff6d010393268d800366712c4b467eb2cc856f89e525aa551137c05dafc3fcc8cba63131490bda0af99ea634c7aebc28dfaaa03dbb3cad27ea9e7bb991e947aae9c8c81d04dd98ca95019fd532\"\r\n    },\r\n    \"status\": 200,\r\n    \"error\": 0\r\n}"
+						}
+					]
+				},
+				{
+					"name": "Refresh Token",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "refresh_token",
+									"value": "{{refresh_token}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}/{{locale}}/refresh-token",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{locale}}",
+								"refresh-token"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Refresh Token",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "refresh_token",
+											"value": "{{refresh_token}}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/{{locale}}/refresh-token",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{locale}}",
+										"refresh-token"
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": "{\r\n    \"message\": \"Refresh token success\",\r\n    \"data\": {\r\n        \"token_type\": \"Bearer\",\r\n        \"expires_in\": 2700,\r\n        \"access_token\": \"eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiI0IiwianRpIjoiNTg5ODA5ZDY5OWEwODZjMGFjOTlmYmMzZjczNDRlNjA4MzI4NWYzMWNkYmUyZWQ2OGU0OTAxNGUwZWNlMmI2MjAxMzBmMDU3MTExZmRjYzAiLCJpYXQiOjE2ODk0MzQyNzcuMjY5NDUyLCJuYmYiOjE2ODk0MzQyNzcuMjY5NDU2LCJleHAiOjE2ODk0MzY5NzYuNDI0ODQ1LCJzdWIiOiIxIiwic2NvcGVzIjpbXX0.lcZXsm3vzb2Lici9520webmK5lVgSWXjULtyzBaQngVf5C2usTecW8wIeMYYYbDILG4yeMu9h1_VHxKHnLw7f0Zf3pKtrHFeqVWcmv4ArV1k5oiXvTqeqKFh8T1XtLoe2aDhhktCWYYgGX7wWsKQCwR7351-5gQXLqv5djS9Dms5nQqaT9iFrlvp9tC3lU4p3vSBKx6HYMmoQXFZDO11poWMGK2qY50zPILkwxM63lOzYpbPg2EVwP2Qyk6x4L_rhYMH_2VkFLw66YcxAwwrQXnwxDnvZYPcQz4ClLI0EEThuTBnHr-EIp1a3rjHCbAKR5VlVnaxSERtZDj7EedB1_J3YpGQhtr1V_fNg7BHssMrMRIpZMAwPu33FJG-MGWCpyX9M6Oi3d0S3hEyDeE9XIclvlYdNm7oJIhUuR4Kmv-silx_9Gre5QVVuF-L4Mb-Ne6rjtrlJn0-bmFzrgutfMv9BoC8YNvgm18mY5GAPnIWloW-tTIdTB8ulwdOEOGmoVa13zIW_w3hKilkQULS-WdbH4fxhZItnFTK_vy6qZAXKurR-ISAjLwv5lrR_7C7SbXMIFIz5E924yczRQBne6HDZAvyfRkLhxceRGVZTlSdyLaFkqu_pjjPUixbn22_rMx2zboP1YFPhjWccHQslP84mGKlSRFmvo1huKNCdQY\",\r\n        \"refresh_token\": \"def5020097b899292f2c209eb1c47536ee15781ccb9f617be8d3673abf865bf0267d05888628fd004d9499567cb7751b00cfc20e6d89d9e9a3ac566d881037811d0d09da70b2b1f7fb823a05c7ed2f5a8683e25f437590ce6dae3ff2af1fb6b8b8bc02d047eb42764bc9b1e15c49094039585f79b9a547b74fc4e90fd78001bef48c03277d384d11f614540cab03562f172ba6ab15ce9443741f852b4c523646122bccdd7712e8b38634532f56c5b64f4be76b4a2b72236e57e91a153f01522538153c6c4dfc7c044ebde7621e74728890432b0d19fd7517d08f5b81068aad95e4a1c64e7a009acf2312251da87f51f50cc5736d58ae1188c6c6a2177f4761dbca57f2126719570ca77aacf74e0167a2dc2cecf44ef8528294345f19d2fcaed6044956a49f3ba9bfcd720a0459962b394c4de186a042a8807879d267470197bc35f638b6c36cd5b33b87744e161211a104e67ef904e6ac627343ba2a95bc0ced07\"\r\n    },\r\n    \"status\": 200,\r\n    \"error\": 0\r\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "Get List User",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"url": {
+							"raw": "{{url}}/{{locale}}/users?page=1&per_page=15&search_column[0]=username&search_text[0]=adm&search_operator[0]=like&sort_column[0]=id&sort_type[0]=asc",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{locale}}",
+								"users"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "per_page",
+									"value": "15"
+								},
+								{
+									"key": "search_column[0]",
+									"value": "username"
+								},
+								{
+									"key": "search_text[0]",
+									"value": "adm"
+								},
+								{
+									"key": "search_operator[0]",
+									"value": "like"
+								},
+								{
+									"key": "sort_column[0]",
+									"value": "id"
+								},
+								{
+									"key": "sort_type[0]",
+									"value": "asc"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Get List User",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": []
+								},
+								"url": {
+									"raw": "{{url}}/{{locale}}/users?page=1&per_page=15&search_column[0]=name&search_text[0]=Galay&search_operator[0]=like&sort_column[0]=name&sort_type[0]=desc",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{locale}}",
+										"users"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "1"
+										},
+										{
+											"key": "per_page",
+											"value": "15"
+										},
+										{
+											"key": "search_column[0]",
+											"value": "name"
+										},
+										{
+											"key": "search_text[0]",
+											"value": "Galay"
+										},
+										{
+											"key": "search_operator[0]",
+											"value": "like"
+										},
+										{
+											"key": "sort_column[0]",
+											"value": "name"
+										},
+										{
+											"key": "sort_type[0]",
+											"value": "desc"
+										}
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": "{\r\n    \"data\": [\r\n        {\r\n            \"id\": 1,\r\n            \"name\": \"Admin\",\r\n            \"roles\": [\r\n                \"admin\"\r\n            ],\r\n            \"username\": \"siadmin\",\r\n            \"email\": \"admin@mail.com\"\r\n        },\r\n        {\r\n            \"id\": 2,\r\n            \"name\": \"Eko\",\r\n            \"roles\": [\r\n                \"customer\"\r\n            ],\r\n            \"username\": \"sieko\",\r\n            \"email\": \"eko@mail.com\"\r\n        }\r\n    ],\r\n    \"links\": {\r\n        \"first\": \"http://localhost:9000/api/en/users?page=1\",\r\n        \"last\": \"http://localhost:9000/api/en/users?page=1\",\r\n        \"prev\": null,\r\n        \"next\": null\r\n    },\r\n    \"meta\": {\r\n        \"current_page\": 1,\r\n        \"from\": 1,\r\n        \"last_page\": 1,\r\n        \"links\": [\r\n            {\r\n                \"url\": null,\r\n                \"label\": \"&laquo; Previous\",\r\n                \"active\": false\r\n            },\r\n            {\r\n                \"url\": \"http://localhost:9000/api/en/users?page=1\",\r\n                \"label\": \"1\",\r\n                \"active\": true\r\n            },\r\n            {\r\n                \"url\": null,\r\n                \"label\": \"Next &raquo;\",\r\n                \"active\": false\r\n            }\r\n        ],\r\n        \"path\": \"http://localhost:9000/api/en/users\",\r\n        \"per_page\": 15,\r\n        \"to\": 2,\r\n        \"total\": 2\r\n    },\r\n    \"sortable_and_searchable_column\": {\r\n        \"search\": {\r\n            \"name\": \"name\",\r\n            \"username\": \"username\",\r\n            \"email\": \"email\"\r\n        },\r\n        \"search_column\": {\r\n            \"id\": \"id\",\r\n            \"name\": \"name\",\r\n            \"username\": \"username\",\r\n            \"email\": \"email\"\r\n        },\r\n        \"sort_column\": {\r\n            \"name\": \"name\",\r\n            \"username\": \"username\",\r\n            \"email\": \"email\",\r\n            \"id\": \"id\"\r\n        }\r\n    }\r\n}"
+						}
+					]
+				},
+				{
+					"name": "Get Single User",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/{{locale}}/users/20",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{locale}}",
+								"users",
+								"20"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Get Single User",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/{{locale}}/users/1",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{locale}}",
+										"users",
+										"1"
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": "{\r\n    \"data\": {\r\n        \"id\": 2,\r\n        \"name\": \"Eko\",\r\n        \"roles\": [\r\n            \"customer\"\r\n        ],\r\n        \"username\": \"sieko\",\r\n        \"email\": \"eko@mail.com\"\r\n    }\r\n}"
+						}
+					]
+				},
+				{
+					"name": "Save User",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "Admin",
+									"type": "text"
+								},
+								{
+									"key": "username",
+									"value": "admin",
+									"type": "text"
+								},
+								{
+									"key": "email",
+									"value": "admin@mail.co.id",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "1qa2ws",
+									"type": "text"
+								},
+								{
+									"key": "role[0]",
+									"value": "customer",
+									"description": "*only admin or customer",
+									"type": "text"
+								},
+								{
+									"key": "role[1]",
+									"value": "admin",
+									"description": "*only admin or customer",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}/{{locale}}/users",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{locale}}",
+								"users"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Save User",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "name",
+											"value": "Admin",
+											"type": "text"
+										},
+										{
+											"key": "username",
+											"value": "admin",
+											"type": "text"
+										},
+										{
+											"key": "email",
+											"value": "admin@mail.co.id",
+											"type": "text"
+										},
+										{
+											"key": "password",
+											"value": "1qa2ws",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/{{locale}}/users",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{locale}}",
+										"users"
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": "{\r\n    \"data\": {\r\n        \"id\": 5,\r\n        \"name\": \"Admin\",\r\n        \"roles\": [\r\n            \"admin\",\r\n            \"customer\"\r\n        ],\r\n        \"username\": \"admin\",\r\n        \"email\": \"admin@mail.co.id\"\r\n    }\r\n}"
+						}
+					]
+				},
+				{
+					"name": "Update User",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "name",
+									"value": "Administrator",
+									"type": "text"
+								},
+								{
+									"key": "username",
+									"value": "admin",
+									"type": "text"
+								},
+								{
+									"key": "email",
+									"value": "admin@mail.co.id",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "1qaz2wsx",
+									"type": "text"
+								},
+								{
+									"key": "role[0]",
+									"value": "admin",
+									"description": "*only admin or customer",
+									"type": "text"
+								},
+								{
+									"key": "role[1]",
+									"value": "customer",
+									"description": "*only admin or customer",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}/{{locale}}/users/6",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{locale}}",
+								"users",
+								"6"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Update User",
+							"originalRequest": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "name",
+											"value": "Administrator",
+											"type": "text"
+										},
+										{
+											"key": "username",
+											"value": "admin",
+											"type": "text"
+										},
+										{
+											"key": "email",
+											"value": "admin@mail.co.id",
+											"type": "text"
+										},
+										{
+											"key": "password",
+											"value": "1qa2ws",
+											"type": "text"
+										},
+										{
+											"key": "role[0]",
+											"value": "admin",
+											"type": "text"
+										},
+										{
+											"key": "role[1]",
+											"value": "customer",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/{{locale}}/users/8",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{locale}}",
+										"users",
+										"8"
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": "{\r\n    \"data\": {\r\n        \"id\": 6,\r\n        \"name\": \"Administrator\",\r\n        \"roles\": [\r\n            \"admin\"\r\n        ],\r\n        \"username\": \"admin\",\r\n        \"email\": \"admin@mail.co.id\"\r\n    }\r\n}"
+						}
+					]
+				},
+				{
+					"name": "Delete User",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/{{locale}}/users/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{locale}}",
+								"users",
+								"1"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Delete User",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/{{locale}}/users/6",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{locale}}",
+										"users",
+										"6"
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": "{\r\n    \"data\": {\r\n        \"message\": \"Success, 1 data deleted\"\r\n    },\r\n    \"status\": 200,\r\n    \"error\": 0\r\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Item Gift",
+			"item": [
+				{
+					"name": "Get List Item Gift",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"url": {
+							"raw": "{{url}}/{{locale}}/gifts?page=1&per_page=15&search_column[0]=total_rating&search_text[0]=5&search_operator[0]=>=&sort_column[0]=item_gift_point&sort_type[0]=asc",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{locale}}",
+								"gifts"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "per_page",
+									"value": "15"
+								},
+								{
+									"key": "search_column[0]",
+									"value": "total_rating"
+								},
+								{
+									"key": "search_text[0]",
+									"value": "5"
+								},
+								{
+									"key": "search_operator[0]",
+									"value": ">="
+								},
+								{
+									"key": "sort_column[0]",
+									"value": "item_gift_point"
+								},
+								{
+									"key": "sort_type[0]",
+									"value": "asc"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Get List Item Gift",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": []
+								},
+								"url": {
+									"raw": "{{url}}/{{locale}}/gifts?page=1&per_page=15&search_column[0]=item_gift_name&search_text[0]=Galay&search_operator[0]=like&sort_column[0]=item_gift_name&sort_type[0]=desc",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{locale}}",
+										"gifts"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "1"
+										},
+										{
+											"key": "per_page",
+											"value": "15"
+										},
+										{
+											"key": "search_column[0]",
+											"value": "item_gift_name"
+										},
+										{
+											"key": "search_text[0]",
+											"value": "Galay"
+										},
+										{
+											"key": "search_operator[0]",
+											"value": "like"
+										},
+										{
+											"key": "sort_column[0]",
+											"value": "item_gift_name"
+										},
+										{
+											"key": "sort_type[0]",
+											"value": "desc"
+										}
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": "{\r\n    \"data\": [\r\n        {\r\n            \"id\": 1,\r\n            \"item_gift_code\": \"4v6EmN7gIg5AZRv\",\r\n            \"item_gift_name\": \"Samsung Galaxy S9 - Midnight Black 4/64 GB\",\r\n            \"item_gift_description\": \"Ukuran layar: 6.2 inci, Dual Edge Super AMOLED 2960 x 1440 (Quad HD+) 529 ppi, 18.5:9 Memori: RAM 6 GB (LPDDR4), ROM 64 GB, MicroSD up to 400GB Sistem operasi: Android 8.0 (Oreo) CPU: Exynos 9810 Octa-core (2.7GHz Quad + 1.7GHz Quad), 64 bit, 10nm processor Kamera: Super Speed Dual Pixel, 12 MP OIS (F1.5/F2.4 Dual Aperture) + 12MP OIS (F2.4) with LED flash, depan 8 MP, f/1.7, autofocus, 1440p@30fps, dual video call, Auto HDR SIM: Dual SIM (Nano-SIM) Baterai: Non-removable Li-Ion 3500 mAh , Fast Charging on wired and wireless\",\r\n            \"item_gift_images\": [\r\n                {\r\n                    \"item_gift_id\": 1,\r\n                    \"item_gift_image_url\": \":9000/public/images.png\"\r\n                }\r\n            ],\r\n            \"item_gift_point\": 200000,\r\n            \"item_gift_quantity\": 30,\r\n            \"item_gift_status\": \"A\",\r\n            \"total_reviews\": 0,\r\n            \"total_rating\": 0,\r\n            \"is_wishlist\": 1\r\n        }\r\n    ],\r\n    \"links\": {\r\n        \"first\": \"http://localhost:9000/api/en/gifts?page=1\",\r\n        \"last\": \"http://localhost:9000/api/en/gifts?page=1\",\r\n        \"prev\": null,\r\n        \"next\": null\r\n    },\r\n    \"meta\": {\r\n        \"current_page\": 1,\r\n        \"from\": 1,\r\n        \"last_page\": 1,\r\n        \"links\": [\r\n            {\r\n                \"url\": null,\r\n                \"label\": \"&laquo; Previous\",\r\n                \"active\": false\r\n            },\r\n            {\r\n                \"url\": \"http://localhost:9000/api/en/gifts?page=1\",\r\n                \"label\": \"1\",\r\n                \"active\": true\r\n            },\r\n            {\r\n                \"url\": null,\r\n                \"label\": \"Next &raquo;\",\r\n                \"active\": false\r\n            }\r\n        ],\r\n        \"path\": \"http://localhost:9000/api/en/gifts\",\r\n        \"per_page\": 15,\r\n        \"to\": 1,\r\n        \"total\": 1\r\n    },\r\n    \"sortable_and_searchable_column\": {\r\n        \"search\": {\r\n            \"item_gift_name\": \"item_gift_name\",\r\n            \"item_gift_quantity\": \"item_gift_quantity\",\r\n            \"total_rating\": \"total_rating\"\r\n        },\r\n        \"search_column\": {\r\n            \"id\": \"id\",\r\n            \"item_gift_name\": \"item_gift_name\",\r\n            \"item_gift_quantity\": \"item_gift_quantity\",\r\n            \"total_rating\": \"total_rating\"\r\n        },\r\n        \"sort_column\": {\r\n            \"item_gift_name\": \"item_gift_name\",\r\n            \"item_gift_quantity\": \"item_gift_quantity\",\r\n            \"total_rating\": \"total_rating\",\r\n            \"id\": \"id\"\r\n        }\r\n    }\r\n}"
+						}
+					]
+				},
+				{
+					"name": "Get Single Item Gift",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/{{locale}}/gifts/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{locale}}",
+								"gifts",
+								"1"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Get Single Item Gift",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/{{locale}}/gifts/100",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{locale}}",
+										"gifts",
+										"100"
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": "{\r\n    \"data\": {\r\n        \"id\": 1,\r\n        \"item_gift_code\": \"4v6EmN7gIg5AZRv\",\r\n        \"item_gift_name\": \"Samsung Galaxy S9 - Midnight Black 4/64 GB\",\r\n        \"item_gift_description\": \"Ukuran layar: 6.2 inci, Dual Edge Super AMOLED 2960 x 1440 (Quad HD+) 529 ppi, 18.5:9 Memori: RAM 6 GB (LPDDR4), ROM 64 GB, MicroSD up to 400GB Sistem operasi: Android 8.0 (Oreo) CPU: Exynos 9810 Octa-core (2.7GHz Quad + 1.7GHz Quad), 64 bit, 10nm processor Kamera: Super Speed Dual Pixel, 12 MP OIS (F1.5/F2.4 Dual Aperture) + 12MP OIS (F2.4) with LED flash, depan 8 MP, f/1.7, autofocus, 1440p@30fps, dual video call, Auto HDR SIM: Dual SIM (Nano-SIM) Baterai: Non-removable Li-Ion 3500 mAh , Fast Charging on wired and wireless\",\r\n        \"item_gift_images\": [\r\n            {\r\n                \"item_gift_id\": 1,\r\n                \"item_gift_image_url\": \":9000/public/images.png\"\r\n            }\r\n        ],\r\n        \"item_gift_point\": 200000,\r\n        \"item_gift_quantity\": 30,\r\n        \"item_gift_status\": \"A\",\r\n        \"total_reviews\": 0,\r\n        \"total_rating\": 0,\r\n        \"is_wishlist\": 1\r\n    }\r\n}"
+						}
+					]
+				},
+				{
+					"name": "Save Item Gift",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "item_gift_name",
+									"value": "Samsung Galaxy S9 - Midnight Black 4/64 GB",
+									"type": "text"
+								},
+								{
+									"key": "item_gift_description",
+									"value": "Ukuran layar: 6.2 inci, Dual Edge Super AMOLED 2960 x 1440 (Quad HD+) 529 ppi, 18.5:9 Memori: RAM 6 GB (LPDDR4), ROM 64 GB, MicroSD up to 400GB Sistem operasi: Android 8.0 (Oreo) CPU: Exynos 9810 Octa-core (2.7GHz Quad + 1.7GHz Quad), 64 bit, 10nm processor Kamera: Super Speed Dual Pixel, 12 MP OIS (F1.5/F2.4 Dual Aperture) + 12MP OIS (F2.4) with LED flash, depan 8 MP, f/1.7, autofocus, 1440p@30fps, dual video call, Auto HDR SIM: Dual SIM (Nano-SIM) Baterai: Non-removable Li-Ion 3500 mAh , Fast Charging on wired and wireless",
+									"type": "text"
+								},
+								{
+									"key": "item_gift_point",
+									"value": "200000",
+									"type": "text"
+								},
+								{
+									"key": "item_gift_quantity",
+									"value": "30",
+									"type": "text"
+								},
+								{
+									"key": "item_gift_images[0]",
+									"type": "file",
+									"src": []
+								},
+								{
+									"key": "item_gift_images[1]",
+									"type": "file",
+									"src": []
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}/{{locale}}/gifts",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{locale}}",
+								"gifts"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Save Item Gift",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "item_gift_name",
+											"value": "Kue Bolu 2",
+											"type": "text"
+										},
+										{
+											"key": "item_gift_description",
+											"value": "Description",
+											"type": "text"
+										},
+										{
+											"key": "item_gift_point",
+											"value": "38000",
+											"type": "text"
+										},
+										{
+											"key": "item_gift_quantity",
+											"value": "15",
+											"type": "text"
+										},
+										{
+											"key": "item_gift_images[0]",
+											"type": "file",
+											"src": []
+										},
+										{
+											"key": "item_gift_images[1]",
+											"type": "file",
+											"src": []
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/{{locale}}/gifts",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{locale}}",
+										"gifts"
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": "{\r\n    \"data\": {\r\n        \"id\": 18,\r\n        \"item_gift_code\": \"tBkXvBiv10J9hXN\",\r\n        \"item_gift_name\": \"Samsung Galaxy S9 - Midnight Black 4/64 GB\",\r\n        \"item_gift_description\": \"Ukuran layar: 6.2 inci, Dual Edge Super AMOLED 2960 x 1440 (Quad HD+) 529 ppi, 18.5:9 Memori: RAM 6 GB (LPDDR4), ROM 64 GB, MicroSD up to 400GB Sistem operasi: Android 8.0 (Oreo) CPU: Exynos 9810 Octa-core (2.7GHz Quad + 1.7GHz Quad), 64 bit, 10nm processor Kamera: Super Speed Dual Pixel, 12 MP OIS (F1.5/F2.4 Dual Aperture) + 12MP OIS (F2.4) with LED flash, depan 8 MP, f/1.7, autofocus, 1440p@30fps, dual video call, Auto HDR SIM: Dual SIM (Nano-SIM) Baterai: Non-removable Li-Ion 3500 mAh , Fast Charging on wired and wireless\",\r\n        \"item_gift_images\": [\r\n            {\r\n                \"item_gift_id\": 18,\r\n                \"item_gift_image\": \"1689478392.png\",\r\n                \"item_gift_image_url\": \"https://rgb-storage.s3-ap-southeast-1.amazonaws.com/images/1689478392.png\",\r\n                \"item_gift_image_thumb_url\": \"https://rgb-storage.s3-ap-southeast-1.amazonaws.com/images/thumbnails/1689478392.png\"\r\n            }\r\n        ],\r\n        \"item_gift_point\": 200000,\r\n        \"item_gift_quantity\": 30,\r\n        \"item_gift_status\": \"A\",\r\n        \"total_reviews\": 0,\r\n        \"total_rating\": 0,\r\n        \"is_wishlist\": 0\r\n    }\r\n}"
+						}
+					]
+				},
+				{
+					"name": "Update Item Gift",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "item_gift_name",
+									"value": "Test Barang",
+									"type": "text"
+								},
+								{
+									"key": "item_gift_description",
+									"value": "Test Description",
+									"type": "text"
+								},
+								{
+									"key": "item_gift_point",
+									"value": "70000",
+									"type": "text"
+								},
+								{
+									"key": "item_gift_quantity",
+									"value": "15",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}/{{locale}}/gifts/2",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{locale}}",
+								"gifts",
+								"2"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Update Item Gift",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "item_gift_name",
+											"value": "Test Barang",
+											"type": "text"
+										},
+										{
+											"key": "item_gift_description",
+											"value": "Test Description",
+											"type": "text"
+										},
+										{
+											"key": "item_gift_point",
+											"value": "70000",
+											"type": "text"
+										},
+										{
+											"key": "item_gift_quantity",
+											"value": "15",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/{{locale}}/gifts/2",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{locale}}",
+										"gifts",
+										"2"
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": "{\r\n    \"data\": {\r\n        \"id\": 2,\r\n        \"item_gift_code\": \"aWeD8La2DUjxsPa\",\r\n        \"item_gift_name\": \"Test Barang\",\r\n        \"item_gift_description\": \"Test Description\",\r\n        \"item_gift_images\": [\r\n            {\r\n                \"item_gift_id\": 2,\r\n                \"item_gift_image_url\": \"http://localhost:9000/images/1689431815_64b2af075dc7d.jpg\"\r\n            },\r\n            {\r\n                \"item_gift_id\": 2,\r\n                \"item_gift_image_url\": \"http://localhost:9000/images/1689431817_64b2af09ba091.jpg\"\r\n            }\r\n        ],\r\n        \"item_gift_point\": 70000,\r\n        \"item_gift_quantity\": 15,\r\n        \"item_gift_status\": \"A\",\r\n        \"total_reviews\": 0,\r\n        \"total_rating\": 0,\r\n        \"is_wishlist\": 0\r\n    }\r\n}"
+						}
+					]
+				},
+				{
+					"name": "Update Item Gift Partial",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "item_gift_description",
+									"value": "Tester",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}/{{locale}}/gifts/2",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{locale}}",
+								"gifts",
+								"2"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Update Item Gift Partial",
+							"originalRequest": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "item_gift_description",
+											"value": "Tester",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/{{locale}}/gifts/1",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{locale}}",
+										"gifts",
+										"1"
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": "{\r\n    \"data\": {\r\n        \"id\": 2,\r\n        \"item_gift_code\": \"aWeD8La2DUjxsPa\",\r\n        \"item_gift_name\": \"Test Barang\",\r\n        \"item_gift_description\": \"Tester\",\r\n        \"item_gift_images\": [\r\n            {\r\n                \"item_gift_id\": 2,\r\n                \"item_gift_image_url\": \"http://localhost:9000/images/1689431815_64b2af075dc7d.jpg\"\r\n            },\r\n            {\r\n                \"item_gift_id\": 2,\r\n                \"item_gift_image_url\": \"http://localhost:9000/images/1689431817_64b2af09ba091.jpg\"\r\n            }\r\n        ],\r\n        \"item_gift_point\": 70000,\r\n        \"item_gift_quantity\": 15,\r\n        \"item_gift_status\": \"A\",\r\n        \"total_reviews\": 0,\r\n        \"total_rating\": 0,\r\n        \"is_wishlist\": 0\r\n    }\r\n}"
+						}
+					]
+				},
+				{
+					"name": "Delete Item Gift",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/{{locale}}/gifts/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{locale}}",
+								"gifts",
+								"1"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Delete Item Gift",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/{{locale}}/gifts/11",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{locale}}",
+										"gifts",
+										"11"
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": "{\r\n    \"data\": {\r\n        \"message\": \"Success, 1 data deleted\"\r\n    },\r\n    \"status\": 200,\r\n    \"error\": 0\r\n}"
+						}
+					]
+				},
+				{
+					"name": "Redeem Item Gift",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "redeem_quantity",
+									"value": "1",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}/{{locale}}/gifts/1/redeem",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{locale}}",
+								"gifts",
+								"1",
+								"redeem"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Redeem Item Gift",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "redeem_quantity",
+											"value": "2",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/{{locale}}/gifts/1/redeem",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{locale}}",
+										"gifts",
+										"1",
+										"redeem"
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": "{\r\n    \"message\": \"Succes redeem gift\",\r\n    \"data\": {\r\n        \"id\": 17,\r\n        \"redeem_code\": \"eca4UNKDMpYlZNHa5pmp\",\r\n        \"redeem_item_gifts\": [\r\n            {\r\n                \"redeem_id\": 17,\r\n                \"redeem_quantity\": 1,\r\n                \"redeem_point\": 200000,\r\n                \"item_gift\": {\r\n                    \"id\": 1,\r\n                    \"item_gift_code\": \"4v6EmN7gIg5AZRv\",\r\n                    \"item_gift_name\": \"Samsung Galaxy S9 - Midnight Black 4/64 GB\",\r\n                    \"item_gift_description\": \"Ukuran layar: 6.2 inci, Dual Edge Super AMOLED 2960 x 1440 (Quad HD+) 529 ppi, 18.5:9 Memori: RAM 6 GB (LPDDR4), ROM 64 GB, MicroSD up to 400GB Sistem operasi: Android 8.0 (Oreo) CPU: Exynos 9810 Octa-core (2.7GHz Quad + 1.7GHz Quad), 64 bit, 10nm processor Kamera: Super Speed Dual Pixel, 12 MP OIS (F1.5/F2.4 Dual Aperture) + 12MP OIS (F2.4) with LED flash, depan 8 MP, f/1.7, autofocus, 1440p@30fps, dual video call, Auto HDR SIM: Dual SIM (Nano-SIM) Baterai: Non-removable Li-Ion 3500 mAh , Fast Charging on wired and wireless\",\r\n                    \"item_gift_point\": 200000,\r\n                    \"item_gift_quantity\": 13,\r\n                    \"item_gift_status\": \"A\"\r\n                }\r\n            }\r\n        ],\r\n        \"total_point\": 200000,\r\n        \"redeem_date\": \"2023-07-15\"\r\n    },\r\n    \"status\": 200,\r\n    \"error\": 0\r\n}"
+						}
+					]
+				},
+				{
+					"name": "Redeem Multiple Item Gift",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "item_gift_id[0]",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "redeem_quantity[0]",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "item_gift_id[1]",
+									"value": "3",
+									"type": "text"
+								},
+								{
+									"key": "redeem_quantity[1]",
+									"value": "1",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}/{{locale}}/gifts/redeem",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{locale}}",
+								"gifts",
+								"redeem"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Redeem Multiple Item Gift",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "item_gift_id[0]",
+											"value": "1",
+											"type": "text"
+										},
+										{
+											"key": "redeem_quantity[0]",
+											"value": "1",
+											"type": "text"
+										},
+										{
+											"key": "item_gift_id[1]",
+											"value": "2",
+											"type": "text"
+										},
+										{
+											"key": "redeem_quantity[1]",
+											"value": "3",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/{{locale}}/gifts/redeem",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{locale}}",
+										"gifts",
+										"redeem"
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": "{\r\n    \"message\": \"Succes redeem gift\",\r\n    \"data\": {\r\n        \"id\": 18,\r\n        \"redeem_code\": \"KWLTyWFtyK2czWZYHKva\",\r\n        \"redeem_item_gifts\": [\r\n            {\r\n                \"redeem_id\": 18,\r\n                \"redeem_quantity\": 1,\r\n                \"redeem_point\": 200000,\r\n                \"item_gift\": {\r\n                    \"id\": 1,\r\n                    \"item_gift_code\": \"4v6EmN7gIg5AZRv\",\r\n                    \"item_gift_name\": \"Samsung Galaxy S9 - Midnight Black 4/64 GB\",\r\n                    \"item_gift_description\": \"Ukuran layar: 6.2 inci, Dual Edge Super AMOLED 2960 x 1440 (Quad HD+) 529 ppi, 18.5:9 Memori: RAM 6 GB (LPDDR4), ROM 64 GB, MicroSD up to 400GB Sistem operasi: Android 8.0 (Oreo) CPU: Exynos 9810 Octa-core (2.7GHz Quad + 1.7GHz Quad), 64 bit, 10nm processor Kamera: Super Speed Dual Pixel, 12 MP OIS (F1.5/F2.4 Dual Aperture) + 12MP OIS (F2.4) with LED flash, depan 8 MP, f/1.7, autofocus, 1440p@30fps, dual video call, Auto HDR SIM: Dual SIM (Nano-SIM) Baterai: Non-removable Li-Ion 3500 mAh , Fast Charging on wired and wireless\",\r\n                    \"item_gift_point\": 200000,\r\n                    \"item_gift_quantity\": 12,\r\n                    \"item_gift_status\": \"A\"\r\n                }\r\n            },\r\n            {\r\n                \"redeem_id\": 18,\r\n                \"redeem_quantity\": 1,\r\n                \"redeem_point\": 2500,\r\n                \"item_gift\": {\r\n                    \"id\": 3,\r\n                    \"item_gift_code\": \"QRlkmEiXf7v4IS0\",\r\n                    \"item_gift_name\": \"iPhone 15 Pro Max\",\r\n                    \"item_gift_description\": \"Ipon keluaran amerika\",\r\n                    \"item_gift_point\": 2500,\r\n                    \"item_gift_quantity\": 16,\r\n                    \"item_gift_status\": \"A\"\r\n                }\r\n            }\r\n        ],\r\n        \"total_point\": 202500,\r\n        \"redeem_date\": \"2023-07-15\"\r\n    },\r\n    \"status\": 200,\r\n    \"error\": 0\r\n}"
+						}
+					]
+				},
+				{
+					"name": "Wishlist Item Gift",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/{{locale}}/gifts/1/wishlist",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{locale}}",
+								"gifts",
+								"1",
+								"wishlist"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Wishlist Item Gift",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/{{locale}}/gifts/1/wishlist",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{locale}}",
+										"gifts",
+										"1",
+										"wishlist"
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": "{\r\n    \"message\": \"Succes add to wishlists\",\r\n    \"data\": {\r\n        \"id\": 7,\r\n        \"item_gifts\": {\r\n            \"id\": 1,\r\n            \"item_gift_code\": \"4v6EmN7gIg5AZRv\",\r\n            \"item_gift_name\": \"Samsung Galaxy S9 - Midnight Black 4/64 GB\",\r\n            \"item_gift_description\": \"Ukuran layar: 6.2 inci, Dual Edge Super AMOLED 2960 x 1440 (Quad HD+) 529 ppi, 18.5:9 Memori: RAM 6 GB (LPDDR4), ROM 64 GB, MicroSD up to 400GB Sistem operasi: Android 8.0 (Oreo) CPU: Exynos 9810 Octa-core (2.7GHz Quad + 1.7GHz Quad), 64 bit, 10nm processor Kamera: Super Speed Dual Pixel, 12 MP OIS (F1.5/F2.4 Dual Aperture) + 12MP OIS (F2.4) with LED flash, depan 8 MP, f/1.7, autofocus, 1440p@30fps, dual video call, Auto HDR SIM: Dual SIM (Nano-SIM) Baterai: Non-removable Li-Ion 3500 mAh , Fast Charging on wired and wireless\",\r\n            \"item_gift_point\": 200000,\r\n            \"item_gift_quantity\": 12,\r\n            \"item_gift_status\": \"A\"\r\n        }\r\n    },\r\n    \"status\": 200,\r\n    \"error\": 0\r\n}"
+						}
+					]
+				},
+				{
+					"name": "Rating Item Gift",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "review_text",
+									"value": "Produk nya bagus sekali",
+									"type": "text"
+								},
+								{
+									"key": "review_rating",
+									"value": "4.7",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}/{{locale}}/gifts/1/rating",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{locale}}",
+								"gifts",
+								"1",
+								"rating"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Rating Item Gift",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "review_text",
+											"value": "Produk nya bagus",
+											"type": "text"
+										},
+										{
+											"key": "review_rating",
+											"value": "3.5",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/{{locale}}/gifts/1/rating",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{locale}}",
+										"gifts",
+										"1",
+										"rating"
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": "{\r\n    \"message\": \"Succes reviews gift\",\r\n    \"data\": {\r\n        \"id\": 2,\r\n        \"review_text\": \"Produk nya bagus sekali\",\r\n        \"review_rating\": \"4.5\",\r\n        \"review_date\": \"2023-07-15\",\r\n        \"item_gifts\": {\r\n            \"id\": 1,\r\n            \"item_gift_code\": \"4v6EmN7gIg5AZRv\",\r\n            \"item_gift_name\": \"Samsung Galaxy S9 - Midnight Black 4/64 GB\",\r\n            \"item_gift_description\": \"Ukuran layar: 6.2 inci, Dual Edge Super AMOLED 2960 x 1440 (Quad HD+) 529 ppi, 18.5:9 Memori: RAM 6 GB (LPDDR4), ROM 64 GB, MicroSD up to 400GB Sistem operasi: Android 8.0 (Oreo) CPU: Exynos 9810 Octa-core (2.7GHz Quad + 1.7GHz Quad), 64 bit, 10nm processor Kamera: Super Speed Dual Pixel, 12 MP OIS (F1.5/F2.4 Dual Aperture) + 12MP OIS (F2.4) with LED flash, depan 8 MP, f/1.7, autofocus, 1440p@30fps, dual video call, Auto HDR SIM: Dual SIM (Nano-SIM) Baterai: Non-removable Li-Ion 3500 mAh , Fast Charging on wired and wireless\",\r\n            \"item_gift_point\": 200000,\r\n            \"item_gift_quantity\": 12,\r\n            \"item_gift_status\": \"A\"\r\n        }\r\n    },\r\n    \"status\": 200,\r\n    \"error\": 0\r\n}"
+						}
+					]
+				}
+			]
+		}
+	]
+}
