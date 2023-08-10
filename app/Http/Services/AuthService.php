@@ -94,6 +94,7 @@ class AuthService extends BaseService
         $data = [
             'message' => trans('all.success_refresh_token'),
             'data' => [
+                'user_id' => $user->id,
                 'token_type' => 'Bearer',
                 'expires_in' => $token_response['expires_in'],
                 'access_token' => $token_response['access_token'],
@@ -115,5 +116,4 @@ class AuthService extends BaseService
                 'error' => 0,
             ]);
     }
-
 }
