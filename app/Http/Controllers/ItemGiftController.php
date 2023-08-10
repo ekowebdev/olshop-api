@@ -12,9 +12,11 @@ use Illuminate\Support\Facades\Config;
 
 class ItemGiftController extends BaseController
 {
-    public function __construct()
+    private $service;
+
+    public function __construct(ItemGiftService $service)
     {
-        $this->service = new ItemGiftService;
+        $this->service = $service;
         parent::__construct();
     }
 

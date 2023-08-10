@@ -12,9 +12,11 @@ use Illuminate\Support\Facades\Config;
 
 class UserController extends BaseController
 {
-    public function __construct()
+    private $service;
+
+    public function __construct(UserService $service)
     {
-        $this->service = new UserService;
+        $this->service = $service;
         parent::__construct();
     }
 

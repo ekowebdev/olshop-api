@@ -9,26 +9,27 @@ use Illuminate\Support\Facades\Request;
 
 class UserRepository extends BaseRepository 
 {
-    public $repository_name = 'User';
+    private $repository_name = 'User';
+    private $model;
 
-	public function __construct()
+	public function __construct(User $model)
 	{
-		$this->model = new User;
+		$this->model = $model;
 	}
 
-    public function getIndexData($locale, array $sortableAndSearchableColumn)
+    public function getIndexData($locale, array $sortable_and_searchable_column)
     {
         $this->validate(Request::all(), [
             'per_page' => ['numeric']
         ]);
         $result = $this->model
                     ->getAll()
-                    ->setSortableAndSearchableColumn($sortableAndSearchableColumn)
+                    ->setSortableAndSearchableColumn($sortable_and_searchable_column)
                     ->search()
                     ->sort()
                     ->orderByDesc('id')
                     ->paginate(Arr::get(Request::all(), 'per_page', 15));
-        $result->sortableAndSearchableColumn = $sortableAndSearchableColumn;
+        $result->sortableAndSearchableColumn = $sortable_and_searchable_column;
         if($result->total() == 0) throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => $this->repository_name], $locale));
         return $result;
     }

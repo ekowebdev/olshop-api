@@ -24,12 +24,14 @@ use Image;
 
 class ItemGiftService extends BaseService
 {
-    public function __construct()
+    private $model, $repository, $wishlist_repository, $rating_repository;
+    
+    public function __construct(ItemGift $model, ItemGiftRepository $repository, WishlistRepository $wishlist_repository, RatingRepository $rating_repository)
     {
-        $this->model = new ItemGift;
-        $this->repository = new ItemGiftRepository;
-        $this->wishlist_repository = new WishlistRepository;
-        $this->rating_repository = new RatingRepository;
+        $this->model = $model;
+        $this->repository = $repository;
+        $this->wishlist_repository = $wishlist_repository;
+        $this->rating_repository = $rating_repository;
     }
 
     public function getIndexData($locale, $data)
@@ -49,13 +51,13 @@ class ItemGiftService extends BaseService
             'total_rating' => 'total_rating',
         ];
 
-        $sortableAndSearchableColumn = [
+        $sortable_and_searchable_column = [
             'search'        => $search,
             'search_column' => $search_column,
             'sort_column'   => array_merge($search, $search_column),
         ];
         
-        return $this->repository->getIndexData($locale, $sortableAndSearchableColumn);
+        return $this->repository->getIndexData($locale, $sortable_and_searchable_column);
     }
 
     public function getSingleData($locale, $id)
@@ -244,9 +246,15 @@ class ItemGiftService extends BaseService
         ]);
 
         $this->repository->validate($data_request, [
+                'item_gift_id' => [
+                    'required'
+                ],
                 'item_gift_id.*' => [
                     'required',
                     'exists:item_gifts,id'
+                ],
+                'redeem_quantity' => [
+                    'required',
                 ],
                 'redeem_quantity.*' => [
                     'required',

@@ -8,12 +8,13 @@ use App\Http\Models\OauthRefreshToken;
 
 class OauthRepository extends BaseRepository {
 
-  public $repository_name = 'Oauth';
+    private $repository_name = 'Oauth';
+    private $modelAccessToken, $modelRefreshToken;
 
-	public function __construct()
+	public function __construct(OauthAccessToken $modelAccessToken, OauthRefreshToken $modelRefreshToken)
 	{
-        $this->modelRefreshToken = new OauthRefreshToken;
-        $this->modelAccessToken = new OauthAccessToken;
+        $this->modelAccessToken = $modelAccessToken;
+        $this->modelRefreshToken = $modelRefreshToken;
 	}
    
     public function checkRefreshToken($refreshToken, $accessToken)

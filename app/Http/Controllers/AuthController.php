@@ -8,9 +8,11 @@ use App\Http\Controllers\BaseController;
 
 class AuthController extends BaseController
 {
-    public function __construct()
+    private $service;
+
+    public function __construct(AuthService $service)
     {
-        $this->service = new AuthService;
+        $this->service = $service;
         parent::__construct();
     }
 
@@ -25,7 +27,7 @@ class AuthController extends BaseController
     }
 
     public function logout($locale)
-    {   
+	{
         return $this->service->logout($locale);
     }
 }

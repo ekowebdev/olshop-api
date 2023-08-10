@@ -11,10 +11,12 @@ class AuthService extends BaseService
 {  
     use PassportToken;
 
-    public function __construct()
+    private $repository, $oauth_repository, $oauth_client_id;
+
+    public function __construct(UserRepository $repository, OauthRepository $oauth_repository)
     {
-        $this->repository = new UserRepository;
-        $this->oauth_repository = new OauthRepository;
+        $this->repository = $repository;
+        $this->oauth_repository = $oauth_repository;
         $this->oauth_client_id = env('OAUTH_CLIENT_ID');
     }
 
@@ -39,7 +41,7 @@ class AuthService extends BaseService
         $data = [
             'message' => trans('all.success_login'),
             'data' => [
-                'username' => $user->username,
+                'user_id' => $user->id,
                 'token_type' => 'Bearer',
                 'expires_in' => $token_response['expires_in'],
                 'access_token' => $token_response['access_token'],
@@ -113,4 +115,5 @@ class AuthService extends BaseService
                 'error' => 0,
             ]);
     }
+
 }

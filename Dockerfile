@@ -1,5 +1,7 @@
 FROM php:8.1.10-fpm
 
+ENV APP_PORT=3000
+
 RUN apt-get update && apt-get install -y \
     build-essential \
     libpng-dev \
@@ -28,6 +30,6 @@ RUN composer install
 RUN chown -R www-data:www-data /var/www/html
 RUN chmod -R 755 /var/www/html/storage
 
-EXPOSE 9000
+EXPOSE $APP_PORT
 
 CMD ["php-fpm"]

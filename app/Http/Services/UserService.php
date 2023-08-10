@@ -22,10 +22,12 @@ use Spatie\Permission\Models\Role;
 
 class UserService extends BaseService
 {
-    public function __construct()
+    private $model, $repository;
+
+    public function __construct(User $model, UserRepository $repository)
     {
-        $this->model = new User;
-        $this->repository = new UserRepository;
+        $this->model = $model;
+        $this->repository = $repository;
     }
 
     public function getIndexData($locale, $data)
@@ -43,13 +45,13 @@ class UserService extends BaseService
             'email' => 'email',
         ];
 
-        $sortableAndSearchableColumn = [
+        $sortable_and_searchable_column = [
             'search'        => $search,
             'search_column' => $search_column,
             'sort_column'   => array_merge($search, $search_column),
         ];
         
-        return $this->repository->getIndexData($locale, $sortableAndSearchableColumn);
+        return $this->repository->getIndexData($locale, $sortable_and_searchable_column);
     }
 
     public function getSingleData($locale, $id)
