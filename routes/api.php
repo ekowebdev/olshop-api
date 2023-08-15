@@ -45,6 +45,8 @@ Route::middleware(['xssclean'])->group(function () {
                     Route::put('/{id}', '\App\Http\Controllers\ItemGiftController@update');
                     Route::patch('/{id}', '\App\Http\Controllers\ItemGiftController@update');
                     Route::delete('/{id}', '\App\Http\Controllers\ItemGiftController@delete');
+                    // Route::post('/{id}/image', '\App\Http\Controllers\ItemGiftImageController@update');
+                    // Route::delete('/{id}/image/{imageId}', '\App\Http\Controllers\ItemGiftImageController@update');
                 });
             });
             Route::post('/logout', '\App\Http\Controllers\AuthController@logout');

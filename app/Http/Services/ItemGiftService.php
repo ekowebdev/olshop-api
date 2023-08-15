@@ -2,6 +2,8 @@
 
 namespace App\Http\Services;
 
+use Image;
+use App\Jobs\RedeemJob;
 use App\Http\Models\Rating;
 use App\Http\Models\Redeem;
 use Illuminate\Support\Arr;
@@ -15,20 +17,20 @@ use App\Http\Resources\RatingResource;
 use App\Http\Resources\RedeemResource;
 use App\Exceptions\ValidationException;
 use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\Storage;
 use App\Http\Resources\WishlistResource;
+use App\Http\Repositories\RatingRepository;
 use App\Http\Repositories\ItemGiftRepository;
 use App\Http\Repositories\WishlistRepository;
-use App\Http\Repositories\RatingRepository;
-use Illuminate\Support\Facades\Storage;
-use Image;
 
 class ItemGiftService extends BaseService
 {
-    private $model, $repository, $wishlist_repository, $rating_repository;
+    private $model, $redeem_item_gift_model, $repository, $wishlist_repository, $rating_repository;
     
-    public function __construct(ItemGift $model, ItemGiftRepository $repository, WishlistRepository $wishlist_repository, RatingRepository $rating_repository)
+    public function __construct(ItemGift $model, RedeemItemGift $redeem_item_gift_model, ItemGiftRepository $repository, WishlistRepository $wishlist_repository, RatingRepository $rating_repository)
     {
         $this->model = $model;
+        $this->redeem_item_gift_model = $redeem_item_gift_model;
         $this->repository = $repository;
         $this->wishlist_repository = $wishlist_repository;
         $this->rating_repository = $rating_repository;
@@ -230,9 +232,11 @@ class ItemGiftService extends BaseService
         $redeem->save();
         DB::commit();
 
+        // dispatch(new RedeemJob($locale, $id, $data));
+
         return response()->json([
             'message' => trans('all.success_redeem'),
-            'data' => new RedeemResource($redeem),
+            // 'data' => new RedeemResource($redeem),
             'status' => 200,
             'error' => 0
         ]);
@@ -295,7 +299,7 @@ class ItemGiftService extends BaseService
 
         return response()->json([
             'message' => trans('all.success_redeem'),
-            'data' => new RedeemResource($redeem),
+            // 'data' => new RedeemResource($redeem),
             'status' => 200,
             'error' => 0
         ]);
@@ -362,18 +366,24 @@ class ItemGiftService extends BaseService
                 'review_rating' => calculate_rating($data_request['review_rating']),
                 'review_date' => date('Y-m-d'),
             ]);
-            $response = response()->json([
-                'message' => trans('all.success_reviews'),
-                'data' => new RatingResource($rating),
-                'status' => 200,
-                'error' => 0
-            ]);
+            // $response = response()->json([
+            //     'message' => trans('all.success_reviews'),
+            //     'data' => new RatingResource($rating),
+            //     'status' => 200,
+            //     'error' => 0
+            // ]);
         } else {
             DB::rollback();
             throw new ValidationException(json_encode(['item_gift_id' => [trans('error.already_reviews', ['id' => $item_gift->id])]])); 
         }
         DB::commit();
 
-        return $response;
+        // return $response;
+        return response()->json([
+            'message' => trans('all.success_reviews'),
+            // 'data' => new RatingResource($rating),
+            'status' => 200,
+            'error' => 0
+        ]);
     }
 }

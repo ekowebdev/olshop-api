@@ -11,7 +11,6 @@ class ItemGiftImage extends BaseModel
     use HasFactory;
 
     protected $table = 'item_gift_images';
-    // protected $fillable = ['item_gift_id', 'item_gift_image'];
     protected $guarded = [];
     protected $appends = ['item_gift_image_url', 'item_gift_image_thumb_url'];
 
