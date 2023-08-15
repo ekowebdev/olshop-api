@@ -1,14 +1,18 @@
 name: Deploy RGB API
+
 on:
   push:
     branches:
       - master
+
 jobs:
   deploy:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+
       - name: Deploy app to AWS EC2
         env:
           PRIVATE_KEY: ${{ secrets.RGB_AWS_SSH_PEM }}
@@ -16,19 +20,19 @@ jobs:
           USERNAME: ${{ secrets.RGB_AWS_USERNAME }}
           PROJECT_PATH: ${{ secrets.RGB_AWS_PATH_PROJECT }}
         run: |
-          echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
-          ssh -o StrictHostKeyChecking=no -i private_key ${USERNAME}@${HOSTNAME} '
-            cd ${{ secrets.RGB_AWS_PATH_PROJECT }} &&
-            sudo chown -R $USER:www-data $PROJECT_PATH &&
-            git config --global --add safe.directory $PROJECT_PATH &&
-            git checkout master &&
-            git fetch --all &&
-            git reset --hard origin/master &&
-            git pull origin master &&
-            composer update --no-dev --prefer-dist --optimize-autoloader &&
-            chmod -R 775 storage &&
-            php artisan config:clear &&
-            php artisan cache:clear &&
-            php artisan route:clear &&
+          echo -e "$PRIVATE_KEY" > private_key && chmod 600 private_key
+          ssh -o StrictHostKeyChecking=no -i private_key ${USERNAME}@${HOSTNAME} 'bash -s' << 'ENDSSH'
+            cd $PROJECT_PATH
+            sudo chown -R $USER:www-data $PROJECT_PATH
+            git config --global --add safe.directory $PROJECT_PATH
+            git checkout master
+            git fetch --all
+            git reset --hard origin/master
+            git pull origin master
+            composer update --no-dev --prefer-dist --optimize-autoloader
+            chmod -R 775 storage
+            php artisan config:clear
+            php artisan cache:clear
+            php artisan route:clear
             php artisan up
-          '
+          ENDSSH
