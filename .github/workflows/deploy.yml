@@ -18,13 +18,12 @@ jobs:
           PRIVATE_KEY: ${{ secrets.RGB_AWS_SSH_PEM }}
           HOSTNAME: ${{ secrets.RGB_AWS_HOSTNAME }}
           USERNAME: ${{ secrets.RGB_AWS_USERNAME }}
-          PROJECT_PATH: ${{ secrets.RGB_AWS_PATH_PROJECT }}
         run: |
           echo -e "$PRIVATE_KEY" > private_key && chmod 600 private_key
           ssh -o StrictHostKeyChecking=no -i private_key ${USERNAME}@${HOSTNAME} 'bash -s' << 'ENDSSH'
-            cd $PROJECT_PATH
-            sudo chown -R $USER:www-data $PROJECT_PATH
-            git config --global --add safe.directory $PROJECT_PATH
+            cd ${{ secrets.RGB_AWS_PATH_PROJECT }}
+            sudo chown -R $USER:www-data ${{ secrets.RGB_AWS_PATH_PROJECT }}
+            git config --global --add safe.directory ${{ secrets.RGB_AWS_PATH_PROJECT }}
             git checkout master
             git fetch --all
             git reset --hard origin/master
