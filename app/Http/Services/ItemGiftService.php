@@ -25,12 +25,11 @@ use App\Http\Repositories\WishlistRepository;
 
 class ItemGiftService extends BaseService
 {
-    private $model, $redeem_item_gift_model, $repository, $wishlist_repository, $rating_repository;
+    private $model, $repository, $wishlist_repository, $rating_repository;
     
-    public function __construct(ItemGift $model, RedeemItemGift $redeem_item_gift_model, ItemGiftRepository $repository, WishlistRepository $wishlist_repository, RatingRepository $rating_repository)
+    public function __construct(ItemGift $model, ItemGiftRepository $repository, WishlistRepository $wishlist_repository, RatingRepository $rating_repository)
     {
         $this->model = $model;
-        $this->redeem_item_gift_model = $redeem_item_gift_model;
         $this->repository = $repository;
         $this->wishlist_repository = $wishlist_repository;
         $this->rating_repository = $rating_repository;
@@ -200,17 +199,16 @@ class ItemGiftService extends BaseService
             ]
         );
 
+        DB::beginTransaction();
         if($item_gift->item_gift_quantity == 0) {
             $item_gift->update([
                 'item_gift_status' => 'O'
             ]);
         }
-
-        DB::beginTransaction();
         $total_point = 0;
         $redeem = Redeem::create([
             'user_id' => auth()->user()->id,
-            'redeem_code' => Str::random(20),
+            'redeem_code' => Str::uuid(),
             'total_point' => $total_point,
             'redeem_date' => date('Y-m-d'),
         ]);
@@ -232,7 +230,7 @@ class ItemGiftService extends BaseService
         $redeem->save();
         DB::commit();
 
-        // dispatch(new RedeemJob($locale, $id, $data));
+        // $redeem = dispatch(new RedeemJob($locale, $id, $data));
 
         return response()->json([
             'message' => trans('all.success_redeem'),
@@ -270,7 +268,7 @@ class ItemGiftService extends BaseService
         $total_point = 0;
         $redeem = Redeem::create([
             'user_id' => auth()->user()->id,
-            'redeem_code' => Str::random(20),
+            'redeem_code' => Str::uuid(),
             'total_point' => $total_point,
             'redeem_date' => date('Y-m-d'),
         ]);
@@ -298,7 +296,6 @@ class ItemGiftService extends BaseService
 
         return response()->json([
             'message' => trans('all.success_redeem'),
-            // 'data' => new RedeemResource($redeem),
             'status' => 200,
             'error' => 0
         ]);
