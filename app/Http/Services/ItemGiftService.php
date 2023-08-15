@@ -236,7 +236,6 @@ class ItemGiftService extends BaseService
 
         return response()->json([
             'message' => trans('all.success_redeem'),
-            // 'data' => new RedeemResource($redeem),
             'status' => 200,
             'error' => 0
         ]);
@@ -366,12 +365,6 @@ class ItemGiftService extends BaseService
                 'review_rating' => calculate_rating($data_request['review_rating']),
                 'review_date' => date('Y-m-d'),
             ]);
-            // $response = response()->json([
-            //     'message' => trans('all.success_reviews'),
-            //     'data' => new RatingResource($rating),
-            //     'status' => 200,
-            //     'error' => 0
-            // ]);
         } else {
             DB::rollback();
             throw new ValidationException(json_encode(['item_gift_id' => [trans('error.already_reviews', ['id' => $item_gift->id])]])); 
