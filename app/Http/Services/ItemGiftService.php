@@ -380,7 +380,6 @@ class ItemGiftService extends BaseService
 
         return response()->json([
             'message' => trans('all.success_reviews'),
-            // 'data' => new RatingResource($rating),
             'status' => 200,
             'error' => 0
         ]);
