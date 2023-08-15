@@ -378,7 +378,6 @@ class ItemGiftService extends BaseService
         }
         DB::commit();
 
-        // return $response;
         return response()->json([
             'message' => trans('all.success_reviews'),
             // 'data' => new RatingResource($rating),
