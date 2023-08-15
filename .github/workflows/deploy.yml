@@ -22,9 +22,9 @@ jobs:
         run: |
           echo -e "$PRIVATE_KEY" > private_key && chmod 600 private_key
           ssh -o StrictHostKeyChecking=no -i private_key ${USERNAME}@${HOSTNAME} 'bash -s' << 'ENDSSH'
-            cd ${PROJECT_PATH}
-            sudo chown -R $USER:www-data ${PROJECT_PATH}
-            git config --global --add safe.directory ${PROJECT_PATH}
+            cd "$PROJECT_PATH"
+            sudo chown -R $USER:www-data "$PROJECT_PATH"
+            git config --global --add safe.directory "$PROJECT_PATH"
             git checkout master
             git fetch --all
             git reset --hard origin/master
