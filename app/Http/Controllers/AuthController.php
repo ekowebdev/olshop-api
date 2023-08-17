@@ -12,8 +12,8 @@ class AuthController extends BaseController
 
     public function __construct(AuthService $service)
     {
-        $this->service = $service;
         parent::__construct();
+        $this->service = $service;
     }
 
     public function login($locale, Request $request)

@@ -70,24 +70,24 @@ class AuthService extends BaseService
         }
         $crypto = json_decode($crypto, true);
 
-        $checkRefreshToken = $this->oauth_repository->checkRefreshToken($crypto['refresh_token_id'], $crypto['access_token_id']);
-        if(empty($checkRefreshToken)){
+        $check_refresh_token = $this->oauth_repository->checkRefreshToken($crypto['refresh_token_id'], $crypto['access_token_id']);
+        if(empty($check_refresh_token)){
             throw new AuthenticationException(trans('error.failed_refresh_token'));
         }
-        $checkAccessToken = $this->oauth_repository->checkAccessToken($crypto['access_token_id']);
+        $check_access_token = $this->oauth_repository->checkAccessToken($crypto['access_token_id']);
 
-        if(empty($checkAccessToken)){
+        if(empty($check_access_token)){
             throw new AuthenticationException(trans('error.failed_refresh_token'));  
         }
 
-        $user = $this->repository->getSingleData($locale, $checkAccessToken['user_id']);
+        $user = $this->repository->getSingleData($locale, $check_access_token['user_id']);
 
         if (empty($user)) {
             throw new AuthenticationException(trans('error.failed_refresh_token'));            
         }
 
-        $checkRefreshToken->update(['revoked' => 1]);
-        $checkAccessToken->update(['revoked' => 1]);
+        $check_refresh_token->update(['revoked' => 1]);
+        $check_access_token->update(['revoked' => 1]);
                 
         $token_response = $this->getBearerTokenByUser($user, $this->oauth_client_id, false);
         
