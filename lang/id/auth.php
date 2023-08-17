@@ -13,7 +13,7 @@ return [
     |
     */
     
-    'failed'                         => 'Kredensial ini tidak cocok dengan data kami.',
+    'failed'                         => 'Kredensial tidak sesuai.',
     'throttle'                       => 'Terlalu banyak upaya masuk. Silakan coba lagi dalam :seconds detik.',
     'wrong_username_or_password'     => 'Username atau sandi salah.',
     'not_authorize_access'           => 'Tidak ada otoritas akses.',
