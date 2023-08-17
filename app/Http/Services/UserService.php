@@ -89,6 +89,9 @@ class UserService extends BaseService
                     'min:6',
                     'max:20',
                 ],
+                'role' => [
+                    'required',
+                ],
                 'role.*' => [
                     'required',
                     'in:admin,customer',

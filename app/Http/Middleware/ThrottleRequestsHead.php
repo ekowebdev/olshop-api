@@ -116,7 +116,6 @@ class ThrottleRequestsHead
     {
         $retryAfter = $this->limiter->availableIn($key);
 
-        // $AfterDate = \Carbon\Carbon::now()->addSeconds($retryAfter);
         $error_message = $this->custom_message;
         if(empty($custom_message)){
             $error_message = trans('validation.too_many_requests_wait',[
@@ -129,7 +128,7 @@ class ThrottleRequestsHead
                 'message' => $error_message, 
                 'status_code' => 429,
                 'error' => $error_message,
-            ]],429);
+            ]], 429);
 
         $response = new Response($message, 429);
 

@@ -45,7 +45,6 @@ trait PassportToken
 		} catch (\Error $e) {
 			throw OAuthServerException::serverError('An unexpected error has occurred');
 		} catch (\Exception $e) {
-			// If you get this message, the CSPRNG failed hard.
 			throw OAuthServerException::serverError('Could not generate a random string');
 		}
 	}
@@ -104,16 +103,12 @@ trait PassportToken
 
 	private function sendBearerTokenResponse($accessToken, $refreshToken)
 	{
-	    //set private key
         $privateKey = new CryptKey('file://' . Passport::keyPath('oauth-private.key'), null, false);
         $accessToken->setPrivateKey($privateKey);
 
         $response = new BearerTokenResponse();
 		$response->setAccessToken($accessToken);
 		$response->setRefreshToken($refreshToken);
-
-		//not used on laravel 6.x
-		//$response->setPrivateKey($privateKey);
 
 		$response->setEncryptionKey(app('encrypter')->getKey());
 

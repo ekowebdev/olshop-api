@@ -45,14 +45,8 @@ class CheckClientCredentials
     {
         try {
             $psr17Factory = new Psr17Factory;
-
             $psr = (new PsrHttpFactory($psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory))->createRequest($request);
             $psr = $this->server->validateAuthenticatedRequest($psr);
-            // $whiteListClientId = ['18'];
-            // $clientId = $psr->getAttribute('oauth_client_id');
-            // if(!in_array($clientId,$whiteListClientId)){
-            //     throw new AuthenticationException();
-            // }
         } catch (OAuthServerException $e) {
             throw new AuthenticationException;
         }

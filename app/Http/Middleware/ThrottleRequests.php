@@ -27,7 +27,7 @@ class ThrottleRequests
      *
      * @param  \Illuminate\Cache\RateLimiter $limiter
      */
-    public function __construct(RateLimiter $limiter, $custom_message='')
+    public function __construct(RateLimiter $limiter, $custom_message = '')
     {
         $this->limiter = $limiter;
         $this->custom_message = $custom_message;
@@ -86,12 +86,6 @@ class ThrottleRequests
         }
 
         if ($route = $request->route()) {
-            #exp : "otpresend"
-            // if(!empty($route->getActionMethod())){
-            //     return sha1($route->getDomain().'|'.$route->getActionMethod().'|'.$request->ip());
-            // }
-
-            #exp : "\App\Http\Controllers\Api\v1\Admin\CustomerAuthenticationController@otpresend"
             if(!empty($route->getActionName())){
                 if(!empty($request->header('User-Agent'))){
                     return sha1($route->getDomain().'|'.$route->getActionName().'|'.$request->ip().'|'.$request->header('User-Agent'));
@@ -129,7 +123,6 @@ class ThrottleRequests
     {
         $retryAfter = $this->limiter->availableIn($key);
 
-        // $AfterDate = \Carbon\Carbon::now()->addSeconds($retryAfter);
         $error_message = $this->custom_message;
         if(empty($custom_message)){
             $error_message = trans('validation.too_many_requests_wait',[
@@ -142,7 +135,7 @@ class ThrottleRequests
                 'message' => $error_message, 
                 'status_code' => 429,
                 'error' => $error_message,
-            ]],429);
+            ]], 429);
 
         $response = new Response($message, 429);
 

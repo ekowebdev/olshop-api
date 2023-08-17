@@ -11,13 +11,9 @@ use Illuminate\Support\Facades\Request;
 class BaseModel extends Model
 {
 	protected $guarded = [];
-	
 	protected $soft_delete = false;
-
 	protected $with_log	= false;
-	
 	protected $casts = ['created_at' => 'string'];
-
 	protected static $rules = [];
 
 	/**
@@ -116,8 +112,6 @@ class BaseModel extends Model
 
 		if(isset($request['search']))
 		{			
-			#Handle error unicode
-			#SQLSTATE[HY000]: General error: 1267 Illegal mix of collations (latin1_swedish_ci,IMPLICIT) and (utf8mb4_unicode_ci,COERCIBLE) 
 			if($request['search'] != utf8_encode($request['search'])){
 				throw new \App\Exceptions\AuthenticationException('Periksa text pencarian anda, mungkin mengandung karakter yang tidak kita ijinkan!');
 			}
@@ -370,6 +364,6 @@ class BaseModel extends Model
 		$thisClass = get_class($this);
 		$model = new $thisClass;
 
-        return $model->getTable().'.'.$model->getKeyName(); 
+        return $model->getTable() . '.' . $model->getKeyName(); 
     }
 }

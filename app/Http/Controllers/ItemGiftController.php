@@ -16,8 +16,8 @@ class ItemGiftController extends BaseController
 
     public function __construct(ItemGiftService $service)
     {
-        $this->service = $service;
         parent::__construct();
+        $this->service = $service;
     }
 
     public function index($locale)

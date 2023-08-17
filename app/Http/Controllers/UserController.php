@@ -16,8 +16,8 @@ class UserController extends BaseController
 
     public function __construct(UserService $service)
     {
-        $this->service = $service;
         parent::__construct();
+        $this->service = $service;
     }
 
     public function index($locale)

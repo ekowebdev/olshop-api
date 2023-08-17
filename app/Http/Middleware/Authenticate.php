@@ -37,8 +37,6 @@ class Authenticate
      */
     public function handle($request, Closure $next, $guard = null)
     {
-        // $is_guest = Config::get('setting.guest');
-        // $user = $this->auth->guard($guard)->user();
         $user = auth()->guard('api')->user();
 
         if (empty($user)) {

@@ -15,8 +15,8 @@ class ItemGiftImageController extends BaseController
 
     public function __construct(ItemGiftImageService $service)
     {
-        $this->service = $service;
         parent::__construct();
+        $this->service = $service;
     }
 
     public function update($locale, $id)
