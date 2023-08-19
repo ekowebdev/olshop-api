@@ -3,31 +3,25 @@
 namespace App\Http\Services;
 
 use Image;
-use App\Jobs\RedeemJob;
-use App\Http\Models\Rating;
 use App\Http\Models\Redeem;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
-use App\Http\Models\ItemGift;
 use App\Http\Models\Wishlist;
 use Illuminate\Support\Facades\DB;
 use App\Http\Models\RedeemItemGift;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Resources\RatingResource;
 use App\Http\Resources\RedeemResource;
 use App\Exceptions\ValidationException;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Storage;
-use App\Http\Resources\WishlistResource;
 use App\Http\Repositories\RatingRepository;
 use App\Http\Repositories\RedeemItemGiftRepository;
-use App\Http\Repositories\WishlistRepository;
 
 class RedeemService extends BaseService
 {
     private $model, $repository;
     
-    public function __construct(ItemGift $model, RedeemItemGiftRepository $repository)
+    public function __construct(Redeem $model, RedeemRepository $repository)
     {
         $this->model = $model;
         $this->repository = $repository;

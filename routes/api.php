@@ -35,8 +35,8 @@ Route::middleware(['xssclean'])->group(function () {
                 Route::middleware(['role:admin|customer'])->group(function ()  {
                     Route::get('/', '\App\Http\Controllers\ItemGiftController@index');
                     Route::get('/{id}', '\App\Http\Controllers\ItemGiftController@show');
-                    Route::post('/{id}/redeem', '\App\Http\Controllers\RedeemController@redeem');
                     Route::get('/redeem', '\App\Http\Controllers\RedeemController@index');
+                    Route::post('/{id}/redeem', '\App\Http\Controllers\RedeemController@redeem');
                     Route::post('/redeem', '\App\Http\Controllers\RedeemController@redeem_multiple');
                     Route::post('/{id}/wishlist', '\App\Http\Controllers\ItemGiftController@wishlist');
                     Route::post('/{id}/rating', '\App\Http\Controllers\ItemGiftController@rating');
