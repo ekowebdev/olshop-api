@@ -6,7 +6,6 @@ use Image;
 use App\Http\Models\Redeem;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
-use App\Http\Models\Wishlist;
 use Illuminate\Support\Facades\DB;
 use App\Http\Models\RedeemItemGift;
 use Illuminate\Support\Facades\Auth;
@@ -14,8 +13,7 @@ use App\Http\Resources\RedeemResource;
 use App\Exceptions\ValidationException;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Storage;
-use App\Http\Repositories\RatingRepository;
-use App\Http\Repositories\RedeemItemGiftRepository;
+use App\Http\Repositories\RedeemRepository;
 
 class RedeemService extends BaseService
 {

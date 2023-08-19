@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\RedeemResource;
 use App\Http\Services\RedeemService;
-use App\Http\Resources\DeletedResource;
 use Illuminate\Support\Facades\Request;
 use App\Http\Controllers\BaseController;
 use Illuminate\Support\Facades\Config;
