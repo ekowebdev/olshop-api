@@ -44,7 +44,7 @@ class User extends Authenticable
         'email_verified_at' => 'datetime',
     ];
 
-    public function scopeSetSortableAndSearchableColumn($query, $value=[])
+    public function scopeSetSortableAndSearchableColumn($query, $value = [])
 	{
 		$this->sortableAndSearchableColumn = $value;
 	}

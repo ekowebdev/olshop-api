@@ -39,7 +39,7 @@ class BaseModel extends Model
 	 * [setSortableAndSearchableColumn description]
 	 * @param array $value [description]
 	 */
-	public function scopeSetSortableAndSearchableColumn($query, $value=[])
+	public function scopeSetSortableAndSearchableColumn($query, $value = [])
 	{
 		$this->sortableAndSearchableColumn = $value;
 	}
@@ -51,7 +51,7 @@ class BaseModel extends Model
 	 * @param array $value
 	 * @return void
 	 */
-	public function scopeSetRelationColumn($query, $value=[])
+	public function scopeSetRelationColumn($query, $value = [])
 	{		
 		$this->relationColumn = $value;
 	}
@@ -216,7 +216,7 @@ class BaseModel extends Model
 	 * @param [type] $query
 	 * @return void
 	 */
-	public function scopeDistinct($query,$data=null)
+	public function scopeDistinct($query, $data = null)
 	{
 		$request = Request::all();		
 		
