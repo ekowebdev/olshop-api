@@ -2,22 +2,22 @@
 
 namespace App\Http\Services;
 
-use App\Http\Models\Rating;
+use App\Http\Models\Review;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Resources\RatingResource;
+use App\Http\Resources\ReviewResource;
 use App\Exceptions\ValidationException;
 use Illuminate\Support\Facades\Request;
-use App\Http\Repositories\RatingRepository;
+use App\Http\Repositories\ReviewRepository;
 use App\Http\Repositories\ItemGiftRepository;
 
-class RatingService extends BaseService
+class ReviewService extends BaseService
 {
     private $model, $repository, $item_gift_repository;
     
-    public function __construct(Rating $model, RatingRepository $repository, ItemGiftRepository $item_gift_repository)
+    public function __construct(Review $model, ReviewRepository $repository, ItemGiftRepository $item_gift_repository)
     {
         $this->model = $model;
         $this->repository = $repository;
@@ -77,7 +77,7 @@ class RatingService extends BaseService
 
         DB::beginTransaction();
         if(!isset($check_rating)){
-            $rating = Rating::create([
+            Review::create([
                 'user_id' => auth()->user()->id,
                 'item_gift_id' => $item_gift->id,
                 'review_text' => $data_request['review_text'],

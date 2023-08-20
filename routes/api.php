@@ -43,15 +43,15 @@ Route::middleware(['xssclean'])->group(function () {
                 // Wishlist Item Gift
                 Route::get('/gifts/wishlist', '\App\Http\Controllers\WishlistController@index');
                 Route::post('/gifts/{itemGiftId}/wishlist', '\App\Http\Controllers\WishlistController@wishlist');
-                // Rating Item Gift
-                Route::get('/gifts/rating', '\App\Http\Controllers\RatingController@index');
-                Route::get('/gifts/rating/{id}', '\App\Http\Controllers\RatingController@show');
-                Route::post('/gifts/{itemGiftId}/rating', '\App\Http\Controllers\RatingController@rating');
-                // Item Gift
-                Route::get('/gifts', '\App\Http\Controllers\ItemGiftController@index');
-                Route::get('/gifts/{id}', '\App\Http\Controllers\ItemGiftController@show');
+                // Review Item Gift
+                Route::get('/gifts/rating', '\App\Http\Controllers\ReviewController@index');
+                Route::get('/gifts/rating/{id}', '\App\Http\Controllers\ReviewController@show');
+                Route::post('/gifts/{itemGiftId}/rating', '\App\Http\Controllers\ReviewController@rating');
             });
             Route::post('/logout', '\App\Http\Controllers\AuthController@logout');
         });
+        // Item Gift
+        Route::get('/gifts', '\App\Http\Controllers\ItemGiftController@index');
+        Route::get('/gifts/{id}', '\App\Http\Controllers\ItemGiftController@show');
     });
 });

@@ -7,7 +7,7 @@ use App\Http\Models\ItemGift;
 use App\Http\Models\BaseModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Rating extends BaseModel
+class Review extends BaseModel
 {
     use HasFactory;
 

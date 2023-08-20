@@ -3,16 +3,16 @@
 namespace App\Http\Repositories;
 
 use Illuminate\Support\Arr;
-use App\Http\Models\Rating;
+use App\Http\Models\Review;
 use App\Exceptions\DataEmptyException;
 use Illuminate\Support\Facades\Request;
 
-class RatingRepository extends BaseRepository 
+class ReviewRepository extends BaseRepository 
 {
-    private $repository_name = 'Rating';
+    private $repository_name = 'Review';
     private $model;
 
-	public function __construct(Rating $model)
+	public function __construct(Review $model)
 	{
 		$this->model = $model;
 	}

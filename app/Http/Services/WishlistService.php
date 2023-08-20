@@ -52,7 +52,7 @@ class WishlistService extends BaseService
 
         DB::beginTransaction();
         if(!isset($check_wishlist)){
-            $wishlist = Wishlist::create([
+            Wishlist::create([
                 'user_id' => auth()->user()->id,
                 'item_gift_id' => $item_gift->id,
             ]);

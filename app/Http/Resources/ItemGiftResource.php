@@ -17,6 +17,19 @@ class ItemGiftResource extends JsonResource
             'item_gift_point' => $this->item_gift_point,
             'item_gift_quantity' => $this->item_gift_quantity,
             'item_gift_status' => $this->item_gift_status,
+            'reviews' => $this->reviews->map(function ($review) {
+                return [
+                    'id' => $review->id,
+                    'users' => [
+                        'id' => $review->users->id,
+                        'name' => $review->users->name,
+                    ],
+                    'item_gift_id' => $review->item_gift_id,
+                    'review_text' => $review->review_text,
+                    'review_rating' => $review->review_rating,
+                    'review_date' => $review->review_date,
+                ];
+            }),
             'total_reviews' => $this->total_reviews,
             'total_rating' => floatval(rtrim($this->total_rating, '0')),
             'is_wishlist' => $this->is_wishlist

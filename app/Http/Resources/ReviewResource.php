@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use App\Http\Resources\UserResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class RatingResource extends JsonResource
+class ReviewResource extends JsonResource
 {
     public function toArray($request)
     {

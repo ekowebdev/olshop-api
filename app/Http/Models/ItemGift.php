@@ -2,7 +2,7 @@
 
 namespace App\Http\Models;
 
-use App\Http\Models\Rating;
+use App\Http\Models\Review;
 use App\Http\Models\BaseModel;
 use App\Http\Models\Wishlists;
 use App\Http\Models\ItemGiftImage;
@@ -32,14 +32,14 @@ class ItemGift extends BaseModel
         return $this->hasMany(Wishlist::class);
     }
 
-    public function ratings()
+    public function reviews()
     {
-        return $this->hasMany(Rating::class);
+        return $this->hasMany(Review::class);
     }
 
     public function scopeGetAll($query)
     {   
-        $user_id = auth()->user()->id;
+        $user_id = auth()->user()->id ?? 0;
         return $query->select([
                     'id', 
                     'item_gift_code', 
