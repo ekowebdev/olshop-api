@@ -14,6 +14,19 @@ class Rating extends BaseModel
     protected $table = 'reviews';
     protected $fillable = ['user_id', 'item_gift_id', 'review_text', 'review_rating', 'review_date'];
 
+    public function scopeGetAll($query)
+    {      
+        return $query->select([
+                    'id', 
+                    'user_id', 
+                    'item_gift_id', 
+                    'review_text', 
+                    'review_rating', 
+                    'review_date'
+                ])
+                ->where('user_id', auth()->user()->id);
+    }
+
     public function users()
     {
         return $this->belongsTo(User::class, 'user_id');

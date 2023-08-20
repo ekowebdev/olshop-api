@@ -8,7 +8,6 @@ use App\Http\Resources\DeletedResource;
 use Illuminate\Support\Facades\Request;
 use App\Http\Controllers\BaseController;
 use App\Http\Resources\UserResource;
-use Illuminate\Support\Facades\Config;
 
 class UserController extends BaseController
 {

@@ -14,6 +14,16 @@ class Wishlist extends BaseModel
     protected $table = 'wishlists';
     protected $fillable = ['user_id', 'item_gift_id'];
 
+    public function scopeGetAll($query)
+    {      
+        return $query->select([
+                    'id', 
+                    'user_id', 
+                    'item_gift_id'
+                ])
+                ->where('user_id', auth()->user()->id);
+    }
+
     public function users()
     {
         return $this->belongsTo(User::class, 'user_id');

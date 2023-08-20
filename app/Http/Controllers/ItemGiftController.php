@@ -2,13 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\RedeemResource;
 use App\Http\Services\ItemGiftService;
 use App\Http\Resources\DeletedResource;
 use Illuminate\Support\Facades\Request;
 use App\Http\Controllers\BaseController;
 use App\Http\Resources\ItemGiftResource;
-use Illuminate\Support\Facades\Config;
 
 class ItemGiftController extends BaseController
 {
@@ -51,25 +49,5 @@ class ItemGiftController extends BaseController
     {
         $data = $this->service->delete($locale, $id, Request::all());
         return new DeletedResource($data);
-    }
-
-    public function redeem($locale, $id)
-    {
-        return $this->service->redeem($locale, $id, Request::all());
-    }
-
-    public function redeem_multiple($locale)
-    {
-        return $this->service->redeem_multiple($locale, Request::all());
-    }
-
-    public function wishlist($locale, $id)
-    {
-        return $this->service->wishlist($locale, $id, Request::all());
-    }
-
-    public function rating($locale, $id)
-    {
-        return $this->service->rating($locale, $id, Request::all());
     }
 }

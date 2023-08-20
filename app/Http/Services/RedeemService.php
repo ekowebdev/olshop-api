@@ -8,21 +8,24 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use App\Http\Models\RedeemItemGift;
+use App\Http\Services\RedeemService;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Resources\RedeemResource;
 use App\Exceptions\ValidationException;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Repositories\RedeemRepository;
+use App\Http\Repositories\ItemGiftRepository;
 
 class RedeemService extends BaseService
 {
-    private $model, $repository;
+    private $model, $repository, $item_gift_repository;
     
-    public function __construct(Redeem $model, RedeemRepository $repository)
+    public function __construct(Redeem $model, RedeemRepository $repository, ItemGiftRepository $item_gift_repository)
     {
         $this->model = $model;
         $this->repository = $repository;
+        $this->item_gift_repository = $item_gift_repository;
     }
 
     public function getIndexData($locale, $data)
@@ -54,14 +57,14 @@ class RedeemService extends BaseService
 
     public function redeem($locale, $id, $data)
     {
-        $item_gift = $this->repository->getSingleData($locale, $id);
+        $item_gift = $this->item_gift_repository->getSingleData($locale, $id);
 
         $data_request = Arr::only($data, [
             'item_gift_id',
             'redeem_quantity',
         ]);
 
-        $this->repository->validate($data_request, [
+        $this->item_gift_repository->validate($data_request, [
                 'redeem_quantity' => [
                     'required',
                     'numeric'
@@ -116,7 +119,7 @@ class RedeemService extends BaseService
             'redeem_quantity',
         ]);
 
-        $this->repository->validate($data_request, [
+        $this->item_gift_repository->validate($data_request, [
                 'item_gift_id' => [
                     'required'
                 ],
@@ -144,7 +147,7 @@ class RedeemService extends BaseService
         ]);
         foreach ($data_request['item_gift_id'] as $key => $item_gift_id) {
             $quantity = $data_request['redeem_quantity'][$key];
-            $item_gift = $this->repository->getSingleData($locale, $item_gift_id);
+            $item_gift = $this->item_gift_repository->getSingleData($locale, $item_gift_id);
             if (!$item_gift || $item_gift->item_gift_quantity < $quantity || $item_gift->item_gift_status == 'O') {
                 DB::rollBack();
                 throw new ValidationException(json_encode(['item_gift_id' => [trans('error.out_of_stock', ['id' => $item_gift_id])]]));
