@@ -2,20 +2,9 @@
 
 namespace App\Http\Services;
 
-use App\Http\Models\Rating;
-use App\Http\Models\Redeem;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
 use App\Http\Models\User;
-use App\Http\Models\Wishlist;
 use Illuminate\Support\Facades\DB;
-use App\Http\Models\RedeemUser;
-use Illuminate\Support\Facades\Auth;
-use App\Http\Resources\RatingResource;
-use App\Http\Resources\RedeemResource;
-use App\Exceptions\ValidationException;
-use Illuminate\Support\Facades\Request;
-use App\Http\Resources\WishlistResource;
 use App\Http\Repositories\UserRepository;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;

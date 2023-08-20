@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Http\Services\WishlistService;
-use App\Http\Resources\DeletedResource;
 use Illuminate\Support\Facades\Request;
 use App\Http\Controllers\BaseController;
 use App\Http\Resources\WishlistResource;

@@ -2,15 +2,9 @@
 
 namespace App\Http\Services;
 
-use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
 use App\Http\Models\Wishlist;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Auth;
 use App\Exceptions\ValidationException;
-use Illuminate\Support\Facades\Request;
-use Illuminate\Support\Facades\Storage;
-use App\Http\Resources\WishlistResource;
 use App\Http\Repositories\ItemGiftRepository;
 use App\Http\Repositories\WishlistRepository;
 

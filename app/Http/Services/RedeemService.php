@@ -2,18 +2,13 @@
 
 namespace App\Http\Services;
 
-use Image;
 use App\Http\Models\Redeem;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use App\Http\Models\RedeemItemGift;
 use App\Http\Services\RedeemService;
-use Illuminate\Support\Facades\Auth;
-use App\Http\Resources\RedeemResource;
 use App\Exceptions\ValidationException;
-use Illuminate\Support\Facades\Request;
-use Illuminate\Support\Facades\Storage;
 use App\Http\Repositories\RedeemRepository;
 use App\Http\Repositories\ItemGiftRepository;
 

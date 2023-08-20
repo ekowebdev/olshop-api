@@ -7,9 +7,6 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use App\Http\Models\ItemGift;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Auth;
-use App\Exceptions\ValidationException;
-use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Repositories\ItemGiftRepository;
 

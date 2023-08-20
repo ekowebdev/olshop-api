@@ -4,12 +4,8 @@ namespace App\Http\Services;
 
 use App\Http\Models\Review;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Auth;
-use App\Http\Resources\ReviewResource;
 use App\Exceptions\ValidationException;
-use Illuminate\Support\Facades\Request;
 use App\Http\Repositories\ReviewRepository;
 use App\Http\Repositories\ItemGiftRepository;
 

@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\RedeemResource;
 use App\Http\Services\UserService;
 use App\Http\Resources\DeletedResource;
 use Illuminate\Support\Facades\Request;
