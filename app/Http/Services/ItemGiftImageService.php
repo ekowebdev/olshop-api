@@ -25,32 +25,20 @@ class ItemGiftImageService extends BaseService
         $this->item_gift_image_repository = $repository;
     }
 
-    public function store($locale, $data)
+    public function store($locale, $id, $data)
     {
+        $check_data = $this->repository->getSingleData($locale, $id);
+
         $data_request = Arr::only($data, [
-            'item_gift_name',
-            'item_gift_description',
-            'item_gift_point',
-            'item_gift_quantity',
             'item_gift_images',
         ]);
 
         $this->repository->validate($data_request, [
-                'item_gift_name' => [
+                'item_gift_images' => [
                     'required'
-                ],
-                'item_gift_description' => [
-                    'required'
-                ],
-                'item_gift_point' => [
-                    'required',
-                    'numeric'
-                ],
-                'item_gift_quantity' => [
-                    'required',
-                    'numeric'
                 ],
                 'item_gift_images.*' => [
+                    'required',
                     'max:10000',
                     'mimes:jpg,png'
                 ],
@@ -58,8 +46,6 @@ class ItemGiftImageService extends BaseService
         );
 
         DB::beginTransaction();
-        $data_request['item_gift_code'] = Str::uuid();
-        $result = $this->model->create($data_request);
         if (isset($data_request['item_gift_images'])) {
             foreach ($data_request['item_gift_images'] as $image) {
                 $image_name = time() . '.' . $image->getClientOriginalExtension();
@@ -68,71 +54,33 @@ class ItemGiftImageService extends BaseService
                 $img_thumb = $img->crop(5, 5);
                 $img_thumb = $img_thumb->stream()->detach();
                 Storage::disk('s3')->put('images/thumbnails/' . $image_name, $img_thumb);
-                $result->item_gift_images()->create([
+                $this->model->create([
+                    'item_gift_id' => $id,
                     'item_gift_image' => $image_name,
                 ]);
             }
         }
         DB::commit();
 
-        return $this->repository->getSingleData($locale, $result->id);
+        return response()->json([
+            'message' => 'success upload images',
+            'status' => 200,
+            'error' => 0
+        ]);
     }
 
-    public function update($locale, $id, $data)
+    public function delete($locale, $id, $image_name)
     {
-        $check_data = $this->repository->getSingleData($locale, $id);
-
-        $data = array_merge([
-            'item_gift_image' => $check_data->item_gift_image,
-        ], $data);
-
-        $data_request = Arr::only($data, [
-            'item_gift_image',
-        ]);
-
-        $this->repository->validate($data_request, [
-                'item_gift_image' => [
-                    'required',
-                    'max:10000',
-                    'mimes:jpg,png',
-                ]
-            ]
-        );
-
-        DB::beginTransaction();
-        // $check_data->update($data_request);
-        $image = $data_request['item_gift_image'];
-        // dd($image);
-        $image_name = time() . '.' . $image->getClientOriginalExtension();
-        Storage::disk('s3')->put('images/' . $image_name, file_get_contents($image));
-        $img = Image::make($image);
-        $img_thumb = $img->crop(5, 5);
-        $img_thumb = $img_thumb->stream()->detach();
-        Storage::disk('s3')->put('images/thumbnails/' . $image_name, $img_thumb);
-        $check_data->create([
-            'item_gift_id' => $id,
-            'item_gift_image' => $image_name,
-        ]);
-        // $check_data->update($data_request);
-        DB::commit();
-
-        return $this->item_gift_image_repository->getSingleData($locale, $id);
-    }
-
-    public function delete($locale, $id)
-    {
-        $check_data = $this->repository->getSingleData($locale, $id);
+        $data = $this->repository->getByIdAndImageName($locale, $id, $image_name);
         
         DB::beginTransaction();
-        foreach($check_data->item_gift_image as $image) {
-            if(Storage::disk('s3')->exists('images/' . $image->item_gift_image)) {
-                Storage::disk('s3')->delete('images/' . $image->item_gift_image);
-            }
-            if(Storage::disk('s3')->exists('images/' . 'thumbnails/' . $image->item_gift_image)) {
-                Storage::disk('s3')->delete('images/' . 'thumbnails/' . $image->item_gift_image);
-            }
+        if(Storage::disk('s3')->exists('images/' . $data->item_gift_image)) {
+            Storage::disk('s3')->delete('images/' . $data->item_gift_image);
         }
-        $result = $check_data->delete();
+        if(Storage::disk('s3')->exists('images/' . 'thumbnails/' . $data->item_gift_image)) {
+            Storage::disk('s3')->delete('images/' . 'thumbnails/' . $data->item_gift_image);
+        }
+        $result = $data->where('item_gift_id', $data->item_gift_id)->where('item_gift_image', $data->item_gift_image)->delete();
         DB::commit();
 
         return $result;

@@ -33,6 +33,9 @@ Route::middleware(['xssclean'])->group(function () {
                 Route::put('/gifts/{id}', '\App\Http\Controllers\ItemGiftController@update');
                 Route::patch('/gifts/{id}', '\App\Http\Controllers\ItemGiftController@update');
                 Route::delete('/gifts/{id}', '\App\Http\Controllers\ItemGiftController@delete');
+                // Item Gift Image
+                Route::post('/gifts/{itemGiftId}/images', '\App\Http\Controllers\ItemGiftImageController@store');
+                Route::delete('/gifts/{itemGiftId}/{imageName}/images', '\App\Http\Controllers\ItemGiftImageController@delete');
             });
             Route::group(['middleware' => ['role:admin|customer']], function () {
                 // Redeem Item Gift

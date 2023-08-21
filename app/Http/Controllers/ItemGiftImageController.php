@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\Config;
 use App\Http\Resources\DeletedResource;
 use Illuminate\Support\Facades\Request;
 use App\Http\Controllers\BaseController;
-use App\Http\Services\ItemGiftImageService;
 use App\Http\Resources\ItemGiftResource;
+use App\Http\Services\ItemGiftImageService;
+use App\Http\Resources\ItemGiftImageResource;
 
 class ItemGiftImageController extends BaseController
 {
@@ -19,15 +19,14 @@ class ItemGiftImageController extends BaseController
         $this->service = $service;
     }
 
-    public function update($locale, $id)
+    public function store($locale, $id)
     {
-        $data = $this->service->update($locale, $id, Request::all());
-        return new ItemGiftResource($data);
+        return $this->service->store($locale, $id, Request::all());
     }
-
-    public function delete($locale, $id)
+    
+    public function delete($locale, $id, $image_name)
     {
-        $data = $this->service->delete($locale, $id, Request::all());
+        $data = $this->service->delete($locale, $id, $image_name, Request::all());
         return new DeletedResource($data);
     }
 }
