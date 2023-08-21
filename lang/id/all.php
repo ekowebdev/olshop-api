@@ -17,4 +17,5 @@ return [
 	"success_add_to_wishlists"      => "Berhasil ditambah ke wishlists",
 	"success_delete_from_wishlists" => "Berhasil dihapus dari wishlists",
 	"success_reviews"               => "Berhasil reviews gift",
+	"success_add_images"            => "Berhasil mengupload gambar",
 ];

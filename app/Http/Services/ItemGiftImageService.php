@@ -4,31 +4,23 @@ namespace App\Http\Services;
 
 use Image;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
 use App\Http\Models\ItemGiftImage;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Auth;
-use App\Exceptions\ValidationException;
-use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Storage;
-use App\Http\Repositories\ItemGiftRepository;
 use App\Http\Repositories\ItemGiftImageRepository;
 
 class ItemGiftImageService extends BaseService
 {
-    private $model, $repository, $item_gift_image_repository;
+    private $model, $repository;
     
-    public function __construct(ItemGiftImage $model, ItemGiftImageRepository $repository, ItemGiftRepository $item_gift_image_repository)
+    public function __construct(ItemGiftImage $model, ItemGiftImageRepository $repository)
     {
         $this->model = $model;
         $this->repository = $repository;
-        $this->item_gift_image_repository = $repository;
     }
 
     public function store($locale, $id, $data)
     {
-        $check_data = $this->repository->getSingleData($locale, $id);
-
         $data_request = Arr::only($data, [
             'item_gift_images',
         ]);
@@ -63,7 +55,7 @@ class ItemGiftImageService extends BaseService
         DB::commit();
 
         return response()->json([
-            'message' => 'success upload images',
+            'message' => trans('all.success_add_images'),
             'status' => 200,
             'error' => 0
         ]);
@@ -71,7 +63,7 @@ class ItemGiftImageService extends BaseService
 
     public function delete($locale, $id, $image_name)
     {
-        $data = $this->repository->getByIdAndImageName($locale, $id, $image_name);
+        $data = $this->repository->getSingleData($locale, $id, $image_name);
         
         DB::beginTransaction();
         if(Storage::disk('s3')->exists('images/' . $data->item_gift_image)) {

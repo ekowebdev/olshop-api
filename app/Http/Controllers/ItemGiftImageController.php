@@ -5,9 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Resources\DeletedResource;
 use Illuminate\Support\Facades\Request;
 use App\Http\Controllers\BaseController;
-use App\Http\Resources\ItemGiftResource;
 use App\Http\Services\ItemGiftImageService;
-use App\Http\Resources\ItemGiftImageResource;
 
 class ItemGiftImageController extends BaseController
 {
@@ -23,7 +21,7 @@ class ItemGiftImageController extends BaseController
     {
         return $this->service->store($locale, $id, Request::all());
     }
-    
+
     public function delete($locale, $id, $image_name)
     {
         $data = $this->service->delete($locale, $id, $image_name, Request::all());

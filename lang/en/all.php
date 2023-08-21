@@ -17,4 +17,5 @@ return [
 	"success_add_to_wishlists"      => "Succes add to wishlists",
 	"success_delete_from_wishlists" => "Succes delete from wishlists",
 	"success_reviews"               => "Succes reviews gift",
+	"success_add_images"            => "Success upload images",
 ];

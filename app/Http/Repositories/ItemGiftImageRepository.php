@@ -2,10 +2,8 @@
 
 namespace App\Http\Repositories;
 
-use Illuminate\Support\Arr;
 use App\Http\Models\ItemGiftImage;
 use App\Exceptions\DataEmptyException;
-use Illuminate\Support\Facades\Request;
 
 class ItemGiftImageRepository extends BaseRepository 
 {
@@ -17,23 +15,14 @@ class ItemGiftImageRepository extends BaseRepository
 		$this->model = $model;
 	}
 
-	public function getSingleData($locale, $id)
+	public function getSingleData($locale, $id, $image_name)
 	{
 		$result = $this->model
                   ->getAll()
-                  ->where('item_gift_id', $id)	
+                  ->where('item_gift_id', $id)
+				  ->where('item_gift_image', $image_name)	
                   ->first();
 		if($result === null) throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => $this->repository_name], $locale));
         return $result;	
-	}
-
-	public function getByIdAndImageName($locale, $id, $image_name) {
-		$result = $this->model
-                  ->getAll()
-                  ->where('item_gift_id', $id)	
-                  ->where('item_gift_image', $image_name)	
-                  ->first();
-		if($result === null) throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => $this->repository_name], $locale));
-		return $result;	
 	}
 }
