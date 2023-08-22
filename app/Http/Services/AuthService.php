@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Services;
 
+use App\Http\Services\BaseService;
 use App\Http\Traits\PassportToken;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Repositories\UserRepository;

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\v1;
 
 use App\Http\Services\WishlistService;
 use Illuminate\Support\Facades\Request;
