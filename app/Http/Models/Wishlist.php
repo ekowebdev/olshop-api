@@ -20,8 +20,7 @@ class Wishlist extends BaseModel
                     'id', 
                     'user_id', 
                     'item_gift_id'
-                ])
-                ->where('user_id', auth()->user()->id);
+                ]);
     }
 
     public function users()

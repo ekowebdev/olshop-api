@@ -23,8 +23,7 @@ class Review extends BaseModel
                     'review_text', 
                     'review_rating', 
                     'review_date'
-                ])
-                ->where('user_id', auth()->user()->id);
+                ]);
     }
 
     public function users()

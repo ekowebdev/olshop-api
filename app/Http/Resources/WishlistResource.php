@@ -12,6 +12,7 @@ class WishlistResource extends JsonResource
         return [
             'id' => $this->id,
             'item_gifts' => $this->item_gifts->makeHidden(['created_at', 'updated_at']),
+            'users' => $this->users->makeHidden(['created_at', 'updated_at']),
         ];
     }
 }

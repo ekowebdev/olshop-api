@@ -22,6 +22,7 @@ class RedeemResource extends JsonResource
             }),
             'total_point' => $this->total_point,
             'redeem_date' => $this->redeem_date,
+            'users' => $this->users->makeHidden(['created_at', 'updated_at']),
         ];
     }
 }

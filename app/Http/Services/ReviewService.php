@@ -23,6 +23,7 @@ class ReviewService extends BaseService
     public function getIndexData($locale, $data)
     {
         $search = [
+            'user_id' => 'user_id',
             'review_text' => 'review_text',
             'review_rating' => 'review_rating',
             'review_date' => 'review_date',
@@ -30,6 +31,7 @@ class ReviewService extends BaseService
 
         $search_column = [
             'id' => 'id',
+            'user_id' => 'user_id',
             'review_text' => 'review_text',
             'review_rating' => 'review_rating',
             'review_date' => 'review_date',

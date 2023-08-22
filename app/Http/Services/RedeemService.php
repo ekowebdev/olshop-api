@@ -27,13 +27,15 @@ class RedeemService extends BaseService
     {
         $search = [
             'redeem_code' => 'redeem_code',
-            'total_point' => 'total_point'
+            'user_id' => 'user_id',
+            'total_point' => 'total_point',
         ];
 
         $search_column = [
             'id' => 'id',
             'redeem_code' => 'redeem_code',
-            'total_point' => 'total_point'
+            'user_id' => 'user_id',
+            'total_point' => 'total_point',
         ];
 
         $sortable_and_searchable_column = [

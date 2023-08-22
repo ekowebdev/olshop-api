@@ -22,11 +22,13 @@ class WishlistService extends BaseService
     public function getIndexData($locale, $data)
     {
         $search = [
+            'user_id' => 'user_id',
             'item_gift_id' => 'item_gift_id',
         ];
 
         $search_column = [
             'id' => 'id',
+            'user_id' => 'user_id',
             'item_gift_id' => 'item_gift_id',
         ];
 

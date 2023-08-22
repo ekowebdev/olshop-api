@@ -23,8 +23,7 @@ class Redeem extends BaseModel
                     'redeem_code', 
                     'total_point', 
                     'redeem_date',
-                ])
-                ->where('user_id', auth()->user()->id);
+                ]);
     }
 
     public function users()

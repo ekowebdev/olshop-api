@@ -15,6 +15,7 @@ class ReviewResource extends JsonResource
             'review_rating' => $this->review_rating,
             'review_date' => $this->review_date,
             'item_gifts' => $this->item_gifts->makeHidden(['created_at', 'updated_at']),
+            'users' => $this->users->makeHidden(['created_at', 'updated_at']),
         ];
     }
 }

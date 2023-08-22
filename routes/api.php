@@ -47,8 +47,8 @@ Route::middleware(['xssclean'])->group(function () {
                 Route::get('/gifts/wishlist', '\App\Http\Controllers\WishlistController@index');
                 Route::post('/gifts/{itemGiftId}/wishlist', '\App\Http\Controllers\WishlistController@wishlist');
                 // Review Item Gift
-                Route::get('/gifts/rating', '\App\Http\Controllers\ReviewController@index');
-                Route::get('/gifts/rating/{id}', '\App\Http\Controllers\ReviewController@show');
+                Route::get('/gifts/review', '\App\Http\Controllers\ReviewController@index');
+                Route::get('/gifts/review/{id}', '\App\Http\Controllers\ReviewController@show');
                 Route::post('/gifts/{itemGiftId}/rating', '\App\Http\Controllers\ReviewController@rating');
             });
             Route::post('/logout', '\App\Http\Controllers\AuthController@logout');
