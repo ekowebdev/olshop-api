@@ -1,18 +1,18 @@
 <?php
 
-namespace App\Http\Controllers\v1;
+namespace App\Http\Controllers\API\v1;
 
-use App\Http\Services\UserService;
+use App\Http\Services\ItemGiftService;
 use App\Http\Resources\DeletedResource;
 use Illuminate\Support\Facades\Request;
 use App\Http\Controllers\BaseController;
-use App\Http\Resources\UserResource;
+use App\Http\Resources\ItemGiftResource;
 
-class UserController extends BaseController
+class ItemGiftController extends BaseController
 {
     private $service;
 
-    public function __construct(UserService $service)
+    public function __construct(ItemGiftService $service)
     {
         parent::__construct();
         $this->service = $service;
@@ -21,7 +21,7 @@ class UserController extends BaseController
     public function index($locale)
     {
         $data = $this->service->getIndexData($locale, Request::all());
-        return (UserResource::collection($data))
+        return (ItemGiftResource::collection($data))
                 ->additional([
                     'sortable_and_searchable_column' => $data->sortableAndSearchableColumn,
                 ]);
@@ -30,19 +30,19 @@ class UserController extends BaseController
     public function show($locale, $id)
     {
         $data = $this->service->getSingleData($locale, $id);
-        return new UserResource($data);
+        return new ItemGiftResource($data);
     }
 
     public function store($locale)
     {
         $data = $this->service->store($locale, Request::all());
-        return new UserResource($data);
+        return new ItemGiftResource($data);
     }
 
     public function update($locale, $id)
     {
         $data = $this->service->update($locale, $id, Request::all());
-        return new UserResource($data);
+        return new ItemGiftResource($data);
     }
 
     public function delete($locale, $id)

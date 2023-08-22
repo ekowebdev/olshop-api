@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\v1;
+namespace App\Http\Controllers\API\v1;
 
 use App\Http\Resources\RedeemResource;
 use App\Http\Services\RedeemService;

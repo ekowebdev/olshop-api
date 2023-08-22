@@ -33,6 +33,16 @@ services:
     environment:
       - PMA_ARBITRARY=1
 
+  redis:
+    image: redis:latest
+    ports:
+      - ${REDIS_PORT}:6379
+    environment:
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - REDIS_PORT=${REDIS_PORT}
+      - REDIS_CLIENT=${REDIS_CLIENT}
+
   nginx:
     image: nginx:latest
     ports:
