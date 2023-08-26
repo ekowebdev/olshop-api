@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Hash;
 use App\Http\Repositories\UserRepository;
 use App\Http\Repositories\OauthRepository;
 use App\Exceptions\AuthenticationException;
+use App\Http\Resources\UserResource;
 
 class AuthService extends BaseService
 {  
@@ -42,7 +43,7 @@ class AuthService extends BaseService
         $data = [
             'message' => trans('all.success_login'),
             'data' => [
-                'user_id' => $user->id,
+                'users' => new UserResource($user),
                 'token_type' => 'Bearer',
                 'expires_in' => $token_response['expires_in'],
                 'access_token' => $token_response['access_token'],
@@ -95,7 +96,7 @@ class AuthService extends BaseService
         $data = [
             'message' => trans('all.success_refresh_token'),
             'data' => [
-                'user_id' => $user->id,
+                'users' => new UserResource($user),
                 'token_type' => 'Bearer',
                 'expires_in' => $token_response['expires_in'],
                 'access_token' => $token_response['access_token'],
