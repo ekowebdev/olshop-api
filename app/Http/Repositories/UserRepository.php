@@ -44,11 +44,11 @@ class UserRepository extends BaseRepository
         return $result;	
 	}
 
-    public function getDataByUsername($locale, $username)
+    public function getDataByMultipleParam($param)
 	{
 		$result = $this->model
                   ->getAll()
-                  ->where('username', $username)	
+                  ->where('email', $param['email'])	
                   ->first();
 		return $result;	
 	}

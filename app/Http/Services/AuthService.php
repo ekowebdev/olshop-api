@@ -35,7 +35,7 @@ class AuthService extends BaseService
         $this->validate($request, [
             'name' => 'required|string|max:255',
             'username' => 'required|string|unique:users|max:255',
-            'email' => 'required|string|email|unique:users|max:255',
+            'email' => 'required|string|email:rfc,dns|unique:users|max:255',
             'password' => 'required|string|min:6|confirmed',
         ]);
 
@@ -62,17 +62,17 @@ class AuthService extends BaseService
     public function login($locale, $request)
     {
         $this->validate($request, [
-            'username' => 'required',
+            'email' => 'required|email:rfc,dns|string',
             'password' => 'required|min:6|max:12|string'
         ]);
 
-        $user = $this->repository->getDataByUsername($locale, $request['username']);
+        $user = $this->repository->getDataByMultipleParam(['email' => $request['email']]);
 
         if(empty($user)){
-            throw new AuthenticationException(trans('auth.wrong_username_or_password'));
+            throw new AuthenticationException(trans('auth.wrong_email_or_password'));
         }
         if (empty($user) OR !Hash::check($request['password'], $user->password, [])) {
-            throw new AuthenticationException(trans('auth.wrong_username_or_password'));
+            throw new AuthenticationException(trans('auth.wrong_email_or_password'));
         }
         
         $token_response = $this->getBearerTokenByUser($user, $this->oauth_client_id, false);
@@ -175,14 +175,14 @@ class AuthService extends BaseService
         return redirect()->to('/');
     }
 
-    public function notice()
-    {
-        return response()->json([
-            'message' => 'Anda belum melakukan verifikasi email.', 
-            'status' => 400,
-            'error' => 0,
-        ]);
-    }
+    // public function notice()
+    // {
+    //     return response()->json([
+    //         'message' => 'Anda belum melakukan verifikasi email.', 
+    //         'status' => 400,
+    //         'error' => 0,
+    //     ]);
+    // }
 
     public function resend($locale)
     {

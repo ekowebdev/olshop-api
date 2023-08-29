@@ -41,10 +41,10 @@ class AuthController extends BaseController
         return $this->service->verify($id, $request);
     }
 
-    public function notice()
-    {   
-        return $this->service->notice();
-    }
+    // public function notice()
+    // {   
+    //     return $this->service->notice();
+    // }
 
     public function resend($locale)
     {   
