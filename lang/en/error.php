@@ -6,5 +6,6 @@ return [
 	"failed_login" 					              => "Login failed.",
 	"failed_refresh_token" 					      => "Failed Refresh token.",
 	"out_of_stock"								  => "Out of stock, item gift ID: :id",
-	"already_reviews"							  => "You have already given a review on the item gift ID: :id"
+	"already_reviews"							  => "You have already given a review on the item gift ID: :id",
+	"already_verification"						  => "Email sudah diverifikasi",
 ];

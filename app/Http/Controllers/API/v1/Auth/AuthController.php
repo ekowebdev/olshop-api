@@ -16,6 +16,11 @@ class AuthController extends BaseController
         $this->service = $service;
     }
 
+    public function register($locale, Request $request)
+    {   
+        return $this->service->register($locale, $request->all());
+    }
+
     public function login($locale, Request $request)
     {   
         return $this->service->login($locale, $request->all());
@@ -29,5 +34,20 @@ class AuthController extends BaseController
     public function logout($locale)
 	{
         return $this->service->logout($locale);
+    }
+
+    public function verify($id, Request $request)
+    {
+        return $this->service->verify($id, $request);
+    }
+
+    public function notice()
+    {   
+        return $this->service->notice();
+    }
+
+    public function resend($locale)
+    {   
+        return $this->service->resend($locale);
     }
 }

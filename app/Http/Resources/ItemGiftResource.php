@@ -13,10 +13,10 @@ class ItemGiftResource extends JsonResource
             'item_gift_code' => $this->item_gift_code,
             'item_gift_name' => $this->item_gift_name,
             'item_gift_description' => $this->item_gift_description,
-            'item_gift_images' => $this->item_gift_images->makeHidden(['created_at', 'updated_at']),
             'item_gift_point' => $this->item_gift_point,
             'item_gift_quantity' => $this->item_gift_quantity,
             'item_gift_status' => $this->item_gift_status,
+            'item_gift_images' => $this->item_gift_images->makeHidden(['created_at', 'updated_at']),
             'reviews' => $this->reviews->map(function ($review) {
                 return [
                     'id' => $review->id,

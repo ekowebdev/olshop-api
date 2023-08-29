@@ -6,18 +6,20 @@ namespace App\Http\Models;
 use Validator;
 use App\Http\Models\Rating;
 use App\Http\Models\Redeem;
-use App\Http\Models\Wishlists;
+use Illuminate\Support\Arr;
 use App\Http\Models\BaseModel;
+use App\Http\Models\Wishlists;
 use Laravel\Passport\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
-use Illuminate\Notifications\Notifiable;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticable;
-use Illuminate\Support\Arr;
 use App\Exceptions\ValidationException;
 use Illuminate\Support\Facades\Request;
+use App\Notifications\VerifyEmailQueued;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Foundation\Auth\User as Authenticable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class User extends Authenticable
+class User extends Authenticable implements MustVerifyEmail
 {
     use HasApiTokens, HasFactory, Notifiable, HasRoles;
 

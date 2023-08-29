@@ -3,6 +3,7 @@
 return [
 	"yes" 				            => "Ya",
 	"success_delete_data"           => "Berhasil, menghapus :attribute data",
+	"success_register"              => "Registrasi berhasil, silahkan cek email untuk verifikasi",
 	"success_login"                 => "Login berhasil",
 	"success_refresh_token"         => "Refresh token berhasil",
 	"success_logout"         		=> "Logout berhasil",
@@ -18,4 +19,5 @@ return [
 	"success_delete_from_wishlists" => "Berhasil dihapus dari wishlists",
 	"success_reviews"               => "Berhasil reviews gift",
 	"success_add_images"            => "Berhasil mengupload gambar",
+	"success_resend_verification"   => "Link verifikasi sudah dikirim ke email anda",
 ];

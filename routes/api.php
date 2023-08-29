@@ -14,11 +14,15 @@ use Illuminate\Support\Facades\Route;
 |
 */
 Route::middleware(['xssclean'])->group(function () {
+    Route::get('/email/verify/{id}', '\App\Http\Controllers\API\v1\Auth\AuthController@verify')->name('verification.verify');
+    Route::get('/email/notice', '\App\Http\Controllers\API\v1\Auth\AuthController@notice')->name('verification.notice');
 	Route::group(['prefix' => '/v1/{locale}'], function(){
         // Auth
+        Route::post('/register', '\App\Http\Controllers\API\v1\Auth\AuthController@register');
         Route::post('/login', '\App\Http\Controllers\API\v1\Auth\AuthController@login');
         Route::post('/refresh-token', '\App\Http\Controllers\API\v1\Auth\AuthController@refresh_token');
-        Route::group(['middleware' => ['auth:api']], function () {
+        Route::get('/email/resend', '\App\Http\Controllers\API\v1\Auth\AuthController@resend')->name('verification.resend');
+        Route::group(['middleware' => ['auth:api','verified']], function () {
             Route::group(['middleware' => ['role:admin']], function () {
                 // User
                 Route::get('/users', '\App\Http\Controllers\API\v1\UserController@index');

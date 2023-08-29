@@ -17,7 +17,21 @@ class RedeemResource extends JsonResource
                     'redeem_id' => $redeem_item_gift->redeem_id,
                     'redeem_quantity' => $redeem_item_gift->redeem_quantity,
                     'redeem_point' => $redeem_item_gift->redeem_point,
-                    'item_gift' => $redeem_item_gift->item_gifts->makeHidden(['created_at', 'updated_at']),
+                    'item_gifts' => [
+                        'id' => $redeem_item_gift->item_gifts->id,
+                        'item_gift_code' => $redeem_item_gift->item_gifts->item_gift_code,
+                        'item_gift_name' => $redeem_item_gift->item_gifts->item_gift_name,
+                        'item_gift_description' => $redeem_item_gift->item_gifts->item_gift_description,
+                        'item_gift_point' => $redeem_item_gift->item_gifts->item_gift_point,
+                        'item_gift_quantity' => $redeem_item_gift->item_gifts->item_gift_quantity,
+                        'item_gift_status' => $redeem_item_gift->item_gifts->item_gift_status,
+                        'item_gift_images' => $redeem_item_gift->item_gifts->item_gift_images->map(function ($image) {
+                            return [
+                                'item_gift_id' => $image->item_gift_id,
+                                'item_gift_image_url' => $image->item_gift_image_url,
+                            ];
+                        }),
+                    ],
                 ];
             }),
             'total_point' => $this->total_point,
