@@ -16,12 +16,17 @@ use Illuminate\Support\Facades\Route;
 Route::middleware(['xssclean'])->group(function () {
     Route::get('/email/verify/{id}', '\App\Http\Controllers\API\v1\Auth\AuthController@verify')->name('verification.verify');
     // Route::get('/email/notice', '\App\Http\Controllers\API\v1\Auth\AuthController@notice')->name('verification.notice');
-	Route::group(['prefix' => '/v1/{locale}'], function(){
+    Route::get('/reset/password/{token}', '\App\Http\Controllers\API\v1\Auth\AuthController@reset_password')->name('password.reset');
+    Route::group(['prefix' => '/v1/{locale}'], function(){
         // Auth
         Route::post('/register', '\App\Http\Controllers\API\v1\Auth\AuthController@register');
         Route::post('/login', '\App\Http\Controllers\API\v1\Auth\AuthController@login');
         Route::post('/refresh-token', '\App\Http\Controllers\API\v1\Auth\AuthController@refresh_token');
         Route::get('/email/resend', '\App\Http\Controllers\API\v1\Auth\AuthController@resend')->name('verification.resend');
+        
+        Route::post('/forget/password', '\App\Http\Controllers\API\v1\Auth\AuthController@forget_password')->name('forget.password'); 
+        Route::post('/reset/password', '\App\Http\Controllers\API\v1\Auth\AuthController@reset_password_update')->name('password.update');
+        
         Route::group(['middleware' => ['auth:api','verified']], function () {
             Route::group(['middleware' => ['role:admin']], function () {
                 // User

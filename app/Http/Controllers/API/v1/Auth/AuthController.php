@@ -50,4 +50,19 @@ class AuthController extends BaseController
     {   
         return $this->service->resend($locale);
     }
+
+    public function forget_password($locale, Request $request)
+    {
+        return $this->service->forget_password($locale, $request);
+    }
+
+    public function reset_password($token)
+    {
+        return $this->service->reset_password($token);
+    }
+
+    public function reset_password_update($locale, Request $request)
+    {
+        return $this->service->reset_password_update($locale, $request);
+    }
 }

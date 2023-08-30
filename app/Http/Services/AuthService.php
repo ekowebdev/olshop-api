@@ -1,7 +1,10 @@
 <?php
 namespace App\Http\Services;
 
+use Carbon\Carbon;
 use App\Http\Models\User;
+use Illuminate\Support\Str;
+use App\Mail\LinkResetPassword;
 use App\Http\Services\BaseService;
 use App\Http\Traits\PassportToken;
 use Illuminate\Support\Facades\DB;
@@ -10,7 +13,9 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use App\Jobs\SendEmailVerificationJob;
 use Illuminate\Auth\Events\Registered;
+use Illuminate\Support\Facades\Password;
 use App\Http\Repositories\UserRepository;
+use Illuminate\Auth\Events\PasswordReset;
 use App\Http\Repositories\OauthRepository;
 use App\Exceptions\AuthenticationException;
 use Illuminate\Support\Facades\Notification;
@@ -172,7 +177,9 @@ class AuthService extends BaseService
             $user->markEmailAsVerified();
         }
 
-        return redirect()->to('/');
+        $url = env('FRONT_URL') . '/email-verification-success';
+
+        return redirect()->to($url);
     }
 
     // public function notice()
@@ -199,6 +206,73 @@ class AuthService extends BaseService
 
         return response()->json([
             'message' => trans('all.success_resend_verification'), 
+            'status' => 200,
+            'error' => 0,
+        ]);
+    }
+
+    public function forget_password($locale, $request)
+    {
+        $request->validate([
+            'email' => 'required|email|exists:users',
+        ]);
+
+        $status = Password::sendResetLink(
+            $request->only('email')
+        );
+
+        if($status != Password::RESET_LINK_SENT) {
+            return response()->json([
+                'message' => trans('error.failed_send_reset_password_link'), 
+                'status' => 200,
+                'error' => 0,
+            ]);
+        }
+
+        return response()->json([
+            'message' => trans('all.success_send_reset_password_link'), 
+            'status' => 200,
+            'error' => 0,
+        ]);
+    }
+
+    public function reset_password($token) 
+    {
+        $url = env('FRONT_URL') . '/reset-password?token=' . $token; 
+        return redirect()->to($url);
+    }
+
+    public function reset_password_update($locale, $request) 
+    {
+        $request->validate([
+            'token' => 'required',
+            'email' => 'required|email|exists:users',
+            'password' => 'required|min:6|confirmed',
+        ]);
+     
+        $status = Password::reset(
+            $request->only('email', 'password', 'password_confirmation', 'token'),
+            function (User $user, string $password) {
+                $user->forceFill([
+                    'password' => Hash::make($password)
+                ])->setRememberToken(Str::random(60));
+     
+                $user->save();
+     
+                event(new PasswordReset($user));
+            }
+        );
+
+        if($status !== Password::PASSWORD_RESET) {
+            return response()->json([
+                'message' => trans('error.failed_reset_password'), 
+                'status' => 200,
+                'error' => 0,
+            ]);
+        }
+
+        return response()->json([
+            'message' => trans('all.success_reset_password'), 
             'status' => 200,
             'error' => 0,
         ]);
