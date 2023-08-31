@@ -67,8 +67,8 @@ class AuthService extends BaseService
     public function login($locale, $request)
     {
         $this->validate($request, [
-            'email' => 'required|email:rfc,dns|string',
-            'password' => 'required|min:6|max:12|string'
+            'email' => 'required|string|email:rfc,dns|exists:users',
+            'password' => 'required|string|min:6|max:12'
         ]);
 
         $user = $this->repository->getDataByMultipleParam(['email' => $request['email']]);
@@ -165,7 +165,8 @@ class AuthService extends BaseService
     {
         if(!$request->hasValidSignature()){
             return response()->json([
-                'message' => 'Verifikasi email gagal.', 
+                'message' => 'Gagal verifikasi email', 
+                // 'message' => trans('error.failed_verifcation_email'), 
                 'status' => 400,
                 'error' => 0,
             ]);

@@ -8,6 +8,7 @@ return [
 	"out_of_stock"								  => "Out of stock, item gift ID: :id",
 	"already_reviews"							  => "You have already given a review on the item gift ID: :id",
 	"already_verification"						  => "Email alraedy verified",
+	"failed_verifcation_email"					  => "Failed verification email",
 	"failed_send_reset_password_link"             => "Failed send reset password link",
 	"failed_reset_password"                       => "Failed reset password",
 ];

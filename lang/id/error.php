@@ -8,6 +8,7 @@ return [
 	"out_of_stock"								  => "Stok habis, item gift ID: :id",
 	"already_reviews"							  => "Anda sudah memberi review pada item gift ID: :id",
 	"already_verification"						  => "Email sudah diverifikasi",
+	"failed_verifcation_email"					  => "Gagal verifikasi email",
 	"failed_send_reset_password_link"             => "Gagal kirim link reset password",
 	"failed_reset_password"                       => "Gagal reset password",
 ];

@@ -2,18 +2,15 @@
 
 namespace App\Http\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Validator;
 use App\Http\Models\Rating;
 use App\Http\Models\Redeem;
 use Illuminate\Support\Arr;
-use App\Http\Models\BaseModel;
 use App\Http\Models\Wishlists;
 use Laravel\Passport\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 use App\Exceptions\ValidationException;
 use Illuminate\Support\Facades\Request;
-use App\Notifications\VerifyEmailQueued;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticable;
@@ -24,8 +21,6 @@ class User extends Authenticable implements MustVerifyEmail
     use HasApiTokens, HasFactory, Notifiable, HasRoles;
 
     public $table = 'users';
-
-    protected $soft_delete = true;
 
     public $sortableAndSearchableColumn = [];
 
