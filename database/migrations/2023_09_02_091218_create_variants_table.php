@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::create('variants', function (Blueprint $table) {
-            Schema::create('variants', function (Blueprint $table) {
+            if(!Schema::hasTable('variants')) {
                 $table->id();
                 $table->unsignedBigInteger('item_gift_id');
                 $table->string('variant_name', 150);
@@ -23,7 +23,7 @@ return new class extends Migration
                 $table->timestamps();
                 $table->foreign('item_gift_id')->references('id')->on('item_gifts')->onDelete('cascade');
                 $table->index(['item_gift_id', 'variant_name'], 'index_variants');
-            });
+            }
         });
     }
 
