@@ -19,10 +19,10 @@ class WishlistResource extends JsonResource
                 'brand' => ($this->item_gifts->brand_id != null) ? $this->item_gifts->brand->makeHidden(['created_at', 'updated_at']) : null,
                 'item_gift_description' => $this->item_gifts->item_gift_description,
                 'item_gift_point' => ($this->item_gifts->variants->count() > 0) 
-                            ? [
+                            ? array_unique([
                                 min($this->item_gifts->variants->pluck('variant_point')->toArray()),
                                 max($this->item_gifts->variants->pluck('variant_point')->toArray()),
-                            ]
+                              ])
                             : [$this->item_gifts->item_gift_point],
                         'item_gift_quantity' => ($this->item_gifts->variants->count() > 0) 
                             ? $this->item_gifts->variants->sum('variant_quantity')

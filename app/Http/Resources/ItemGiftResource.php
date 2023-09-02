@@ -17,10 +17,10 @@ class ItemGiftResource extends JsonResource
             'item_gift_slug' => $this->item_gift_slug,
             'item_gift_description' => $this->item_gift_description,
             'item_gift_point' => ($this->variants->count() > 0) 
-                ? [
+                ? array_unique([
                     min($this->variants->pluck('variant_point')->toArray()),
                     max($this->variants->pluck('variant_point')->toArray()),
-                  ]
+                  ])
                 : [$this->item_gift_point],
             'item_gift_quantity' => ($this->variants->count() > 0) 
                 ? $this->variants->sum('variant_quantity')

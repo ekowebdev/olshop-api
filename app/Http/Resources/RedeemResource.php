@@ -25,10 +25,10 @@ class RedeemResource extends JsonResource
                         'brand' => ($redeem_item_gift->item_gifts->brand_id != null) ? $redeem_item_gift->item_gifts->brand->makeHidden(['created_at', 'updated_at']) : null,
                         'item_gift_description' => $redeem_item_gift->item_gifts->item_gift_description,
                         'item_gift_point' => ($redeem_item_gift->item_gifts->variants->count() > 0) 
-                            ? [
+                            ? array_unique([
                                 min($redeem_item_gift->item_gifts->variants->pluck('variant_point')->toArray()),
                                 max($redeem_item_gift->item_gifts->variants->pluck('variant_point')->toArray()),
-                            ]
+                              ])
                             : [$redeem_item_gift->item_gifts->item_gift_point],
                         'item_gift_quantity' => ($redeem_item_gift->item_gifts->variants->count() > 0) 
                             ? $redeem_item_gift->item_gifts->variants->sum('variant_quantity')
