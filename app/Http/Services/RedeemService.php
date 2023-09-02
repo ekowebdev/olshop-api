@@ -57,19 +57,33 @@ class RedeemService extends BaseService
         $item_gift = $this->item_gift_repository->getSingleData($locale, $id);
 
         $data_request = Arr::only($data, [
-            'item_gift_id',
+            'variant_id',
             'redeem_quantity',
         ]);
 
         $this->item_gift_repository->validate($data_request, [
+                'variant_id' => [
+                    'exists:variants,id'
+                ],
                 'redeem_quantity' => [
                     'required',
-                    'numeric'
+                    'numeric',
+                    'min:1',
                 ],
             ]
         );
 
         DB::beginTransaction();
+        if($item_gift->variants->count() > 0 AND !is_null($data_request['variant_id'])){
+            $item_gift_variant = $item_gift->variants()->find($data_request['variant_id'] ?? 0);
+            if(is_null($item_gift_variant)){
+                return response()->json([ 
+                    'message' => trans('error.variant_not_found_in_item_gifts'), 
+                    'status' => 400,
+                    'error' => 0,
+                ]);
+            }
+        } 
         if($item_gift->item_gift_quantity == 0) {
             $item_gift->update([
                 'item_gift_status' => 'O'
@@ -90,6 +104,7 @@ class RedeemService extends BaseService
         $total_point += $subtotal;
         $redeem_item_gift = new RedeemItemGift([
             'item_gift_id' => $item_gift->id,
+            'variant_id' => $data_request['variant_id'] ?? null,
             'redeem_quantity' => $data_request['redeem_quantity'],
             'redeem_point' => $subtotal,
         ]);
@@ -118,18 +133,19 @@ class RedeemService extends BaseService
 
         $this->item_gift_repository->validate($data_request, [
                 'item_gift_id' => [
-                    'required'
+                    'required',
                 ],
                 'item_gift_id.*' => [
                     'required',
-                    'exists:item_gifts,id'
+                    'exists:item_gifts,id',
                 ],
                 'redeem_quantity' => [
                     'required',
                 ],
                 'redeem_quantity.*' => [
                     'required',
-                    'numeric'
+                    'numeric',
+                    'min:1',
                 ],
             ]
         );

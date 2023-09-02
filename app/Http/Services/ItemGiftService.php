@@ -93,6 +93,7 @@ class ItemGiftService extends BaseService
                 'item_gift_quantity' => [
                     'required',
                     'numeric',
+                    'min:1',
                 ],
                 'item_gift_images.*' => [
                     'max:10000',

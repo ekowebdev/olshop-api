@@ -11,4 +11,5 @@ return [
 	"failed_verifcation_email"					  => "Gagal verifikasi email",
 	"failed_send_reset_password_link"             => "Gagal kirim link reset password",
 	"failed_reset_password"                       => "Gagal reset password",
+	"variant_not_found_in_item_gifts"             => "Variant tidak tersedia pada item gifts ini",
 ];

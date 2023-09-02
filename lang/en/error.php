@@ -11,4 +11,5 @@ return [
 	"failed_verifcation_email"					  => "Failed verification email",
 	"failed_send_reset_password_link"             => "Failed send reset password link",
 	"failed_reset_password"                       => "Failed reset password",
+	"variant_not_found_in_item_gifts"             => "Variants are not available on this item gifts",
 ];

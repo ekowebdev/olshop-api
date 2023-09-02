@@ -16,12 +16,8 @@ class ItemGiftResource extends JsonResource
             'brand' => ($this->brand_id != null) ? $this->brand->makeHidden(['created_at', 'updated_at']) : null,
             'item_gift_slug' => $this->item_gift_slug,
             'item_gift_description' => $this->item_gift_description,
-            'item_gift_point' => ($this->variants->count() > 0) 
-                ? array_unique([
-                    min($this->variants->pluck('variant_point')->toArray()),
-                    max($this->variants->pluck('variant_point')->toArray()),
-                  ])
-                : [$this->item_gift_point],
+            'item_gift_point' => ($this->variants->count() > 0) ? min($this->variants->pluck('variant_point')->toArray()) : $this->item_gift_point,
+            'fitem_gift_point' => $this->formatFitemGiftPoint(),
             'item_gift_quantity' => ($this->variants->count() > 0) 
                 ? $this->variants->sum('variant_quantity')
                 : $this->item_gift_quantity,
@@ -45,5 +41,25 @@ class ItemGiftResource extends JsonResource
             'total_rating' => floatval(rtrim($this->total_rating, '0')),
             'is_wishlist' => $this->is_wishlist
         ];
+    }
+
+    private function formatFitemGiftPoint()
+    {
+        $variantPoints = $this->variants->pluck('variant_point')->toArray();
+        
+        if (count($variantPoints) == 1) {
+            return strval($variantPoints[0]);
+        } elseif (count($variantPoints) > 1) {
+            $minValue = min($variantPoints);
+            $maxValue = max($variantPoints);
+
+            if ($minValue === $maxValue) {
+                return strval($minValue);
+            }
+
+            return "{$minValue} ~ {$maxValue}";
+        } else {
+            return strval($this->item_gift_point);
+        }
     }
 }
