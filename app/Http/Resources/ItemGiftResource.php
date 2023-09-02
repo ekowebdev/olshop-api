@@ -16,10 +16,18 @@ class ItemGiftResource extends JsonResource
             'brand' => ($this->brand_id != null) ? $this->brand->makeHidden(['created_at', 'updated_at']) : null,
             'item_gift_slug' => $this->item_gift_slug,
             'item_gift_description' => $this->item_gift_description,
-            'item_gift_point' => $this->item_gift_point,
-            'item_gift_quantity' => $this->item_gift_quantity,
+            'item_gift_point' => ($this->variants->count() > 0) 
+                ? [
+                    min($this->variants->pluck('variant_point')->toArray()),
+                    max($this->variants->pluck('variant_point')->toArray()),
+                  ]
+                : [$this->item_gift_point],
+            'item_gift_quantity' => ($this->variants->count() > 0) 
+                ? $this->variants->sum('variant_quantity')
+                : $this->item_gift_quantity,
             'item_gift_status' => $this->item_gift_status,
             'item_gift_images' => $this->item_gift_images->makeHidden(['created_at', 'updated_at']),
+            'variants' => $this->variants->makeHidden(['created_at', 'updated_at']),
             'reviews' => $this->reviews->map(function ($review) {
                 return [
                     'id' => $review->id,

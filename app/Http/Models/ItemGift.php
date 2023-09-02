@@ -5,6 +5,7 @@ namespace App\Http\Models;
 use App\Http\Models\Brand;
 use App\Http\Models\Review;
 use Illuminate\Support\Str;
+use App\Http\Models\Variant;
 use App\Http\Models\Category;
 use App\Http\Models\BaseModel;
 use App\Http\Models\Wishlists;
@@ -48,6 +49,11 @@ class ItemGift extends BaseModel
     public function brand()
     {
         return $this->belongsTo(Brand::class);
+    }
+
+    public function variants()
+    {
+        return $this->hasMany(Variant::class);
     }
 
     public function scopeGetAll($query)

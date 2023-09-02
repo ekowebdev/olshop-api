@@ -37,14 +37,10 @@ Route::middleware(['xssclean'])->group(function () {
                 Route::patch('/users/{id}', '\App\Http\Controllers\API\v1\UserController@update');
                 Route::delete('/users/{id}', '\App\Http\Controllers\API\v1\UserController@delete');
                 // Category
-                Route::get('/category', '\App\Http\Controllers\API\v1\CategoryController@index');
-                Route::get('/category/{id}', '\App\Http\Controllers\API\v1\CategoryController@show');
                 Route::post('/category', '\App\Http\Controllers\API\v1\CategoryController@store');
                 Route::put('/category/{id}', '\App\Http\Controllers\API\v1\CategoryController@update');
                 Route::delete('/category/{id}', '\App\Http\Controllers\API\v1\CategoryController@delete');
                 // Brand
-                Route::get('/brand', '\App\Http\Controllers\API\v1\BrandController@index');
-                Route::get('/brand/{id}', '\App\Http\Controllers\API\v1\BrandController@show');
                 Route::post('/brand', '\App\Http\Controllers\API\v1\BrandController@store');
                 Route::put('/brand/{id}', '\App\Http\Controllers\API\v1\BrandController@update');
                 Route::delete('/brand/{id}', '\App\Http\Controllers\API\v1\BrandController@delete');
@@ -56,6 +52,10 @@ Route::middleware(['xssclean'])->group(function () {
                 // Item Gift Image
                 Route::post('/gifts/{itemGiftId}/images', '\App\Http\Controllers\API\v1\ItemGiftImageController@store');
                 Route::delete('/gifts/{itemGiftId}/{imageName}/images', '\App\Http\Controllers\API\v1\ItemGiftImageController@delete');
+                // Variant
+                Route::post('/variants', '\App\Http\Controllers\API\v1\VariantController@store');
+                Route::put('/variants/{id}', '\App\Http\Controllers\API\v1\VariantController@update');
+                Route::delete('/variants/{id}', '\App\Http\Controllers\API\v1\VariantController@delete');
             });
             Route::group(['middleware' => ['role:admin|customer']], function () {
                 // Redeem Item Gift
@@ -73,8 +73,17 @@ Route::middleware(['xssclean'])->group(function () {
             });
             Route::post('/logout', '\App\Http\Controllers\API\v1\Auth\AuthController@logout');
         });
+        // Category
+        Route::get('/category', '\App\Http\Controllers\API\v1\CategoryController@index');
+        Route::get('/category/{id}', '\App\Http\Controllers\API\v1\CategoryController@show');
+        // Brand
+        Route::get('/brand', '\App\Http\Controllers\API\v1\BrandController@index');
+        Route::get('/brand/{id}', '\App\Http\Controllers\API\v1\BrandController@show');
         // Item Gift
         Route::get('/gifts', '\App\Http\Controllers\API\v1\ItemGiftController@index');
         Route::get('/gifts/{id}', '\App\Http\Controllers\API\v1\ItemGiftController@show');
+        // Variant
+        Route::get('/variants', '\App\Http\Controllers\API\v1\VariantController@index');
+        Route::get('/variants/{id}', '\App\Http\Controllers\API\v1\VariantController@show');
     });
 });

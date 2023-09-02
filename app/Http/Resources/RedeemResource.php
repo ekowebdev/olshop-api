@@ -24,8 +24,15 @@ class RedeemResource extends JsonResource
                         'category' => ($redeem_item_gift->item_gifts->category_id != null) ? $redeem_item_gift->item_gifts->category->makeHidden(['created_at', 'updated_at']) : null,
                         'brand' => ($redeem_item_gift->item_gifts->brand_id != null) ? $redeem_item_gift->item_gifts->brand->makeHidden(['created_at', 'updated_at']) : null,
                         'item_gift_description' => $redeem_item_gift->item_gifts->item_gift_description,
-                        'item_gift_point' => $redeem_item_gift->item_gifts->item_gift_point,
-                        'item_gift_quantity' => $redeem_item_gift->item_gifts->item_gift_quantity,
+                        'item_gift_point' => ($redeem_item_gift->item_gifts->variants->count() > 0) 
+                            ? [
+                                min($redeem_item_gift->item_gifts->variants->pluck('variant_point')->toArray()),
+                                max($redeem_item_gift->item_gifts->variants->pluck('variant_point')->toArray()),
+                            ]
+                            : [$redeem_item_gift->item_gifts->item_gift_point],
+                        'item_gift_quantity' => ($redeem_item_gift->item_gifts->variants->count() > 0) 
+                            ? $redeem_item_gift->item_gifts->variants->sum('variant_quantity')
+                            : $redeem_item_gift->item_gifts->item_gift_quantity,
                         'item_gift_status' => $redeem_item_gift->item_gifts->item_gift_status,
                         'item_gift_images' => $redeem_item_gift->item_gifts->item_gift_images->map(function ($image) {
                             return [
@@ -33,6 +40,7 @@ class RedeemResource extends JsonResource
                                 'item_gift_image_url' => $image->item_gift_image_url,
                             ];
                         }),
+                        'variants' => $redeem_item_gift->item_gifts->variants->makeHidden(['created_at', 'updated_at']),
                     ],
                 ];
             }),
