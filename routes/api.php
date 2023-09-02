@@ -36,6 +36,18 @@ Route::middleware(['xssclean'])->group(function () {
                 Route::put('/users/{id}', '\App\Http\Controllers\API\v1\UserController@update');
                 Route::patch('/users/{id}', '\App\Http\Controllers\API\v1\UserController@update');
                 Route::delete('/users/{id}', '\App\Http\Controllers\API\v1\UserController@delete');
+                // Category
+                Route::get('/category', '\App\Http\Controllers\API\v1\CategoryController@index');
+                Route::get('/category/{id}', '\App\Http\Controllers\API\v1\CategoryController@show');
+                Route::post('/category', '\App\Http\Controllers\API\v1\CategoryController@store');
+                Route::put('/category/{id}', '\App\Http\Controllers\API\v1\CategoryController@update');
+                Route::delete('/category/{id}', '\App\Http\Controllers\API\v1\CategoryController@delete');
+                // Brand
+                Route::get('/brand', '\App\Http\Controllers\API\v1\BrandController@index');
+                Route::get('/brand/{id}', '\App\Http\Controllers\API\v1\BrandController@show');
+                Route::post('/brand', '\App\Http\Controllers\API\v1\BrandController@store');
+                Route::put('/brand/{id}', '\App\Http\Controllers\API\v1\BrandController@update');
+                Route::delete('/brand/{id}', '\App\Http\Controllers\API\v1\BrandController@delete');
                 // Item Gift
                 Route::post('/gifts', '\App\Http\Controllers\API\v1\ItemGiftController@store');
                 Route::put('/gifts/{id}', '\App\Http\Controllers\API\v1\ItemGiftController@update');

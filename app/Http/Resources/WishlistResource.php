@@ -15,6 +15,8 @@ class WishlistResource extends JsonResource
                 'id' => $this->item_gifts->id,
                 'item_gift_code' => $this->item_gifts->item_gift_code,
                 'item_gift_name' => $this->item_gifts->item_gift_name,
+                'category' => ($this->item_gifts->category_id != null) ? $this->item_gifts->category->makeHidden(['created_at', 'updated_at']) : null,
+                'brand' => ($this->item_gifts->brand_id != null) ? $this->item_gifts->brand->makeHidden(['created_at', 'updated_at']) : null,
                 'item_gift_description' => $this->item_gifts->item_gift_description,
                 'item_gift_point' => $this->item_gifts->item_gift_point,
                 'item_gift_quantity' => $this->item_gifts->item_gift_quantity,

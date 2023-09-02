@@ -2,7 +2,10 @@
 
 namespace App\Http\Models;
 
+use App\Http\Models\Brand;
 use App\Http\Models\Review;
+use Illuminate\Support\Str;
+use App\Http\Models\Category;
 use App\Http\Models\BaseModel;
 use App\Http\Models\Wishlists;
 use App\Http\Models\ItemGiftImage;
@@ -15,7 +18,7 @@ class ItemGift extends BaseModel
     use HasFactory;
 
     protected $table = 'item_gifts';
-    protected $fillable = ['item_gift_code', 'item_gift_name', 'item_gift_description', 'item_gift_point', 'item_gift_quantity', 'item_gift_status'];
+    protected $fillable = ['item_gift_code', 'item_gift_name', 'category_id', 'brand_id', 'item_gift_slug', 'item_gift_description', 'item_gift_point', 'item_gift_quantity', 'item_gift_status'];
 
     public function item_gift_images()
     {
@@ -37,6 +40,16 @@ class ItemGift extends BaseModel
         return $this->hasMany(Review::class);
     }
 
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
+
+    public function brand()
+    {
+        return $this->belongsTo(Brand::class);
+    }
+
     public function scopeGetAll($query)
     {   
         $user_id = auth()->user()->id ?? 0;
@@ -44,6 +57,9 @@ class ItemGift extends BaseModel
                     'id', 
                     'item_gift_code', 
                     'item_gift_name', 
+                    'category_id', 
+                    'brand_id', 
+                    'item_gift_slug', 
                     'item_gift_description', 
                     'item_gift_point',
                     'item_gift_quantity',

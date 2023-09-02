@@ -24,6 +24,9 @@ class ItemGiftService extends BaseService
     {
         $search = [
             'item_gift_name' => 'item_gift_name',
+            'category_id' => 'category_id',
+            'brand_id' => 'brand_id',
+            'item_gift_slug' => 'item_gift_slug',
             'item_gift_quantity' => 'item_gift_quantity',
             'item_gift_point' => 'item_gift_point',
             'total_rating' => 'total_rating',
@@ -32,6 +35,9 @@ class ItemGiftService extends BaseService
         $search_column = [
             'id' => 'id',
             'item_gift_name' => 'item_gift_name',
+            'category_id' => 'category_id',
+            'brand_id' => 'brand_id',
+            'item_gift_slug' => 'item_gift_slug',
             'item_gift_quantity' => 'item_gift_quantity',
             'item_gift_point' => 'item_gift_point',
             'total_rating' => 'total_rating',
@@ -55,6 +61,8 @@ class ItemGiftService extends BaseService
     {
         $data_request = Arr::only($data, [
             'item_gift_name',
+            'category_id',
+            'brand_id',
             'item_gift_description',
             'item_gift_point',
             'item_gift_quantity',
@@ -63,28 +71,39 @@ class ItemGiftService extends BaseService
 
         $this->repository->validate($data_request, [
                 'item_gift_name' => [
-                    'required'
+                    'required',
+                    'unique:item_gifts,item_gift_name',
+                ],
+                'category_id' => [
+                    'nullable',
+                    'exists:categories,id',
+                ],
+                'brand_id' => [
+                    'nullable',
+                    'exists:brands,id',
                 ],
                 'item_gift_description' => [
-                    'required'
+                    'required',
+                    'string',
                 ],
                 'item_gift_point' => [
                     'required',
-                    'numeric'
+                    'numeric',
                 ],
                 'item_gift_quantity' => [
                     'required',
-                    'numeric'
+                    'numeric',
                 ],
                 'item_gift_images.*' => [
                     'max:10000',
-                    'mimes:jpg,png'
+                    'mimes:jpg,png',
                 ],
             ]
         );
 
         DB::beginTransaction();
         $data_request['item_gift_code'] = Str::random(15);
+        $data_request['item_gift_slug'] = Str::slug($data_request['item_gift_name']);
         $result = $this->model->create($data_request);
         if (isset($data_request['item_gift_images'])) {
             foreach ($data_request['item_gift_images'] as $image) {
@@ -109,8 +128,10 @@ class ItemGiftService extends BaseService
         $check_data = $this->repository->getSingleData($locale, $id);
 
         $data = array_merge([
-            'item_gift_code' => $check_data->item_gift_code,
             'item_gift_name' => $check_data->item_gift_name,
+            'category_id' => $check_data->category_id,
+            'brand_id' => $check_data->brand_id,
+            'item_gift_slug' => $check_data->item_gift_slug,
             'item_gift_description' => $check_data->item_gift_description,
             'item_gift_point' => $check_data->item_gift_point,
             'item_gift_quantity' => $check_data->item_gift_quantity,
@@ -118,6 +139,9 @@ class ItemGiftService extends BaseService
 
         $data_request = Arr::only($data, [
             'item_gift_name',
+            'category_id',
+            'brand_id',
+            'item_gift_slug',
             'item_gift_description',
             'item_gift_point',
             'item_gift_quantity',
@@ -125,23 +149,28 @@ class ItemGiftService extends BaseService
 
         $this->repository->validate($data_request, [
                 'item_gift_name' => [
-                    'required'
+                    'unique:item_gifts,item_gift_name,' . $id,
+                ],
+                'category_id' => [
+                    'exists:categories,id',
+                ],
+                'brand_id' => [
+                    'exists:brands,id',
                 ],
                 'item_gift_description' => [
-                    'required'
+                    'string',
                 ],
                 'item_gift_point' => [
-                    'required',
-                    'numeric'
+                    'numeric',
                 ],
                 'item_gift_quantity' => [
-                    'required',
-                    'numeric'
+                    'numeric',
                 ]
             ]
         );
 
         DB::beginTransaction();
+        $data_request['item_gift_slug'] = Str::slug($data_request['item_gift_name']);
         $check_data->update($data_request);
         DB::commit();
 

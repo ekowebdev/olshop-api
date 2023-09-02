@@ -88,9 +88,8 @@ class UserService extends BaseService
             ]
         );
 
-        $data_request['password'] = Hash::make($data_request['password']);
-
         DB::beginTransaction();
+        $data_request['password'] = Hash::make($data_request['password']);
         $result = $this->model->create($data_request);
         $result->assignRole($data_request['role']);
         DB::commit();
@@ -136,13 +135,12 @@ class UserService extends BaseService
             ],
         ]);
 
+        DB::beginTransaction();
         if(!empty($data_request['password'])){
             $data_request['password'] = Hash::make($data_request['password']);
         } else {
             unset($data_request['password']);
         }
-
-        DB::beginTransaction();
         $check_data->update($data_request);
         if(!empty($data_request['role'])){
             $roles = Role::whereIn('name', $data_request['role'])->get();

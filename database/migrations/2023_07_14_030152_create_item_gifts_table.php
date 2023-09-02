@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('item_gifts', function (Blueprint $table) {
             $table->id();
             $table->string('item_gift_code', 15)->unique();
-            $table->string('item_gift_name', 150);
+            $table->string('item_gift_name', 150)->unique();
             $table->text('item_gift_description');
             $table->double('item_gift_point', 10, 2);
             $table->integer('item_gift_quantity');
