@@ -6,8 +6,9 @@ use Image;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use App\Http\Models\Variant;
+use App\Http\Models\ItemGift;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Database\QueryException;
 use App\Http\Repositories\VariantRepository;
 
 class VariantService extends BaseService
@@ -81,8 +82,20 @@ class VariantService extends BaseService
         );
 
         DB::beginTransaction();
-        $result = $this->model->create($data_request);
-        DB::commit();
+        try {
+            $result = $this->model->create($data_request);
+            $item_gift = ItemGift::find($result->item_gift_id);
+            $total_point = ($item_gift->variants->count() > 0) ? min($item_gift->variants->pluck('variant_point')->toArray()) : $item_gift->item_gift_point;
+            $qty_variant = $item_gift->item_gift_quantity + $result->variant_quantity;
+            $qty_item_gift = ($item_gift->variants->count() > 0) ? $qty_variant : $item_gift->item_gift_quantity;
+            $item_gift->update([
+                'item_gift_point' => $total_point,
+                'item_gift_quantity' => $qty_item_gift,
+            ]);
+            DB::commit();
+        } catch (QueryException $e) {
+            DB::rollBack();
+        }
 
         return $this->repository->getSingleData($locale, $result->id);
     }
@@ -95,7 +108,7 @@ class VariantService extends BaseService
             'item_gift_id' => $check_data->item_gift_id,
             'variant_name' => $check_data->variant_name,
             'variant_point' => $check_data->variant_point,
-            'variant_quantity' => $check_data->item_gift_quantity,
+            'variant_quantity' => $check_data->variant_quantity,
         ], $data);
 
         $data_request = Arr::only($data, [
@@ -122,8 +135,20 @@ class VariantService extends BaseService
         );
 
         DB::beginTransaction();
-        $check_data->update($data_request);
-        DB::commit();
+        try {
+            $item_gift = ItemGift::find($check_data->item_gift_id);
+            $total_point = ($item_gift->variants->count() > 0) ? min($item_gift->variants->pluck('variant_point')->toArray()) : $item_gift->item_gift_point;
+            $qty_item_gift = $item_gift->item_gift_quantity - $check_data->variant_quantity;
+            $qty_update = $item_gift->variants->count() > 0 ? $qty_item_gift + $data_request['variant_quantity'] : $item_gift->item_gift_quantity;
+            $item_gift->update([
+                'item_gift_point' => $total_point,
+                'item_gift_quantity' => $qty_update,
+            ]);
+            $check_data->update($data_request);
+            DB::commit();
+        } catch (QueryException $e) {
+            DB::rollback();
+        }
 
         return $this->repository->getSingleData($locale, $id);
     }
@@ -133,6 +158,15 @@ class VariantService extends BaseService
         $check_data = $this->repository->getSingleData($locale, $id);
         
         DB::beginTransaction();
+        $item_gift = ItemGift::find($check_data->item_gift_id);
+        $qty_item_gift = $item_gift->item_gift_quantity - $check_data->variant_quantity;
+        $filtered_variant = array_filter($item_gift->variants->toArray(), function ($item) use ($id) {
+            return $item['id'] != intval($id);
+        });
+        $item_gift->update([
+            'item_gift_point' => min(array_column($filtered_variant, 'variant_point')) ?? null,
+            'item_gift_quantity' => $qty_item_gift,
+        ]);
         $result = $check_data->delete();
         DB::commit();
 

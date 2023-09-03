@@ -87,13 +87,12 @@ class ItemGiftService extends BaseService
                     'string',
                 ],
                 'item_gift_point' => [
-                    'required',
+                    'nullable',
                     'numeric',
                 ],
                 'item_gift_quantity' => [
-                    'required',
+                    'nullable',
                     'numeric',
-                    'min:1',
                 ],
                 'item_gift_images.*' => [
                     'max:10000',
@@ -105,6 +104,8 @@ class ItemGiftService extends BaseService
         DB::beginTransaction();
         $data_request['item_gift_code'] = Str::random(15);
         $data_request['item_gift_slug'] = Str::slug($data_request['item_gift_name']);
+        $data_request['item_gift_quantity'] = $data_request['item_gift_quantity'] ?? null;
+        $data_request['item_gift_point'] = $data_request['item_gift_point'] ?? null;
         $result = $this->model->create($data_request);
         if (isset($data_request['item_gift_images'])) {
             foreach ($data_request['item_gift_images'] as $image) {

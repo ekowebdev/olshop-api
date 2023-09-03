@@ -6,6 +6,7 @@ return [
 	"failed_login" 					              => "Login failed.",
 	"failed_refresh_token" 					      => "Failed Refresh token.",
 	"out_of_stock"								  => "Out of stock, item gift ID: :id",
+	"variant_out_of_stock"						  => "Out of stock, item gift ID: :id with variant ID :variant_id",
 	"already_reviews"							  => "You have already given a review on the item gift ID: :id",
 	"already_verification"						  => "Email alraedy verified",
 	"failed_verifcation_email"					  => "Failed verification email",
