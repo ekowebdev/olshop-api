@@ -6,6 +6,7 @@ use App\Http\Models\Redeem;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use App\Http\Models\Variant;
+use App\Http\Models\ItemGift;
 use Illuminate\Support\Facades\DB;
 use App\Http\Models\RedeemItemGift;
 use App\Http\Services\RedeemService;
@@ -166,6 +167,7 @@ class RedeemService extends BaseService
     {
         $data_request = Arr::only($data, [
             'item_gift_id',
+            'variant_id',
             'redeem_quantity',
         ]);
 
@@ -177,7 +179,11 @@ class RedeemService extends BaseService
                     'required',
                     'exists:item_gifts,id',
                 ],
+                'variant_id' => [
+                    'nullable',
+                ],
                 'variant_id.*' => [
+                    'nullable',
                     'exists:variants,id',
                 ],
                 'redeem_quantity' => [
@@ -192,39 +198,73 @@ class RedeemService extends BaseService
         );
 
         DB::beginTransaction();
-        $total_point = 0;
-        $redeem = Redeem::create([
-            'user_id' => auth()->user()->id,
-            'redeem_code' => Str::uuid(),
-            'total_point' => $total_point,
-            'redeem_date' => date('Y-m-d'),
-        ]);
-        foreach ($data_request['item_gift_id'] as $key => $item_gift_id) {
-            $quantity = $data_request['redeem_quantity'][$key];
-            $item_gift = $this->item_gift_repository->getSingleData($locale, $item_gift_id);
-            if (!$item_gift || $item_gift->item_gift_quantity < $quantity || $item_gift->item_gift_status == 'O') {
-                throw new ValidationException(json_encode(['item_gift_id' => [trans('error.out_of_stock', ['id' => $item_gift_id])]]));
-            }
-            $subtotal = $item_gift->item_gift_point * $quantity;
-            $total_point += $subtotal;
-            $redeem_item_gift = new RedeemItemGift([
-                'item_gift_id' => $item_gift->id,
-                'variant_id' => $item_gift->id,
-                'redeem_quantity' => $quantity,
-                'redeem_point' => $subtotal,
-            ]);
-            $redeem->redeem_item_gifts()->save($redeem_item_gift);
-            $item_gift->item_gift_quantity -= $quantity;
-            $item_gift->save();
-        }
-        $redeem->total_point = $total_point;
-        $redeem->save();
-        DB::commit();
 
-        return response()->json([
-            'message' => trans('all.success_redeem'),
-            'status' => 200,
-            'error' => 0
-        ]);
+        try {
+            $total_point = 0;
+
+            $redeem = Redeem::create([
+                'user_id' => auth()->user()->id,
+                'redeem_code' => Str::uuid(),
+                'total_point' => $total_point,
+                'redeem_date' => date('Y-m-d'),
+            ]);
+
+            foreach ($data_request['item_gift_id'] as $key => $item_gift_id) {
+                $quantity = $data_request['redeem_quantity'][$key];
+                $variant_id = $data_request['variant_id'][$key] ?? null;
+
+                // Lock the item_gift row for update
+                $item_gift = ItemGift::where('id', $item_gift_id)->lockForUpdate()->first();
+
+                if (!$item_gift || $item_gift->item_gift_quantity < $quantity || $item_gift->item_gift_status == 'O') {
+                    return response()->json([
+                        'message' => trans('error.out_of_stock', ['id' => $item_gift->id]),
+                        'status' => 400,
+                        'error' => 0,
+                    ], 400);
+                }
+
+                $subtotal = 0;
+
+                if ($variant_id) {
+                    // Lock the variant row for update
+                    $variant = $item_gift->variants()->lockForUpdate()->find($variant_id);
+                    
+                    if ($variant) {
+                        $subtotal = $variant->variant_point * $quantity;
+                    }
+                } else {
+                    $subtotal = $item_gift->item_gift_point * $quantity;
+                }
+
+                $total_point += $subtotal;
+
+                $redeem_item_gift = new RedeemItemGift([
+                    'item_gift_id' => $item_gift->id,
+                    'variant_id' => $variant_id,
+                    'redeem_quantity' => $quantity,
+                    'redeem_point' => $subtotal,
+                ]);
+
+                $redeem->redeem_item_gifts()->save($redeem_item_gift);
+
+                $item_gift->item_gift_quantity -= $quantity;
+                $item_gift->save();
+            }
+
+            $redeem->total_point = $total_point;
+            $redeem->save();
+
+            DB::commit();
+
+            return response()->json([
+                'message' => trans('all.success_redeem'),
+                'status' => 200,
+                'error' => 0
+            ]);
+        } catch (QueryException $e) {
+            DB::rollback();
+        }
+
     }
 }
