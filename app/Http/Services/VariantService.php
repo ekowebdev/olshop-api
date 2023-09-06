@@ -139,7 +139,7 @@ class VariantService extends BaseService
             $item_gift = ItemGift::find($check_data->item_gift_id);
             $total_point = ($item_gift->variants->count() > 0) ? min($item_gift->variants->pluck('variant_point')->toArray()) : $item_gift->item_gift_point;
             $qty_item_gift = $item_gift->item_gift_quantity - $check_data->variant_quantity;
-            $qty_update = $item_gift->variants->count() > 0 ? $qty_item_gift + $data_request['variant_quantity'] : $item_gift->item_gift_quantity;
+            $qty_update = ($item_gift->variants->count() > 0) ? $qty_item_gift + $data_request['variant_quantity'] : $item_gift->item_gift_quantity;
             $item_gift->update([
                 'item_gift_point' => $total_point,
                 'item_gift_quantity' => $qty_update,

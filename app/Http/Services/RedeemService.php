@@ -214,7 +214,7 @@ class RedeemService extends BaseService
                 $variant_id = $data_request['variant_id'][$key] ?? null;
 
                 // Lock the item_gift row for update
-                $item_gift = ItemGift::where('id', $item_gift_id)->lockForUpdate()->first();
+                $item_gift = ItemGift::lockForUpdate()->find($item_gift_id);
 
                 if (!$item_gift || $item_gift->item_gift_quantity < $quantity || $item_gift->item_gift_status == 'O') {
                     return response()->json([
@@ -232,6 +232,9 @@ class RedeemService extends BaseService
                     
                     if ($variant) {
                         $subtotal = $variant->variant_point * $quantity;
+                        $variant->update([
+                            'variant_quantity' => $variant->variant_quantity - $quantity,
+                        ]);
                     }
                 } else {
                     $subtotal = $item_gift->item_gift_point * $quantity;
@@ -266,5 +269,31 @@ class RedeemService extends BaseService
             DB::rollback();
         }
 
+    }
+
+    public function delete($locale, $id)
+    {
+        $check_data = $this->repository->getSingleData($locale, $id);
+        
+        DB::beginTransaction();
+        $redeem_item_gift = $check_data->redeem_item_gifts()->get();
+        foreach ($redeem_item_gift as $value) {
+            $item_gift = ItemGift::find($value->item_gift_id);
+            $item_gift->update([
+                'item_gift_quantity' => $item_gift->item_gift_quantity + $value->redeem_quantity,
+            ]);
+            if($item_gift->variants()->count() > 0) {
+                $variant = $item_gift->variants()->get();
+                foreach ($variant as $v) {
+                    $v->update([
+                        'variant_quantity' => $v->variant_quantity + $value->redeem_quantity,
+                    ]);
+                }
+            }
+        }
+        $result = $check_data->delete();
+        DB::commit();
+
+        return $result;
     }
 }

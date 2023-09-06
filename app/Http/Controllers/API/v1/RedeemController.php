@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers\API\v1;
 
-use App\Http\Resources\RedeemResource;
 use App\Http\Services\RedeemService;
+use App\Http\Resources\RedeemResource;
+use App\Http\Resources\DeletedResource;
 use Illuminate\Support\Facades\Request;
 use App\Http\Controllers\BaseController;
 
@@ -40,5 +41,11 @@ class RedeemController extends BaseController
     public function redeem_multiple($locale)
     {
         return $this->service->redeem_multiple($locale, Request::all());
+    }
+
+    public function delete($locale, $id)
+    {
+        $data = $this->service->delete($locale, $id, Request::all());
+        return new DeletedResource($data);
     }
 }
