@@ -2,6 +2,7 @@
 
 namespace App\Http\Models;
 
+use App\Http\Models\Cart;
 use App\Http\Models\Brand;
 use App\Http\Models\Review;
 use Illuminate\Support\Str;
@@ -54,6 +55,11 @@ class ItemGift extends BaseModel
     public function variants()
     {
         return $this->hasMany(Variant::class);
+    }
+
+    public function carts()
+    {
+        return $this->hasMany(Cart::class);
     }
 
     public function scopeGetAll($query)

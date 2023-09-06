@@ -3,6 +3,7 @@
 namespace App\Http\Models;
 
 use Validator;
+use App\Http\Models\Cart;
 use App\Http\Models\Rating;
 use App\Http\Models\Redeem;
 use Illuminate\Support\Arr;
@@ -267,5 +268,10 @@ class User extends Authenticable implements MustVerifyEmail
     public function ratings()
     {
         return $this->hasMany(Rating::class);
+    }
+
+	public function carts()
+    {
+        return $this->hasMany(Cart::class);
     }
 }

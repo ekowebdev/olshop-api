@@ -2,6 +2,7 @@
 
 namespace App\Http\Models;
 
+use App\Http\Models\Cart;
 use Illuminate\Support\Str;
 use App\Http\Models\ItemGift;
 use App\Http\Models\BaseModel;
@@ -24,6 +25,11 @@ class Variant extends BaseModel
     public function redeem_item_gifts()
     {
         return $this->hasMany(RedeemItemGift::class);
+    }
+
+    public function carts()
+    {
+        return $this->hasMany(Cart::class);
     }
 
     public function scopeGetAll($query)

@@ -22,4 +22,6 @@ return [
 	"success_resend_verification"        => "Link verifikasi sudah dikirim ke email anda",
 	"success_send_reset_password_link"   => "Link reset password sudah dikirim ke email anda",
 	"success_reset_password"             => "Berhasil reset password",
+	"success_add_to_cart"                => "Berhasil ditambah ke keranjang",
+	"success_update_cart"                => "Berhasil ubah keranjang",
 ];

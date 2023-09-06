@@ -90,7 +90,7 @@ class RedeemService extends BaseService
                         'message' => trans('error.variant_not_found_in_item_gifts'),
                         'status' => 400,
                         'error' => 0,
-                    ]);
+                    ], 400);
                 }
 
                 // Lock the variants row for update

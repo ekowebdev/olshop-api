@@ -22,4 +22,6 @@ return [
 	"success_resend_verification"        => "Success send verification link in your email",
 	"success_send_reset_password_link"   => "Success send password reset link in your email",
 	"success_reset_password"             => "Success reset password",
+	"success_add_to_cart"                => "Success add to cart",
+	"success_update_cart"                => "Success update cart",
 ];
