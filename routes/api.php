@@ -75,7 +75,6 @@ Route::middleware(['xssclean'])->group(function () {
                 Route::get('/carts', '\App\Http\Controllers\API\v1\CartController@index');
                 Route::post('/carts', '\App\Http\Controllers\API\v1\CartController@store');
                 Route::get('/carts/{id}', '\App\Http\Controllers\API\v1\CartController@show');
-                Route::put('/carts/{id}', '\App\Http\Controllers\API\v1\CartController@update');
                 Route::delete('/carts/{id}', '\App\Http\Controllers\API\v1\CartController@delete');
             });
             Route::post('/logout', '\App\Http\Controllers\API\v1\Auth\AuthController@logout');

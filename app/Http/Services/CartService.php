@@ -4,6 +4,7 @@ namespace App\Http\Services;
 
 use App\Http\Models\Cart;
 use Illuminate\Support\Arr;
+use App\Http\Models\Variant;
 use App\Http\Models\ItemGift;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\QueryException;
@@ -77,8 +78,10 @@ class CartService extends BaseService
         DB::beginTransaction();
         try {
             $data_request['user_id'] = auth()->user()->id;
-            if($data_request['variant_id']){
-                $item_gift = ItemGift::find($data_request['item_gift_id']);
+            $item_gift = ItemGift::find($data_request['item_gift_id']);
+            $cart = $this->repository->getByItemAndVariant($item_gift->id, $data_request['variant_id'] ?? null);
+            if(isset($data_request['variant_id'])){
+                $variant = Variant::where('id', $data_request['variant_id'])->where('item_gift_id', $item_gift->id)->first();
                 if ($item_gift->variants->count() < 1) {
                     return response()->json([
                         'message' => trans('error.variant_not_found_in_item_gifts'),
@@ -86,70 +89,45 @@ class CartService extends BaseService
                         'error' => 0,
                     ], 400);
                 }
-            }
-            $result = $this->model->create($data_request);
-            DB::commit();
-            return response()->json([
-                'message' => trans('all.success_add_to_cart'),
-                'status' => 200,
-                'error' => 0,
-            ]);
-        } catch (QueryException $e) {
-            DB::rollback();
-        }
-    }
-
-    public function update($locale, $id, $data)
-    {
-        $check_data = $this->repository->getSingleData($locale, $id);
-
-        $data = array_merge([
-            'item_gift_id' => $check_data->item_gift_id,
-            'variant_id' => $check_data->variant_id,
-            'cart_quantity' => $check_data->cart_quantity,
-        ], $data);
-
-        $data_request = Arr::only($data, [
-            'item_gift_id',
-            'variant_id',
-            'cart_quantity',
-        ]);
-
-        $this->repository->validate($data_request, [
-                'item_gift_id' => [
-                    'exists:item_gifts,id',
-                ],
-                'variant_id' => [
-                    'nullable',
-                    'exists:variants,id',
-                ],
-                'cart_quantity' => [
-                    'numeric',
-                ]
-            ]
-        );
-
-        DB::beginTransaction();
-        try {
-            if($data_request['variant_id']){
-                if($data_request['item_gift_id']){
-                    $item_gift = ItemGift::find($data_request['item_gift_id']);
-                } else {
-                    $item_gift = ItemGift::find($check_data->item_gift_id);
-                }
-                if ($item_gift->variants->count() == 0) {
+                if($variant->variant_quantity < $data_request['cart_quantity']){
                     return response()->json([
-                        'message' => trans('error.variant_not_found_in_item_gifts'),
+                        'message' => trans('error.out_of_stock', ['id' => $item_gift->id]),
                         'status' => 400,
                         'error' => 0,
                     ], 400);
                 }
             }
-            $check_data->update($data_request);
+            if ($item_gift->variants->count() > 0) {
+                if (!isset($data_request['variant_id'])) {
+                    return response()->json([
+                        'message' => trans('error.variant_required', ['id' => $item_gift->id]),
+                        'status' => 400,
+                        'error' => 0,
+                    ], 400);
+                }
+            }
+            if($item_gift->item_gift_quantity < $data_request['cart_quantity']){
+                return response()->json([
+                    'message' => trans('error.out_of_stock', ['id' => $item_gift->id]),
+                    'status' => 400,
+                    'error' => 0,
+                ], 400);
+            }
+            if(!empty($cart)){
+                $cart->update([
+                    'cart_quantity' => $cart->cart_quantity + $data_request['cart_quantity'],
+                ]);
+                DB::commit();
+                return response()->json([
+                    'message' => trans('all.success_update_cart'),
+                    'status' => 200,
+                    'error' => 0,
+                ]);
+            }
+            $this->model->create($data_request);
             DB::commit();
-
             return response()->json([
-                'message' => trans('all.success_update_cart'),
+                'message' => trans('all.success_add_to_cart'),
                 'status' => 200,
                 'error' => 0,
             ]);

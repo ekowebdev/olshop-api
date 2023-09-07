@@ -38,11 +38,6 @@ class CartController extends BaseController
         return $this->service->store($locale, Request::all());
     }
 
-    public function update($locale, $id)
-    {
-        return $this->service->update($locale, $id, Request::all());
-    }
-
     public function delete($locale, $id)
     {
         $data = $this->service->delete($locale, $id, Request::all());

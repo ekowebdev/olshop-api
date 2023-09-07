@@ -81,8 +81,10 @@ class RedeemService extends BaseService
             $item_gift_variant = null;
             $variant_locked = false;
             $total_point = 0;
+            $metadata_redeem_item_gifts = [];
+            $redeem_code = Str::uuid();
 
-            if ($item_gift->variants->count() > 0 && !is_null($data_request['variant_id'])) {
+            if ($item_gift->variants->count() > 0 && isset($data_request['variant_id'])) {
                 $item_gift_variant = $item_gift->variants()->lockForUpdate()->find($data_request['variant_id'] ?? 0);
 
                 if (is_null($item_gift_variant)) {
@@ -95,6 +97,16 @@ class RedeemService extends BaseService
 
                 // Lock the variants row for update
                 $variant_locked = true;
+            }
+
+            if ($item_gift->variants->count() > 0) {
+                if (!isset($data_request['variant_id'])) {
+                    return response()->json([
+                        'message' => trans('error.variant_required', ['id' => $item_gift->id]),
+                        'status' => 400,
+                        'error' => 0,
+                    ], 400);
+                }
             }
 
             // Lock the item_gifts row for update
@@ -120,7 +132,7 @@ class RedeemService extends BaseService
 
             $redeem = Redeem::create([
                 'user_id' => auth()->user()->id,
-                'redeem_code' => Str::uuid(),
+                'redeem_code' => $redeem_code,
                 'total_point' => $total_point,
                 'redeem_date' => date('Y-m-d'),
             ]);
@@ -131,6 +143,17 @@ class RedeemService extends BaseService
                 'redeem_quantity' => $data_request['redeem_quantity'],
                 'redeem_point' => $total_point,
             ]);
+
+            array_push($metadata_redeem_item_gifts, $redeem_item_gift->toArray());
+
+            $redeem->metadata = [
+                'user_id' => auth()->user()->id,
+                'redeem_code' => $redeem_code,
+                'redeem_item_gifts' => $metadata_redeem_item_gifts,
+                'total_point' => $total_point,
+                'redeem_date' => date('Y-m-d'),
+            ];
+            $redeem->save();
 
             $redeem->redeem_item_gifts()->save($redeem_item_gift);
 
@@ -201,10 +224,12 @@ class RedeemService extends BaseService
 
         try {
             $total_point = 0;
+            $metadata_redeem_item_gifts = [];
+            $redeem_code = Str::uuid();
 
             $redeem = Redeem::create([
                 'user_id' => auth()->user()->id,
-                'redeem_code' => Str::uuid(),
+                'redeem_code' => $redeem_code,
                 'total_point' => $total_point,
                 'redeem_date' => date('Y-m-d'),
             ]);
@@ -222,6 +247,26 @@ class RedeemService extends BaseService
                         'status' => 400,
                         'error' => 0,
                     ], 400);
+                }
+
+                if ($item_gift->variants->count() > 0) {
+                    if (!isset($variant_id)) {
+                        return response()->json([
+                            'message' => trans('error.variant_required', ['id' => $item_gift->id]),
+                            'status' => 400,
+                            'error' => 0,
+                        ], 400);
+                    }
+                }
+
+                if ($item_gift->variants->count() == 0) {
+                    if (isset($variant_id)) {
+                        return response()->json([
+                            'message' => trans('error.variant_not_found_in_item_gifts', ['id' => $item_gift->id]),
+                            'status' => 400,
+                            'error' => 0,
+                        ], 400);
+                    }
                 }
 
                 $subtotal = 0;
@@ -249,12 +294,21 @@ class RedeemService extends BaseService
                     'redeem_point' => $subtotal,
                 ]);
 
+                array_push($metadata_redeem_item_gifts, $redeem_item_gift->toArray());
+
                 $redeem->redeem_item_gifts()->save($redeem_item_gift);
 
                 $item_gift->item_gift_quantity -= $quantity;
                 $item_gift->save();
             }
 
+            $redeem->metadata = [
+                'user_id' => auth()->user()->id,
+                'redeem_code' => $redeem_code,
+                'redeem_item_gifts' => $metadata_redeem_item_gifts,
+                'total_point' => $total_point,
+                'redeem_date' => date('Y-m-d'),
+            ];
             $redeem->total_point = $total_point;
             $redeem->save();
 
