@@ -52,13 +52,13 @@ class WebhookService extends BaseService
 
             $detail_data = [];
 
-            $redeem_item_gift = RedeemItemGift::where('redeem_id', $redeem->id)->get();
+            $redeem_item_gift = RedeemItemGift::with('item_gifts')->where('redeem_id', $redeem->id)->get();
 
             foreach ($redeem_item_gift as $item) {
-                array_push($detail_data, [
+                $detail_data = array_push($detail_data, [
                     'price' => intval($item->item_gifts->item_gift_point),
                     'quantity' => $item->redeem_quantity,
-                    'name' => ($item->item_gifts->variants->count() > 0) ? $item->item_gifts->item_gift_name . ' - ' : $item->item_gifts->item_gift_name,
+                    'name' => ($item->item_gifts->variants->count() > 0) ? $item->item_gifts->item_gift_name . ' - ' . $item->item_gifts->variants()->variant_name : $item->item_gifts->item_gift_name,
                 ]);
             }
 
