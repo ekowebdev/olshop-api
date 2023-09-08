@@ -52,13 +52,27 @@ class WebhookService extends BaseService
 
             $detail_data = [];
 
-            $redeem_item_gift = RedeemItemGift::with(['item_gifts', 'variants'])->where('redeem_id', $redeem->id)->get();
+            $redeem_item_gift = RedeemItemGift::with('item_gifts.variants')->where('redeem_id', $redeem->id)->get();
 
             foreach ($redeem_item_gift as $item) {
+                // $detail_data = array_push($detail_data, [
+                //     'price' => intval($item->item_gifts->item_gift_point),
+                //     'quantity' => $item->redeem_quantity,
+                //     'name' => ($item->item_gifts->variants->count() > 0) ? $item->item_gifts->item_gift_name . ' - ' . $item->item_gifts->variants->variant_name : $item->item_gifts->item_gift_name,
+                // ]);
+                $itemNames = [$item->item_gifts->item_gift_name];
+
+                // Check if variants exist and append their names
+                if ($item->item_gifts->variants->count() > 0) {
+                    foreach ($item->item_gifts->variants as $variant) {
+                        $itemNames[] = $variant->variant_name;
+                    }
+                }
+
                 $detail_data = array_push($detail_data, [
                     'price' => intval($item->item_gifts->item_gift_point),
                     'quantity' => $item->redeem_quantity,
-                    'name' => ($item->item_gifts->variants->count() > 0) ? $item->item_gifts->item_gift_name . ' - ' . $item->item_gifts->variants->variant_name : $item->item_gifts->item_gift_name,
+                    'name' => implode(' - ', $itemNames),
                 ]);
             }
 
