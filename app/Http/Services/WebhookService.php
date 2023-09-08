@@ -71,8 +71,6 @@ class WebhookService extends BaseService
                 ];
             }
 
-            dd($detail_data);
-
             Mail::to($redeem->users->email)->send(new RedeemConfirmation($header_data, $detail_data));
         }
 
@@ -102,25 +100,35 @@ class WebhookService extends BaseService
 
         $redeem->save();
 
-        // if ($redeem->redeem_status === 'success') {
+        if ($redeem->redeem_status === 'success') {
             // SEND EMAIL NOTIFICATION
             $header_data = [
                 'redeem_code' => $redeem->redeem_code,
                 'total_price' => $redeem->total_point
             ];
 
+            $redeem_item_gifts = RedeemItemGift::with(['item_gifts', 'variants'])
+                ->where('redeem_id', $redeem->id)
+                ->get();
+
             $detail_data = [];
 
-            foreach ($redeem->redeem_item_gifts() as $item) {
-                array_push($detail_data, [
+            foreach ($redeem_item_gifts as $item) {
+                $variant_name = '';
+
+                if ($item->variants) {
+                    $variant_name = ' - ' . $item->variants->variant_name;
+                }
+
+                $detail_data[] = [
                     'price' => intval($item->item_gifts->item_gift_point),
                     'quantity' => $item->redeem_quantity,
-                    'name' => ($item->item_gifts->variants->count() > 0) ? $item->item_gifts->item_gift_name . ' - ' . $item->item_gifts_variant->variant_name : $item_gift->item_gift_name,
-                ]);
+                    'name' => $item->item_gifts->item_gift_name . $variant_name,
+                ];
             }
 
             Mail::to($redeem->users->email)->send(new RedeemConfirmation($header_data, $detail_data));   
-        // }
+        }
 
         return response()->json([
             'message' => 'OK',
