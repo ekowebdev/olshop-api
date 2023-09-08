@@ -214,8 +214,6 @@ class RedeemService extends BaseService
 
             // dispatch(new SendRedeemConfirmationJob($customer_details, $header_data, $detail_data));
 
-            // Mail::to(auth()->user()->email)->send(new RedeemConfirmation($header_data, $detail_data));
-
             DB::commit();
 
             return response()->json([

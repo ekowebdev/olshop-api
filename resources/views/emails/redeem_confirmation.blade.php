@@ -26,8 +26,8 @@
         </tbody>
         <tfoot>
             <tr>
-                <th colspan="2" style="border: 1px solid #ddd; padding: 8px; text-align: left;">Total Price</th>
-                <th style="border: 1px solid #ddd; padding: 8px; text-align: right;">{{ $transaction_details['total_price'] }}</th>
+                <th colspan="2" style="border: 1px solid #ddd; padding: 8px; text-align: right;">Total Price</th>
+                <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">{{ $transaction_details['total_price'] }}</th>
             </tr>
         </tfoot>
     </table>
