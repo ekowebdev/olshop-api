@@ -2,7 +2,6 @@
 
 namespace App\Http\Services;
 
-use App\Http\Models\Variant;
 use App\Http\Models\PaymentLog;
 use App\Mail\RedeemConfirmation;
 use App\Http\Models\RedeemItemGift;

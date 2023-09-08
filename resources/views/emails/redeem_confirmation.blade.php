@@ -5,7 +5,7 @@
 </head>
 <body>
     <h1 style="color: #333;">Thank you for your order!</h1>
-    <h2>#{{ $transaction_details['redeem_code'] }}</h2>
+    <h3>#{{ $transaction_details['redeem_code'] }}</h3>
 
     <table style="border-collapse: collapse; width: 100%;">
         <thead>
