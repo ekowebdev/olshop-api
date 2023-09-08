@@ -52,7 +52,7 @@ class WebhookService extends BaseService
             $detail_data = [];
 
             foreach ($redeem->redeem_item_gifts() as $item) {
-                $detail_data = array_push($detail_data, [
+                array_push($detail_data, [
                     'price' => intval($item->item_gifts->item_gift_point),
                     'quantity' => $item->redeem_quantity,
                     'name' => ($item->item_gifts->variants->count() > 0) ? $item->item_gifts->item_gift_name . ' - ' . $item->item_gifts_variant->variant_name : $item_gift->item_gift_name,
@@ -88,7 +88,7 @@ class WebhookService extends BaseService
 
         $redeem->save();
 
-        if ($redeem->redeem_status === 'success') {
+        // if ($redeem->redeem_status === 'success') {
             // SEND EMAIL NOTIFICATION
             $header_data = [
                 'redeem_code' => $redeem->redeem_code,
@@ -98,7 +98,7 @@ class WebhookService extends BaseService
             $detail_data = [];
 
             foreach ($redeem->redeem_item_gifts() as $item) {
-                $detail_data = array_push($detail_data, [
+                array_push($detail_data, [
                     'price' => intval($item->item_gifts->item_gift_point),
                     'quantity' => $item->redeem_quantity,
                     'name' => ($item->item_gifts->variants->count() > 0) ? $item->item_gifts->item_gift_name . ' - ' . $item->item_gifts_variant->variant_name : $item_gift->item_gift_name,
@@ -106,7 +106,7 @@ class WebhookService extends BaseService
             }
 
             Mail::to($redeem->users->email)->send(new RedeemConfirmation($header_data, $detail_data));   
-        }
+        // }
 
         return response()->json([
             'message' => 'OK',
