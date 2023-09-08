@@ -4,6 +4,7 @@ namespace App\Http\Services;
 
 use App\Http\Models\PaymentLog;
 use App\Mail\RedeemConfirmation;
+use App\Http\Models\RedeemItemGift;
 use Illuminate\Support\Facades\Mail;
 use App\Http\Repositories\RedeemRepository;
 
@@ -51,7 +52,9 @@ class WebhookService extends BaseService
 
             $detail_data = [];
 
-            foreach ($redeem->redeem_item_gifts() as $item) {
+            $redeem_item_gift = RedeemItemGift::where('redeem_id', $redeem->id)->get();
+
+            foreach ($redeem_item_gift as $item) {
                 array_push($detail_data, [
                     'price' => intval($item->item_gifts->item_gift_point),
                     'quantity' => $item->redeem_quantity,
@@ -59,7 +62,7 @@ class WebhookService extends BaseService
                 ]);
             }
 
-            dd($redeem->redeem_item_gifts());
+            dd($detail_data);
 
             Mail::to($redeem->users->email)->send(new RedeemConfirmation($header_data, $detail_data));
         }
