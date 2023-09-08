@@ -58,7 +58,7 @@ class WebhookService extends BaseService
                 $detail_data = array_push($detail_data, [
                     'price' => intval($item->item_gifts->item_gift_point),
                     'quantity' => $item->redeem_quantity,
-                    'name' => ($item->item_gifts->variants->count() > 0) ? $item->item_gifts->item_gift_name . ' - ' . $item->item_gifts->variants()->variant_name : $item->item_gifts->item_gift_name,
+                    'name' => ($item->item_gifts->variants->count() > 0) ? $item->item_gifts->item_gift_name . ' - ' . $item->item_gifts->variants->variant_name : $item->item_gifts->item_gift_name,
                 ]);
             }
 
