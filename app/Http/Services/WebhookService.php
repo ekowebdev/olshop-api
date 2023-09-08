@@ -2,6 +2,7 @@
 
 namespace App\Http\Services;
 
+use App\Http\Models\Variant;
 use App\Http\Models\PaymentLog;
 use App\Mail\RedeemConfirmation;
 use App\Http\Models\RedeemItemGift;
@@ -50,19 +51,26 @@ class WebhookService extends BaseService
                 'total_price' => $redeem->total_point
             ];
 
-            $redeem_item_gift = RedeemItemGift::where('redeem_id', $redeem->id)->get();
+            $redeem_item_gifts = RedeemItemGift::with(['item_gifts', 'variants'])
+                ->where('redeem_id', $redeem->id)
+                ->get();
 
             $detail_data = [];
 
-            foreach ($redeem_item_gift as $item) {
-                
-                $variant = Variant::find($item->variant_id);
+            foreach ($redeem_item_gifts as $item) {
+                $itemNames = [$item->item_gifts->item_gift_name];
+                $variantName = '';
 
-                $detail_data[] = array_push($detail_data, [
+                // Check if variants exist and append their names
+                if ($item->variants) {
+                    $variantName = ' - ' . $item->variants->variant_name;
+                }
+
+                $detail_data[] = [
                     'price' => intval($item->item_gifts->item_gift_point),
                     'quantity' => $item->redeem_quantity,
-                    'name' => ($item->item_gifts->variants->count() > 0) ? $item->item_gifts->item_gift_name . ' - ' . $variant->variant_name : $item->item_gifts->item_gift_name,
-                ]);
+                    'name' => $item->item_gifts->item_gift_name . $variantName,
+                ];
             }
 
             dd($detail_data);
