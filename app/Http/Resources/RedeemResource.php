@@ -44,7 +44,7 @@ class RedeemResource extends JsonResource
             'total_point' => $this->total_point,
             'redeem_date' => $this->redeem_date,
             'snap_url' => $this->snap_url,
-            'metadata' => $this->metadata,
+            'metadata' => json_decode($this->metadata),
             'users' => $this->users->makeHidden(['created_at', 'updated_at']),
             'redeem_status' => $this->redeem_status,
         ];
