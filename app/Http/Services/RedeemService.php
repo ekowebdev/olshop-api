@@ -319,7 +319,7 @@ class RedeemService extends BaseService
                     'id' => $item_gift->id,
                     'price' => $item_gift->item_gift_point,
                     'quantity' => $quantity,
-                    'name' => ($item_gift->variants->count() > 0) ? mb_strimwidth($item_gift->item_gift_name . ' - ' . $item_gift_variant->variant_name, 0, 20, '..') : mb_strimwidth($item_gift->item_gift_name, 0, 20, '..'),
+                    'name' => ($item_gift->variants->count() > 0) ? mb_strimwidth($item_gift->item_gift_name . ' - ' . $variant->variant_name, 0, 20, '..') : mb_strimwidth($item_gift->item_gift_name, 0, 20, '..'),
                 ]);
         
                 $redeem->redeem_item_gifts()->save($redeem_item_gift);
