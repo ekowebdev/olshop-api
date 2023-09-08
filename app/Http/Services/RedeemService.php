@@ -84,8 +84,8 @@ class RedeemService extends BaseService
             $metadata_redeem_item_gifts = [];
             $redeem_code = Str::uuid();
 
-            if ($item_gift->variants->count() > 0 && isset($data_request['variant_id'])) {
-                $item_gift_variant = $item_gift->variants()->lockForUpdate()->find($data_request['variant_id'] ?? 0);
+            if (isset($data_request['variant_id'])) {
+                $item_gift_variant = $item_gift->variants()->lockForUpdate()->find($data_request['variant_id']);
 
                 if (is_null($item_gift_variant)) {
                     return response()->json([
@@ -143,12 +143,12 @@ class RedeemService extends BaseService
 
             array_push($metadata_redeem_item_gifts, $redeem_item_gift->toArray());
 
-            $transactionDetails = [
+            $transaction_details = [
                 'order_id' => $redeem->id . '-' . Str::random(5),
                 'gross_amount' => $total_point
             ];
     
-            $itemDetails = [
+            $item_details = [
                 [
                     'id' => $item_gift->id,
                     'price' => $item_gift->item_gift_point,
@@ -157,18 +157,18 @@ class RedeemService extends BaseService
                 ]
             ];
     
-            $customerDetails = [
+            $customer_details = [
                 'first_name' => auth()->user()->name,
                 'email' => auth()->user()->email
             ];
     
-            $midtransParams = [
-                'transaction_details' => $transactionDetails,
-                'item_details' => $itemDetails,
-                'customer_details' => $customerDetails
+            $midtrans_params = [
+                'transaction_details' => $transaction_details,
+                'item_details' => $item_details,
+                'customer_details' => $customer_details
             ];
 
-            $redeem->snap_url = $this->getMidtransSnapUrl($midtransParams);
+            $redeem->snap_url = $this->getMidtransSnapUrl($midtrans_params);
             $redeem->metadata = [
                 'user_id' => auth()->user()->id,
                 'redeem_code' => $redeem_code,
@@ -248,7 +248,7 @@ class RedeemService extends BaseService
             $total_point = 0;
             $metadata_redeem_item_gifts = [];
             $redeem_code = Str::uuid();
-            $itemDetails = [];
+            $item_details = [];
 
             $redeem = Redeem::create([
                 'user_id' => auth()->user()->id,
@@ -315,7 +315,7 @@ class RedeemService extends BaseService
                 ]);
 
                 array_push($metadata_redeem_item_gifts, $redeem_item_gift->toArray());
-                array_push($itemDetails, [
+                array_push($item_details, [
                     'id' => $item_gift->id,
                     'price' => $item_gift->item_gift_point,
                     'quantity' => $quantity,
@@ -328,23 +328,23 @@ class RedeemService extends BaseService
                 $item_gift->save();
             }
 
-            $transactionDetails = [
+            $transaction_details = [
                 'order_id' => $redeem->id . '-' . Str::random(5),
                 'gross_amount' => $total_point
             ];
 
-            $customerDetails = [
+            $customer_details = [
                 'first_name' => auth()->user()->name,
                 'email' => auth()->user()->email
             ];
     
-            $midtransParams = [
-                'transaction_details' => $transactionDetails,
-                'item_details' => $itemDetails,
-                'customer_details' => $customerDetails
+            $midtrans_params = [
+                'transaction_details' => $transaction_details,
+                'item_details' => $item_details,
+                'customer_details' => $customer_details
             ];
 
-            $redeem->snap_url = $this->getMidtransSnapUrl($midtransParams);
+            $redeem->snap_url = $this->getMidtransSnapUrl($midtrans_params);
             $redeem->metadata = [
                 'user_id' => auth()->user()->id,
                 'redeem_code' => $redeem_code,
@@ -400,7 +400,7 @@ class RedeemService extends BaseService
         \Midtrans\Config::$isProduction = (bool) env('MIDTRANS_PRODUCTION');
         \Midtrans\Config::$is3ds = (bool) env('MIDTRANS_3DS');
 
-        $snapUrl = \Midtrans\Snap::createTransaction($params)->redirect_url;
-        return $snapUrl;
+        $snap_url = \Midtrans\Snap::createTransaction($params)->redirect_url;
+        return $snap_url;
     }
 }

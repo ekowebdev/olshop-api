@@ -43,19 +43,19 @@ class ItemGiftResource extends JsonResource
 
     private function formatFitemGiftPoint()
     {
-        $variantPoints = $this->variants->pluck('variant_point')->toArray();
+        $variant_points = $this->variants->pluck('variant_point')->toArray();
         
-        if (count($variantPoints) == 1) {
-            return strval($variantPoints[0]);
-        } elseif (count($variantPoints) > 1) {
-            $minValue = min($variantPoints);
-            $maxValue = max($variantPoints);
+        if (count($variant_points) == 1) {
+            return strval($variant_points[0]);
+        } elseif (count($variant_points) > 1) {
+            $min_value = min($variant_points);
+            $max_value = max($variant_points);
 
-            if ($minValue === $maxValue) {
-                return strval($minValue);
+            if ($min_value === $max_value) {
+                return strval($min_value);
             }
 
-            return "{$minValue} ~ {$maxValue}";
+            return "{$min_value} ~ {$max_value}";
         } else {
             return strval($this->item_gift_point ?? 0);
         }

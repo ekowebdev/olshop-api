@@ -2,9 +2,6 @@
 
 namespace App\Http\Services;
 
-use App\Http\Models\Redeem;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
 use App\Http\Models\PaymentLog;
 use App\Http\Repositories\RedeemRepository;
 
@@ -21,35 +18,28 @@ class WebhookService extends BaseService
     {
         $data = $request;
 
-        $signatureKey = $data['signature_key'];
+        $signature_key = $data['signature_key'];
 
-        $orderId = $data['order_id'];
-        $statusCode = $data['status_code'];
-        $grossAmount = $data['gross_amount'];
-        $serverKey = env('MIDTRANS_SERVER_KEY');
+        $order_id = $data['order_id'];
+        $status_code = $data['status_code'];
+        $gross_amount = $data['gross_amount'];
+        $server_key = env('MIDTRANS_SERVER_KEY');
 
-        $mySignatureKey = hash('sha512', $orderId.$statusCode.$grossAmount.$serverKey);
+        $my_signature_key = hash('sha512', $order_id.$status_code.$gross_amount.$server_key);
 
-        $transactionStatus = $data['transaction_status'];
+        $transaction_status = $data['transaction_status'];
         $type = $data['payment_type'];
-        $fraudStatus = $data['fraud_status'];
+        $fraud_status = $data['fraud_status'];
 
-        if ($signatureKey !== $mySignatureKey) {
+        if ($signature_key !== $my_signature_key) {
             return response()->json([
                 'message' => trans('error.invalid_signature_midtrans'),
                 'status' => 400,
             ], 400);
         }
 
-        $realOrderId = explode('-', $orderId);
-        // $redeem = Redeem::find($realOrderId[0]);
-        $redeem = $this->repository->getSingleData($locale, $realOrderId[0]);
-        // if (!$redeem) {
-        //     return response()->json([
-        //         'status' => 'error',
-        //         'message' => 'order id not found'
-        //     ], 404);
-        // }
+        $real_order_id = explode('-', $order_id);
+        $redeem = $this->repository->getSingleData($locale, $real_order_id[0]);
 
         if ($redeem->redeem_status === 'success') {
             return response()->json([
@@ -58,30 +48,30 @@ class WebhookService extends BaseService
             ], 405);
         }
 
-        if ($transactionStatus == 'capture'){
-            if ($fraudStatus == 'challenge'){
+        if ($transaction_status == 'capture'){
+            if ($fraud_status == 'challenge'){
                 $redeem->redeem_status = 'challenge';
-            } else if ($fraudStatus == 'accept'){
+            } else if ($fraud_status == 'accept'){
                 $redeem->redeem_status = 'success';
             }
-        } else if ($transactionStatus == 'settlement'){
+        } else if ($transaction_status == 'settlement'){
             $redeem->redeem_status = 'success';
-        } else if ($transactionStatus == 'cancel' ||
-          $transactionStatus == 'deny' ||
-          $transactionStatus == 'expire'){
+        } else if ($transaction_status == 'cancel' ||
+          $transaction_status == 'deny' ||
+          $transaction_status == 'expire'){
             $redeem->redeem_status = 'failure';
-        } else if ($transactionStatus == 'pending'){
+        } else if ($transaction_status == 'pending'){
             $redeem->redeem_status = 'pending';
         }
 
-        $logData = [
-            'payment_status' => $transactionStatus,
+        $payment_log_data = [
+            'payment_status' => $transaction_status,
             'raw_response' => json_encode($data),
-            'redeem_id' => $realOrderId[0],
+            'redeem_id' => $real_order_id[0],
             'payment_type' => $type
         ];
 
-        PaymentLog::create($logData);
+        PaymentLog::create($payment_log_data);
         $redeem->save();
 
         if ($redeem->redeem_status === 'success') {
@@ -92,6 +82,6 @@ class WebhookService extends BaseService
             'message' => 'OK',
             'status' => 200,
             'error' => 0,
-        ]);;
+        ]);
     }
 }

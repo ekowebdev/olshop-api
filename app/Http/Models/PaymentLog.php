@@ -13,8 +13,19 @@ class PaymentLog extends BaseModel
     protected $table = 'payment_logs';
     protected $fillable = ['payment_type', 'redeem_id', 'payment_status', 'raw_response'];
 
-    public function redeem()
+    public function redeems()
     {
         return $this->belongsTo(Redeem::class, 'redeem_id');
+    }
+
+    public function scopeGetAll($query)
+    {      
+        return $query->select([
+                    'id',
+                    'payment_type', 
+                    'redeem_id', 
+                    'payment_status', 
+                    'raw_response'
+                ]);
     }
 }

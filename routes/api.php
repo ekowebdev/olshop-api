@@ -56,6 +56,9 @@ Route::middleware(['xssclean'])->group(function () {
                 Route::post('/variants', '\App\Http\Controllers\API\v1\VariantController@store');
                 Route::put('/variants/{id}', '\App\Http\Controllers\API\v1\VariantController@update');
                 Route::delete('/variants/{id}', '\App\Http\Controllers\API\v1\VariantController@delete');
+                // Payment Log
+                Route::get('/payment-logs', '\App\Http\Controllers\API\v1\PaymentLogController@index');
+                Route::get('/payment-logs/{id}', '\App\Http\Controllers\API\v1\PaymentLogController@show');
             });
             Route::group(['middleware' => ['role:admin|customer']], function () {
                 // Redeem Item Gift
@@ -92,6 +95,6 @@ Route::middleware(['xssclean'])->group(function () {
         Route::get('/variants', '\App\Http\Controllers\API\v1\VariantController@index');
         Route::get('/variants/{id}', '\App\Http\Controllers\API\v1\VariantController@show');
         // Webhook
-        Route::post('/webhook', '\App\Http\Controllers\API\v1\WebhookController@midtransHandler');
+        Route::post('/webhook/midtrans', '\App\Http\Controllers\API\v1\WebhookController@midtransHandler');
     });
 });
