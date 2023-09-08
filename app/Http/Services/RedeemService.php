@@ -7,10 +7,13 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use App\Http\Models\Variant;
 use App\Http\Models\ItemGift;
+use App\Mail\RedeemConfirmation;
 use Illuminate\Support\Facades\DB;
 use App\Http\Models\RedeemItemGift;
 use App\Http\Services\RedeemService;
+use Illuminate\Support\Facades\Mail;
 use App\Exceptions\ValidationException;
+use App\Jobs\SendRedeemConfirmationJob;
 use Illuminate\Database\QueryException;
 use App\Http\Repositories\RedeemRepository;
 use App\Http\Repositories\ItemGiftRepository;
@@ -153,7 +156,7 @@ class RedeemService extends BaseService
                     'id' => $item_gift->id,
                     'price' => $item_gift->item_gift_point,
                     'quantity' => $data_request['redeem_quantity'],
-                    'name' => ($item_gift->variants->count() > 0) ? mb_strimwidth($item_gift->item_gift_name . ' - ' . $item_gift_variant->variant_name, 0, 20, '..') : mb_strimwidth($item_gift->item_gift_name, 0, 20, '..'),
+                    'name' => ($item_gift->variants->count() > 0) ? mb_strimwidth($item_gift->item_gift_name . ' - ' . $item_gift_variant->variant_name, 0, 50, '..') : mb_strimwidth($item_gift->item_gift_name, 0, 50, '..'),
                 ]
             ];
     
@@ -195,6 +198,23 @@ class RedeemService extends BaseService
                     'variant_quantity' => $item_gift_variant->variant_quantity - $data_request['redeem_quantity'],
                 ]);
             }
+
+            $header_data = [
+                'redeem_code' => $redeem->redeem_code,
+                'total_price' => $total_point,
+            ];
+
+            $detail_data = [
+                [
+                    'price' => intval($item_gift->item_gift_point),
+                    'quantity' => $data_request['redeem_quantity'],
+                    'name' => ($item_gift->variants->count() > 0) ? $item_gift->item_gift_name . ' - ' . $item_gift_variant->variant_name : $item_gift->item_gift_name,
+                ]
+            ];
+
+            // dispatch(new SendRedeemConfirmationJob($customer_details, $header_data, $detail_data));
+
+            // Mail::to(auth()->user()->email)->send(new RedeemConfirmation($header_data, $detail_data));
 
             DB::commit();
 
