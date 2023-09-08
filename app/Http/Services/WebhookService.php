@@ -3,6 +3,7 @@
 namespace App\Http\Services;
 
 use App\Http\Models\PaymentLog;
+use App\Mail\RedeemConfirmation;
 use Illuminate\Support\Facades\Mail;
 use App\Http\Repositories\RedeemRepository;
 
@@ -39,10 +40,26 @@ class WebhookService extends BaseService
         $redeem = $this->repository->getSingleData($locale, $real_order_id[0]);
 
         if ($redeem->redeem_status === 'success') {
-            return response()->json([
-                'message' => 'Operation not permitted',
-                'status' => 405,
-            ], 405);
+            // return response()->json([
+            //     'message' => 'Operation not permitted',
+            //     'status' => 405,
+            // ], 405);
+            $header_data = [
+                'redeem_code' => $redeem->redeem_code,
+                'total_price' => $redeem->total_point
+            ];
+
+            $detail_data = [];
+
+            foreach ($redeem->redeem_item_gifts() as $item) {
+                $detail_data = array_push($detail_data, [
+                    'price' => intval($item->item_gifts->item_gift_point),
+                    'quantity' => $item->redeem_quantity,
+                    'name' => ($item->item_gifts->variants->count() > 0) ? $item->item_gifts->item_gift_name . ' - ' . $item->item_gifts_variant->variant_name : $item_gift->item_gift_name,
+                ]);
+            }
+
+            Mail::to($redeem->users->email)->send(new RedeemConfirmation($header_data, $detail_data));
         }
 
         if ($transaction_status == 'capture'){
