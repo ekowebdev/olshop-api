@@ -14,7 +14,7 @@ class Redeem extends BaseModel
     use HasFactory;
 
     protected $table = 'redeems';
-    protected $fillable = ['user_id', 'redeem_code', 'total_point', 'redeem_date'];
+    protected $fillable = ['user_id', 'redeem_code', 'total_point', 'redeem_date', 'snap_url', 'metadata', 'redeem_status'];
 
     public function users()
     {
@@ -39,6 +39,9 @@ class Redeem extends BaseModel
                     'redeem_code', 
                     'total_point', 
                     'redeem_date',
+                    'snap_url', 
+                    'metadata', 
+                    'redeem_status',
                 ]);
     }
 }
