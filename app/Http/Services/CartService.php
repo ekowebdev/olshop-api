@@ -86,14 +86,12 @@ class CartService extends BaseService
                     return response()->json([
                         'message' => trans('error.variant_not_found_in_item_gifts'),
                         'status' => 400,
-                        'error' => 0,
                     ], 400);
                 }
                 if($variant->variant_quantity < $data_request['cart_quantity']){
                     return response()->json([
                         'message' => trans('error.out_of_stock', ['id' => $item_gift->id]),
                         'status' => 400,
-                        'error' => 0,
                     ], 400);
                 }
             }
@@ -102,7 +100,6 @@ class CartService extends BaseService
                     return response()->json([
                         'message' => trans('error.variant_required', ['id' => $item_gift->id]),
                         'status' => 400,
-                        'error' => 0,
                     ], 400);
                 }
             }
@@ -110,7 +107,6 @@ class CartService extends BaseService
                 return response()->json([
                     'message' => trans('error.out_of_stock', ['id' => $item_gift->id]),
                     'status' => 400,
-                    'error' => 0,
                 ], 400);
             }
             if(!empty($cart)){

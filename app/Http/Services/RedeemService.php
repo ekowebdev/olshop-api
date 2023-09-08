@@ -91,7 +91,6 @@ class RedeemService extends BaseService
                     return response()->json([
                         'message' => trans('error.variant_not_found_in_item_gifts'),
                         'status' => 400,
-                        'error' => 0,
                     ], 400);
                 }
 
@@ -104,7 +103,6 @@ class RedeemService extends BaseService
                     return response()->json([
                         'message' => trans('error.variant_required', ['id' => $item_gift->id]),
                         'status' => 400,
-                        'error' => 0,
                     ], 400);
                 }
             }
@@ -126,7 +124,6 @@ class RedeemService extends BaseService
                 return response()->json([
                     'message' => trans('error.variant_out_of_stock', ['id' => $item_gift->id, 'variant_id' => $item_gift_variant->id]),
                     'status' => 400,
-                    'error' => 0,
                 ], 400);
             }
 
@@ -146,6 +143,32 @@ class RedeemService extends BaseService
 
             array_push($metadata_redeem_item_gifts, $redeem_item_gift->toArray());
 
+            $transactionDetails = [
+                'order_id' => $redeem->id . '-' . Str::random(5),
+                'gross_amount' => $total_point
+            ];
+    
+            $itemDetails = [
+                [
+                    'id' => $item_gift->id,
+                    'price' => $item_gift->item_gift_point,
+                    'quantity' => $data_request['redeem_quantity'],
+                    'name' => ($item_gift->variants->count() > 0) ? $item_gift->item_gift_name . ' - ' . $item_gift_variant->variant_name : $item_gift->item_gift_name,
+                ]
+            ];
+    
+            $customerDetails = [
+                'first_name' => auth()->user()->name,
+                'email' => auth()->user()->email
+            ];
+    
+            $midtransParams = [
+                'transaction_details' => $transactionDetails,
+                'item_details' => $itemDetails,
+                'customer_details' => $customerDetails
+            ];
+
+            $redeem->snap_url = $this->getMidtransSnapUrl($midtransParams);
             $redeem->metadata = [
                 'user_id' => auth()->user()->id,
                 'redeem_code' => $redeem_code,
@@ -165,7 +188,6 @@ class RedeemService extends BaseService
                     return response()->json([
                         'message' => trans('error.variant_out_of_stock', ['id' => $item_gift->id, 'variant_id' => $item_gift_variant->id]),
                         'status' => 400,
-                        'error' => 0,
                     ], 400);
                 }
 
@@ -226,6 +248,7 @@ class RedeemService extends BaseService
             $total_point = 0;
             $metadata_redeem_item_gifts = [];
             $redeem_code = Str::uuid();
+            $itemDetails = [];
 
             $redeem = Redeem::create([
                 'user_id' => auth()->user()->id,
@@ -245,7 +268,6 @@ class RedeemService extends BaseService
                     return response()->json([
                         'message' => trans('error.out_of_stock', ['id' => $item_gift->id]),
                         'status' => 400,
-                        'error' => 0,
                     ], 400);
                 }
 
@@ -254,7 +276,6 @@ class RedeemService extends BaseService
                         return response()->json([
                             'message' => trans('error.variant_required', ['id' => $item_gift->id]),
                             'status' => 400,
-                            'error' => 0,
                         ], 400);
                     }
                 }
@@ -264,7 +285,6 @@ class RedeemService extends BaseService
                         return response()->json([
                             'message' => trans('error.variant_not_found_in_item_gifts', ['id' => $item_gift->id]),
                             'status' => 400,
-                            'error' => 0,
                         ], 400);
                     }
                 }
@@ -295,13 +315,36 @@ class RedeemService extends BaseService
                 ]);
 
                 array_push($metadata_redeem_item_gifts, $redeem_item_gift->toArray());
-
+                array_push($itemDetails, [
+                    'id' => $item_gift->id,
+                    'price' => $item_gift->item_gift_point,
+                    'quantity' => $quantity,
+                    'name' => ($item_gift->variants->count() > 0) ? $item_gift->item_gift_name . ' - ' . $variant->variant_name : $item_gift->item_gift_name,
+                ]);
+        
                 $redeem->redeem_item_gifts()->save($redeem_item_gift);
 
                 $item_gift->item_gift_quantity -= $quantity;
                 $item_gift->save();
             }
 
+            $transactionDetails = [
+                'order_id' => $redeem->id . '-' . Str::random(5),
+                'gross_amount' => $total_point
+            ];
+
+            $customerDetails = [
+                'first_name' => auth()->user()->name,
+                'email' => auth()->user()->email
+            ];
+    
+            $midtransParams = [
+                'transaction_details' => $transactionDetails,
+                'item_details' => $itemDetails,
+                'customer_details' => $customerDetails
+            ];
+
+            $redeem->snap_url = $this->getMidtransSnapUrl($midtransParams);
             $redeem->metadata = [
                 'user_id' => auth()->user()->id,
                 'redeem_code' => $redeem_code,
@@ -349,5 +392,15 @@ class RedeemService extends BaseService
         DB::commit();
 
         return $result;
+    }
+
+    private function getMidtransSnapUrl($params)
+    {
+        \Midtrans\Config::$serverKey = env('MIDTRANS_SERVER_KEY');
+        \Midtrans\Config::$isProduction = (bool) env('MIDTRANS_PRODUCTION');
+        \Midtrans\Config::$is3ds = (bool) env('MIDTRANS_3DS');
+
+        $snapUrl = \Midtrans\Snap::createTransaction($params)->redirect_url;
+        return $snapUrl;
     }
 }

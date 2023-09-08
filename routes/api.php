@@ -91,5 +91,7 @@ Route::middleware(['xssclean'])->group(function () {
         // Variant
         Route::get('/variants', '\App\Http\Controllers\API\v1\VariantController@index');
         Route::get('/variants/{id}', '\App\Http\Controllers\API\v1\VariantController@show');
+        // Webhook
+        Route::post('/webhook', '\App\Http\Controllers\API\v1\WebhookController@midtransHandler');
     });
 });
