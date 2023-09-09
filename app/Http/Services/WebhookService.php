@@ -70,6 +70,8 @@ class WebhookService extends BaseService
                 ];
             }
 
+            dd($redeem->users->email);
+
             Mail::to($redeem->users->email)->send(new RedeemConfirmation($header_data, $detail_data));   
         }
 
