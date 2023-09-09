@@ -5,7 +5,7 @@
 </head>
 <body>
     <h1 style="color: #333;">Thank you for your order!</h1>
-    <h3>#{{ $transaction_details['redeem_code'] }}</h3>
+    <h3>#{{ $header_data['redeem_code'] }}</h3>
 
     <table style="border-collapse: collapse; width: 100%;">
         <thead>
@@ -16,7 +16,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach($item_details as $item)
+            @foreach($detail_data as $item)
             <tr>
                 <td style="border: 1px solid #ddd; padding: 8px;">{{ $item['name'] }}</td>
                 <td style="border: 1px solid #ddd; padding: 8px;">{{ $item['quantity'] }}</td>
@@ -27,7 +27,7 @@
         <tfoot>
             <tr>
                 <th colspan="2" style="border: 1px solid #ddd; padding: 8px; text-align: right;">Total Price</th>
-                <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">{{ $transaction_details['total_price'] }}</th>
+                <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">{{ $header_data['total_price'] }}</th>
             </tr>
         </tfoot>
     </table>

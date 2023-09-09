@@ -9,22 +9,21 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class RedeemConfirmation extends Mailable implements ShouldQueue
+class RedeemConfirmation extends Mailable
 {
     use Queueable, SerializesModels;
 
-    protected $transaction_details;
-    protected $item_details;
+    protected $header_data, $detail_data;
 
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct($transaction_details, $item_details)
+    public function __construct($header_data, $detail_data)
     {
-        $this->transaction_details = $transaction_details;
-        $this->item_details = $item_details;
+        $this->header_data = $header_data;
+        $this->detail_data = $detail_data;
     }
 
     /**
@@ -49,8 +48,8 @@ class RedeemConfirmation extends Mailable implements ShouldQueue
         return new Content(
             view: 'emails.redeem_confirmation',
             with : [
-                'transaction_details' => $this->transaction_details,
-                'item_details' => $this->item_details
+                'header_data' => $this->header_data,
+                'detail_data' => $this->detail_data
             ]
         );
     }
