@@ -15,20 +15,18 @@ class SendRedeemConfirmationJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    protected $transaction_details;
-    protected $item_details;
-    protected $customer_details;
+    protected $email, $header_data, $detail_data;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct($customer_details, $transaction_details, $item_details)
+    public function __construct($email, $header_data, $detail_data)
     {
-        $this->customer_details = $customer_details;
-        $this->transaction_details = $transaction_details;
-        $this->item_details = $item_details;
+        $this->email = $email;
+        $this->detail_data = $detail_data;
+        $this->header_data = $header_data;
     }
 
     /**
@@ -38,6 +36,6 @@ class SendRedeemConfirmationJob implements ShouldQueue
      */
     public function handle()
     {
-        Mail::to($this->customer_details['email'])->send(new RedeemConfirmation($this->transaction_details, $this->item_details));
+        Mail::to($this->email)->send(new RedeemConfirmation($this->header_data, $this->detail_data));
     }
 }
