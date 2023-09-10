@@ -61,6 +61,12 @@ Route::middleware(['xssclean'])->group(function () {
                 Route::get('/payment-logs/{id}', '\App\Http\Controllers\API\v1\PaymentLogController@show');
             });
             Route::group(['middleware' => ['role:admin|customer']], function () {
+                // Address
+                Route::get('/address', '\App\Http\Controllers\API\v1\AddressController@index');
+                Route::get('/address/{id}', '\App\Http\Controllers\API\v1\AddressController@show');
+                Route::post('/address', '\App\Http\Controllers\API\v1\AddressController@store');
+                Route::put('/address/{id}', '\App\Http\Controllers\API\v1\AddressController@update');
+                Route::delete('/address/{id}', '\App\Http\Controllers\API\v1\AddressController@delete');
                 // Redeem Item Gift
                 Route::get('/gifts/redeem', '\App\Http\Controllers\API\v1\RedeemController@index');
                 Route::get('/gifts/redeem/{id}', '\App\Http\Controllers\API\v1\RedeemController@show');

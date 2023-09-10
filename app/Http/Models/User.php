@@ -7,6 +7,7 @@ use App\Http\Models\Cart;
 use App\Http\Models\Rating;
 use App\Http\Models\Redeem;
 use Illuminate\Support\Arr;
+use App\Http\Models\Address;
 use App\Http\Models\Wishlists;
 use Laravel\Passport\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
@@ -273,5 +274,10 @@ class User extends Authenticable implements MustVerifyEmail
 	public function carts()
     {
         return $this->hasMany(Cart::class);
+    }
+
+	public function address()
+    {
+        return $this->hasOne(Address::class);
     }
 }

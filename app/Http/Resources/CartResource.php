@@ -29,7 +29,20 @@ class CartResource extends JsonResource
             ],
             'variants' => ($this->variant_id != null) ? $this->variants->makeHidden(['created_at', 'updated_at']) : null,
             'cart_quantity' => $this->cart_quantity,
-            'users' => $this->users->makeHidden(['created_at', 'updated_at']),
+            'users' => [
+                'id' => $this->users->id,
+                'name' => $this->users->name,
+                'roles' => $this->users->getRoleNames(),
+                'username' => $this->users->username,
+                'email' => $this->users->email,
+                'address' => ($this->users->address) ? [
+                    'province_id' => $this->users->address->province_id,
+                    'city_id' => $this->users->address->city_id,
+                    'district_id' => $this->users->address->district_id,
+                    'postal_code' => $this->users->address->postal_code,
+                    'address' => $this->users->address->address,
+                ] : null,
+            ]
         ];
     }
 
