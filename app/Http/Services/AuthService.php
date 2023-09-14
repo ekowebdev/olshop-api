@@ -73,13 +73,18 @@ class AuthService extends BaseService
 
         $user = $this->repository->getDataByMultipleParam(['email' => $request['email']]);
 
+        if($user->email_verified_at == null){
+            throw new AuthenticationException(trans('auth.not_verified_account'));
+        }
+
         if(empty($user)){
             throw new AuthenticationException(trans('auth.wrong_email_or_password'));
         }
+
         if (empty($user) OR !Hash::check($request['password'], $user->password, [])) {
             throw new AuthenticationException(trans('auth.wrong_email_or_password'));
         }
-        
+
         $token_response = $this->getBearerTokenByUser($user, $this->oauth_client_id, false);
         
         $data = [

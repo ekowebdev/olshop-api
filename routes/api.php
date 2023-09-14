@@ -100,6 +100,10 @@ Route::middleware(['xssclean'])->group(function () {
         // Variant
         Route::get('/variants', '\App\Http\Controllers\API\v1\VariantController@index');
         Route::get('/variants/{id}', '\App\Http\Controllers\API\v1\VariantController@show');
+        // RajaOngkir
+        Route::get('/rajaongkir/get-province', '\App\Http\Controllers\API\v1\RajaOngkirController@getProvince');
+        Route::get('/rajaongkir/get-city', '\App\Http\Controllers\API\v1\RajaOngkirController@getCity');
+        Route::post('/rajaongkir/get-cost', '\App\Http\Controllers\API\v1\RajaOngkirController@getCost');
         // Webhook
         Route::post('/webhook/midtrans', '\App\Http\Controllers\API\v1\WebhookController@midtransHandler');
     });

@@ -34,7 +34,6 @@ class User extends Authenticable implements MustVerifyEmail
     ];
 
     protected $hidden = [
-        'email_verified_at',
         'password',
         'remember_token',
     ];
@@ -247,7 +246,8 @@ class User extends Authenticable implements MustVerifyEmail
                     'name', 
                     'username', 
                     'email',
-                    'password'
+                    'password',
+					'email_verified_at',
                 ]);
     }
 
