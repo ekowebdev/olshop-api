@@ -3,6 +3,7 @@
 namespace App\Http\Services;
 
 use App\Http\Services\BaseService;
+use App\Exceptions\DataEmptyException;
 
 class RajaOngkirService extends BaseService
 {
@@ -55,6 +56,8 @@ class RajaOngkirService extends BaseService
 
         $collection = collect($data['rajaongkir']['results']);
 
+        if($collection->isEmpty()) throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => 'Province'], $locale));
+
         return response()->json([
             'data' => $collection,
         ]);
@@ -105,6 +108,8 @@ class RajaOngkirService extends BaseService
         $data = json_decode($response, true);
 
         $collection = collect($data['rajaongkir']['results']);
+
+        if($collection->isEmpty()) throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => 'City'], $locale));
 
         return response()->json([
             'data' => $collection,
@@ -166,6 +171,10 @@ class RajaOngkirService extends BaseService
         $data = json_decode($response, true);
 
         $collection = collect($data['rajaongkir']['results']);
+
+        $costs = $collection[0]['costs'];
+
+        if(empty($costs)) throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => 'Cost'], $locale));
 
         return response()->json([
             'data' => $collection,

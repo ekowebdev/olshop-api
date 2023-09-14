@@ -60,9 +60,9 @@ class CartResource extends JsonResource
                 return strval($min_value);
             }
 
-            return "{$min_value} ~ {$max_value}";
+            return format_money($min_value) . " ~ " . format_money($max_value);
         } else {
-            return strval($item->item_gift_point ?? 0);
+            return format_money(strval($this->item_gift_point ?? 0));
         }
     }
 }
