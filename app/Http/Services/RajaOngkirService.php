@@ -3,7 +3,10 @@
 namespace App\Http\Services;
 
 use App\Http\Services\BaseService;
+use Illuminate\Support\Collection;
+use Illuminate\Pagination\Paginator;
 use App\Exceptions\DataEmptyException;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class RajaOngkirService extends BaseService
 {
@@ -14,7 +17,7 @@ class RajaOngkirService extends BaseService
         $this->api_key = env('RAJAONGKIR_API_KEY');
     }
 
-    public function getProvince($locale, $id)
+    public function getProvince($locale, $id, $page, $per_page)
     {
         $id = $id ?? null;
 
@@ -58,12 +61,18 @@ class RajaOngkirService extends BaseService
 
         if($collection->isEmpty()) throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => 'Province'], $locale));
 
-        return response()->json([
-            'data' => $collection,
-        ]);
+        if(is_multidimensional_array($collection->toArray())) {
+            $response = response()->json($this->format_json($collection, $page, $per_page, ['path' => 'http://localhost:9000/api/v1/id/rajaongkir/get-province']));
+        } else {
+            $response = response()->json([
+                'data' => $collection
+            ]);
+        }
+
+        return $response;
     }
 
-    public function getCity($locale, $id, $province_id)
+    public function getCity($locale, $id, $province_id, $page, $per_page)
     {
         $id = $id ?? null;
         $province_id = $province_id ?? null;
@@ -111,9 +120,15 @@ class RajaOngkirService extends BaseService
 
         if($collection->isEmpty()) throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => 'City'], $locale));
 
-        return response()->json([
-            'data' => $collection,
-        ]);
+        if(is_multidimensional_array($collection->toArray())) {
+            $response = response()->json($this->format_json($collection, $page, $per_page, ['path' => 'http://localhost:9000/api/v1/id/rajaongkir/get-city']));
+        } else {
+            $response = response()->json([
+                'data' => $collection
+            ]);
+        }
+
+        return $response;
     }
 
     public function getCost($locale, $request)
@@ -180,4 +195,45 @@ class RajaOngkirService extends BaseService
             'data' => $collection,
         ]);
     }
+
+    private function format_json($original_data, $page, $per_page, $options)
+    {
+        $data_collection = $this->paginate($original_data, $page, $per_page, $options);
+
+        $transformed_data = $data_collection->map(function ($item) {
+            return $item;
+        });
+
+        $data_array = $data_collection->toArray();
+
+        $results = [
+            'data' => $transformed_data->toArray(),
+            'links' => [
+                'first' => $data_array['first_page_url'],
+                'last' => $data_array['last_page_url'],
+                'prev' => $data_array['prev_page_url'],
+                'next' => $data_array['next_page_url'],
+            ],
+            'meta' => [
+                'current_page' => $data_array['current_page'],
+                'from' => $data_array['from'],
+                'last_page' => $data_array['last_page'],
+                'links' => $data_array['links'],
+                'path' => $data_array['path'],
+                'per_page' => $data_array['per_page'],
+                'to' => $data_array['to'],
+                'total' => $data_array['total'],
+            ],
+        ];
+
+        return $results;
+    }
+
+    private function paginate($data, $page = null, $per_page = 15, $options = [])
+    {
+        $page = $page ?: (Paginator::resolveCurrentPage() ?: 1);
+        $data = $data instanceof Collection ? $data : Collection::make($data);
+        return new LengthAwarePaginator($data->forPage($page, $per_page), $data->count(), $per_page, $page, $options);
+    }
+    
 }

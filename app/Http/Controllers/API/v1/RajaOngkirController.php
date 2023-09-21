@@ -19,14 +19,18 @@ class RajaOngkirController extends BaseController
     public function getProvince($locale)
     {
         $id = request('id');
-        return $this->service->getProvince($locale, $id);
+        $page = request('page');
+        $per_page = request('per_page');
+        return $this->service->getProvince($locale, $id, $page, $per_page);
     }
 
     public function getCity($locale)
     {
         $id = request('id');
         $province_id = request('province_id');
-        return $this->service->getCity($locale, $id, $province_id);
+        $page = request('page');
+        $per_page = request('per_page');
+        return $this->service->getCity($locale, $id, $province_id, $page, $per_page);
     }
 
     public function getCost($locale, Request $request)

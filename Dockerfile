@@ -52,5 +52,8 @@ RUN chmod -R 755 /var/www/html/bootstrap
 RUN usermod --uid 1000 www-data
 RUN groupmod --gid 1001 www-data
 
+# Set permission entrypoint file
+RUN chmod +x /var/www/html/docker/entrypoint.sh
+
 # Run the entrypoint file.
 ENTRYPOINT [ "docker/entrypoint.sh" ]
