@@ -52,7 +52,8 @@ class AuthService extends BaseService
             'password' => Hash::make($request['password']),
         ]);
         $user->assignRole($request['role']);
-        $user->sendEmailVerificationNotification();
+        // $user->sendEmailVerificationNotification();
+        SendEmailVerificationJob::dispatch($user);
         DB::commit();
 
         $data = [
@@ -207,8 +208,8 @@ class AuthService extends BaseService
             ]);
         }
 
-        auth()->user()->sendEmailVerificationNotification();
-        // dispatch(new SendEmailVerificationJob(auth()->user()));
+        // auth()->user()->sendEmailVerificationNotification();
+        SendEmailVerificationJob::dispatch($user);
 
         return response()->json([
             'message' => trans('all.success_resend_verification'), 
