@@ -3,6 +3,7 @@
 namespace App\Http\Models;
 
 use App\Http\Models\User;
+use App\Http\Models\Shipping;
 use App\Http\Models\BaseModel;
 use App\Http\Models\PaymentLog;
 use App\Http\Models\RedeemItemGift;
@@ -29,6 +30,11 @@ class Redeem extends BaseModel
     public function payment_logs()
     {
         return $this->hasMany(PaymentLog::class);
+    }
+
+    public function shippings()
+    {
+        return $this->hasOne(Shipping::class);
     }
 
     public function scopeGetAll($query)

@@ -6,7 +6,7 @@ use App\Http\Models\PaymentLog;
 use App\Mail\RedeemConfirmation;
 use App\Http\Models\RedeemItemGift;
 use Illuminate\Support\Facades\Mail;
-use App\Jobs\SendRedeemConfirmationJob;
+use App\Jobs\SendEmailRedeemConfirmationJob;
 use App\Http\Repositories\RedeemRepository;
 
 class WebhookService extends BaseService
@@ -100,9 +100,9 @@ class WebhookService extends BaseService
                 ];
             }
 
-            Mail::to($redeem->users->email)->send(new RedeemConfirmation($header_data, $detail_data));   
+            // Mail::to($redeem->users->email)->send(new RedeemConfirmation($header_data, $detail_data));   
             
-            // SendRedeemConfirmationJob::dispatch($redeem->users->email, $header_data, $detail_data);
+            SendEmailRedeemConfirmationJob::dispatch($redeem->users->email, $header_data, $detail_data);
         }
 
         return response()->json([

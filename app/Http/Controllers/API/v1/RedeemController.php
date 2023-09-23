@@ -43,6 +43,11 @@ class RedeemController extends BaseController
         return $this->service->redeem_multiple($locale, Request::all());
     }
 
+    public function checkout($locale)
+    {
+        return $this->service->checkout($locale, Request::all());
+    }
+
     public function delete($locale, $id)
     {
         $data = $this->service->delete($locale, $id, Request::all());

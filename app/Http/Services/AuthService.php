@@ -4,7 +4,6 @@ namespace App\Http\Services;
 use Carbon\Carbon;
 use App\Http\Models\User;
 use Illuminate\Support\Str;
-use App\Mail\LinkResetPassword;
 use App\Http\Services\BaseService;
 use App\Http\Traits\PassportToken;
 use Illuminate\Support\Facades\DB;
@@ -13,6 +12,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use App\Jobs\SendEmailVerificationJob;
 use Illuminate\Auth\Events\Registered;
+use App\Jobs\SendEmailResetPasswordLinkJob;
 use Illuminate\Support\Facades\Password;
 use App\Http\Repositories\UserRepository;
 use Illuminate\Auth\Events\PasswordReset;
@@ -189,18 +189,11 @@ class AuthService extends BaseService
         return redirect()->to($url);
     }
 
-    // public function notice()
-    // {
-    //     return response()->json([
-    //         'message' => 'Anda belum melakukan verifikasi email.', 
-    //         'status' => 400,
-    //         'error' => 0,
-    //     ]);
-    // }
-
-    public function resend($locale)
+    public function resend($locale, $request)
     {
-        if(auth()->user()->hasVerifiedEmail()){
+        $user = $this->repository->getDataByMultipleParam(['email' => $request->email]);
+        
+        if($user->email_verified_at != null){
             return response()->json([
                 'message' => trans('error.already_verification'), 
                 'status' => 200,
@@ -227,6 +220,8 @@ class AuthService extends BaseService
         $status = Password::sendResetLink(
             $request->only('email')
         );
+
+        // SendEmailResetPasswordLinkJob::dispatch($request->email);
 
         if($status != Password::RESET_LINK_SENT) {
             return response()->json([

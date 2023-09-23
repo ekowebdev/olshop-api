@@ -7,26 +7,29 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use App\Http\Models\Variant;
 use App\Http\Models\ItemGift;
+use App\Http\Models\Shipping;
 use App\Mail\RedeemConfirmation;
 use Illuminate\Support\Facades\DB;
 use App\Http\Models\RedeemItemGift;
 use App\Http\Services\RedeemService;
 use Illuminate\Support\Facades\Mail;
 use App\Exceptions\ValidationException;
-use App\Jobs\SendRedeemConfirmationJob;
 use Illuminate\Database\QueryException;
+use App\Http\Services\RajaOngkirService;
 use App\Http\Repositories\RedeemRepository;
+use App\Jobs\SendEmailRedeemConfirmationJob;
 use App\Http\Repositories\ItemGiftRepository;
 
 class RedeemService extends BaseService
 {
-    private $model, $repository, $item_gift_repository;
+    private $model, $repository, $item_gift_repository, $rajaongkir_service;
     
-    public function __construct(Redeem $model, RedeemRepository $repository, ItemGiftRepository $item_gift_repository)
+    public function __construct(Redeem $model, RedeemRepository $repository, ItemGiftRepository $item_gift_repository, RajaOngkirService $rajaongkir_service)
     {
         $this->model = $model;
         $this->repository = $repository;
         $this->item_gift_repository = $item_gift_repository;
+        $this->rajaongkir_service = $rajaongkir_service;
     }
 
     public function getIndexData($locale, $data)
@@ -212,7 +215,7 @@ class RedeemService extends BaseService
                 ]
             ];
 
-            // dispatch(new SendRedeemConfirmationJob($customer_details, $header_data, $detail_data));
+            // dispatch(new SendEmailRedeemConfirmationJob($customer_details, $header_data, $detail_data));
 
             DB::commit();
 
@@ -345,6 +348,207 @@ class RedeemService extends BaseService
                 $item_gift->item_gift_quantity -= $quantity;
                 $item_gift->save();
             }
+
+            $transaction_details = [
+                'order_id' => $redeem->id . '-' . Str::random(5),
+                'gross_amount' => $total_point
+            ];
+
+            $customer_details = [
+                'first_name' => auth()->user()->name,
+                'email' => auth()->user()->email
+            ];
+    
+            $midtrans_params = [
+                'transaction_details' => $transaction_details,
+                'item_details' => $item_details,
+                'customer_details' => $customer_details
+            ];
+
+            $redeem->snap_url = $this->getMidtransSnapUrl($midtrans_params);
+            $redeem->metadata = [
+                'user_id' => auth()->user()->id,
+                'redeem_code' => $redeem_code,
+                'redeem_item_gifts' => $metadata_redeem_item_gifts,
+                'total_point' => $total_point,
+                'redeem_date' => date('Y-m-d'),
+            ];
+            $redeem->total_point = $total_point;
+            $redeem->save();
+
+            DB::commit();
+
+            return response()->json([
+                'message' => trans('all.success_redeem'),
+                'status' => 200,
+                'error' => 0
+            ]);
+        } catch (QueryException $e) {
+            DB::rollback();
+        }
+
+    }
+
+    public function checkout($locale, $data)
+    {
+        $data_request = Arr::only($data, [
+            'item_gift_id',
+            'variant_id',
+            'redeem_quantity',
+            'shipping_origin',
+            'shipping_destination',
+            'shipping_weight',
+            'shipping_courier',
+        ]);
+
+        $this->item_gift_repository->validate($data_request, [
+                'item_gift_id' => [
+                    'required',
+                ],
+                'item_gift_id.*' => [
+                    'required',
+                    'exists:item_gifts,id',
+                ],
+                'variant_id' => [
+                    'nullable',
+                ],
+                'variant_id.*' => [
+                    'nullable',
+                    'exists:variants,id',
+                ],
+                'redeem_quantity' => [
+                    'required',
+                ],
+                'redeem_quantity.*' => [
+                    'required',
+                    'numeric',
+                    'min:1',
+                ],
+                'shipping_origin' => [
+                    'required',
+                    'string',
+                ],
+                'shipping_destination' => [
+                    'required',
+                    'string',
+                ],
+                'shipping_weight' => [
+                    'required',
+                    'numeric',
+                ],
+                'shipping_courier' => [
+                    'required',
+                    'in:jne,pos,tiki',
+                ],
+            ]
+        );
+
+        DB::beginTransaction();
+
+        try {
+            $total_point = 0;
+            $metadata_redeem_item_gifts = [];
+            $redeem_code = Str::uuid();
+            $item_details = [];
+
+            $redeem = Redeem::create([
+                'user_id' => auth()->user()->id,
+                'redeem_code' => $redeem_code,
+                'total_point' => $total_point,
+                'redeem_date' => date('Y-m-d'),
+            ]);
+
+            foreach ($data_request['item_gift_id'] as $key => $item_gift_id) {
+                $quantity = $data_request['redeem_quantity'][$key];
+                $variant_id = $data_request['variant_id'][$key] ?? null;
+
+                // Lock the item_gift row for update
+                $item_gift = ItemGift::lockForUpdate()->find($item_gift_id);
+
+                if (!$item_gift || $item_gift->item_gift_quantity < $quantity || $item_gift->item_gift_status == 'O') {
+                    return response()->json([
+                        'message' => trans('error.out_of_stock', ['id' => $item_gift->id]),
+                        'status' => 400,
+                    ], 400);
+                }
+
+                if ($item_gift->variants->count() > 0) {
+                    if (!isset($variant_id)) {
+                        return response()->json([
+                            'message' => trans('error.variant_required', ['id' => $item_gift->id]),
+                            'status' => 400,
+                        ], 400);
+                    }
+                }
+
+                if ($item_gift->variants->count() == 0) {
+                    if (isset($variant_id)) {
+                        return response()->json([
+                            'message' => trans('error.variant_not_found_in_item_gifts', ['id' => $item_gift->id]),
+                            'status' => 400,
+                        ], 400);
+                    }
+                }
+
+                $subtotal = 0;
+
+                if ($variant_id) {
+                    // Lock the variant row for update
+                    $variant = $item_gift->variants()->lockForUpdate()->find($variant_id);
+                    
+                    if ($variant) {
+                        $subtotal = $variant->variant_point * $quantity;
+                        $variant->update([
+                            'variant_quantity' => $variant->variant_quantity - $quantity,
+                        ]);
+                    }
+                } else {
+                    $subtotal = $item_gift->item_gift_point * $quantity;
+                }
+
+                $total_point += $subtotal;
+
+                $redeem_item_gift = new RedeemItemGift([
+                    'item_gift_id' => $item_gift->id,
+                    'variant_id' => $variant_id,
+                    'redeem_quantity' => $quantity,
+                    'redeem_point' => $subtotal,
+                ]);
+
+                array_push($metadata_redeem_item_gifts, $redeem_item_gift->toArray());
+                array_push($item_details, [
+                    'id' => $item_gift->id,
+                    'price' => $item_gift->item_gift_point,
+                    'quantity' => $quantity,
+                    'name' => ($item_gift->variants->count() > 0) ? mb_strimwidth($item_gift->item_gift_name . ' - ' . $variant->variant_name, 0, 50, '..') : mb_strimwidth($item_gift->item_gift_name, 0, 50, '..'),
+                ]);
+        
+                $redeem->redeem_item_gifts()->save($redeem_item_gift);
+
+                $item_gift->item_gift_quantity -= $quantity;
+                $item_gift->save();
+            }
+
+            $request = [
+                'origin_city' => $data_request['shipping_origin'],
+                'destination_city' => $data_request['shipping_destination'],
+                'weight' => $data_request['shipping_weight'],
+                'courier' => $data_request['shipping_courier'],
+            ];
+
+            $shippings = $this->rajaongkir_service->getCost($locale, $request);
+
+            dd($shippings);
+
+            $shipping = new Shipping([
+                'redeem_id' => $redeem->id,
+                'origin' => $data_request['shipping_origin'],
+                'destination' => $data_request['shipping_destination'],
+                'weight' => $data_request['shipping_weight'],
+                'courier' => $data_request['shipping_courier'],
+                'cost' => $shipping_costs['cost'],
+            ]);
+            $shipping->save();
 
             $transaction_details = [
                 'order_id' => $redeem->id . '-' . Str::random(5),

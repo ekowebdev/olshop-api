@@ -131,7 +131,7 @@ class RajaOngkirService extends BaseService
         return $response;
     }
 
-    public function getCost($locale, $request)
+    public function getListCost($locale, $request)
     {
         $request->validate([
             'origin_city' => 'required',
@@ -148,10 +148,10 @@ class RajaOngkirService extends BaseService
         ]);
 
         $body = http_build_query([
-            'origin' => $data_request['origin_city'],
-            'destination' => $data_request['destination_city'],
-            'weight' => $data_request['weight'],
-            'courier' => $data_request['courier'],
+            'origin' => $request['origin_city'],
+            'destination' => $request['destination_city'],
+            'weight' => $request['weight'],
+            'courier' => $request['courier'],
         ]);
 
         $curl = curl_init();
@@ -189,11 +189,60 @@ class RajaOngkirService extends BaseService
 
         $costs = $collection[0]['costs'];
 
+        dd($costs);
+
         if(empty($costs)) throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => 'Cost'], $locale));
 
         return response()->json([
             'data' => $collection,
         ]);
+    }
+
+    public function getCost($locale, $request)
+    {
+        $body = http_build_query([
+            'origin' => $request['origin_city'],
+            'destination' => $request['destination_city'],
+            'weight' => $request['weight'],
+            'courier' => $request['courier'],
+        ]);
+
+        $curl = curl_init();
+        
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => "https://api.rajaongkir.com/starter/cost",
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => "",
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 30,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => "POST",
+            CURLOPT_POSTFIELDS => $body,
+            CURLOPT_HTTPHEADER => array(
+                "content-type: application/x-www-form-urlencoded",
+                "key: " . $this->api_key
+            ),
+        ));
+          
+        $response = curl_exec($curl);
+        $err = curl_error($curl);
+          
+        curl_close($curl);
+
+        if ($err) {
+            return response()->json([
+                'message' => "cURL Error #:" . $err,
+                'status' => 500,
+            ], 500);
+        }
+
+        $data = json_decode($response, true);
+
+        $collection = collect($data['rajaongkir']['results']);
+
+        $costs = $collection[0]['costs'];
+
+        return $costs;
     }
 
     private function format_json($original_data, $page, $per_page, $options)

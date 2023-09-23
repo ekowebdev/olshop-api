@@ -22,12 +22,10 @@ Route::middleware(['xssclean'])->group(function () {
         Route::post('/register', '\App\Http\Controllers\API\v1\Auth\AuthController@register');
         Route::post('/login', '\App\Http\Controllers\API\v1\Auth\AuthController@login');
         Route::post('/refresh-token', '\App\Http\Controllers\API\v1\Auth\AuthController@refresh_token');
-        Route::get('/email/resend', '\App\Http\Controllers\API\v1\Auth\AuthController@resend')->name('verification.resend');
-        
-        Route::post('/forget/password', '\App\Http\Controllers\API\v1\Auth\AuthController@forget_password')->name('forget.password'); 
-        Route::post('/reset/password', '\App\Http\Controllers\API\v1\Auth\AuthController@reset_password_update')->name('password.update');
-        
-        Route::group(['middleware' => ['auth:api','verified']], function () {
+        Route::post('/email/resend', '\App\Http\Controllers\API\v1\Auth\AuthController@resend')->name('verification.resend');
+        Route::post('/forget/password', '\App\Http\Controllers\API\v1\Auth\AuthController@forget_password')->name('forget.password')->middleware('verified'); 
+        Route::post('/reset/password', '\App\Http\Controllers\API\v1\Auth\AuthController@reset_password_update')->name('password.update')->middleware('verified');
+        Route::group(['middleware' => ['auth:api']], function () {
             Route::group(['middleware' => ['role:admin']], function () {
                 // User
                 Route::get('/users', '\App\Http\Controllers\API\v1\UserController@index');
@@ -70,8 +68,9 @@ Route::middleware(['xssclean'])->group(function () {
                 // Redeem Item Gift
                 Route::get('/gifts/redeem', '\App\Http\Controllers\API\v1\RedeemController@index');
                 Route::get('/gifts/redeem/{id}', '\App\Http\Controllers\API\v1\RedeemController@show');
-                Route::post('/gifts/{itemGiftId}/redeem', '\App\Http\Controllers\API\v1\RedeemController@redeem');
-                Route::post('/gifts/redeem', '\App\Http\Controllers\API\v1\RedeemController@redeem_multiple');
+                Route::post('/gifts/{itemGiftId}/redeem', '\App\Http\Controllers\API\v1\RedeemController@redeem')->middleware('verified');
+                Route::post('/gifts/redeem', '\App\Http\Controllers\API\v1\RedeemController@redeem_multiple')->middleware('verified');
+                Route::post('/gifts/checkout', '\App\Http\Controllers\API\v1\RedeemController@checkout')->middleware('verified');
                 Route::delete('/gifts/redeem/{id}', '\App\Http\Controllers\API\v1\RedeemController@delete');
                 // Wishlist Item Gift
                 Route::get('/gifts/wishlist', '\App\Http\Controllers\API\v1\WishlistController@index');
