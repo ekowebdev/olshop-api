@@ -191,8 +191,12 @@ class AuthService extends BaseService
 
     public function resend($locale, $request)
     {
-        $user = $this->repository->getDataByMultipleParam(['email' => $request->email]);
-        
+        $this->validate($request, [
+            'email' => 'required|string|email:rfc,dns|exists:users',
+        ]);
+
+        $user = $this->repository->getDataByMultipleParam(['email' => $request['email']]);
+
         if($user->email_verified_at != null){
             return response()->json([
                 'message' => trans('error.already_verification'), 
