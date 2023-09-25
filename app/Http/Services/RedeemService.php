@@ -174,7 +174,7 @@ class RedeemService extends BaseService
                 'customer_details' => $customer_details
             ];
 
-            $redeem->snap_url = $this->getMidtransSnapUrl($midtrans_params);
+            $redeem->snap_url = $this->get_snap_url_midtrans($midtrans_params);
             $redeem->metadata = [
                 'user_id' => auth()->user()->id,
                 'redeem_code' => $redeem_code,
@@ -365,7 +365,7 @@ class RedeemService extends BaseService
                 'customer_details' => $customer_details
             ];
 
-            $redeem->snap_url = $this->getMidtransSnapUrl($midtrans_params);
+            $redeem->snap_url = $this->get_snap_url_midtrans($midtrans_params);
             $redeem->metadata = [
                 'user_id' => auth()->user()->id,
                 'redeem_code' => $redeem_code,
@@ -566,7 +566,7 @@ class RedeemService extends BaseService
                 'customer_details' => $customer_details
             ];
 
-            $redeem->snap_url = $this->getMidtransSnapUrl($midtrans_params);
+            $redeem->snap_url = $this->get_snap_url_midtrans($midtrans_params);
             $redeem->metadata = [
                 'user_id' => auth()->user()->id,
                 'redeem_code' => $redeem_code,
@@ -616,7 +616,7 @@ class RedeemService extends BaseService
         return $result;
     }
 
-    private function getMidtransSnapUrl($params)
+    private function get_snap_url_midtrans($params)
     {
         \Midtrans\Config::$serverKey = env('MIDTRANS_SERVER_KEY');
         \Midtrans\Config::$isProduction = (bool) env('MIDTRANS_PRODUCTION');

@@ -74,9 +74,9 @@ class AuthService extends BaseService
 
         $user = $this->repository->getDataByMultipleParam(['email' => $request['email']]);
 
-        if($user->email_verified_at == null){
-            throw new AuthenticationException(trans('auth.not_verified_account'));
-        }
+        // if($user->email_verified_at == null){
+        //     throw new AuthenticationException(trans('auth.not_verified_account'));
+        // }
 
         if(empty($user)){
             throw new AuthenticationException(trans('auth.wrong_email_or_password'));

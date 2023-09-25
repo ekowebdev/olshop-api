@@ -14,5 +14,5 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return phpinfo();
+    return 'Baktiweb Olshop API v1';
 });
