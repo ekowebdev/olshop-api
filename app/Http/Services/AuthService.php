@@ -175,7 +175,7 @@ class AuthService extends BaseService
                 // 'message' => trans('error.failed_verifcation_email'), 
                 'status' => 400,
                 'error' => 0,
-            ]);
+            ], 400);
         }
 
         $user = User::find($id);
@@ -200,9 +200,9 @@ class AuthService extends BaseService
         if($user->email_verified_at != null){
             return response()->json([
                 'message' => trans('error.already_verification'), 
-                'status' => 200,
+                'status' => 409,
                 'error' => 0,
-            ]);
+            ], 409);
         }
 
         // auth()->user()->sendEmailVerificationNotification();
