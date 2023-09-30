@@ -10,7 +10,10 @@ jobs:
       - name: Checkout the files
         uses: actions/checkout@v2
       - name: Deploy to Server
-        uses: easingthemes/ssh-deploy@main
+        # uses: easingthemes/ssh-deploy@main
+        uses: easingthemes/ssh-deploy@v2 # Gunakan versi terbaru dari action ini
+        with:
+          args: ssh-deploy -i ${{ secrets.AWS_SSH_PEM }} -u ${{ secrets.AWS_USERNAME }} -H ${{ secrets.AWS_HOSTNAME }} -p 22 -P ${{ secrets.AWS_PATH_PROJECT }}
         env:
           SSH_PRIVATE_KEY: ${{ secrets.AWS_SSH_PEM }}
           REMOTE_HOST: ${{ secrets.AWS_HOSTNAME }}
