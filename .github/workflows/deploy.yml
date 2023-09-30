@@ -1,4 +1,4 @@
-name: Deploy RGB API
+name: Deploy Olshop API
 on:
   push:
     branches:

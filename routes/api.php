@@ -22,8 +22,8 @@ Route::middleware(['xssclean'])->group(function () {
         Route::post('/login', '\App\Http\Controllers\API\v1\Auth\AuthController@login');
         Route::post('/refresh-token', '\App\Http\Controllers\API\v1\Auth\AuthController@refresh_token');
         Route::post('/email/resend', '\App\Http\Controllers\API\v1\Auth\AuthController@resend')->name('verification.resend');
-        Route::post('/forget/password', '\App\Http\Controllers\API\v1\Auth\AuthController@forget_password')->name('forget.password')->middleware('verified'); 
-        Route::post('/reset/password', '\App\Http\Controllers\API\v1\Auth\AuthController@reset_password_update')->name('password.update')->middleware('verified');
+        Route::post('/forget/password', '\App\Http\Controllers\API\v1\Auth\AuthController@forget_password')->name('forget.password'); 
+        Route::post('/reset/password', '\App\Http\Controllers\API\v1\Auth\AuthController@reset_password_update')->name('password.update');
         Route::group(['middleware' => ['auth:api']], function () {
             Route::group(['middleware' => ['role:admin']], function () {
                 // User
