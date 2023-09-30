@@ -31,15 +31,24 @@ jobs:
       #       php artisan cache:clear &&
       #       php artisan up
       #     '
-      - uses: actions/checkout@v3
-      - name: Deploy to server
-        uses: appleboy/ssh-action@v0.1.4
-        with:
-          host: ${{ secrets.AWS_HOSTNAME }}
-          port: 22
-          username: ${{ secrets.AWS_USERNAME }}
-          key: ${{ secrets.AWS_SSH_PEM }}
-          script: |
+      # - uses: actions/checkout@v3
+      # - name: Deploy to server
+      #   uses: appleboy/ssh-action@v0.1.4
+      - name: Checkout the files
+        uses: actions/checkout@v2
+      - name: Deploy to Server 1
+        uses: easingthemes/ssh-deploy@main
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.AWS_SSH_PEM }}
+          REMOTE_HOST: ${{ secrets.AWS_HOSTNAME }}
+          REMOTE_USER: ${{ secrets.AWS_USERNAME }}
+          TARGET: ${{ secrets.AWS_PATH_PROJECT }}
+        # with:
+        #   host: ${{ secrets.AWS_HOSTNAME }}
+        #   port: 22
+        #   username: ${{ secrets.AWS_USERNAME }}
+        #   key: ${{ secrets.AWS_SSH_PEM }}
+        run: |
             echo "Deployment started ..."
             cd ${{ secrets.AWS_PATH_PROJECT }}
             git checkout .
