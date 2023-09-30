@@ -27,21 +27,16 @@ jobs:
         run: |
           echo "Deployment started ..."
           cd ${{ env.AWS_PATH_PROJECT }}
-          git checkout .
-          git clean -f -d
+          git checkout master
           git fetch --all
-          git reset --hard origin/main
-          git pull origin main
-          sudo chmod -R 777 bootstrap/cache
-          sudo chmod -R 777 storage
-          composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
-          php artisan config:cache
+          git reset --hard origin/master
+          git pull origin master
+          composer update --no-dev --prefer-dist --optimize-autoloader
+          chmod -R 775 storage
+          php artisan config:clear
           php artisan cache:clear
           php artisan view:clear
           php artisan route:clear
-          php artisan migrate --force
-          git add .
-          git commit -am "Update from automation deploy"
-          git push origin main
-          echo "Deployment finished!"
+          php artisan up
+          
         
