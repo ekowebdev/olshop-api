@@ -1,6 +1,6 @@
-# Rolling Glory Tech Test API
+# Olshop API
 
-Ini merupakan RESTful API yang dibuat untuk keperluan technical test di Rolling Glory. Aplikasi ini di deploy menggunakan AWS EC2 instance dan aplikasi ini dapat diakses dengan link `http://ec2-54-169-254-246.ap-southeast-1.compute.amazonaws.com`. Aplikasi ini juga telah menerapkan fitur multi bahasa dan juga RBAC dimana hak akses dalam aplikasi ini terbagi menjadi 2 yaitu `admin` & `customer`.
+Ini merupakan RESTful API yang dibuat untuk keperluan pembuatan toko online. Aplikasi ini di deploy menggunakan AWS EC2 instance dan aplikasi ini dapat diakses dengan link `http://ec2-18-143-187-165.ap-southeast-1.compute.amazonaws.com/`. Aplikasi ini juga telah menerapkan fitur multi bahasa dan juga RBAC dimana hak akses dalam aplikasi ini terbagi menjadi 2 yaitu `admin` & `customer`.
 
 ## Spesifikasi Teknis
 
@@ -50,8 +50,8 @@ Jika ingin melakukan deploy aplikasi ini ke AWS EC2 dengan menggunakan Git Workf
 
 -   Pastikan Anda memiliki akun AWS yang valid dan telah membuat EC2 instance.
 -   Buka terminal atau command prompt lokal Anda.
--   Clone repository ini ke komputer lokal Anda dengan menggunakan perintah `git clone https://github.com/ekowebdev/rollingglory-test.git`.
--   Pindah ke direktori aplikasi dengan perintah `cd rollingglory-test`.
+-   Clone repository ini ke komputer lokal Anda dengan menggunakan perintah `git clone https://github.com/ekowebdev/olshop-api.git`.
+-   Pindah ke direktori aplikasi dengan perintah `cd olshop-api`.
 -   Buat file konfigurasi .env dengan perintah `cp .env.example .env`.
 -   Sesuaikan konfigurasi pada file .env dengan pengaturan AWS S3 dan informasi database yang sesuai.
 -   Buatlah workflows file pada direktori aplikasi.
@@ -63,8 +63,8 @@ Jika ingin melakukan deploy aplikasi ini ke AWS EC2 dengan menggunakan Git Workf
 -   Pilih EC2 instance yang telah Anda buat untuk deployment aplikasi ini.
 -   Hubungkan ke EC2 instance melalui SSH menggunakan private key Anda. Contoh perintah: `ssh -i <path to private key> <username>@<EC2 instance IP>`.
 -   Di dalam EC2 instance, pastikan Docker dan Docker Compose terinstal. Jika belum, Anda dapat mengikuti panduan instalasi resmi Docker untuk sistem operasi yang digunakan.
--   Di dalam direktori server EC2 instance, clone repositori git dengan perintah `git clone https://github.com/ekowebdev/rollingglory-test.git`.
--   Pindah ke direktori aplikasi dengan perintah `cd rollingglory-test`.
+-   Di dalam direktori server EC2 instance, clone repositori git dengan perintah `git clone https://github.com/ekowebdev/olshop-api.git`.
+-   Pindah ke direktori aplikasi dengan perintah `cd olshop-api`.
 -   Buat file konfigurasi .env dengan perintah `cp .env.example .env`.
 -   Sesuaikan konfigurasi pada file .env dengan pengaturan informasi database yang sesuai dan konfigurasi AWS S3.
 -   Jalankan perintah `docker-compose up -d` untuk memulai kontainer Docker.
