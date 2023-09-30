@@ -7,64 +7,32 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      # - name: Checkout code
-      #   uses: actions/checkout@v2
-      # - name: Deploy app to AWS EC2
-      #   env:
-      #     PRIVATE_KEY: ${{ secrets.AWS_SSH_PEM }}
-      #     HOSTNAME: ${{ secrets.AWS_HOSTNAME }}
-      #     USERNAME: ${{ secrets.AWS_USERNAME }}
-      #   run: |
-      #     echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
-      #     ssh -o StrictHostKeyChecking=no -i private_key ${USERNAME}@${HOSTNAME} '
-      #       cd ${{ secrets.AWS_PATH_PROJECT }} &&
-      #       sudo chown -R $USER:www-data ${{ secrets.AWS_PATH_PROJECT }} &&
-      #       git config --global --add safe.directory ${{ secrets.AWS_PATH_PROJECT }} &&
-      #       git checkout master &&
-      #       git fetch --all &&
-      #       git reset --hard origin/master &&
-      #       git pull origin master &&
-      #       composer update --no-dev --prefer-dist --optimize-autoloader &&
-      #       chmod -R 775 storage &&
-      #       php artisan migrate &&
-      #       php artisan config:clear &&
-      #       php artisan cache:clear &&
-      #       php artisan up
-      #     '
-      # - uses: actions/checkout@v3
-      # - name: Deploy to server
-      #   uses: appleboy/ssh-action@v0.1.4
       - name: Checkout the files
         uses: actions/checkout@v2
-      - name: Deploy to Server 1
+      - name: Deploy to Server
         uses: easingthemes/ssh-deploy@main
         env:
           SSH_PRIVATE_KEY: ${{ secrets.AWS_SSH_PEM }}
           REMOTE_HOST: ${{ secrets.AWS_HOSTNAME }}
           REMOTE_USER: ${{ secrets.AWS_USERNAME }}
           TARGET: ${{ secrets.AWS_PATH_PROJECT }}
-        # with:
-        #   host: ${{ secrets.AWS_HOSTNAME }}
-        #   port: 22
-        #   username: ${{ secrets.AWS_USERNAME }}
-        #   key: ${{ secrets.AWS_SSH_PEM }}
-        # script: |
-        #     echo "Deployment started ..."
-        #     cd ${{ secrets.AWS_PATH_PROJECT }}
-        #     git checkout .
-        #     git clean -f -d
-        #     git fetch --all
-        #     git reset --hard origin/master
-        #     git pull origin master
-        #     sudo chmod -R 777 bootstrap/cache
-        #     sudo chmod -R 777 storage
-        #     composer update --no-dev --no-interaction --prefer-dist --optimize-autoloader
-        #     php artisan config:clear
-        #     php artisan cache:clear
-        #     php artisan view:clear
-        #     php artisan route:clear
-        #     php artisan migrate
-        #     git add .
-        #     git commit -am "Update from automation deploy"
-        #     git push origin master
-        #     echo "Deployment finished!"
+        run: |
+          echo "Deployment started ..."
+          cd ${{ secrets.AWS_PATH_PROJECT }}
+          git checkout .
+          git clean -f -d
+          git fetch --all
+          git reset --hard origin/master
+          git pull origin master
+          sudo chmod -R 777 bootstrap/cache
+          sudo chmod -R 777 storage
+          composer update --no-dev --no-interaction --prefer-dist --optimize-autoloader
+          php artisan config:clear
+          php artisan cache:clear
+          php artisan view:clear
+          php artisan route:clear
+          php artisan migrate
+          git add .
+          git commit -am "Update from automation deploy"
+          git push origin master
+          echo "Deployment finished!"
