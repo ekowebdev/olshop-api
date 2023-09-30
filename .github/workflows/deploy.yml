@@ -25,18 +25,15 @@ jobs:
           AWS_PORT: 22
           AWS_PATH_PROJECT: ${{ secrets.AWS_PATH_PROJECT }}
         run: |
-          echo "Deployment started ..." &&
-          git checkout . &&
-          git clean -f -d &&
+          git checkout master &&
           git fetch --all &&
           git reset --hard origin/master &&
           git pull origin master &&
-          sudo chmod -R 777 bootstrap/cache &&
-          sudo chmod -R 777 storage &&
-          composer update --no-dev --no-interaction --prefer-dist --optimize-autoloader &&
-          php artisan config:cache &&
+          composer update --no-dev --prefer-dist --optimize-autoloader &&
+          chmod -R 775 storage &&
+          php artisan config:clear &&
           php artisan cache:clear &&
           php artisan view:clear &&
           php artisan route:clear &&
-          php artisan migrate
+          php artisan up
         
