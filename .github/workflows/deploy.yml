@@ -28,7 +28,7 @@ jobs:
           git reset --hard origin/master &&
           git pull origin master &&
           composer update --no-dev --prefer-dist --optimize-autoloader &&
-          chmod -R 775 storage &&
+          chmod -R 777 storage &&
           php artisan config:clear &&
           php artisan cache:clear &&
           php artisan view:clear &&
