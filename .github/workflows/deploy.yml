@@ -36,7 +36,7 @@ jobs:
         uses: appleboy/ssh-action@v0.1.4
         with:
           host: ${{ secrets.AWS_HOSTNAME }}
-          # port: ${{ secrets.AWS_PORT }}
+          port: 22
           username: ${{ secrets.AWS_USERNAME }}
           key: ${{ secrets.AWS_SSH_PEM }}
           script: |
