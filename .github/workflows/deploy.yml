@@ -9,33 +9,39 @@ jobs:
     steps:
       - name: Checkout the files
         uses: actions/checkout@v2
+      
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.AWS_SSH_PEM }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.AWS_HOSTNAME }} >> ~/.ssh/known_hosts
+          chmod 644 ~/.ssh/known_hosts
+
       - name: Deploy to Server
-        # uses: easingthemes/ssh-deploy@main
-        uses: easingthemes/ssh-deploy@v2 # Gunakan versi terbaru dari action ini
-        with:
-          args: ssh-deploy -i ${{ secrets.AWS_SSH_PEM }} -u ${{ secrets.AWS_USERNAME }} -H ${{ secrets.AWS_HOSTNAME }} -p 22 -P ${{ secrets.AWS_PATH_PROJECT }}
         env:
-          SSH_PRIVATE_KEY: ${{ secrets.AWS_SSH_PEM }}
-          REMOTE_HOST: ${{ secrets.AWS_HOSTNAME }}
-          REMOTE_USER: ${{ secrets.AWS_USERNAME }}
-          TARGET: ${{ secrets.AWS_PATH_PROJECT }}
+          AWS_USERNAME: ${{ secrets.AWS_USERNAME }}
+          AWS_HOSTNAME: ${{ secrets.AWS_HOSTNAME }}
+          AWS_PORT: 22
+          AWS_PATH_PROJECT: ${{ secrets.AWS_PATH_PROJECT }}
         run: |
           echo "Deployment started ..."
-          cd ${{ secrets.AWS_PATH_PROJECT }}
+          cd ${{ env.AWS_PATH_PROJECT }}
           git checkout .
           git clean -f -d
           git fetch --all
-          git reset --hard origin/master
-          git pull origin master
+          git reset --hard origin/main
+          git pull origin main
           sudo chmod -R 777 bootstrap/cache
           sudo chmod -R 777 storage
-          composer update --no-dev --no-interaction --prefer-dist --optimize-autoloader
-          php artisan config:clear
+          composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
+          php artisan config:cache
           php artisan cache:clear
           php artisan view:clear
           php artisan route:clear
-          php artisan migrate
+          php artisan migrate --force
           git add .
           git commit -am "Update from automation deploy"
-          git push origin master
+          git push origin main
           echo "Deployment finished!"
+        
