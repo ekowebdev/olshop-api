@@ -26,7 +26,6 @@ jobs:
           AWS_PATH_PROJECT: ${{ secrets.AWS_PATH_PROJECT }}
         run: |
           echo "Deployment started ..." &&
-          cd ${{ secrets.AWS_PATH_PROJECT }} &&
           git checkout . &&
           git clean -f -d &&
           git fetch --all &&
