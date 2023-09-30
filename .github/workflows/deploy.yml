@@ -5,7 +5,7 @@ on:
       - master
 jobs:
   deploy:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     steps:
       # - name: Checkout code
       #   uses: actions/checkout@v2
@@ -56,6 +56,6 @@ jobs:
             php artisan route:clear
             php artisan migrate
             git add .
-            git commit -am "Update From Automation Deploy"
+            git commit -am "Update from automation deploy"
             git push origin master
             echo "Deployment finished!"
