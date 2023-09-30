@@ -15,7 +15,6 @@ use Illuminate\Support\Facades\Route;
 */
 Route::middleware(['xssclean'])->group(function () {
     Route::get('/email/verify/{id}', '\App\Http\Controllers\API\v1\Auth\AuthController@verify')->name('verification.verify');
-    // Route::get('/email/notice', '\App\Http\Controllers\API\v1\Auth\AuthController@notice')->name('verification.notice');
     Route::get('/reset/password/{token}', '\App\Http\Controllers\API\v1\Auth\AuthController@reset_password')->name('password.reset');
     Route::group(['prefix' => '/v1/{locale}'], function(){
         // Auth
