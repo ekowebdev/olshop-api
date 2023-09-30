@@ -45,8 +45,8 @@ jobs:
             git checkout .
             git clean -f -d
             git fetch --all
-            git reset --hard origin/dev
-            git pull origin dev
+            git reset --hard origin/master
+            git pull origin master
             sudo chmod -R 777 bootstrap/cache
             sudo chmod -R 777 storage
             composer update --no-dev --no-interaction --prefer-dist --optimize-autoloader
@@ -57,5 +57,5 @@ jobs:
             php artisan migrate
             git add .
             git commit -am "Update From Automation Deploy"
-            git push origin dev
+            git push origin master
             echo "Deployment finished!"
