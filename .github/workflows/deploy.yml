@@ -11,15 +11,15 @@ jobs:
         uses: actions/checkout@v2
       - name: Deploy app to AWS EC2
         env:
-          PRIVATE_KEY: ${{ secrets.RGB_AWS_SSH_PEM }}
-          HOSTNAME: ${{ secrets.RGB_AWS_HOSTNAME }}
-          USERNAME: ${{ secrets.RGB_AWS_USERNAME }}
+          PRIVATE_KEY: ${{ secrets.AWS_SSH_PEM }}
+          HOSTNAME: ${{ secrets.AWS_HOSTNAME }}
+          USERNAME: ${{ secrets.AWS_USERNAME }}
         run: |
           echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
           ssh -o StrictHostKeyChecking=no -i private_key ${USERNAME}@${HOSTNAME} '
-            cd ${{ secrets.RGB_AWS_PATH_PROJECT }} &&
-            sudo chown -R $USER:www-data ${{ secrets.RGB_AWS_PATH_PROJECT }} &&
-            git config --global --add safe.directory ${{ secrets.RGB_AWS_PATH_PROJECT }} &&
+            cd ${{ secrets.AWS_PATH_PROJECT }} &&
+            sudo chown -R $USER:www-data ${{ secrets.AWS_PATH_PROJECT }} &&
+            git config --global --add safe.directory ${{ secrets.AWS_PATH_PROJECT }} &&
             git checkout master &&
             git fetch --all &&
             git reset --hard origin/master &&
