@@ -9,19 +9,6 @@ jobs:
     steps:
       - name: Checkout the code
         uses: actions/checkout@v2
-      # - name: Setup SSH
-      #   run: |
-      #     mkdir -p ~/.ssh
-      #     echo "${{ secrets.AWS_SSH_PEM }}" > ~/.ssh/id_rsa
-      #     chmod 600 ~/.ssh/id_rsa
-      #     ssh-keyscan -H ${{ secrets.AWS_HOSTNAME }} >> ~/.ssh/known_hosts
-      #     chmod 644 ~/.ssh/known_hosts
-      # - name: Deploy to Server
-      #   env:
-      #     AWS_USERNAME: ${{ secrets.AWS_USERNAME }}
-      #     AWS_HOSTNAME: ${{ secrets.AWS_HOSTNAME }}
-      #     AWS_PORT: ${{ secrets.AWS_PORT }}
-      #     AWS_PATH_PROJECT: /var/www/html/test
       - name: Deploy to EC2
         uses: easingthemes/ssh-deploy@main
         env:
@@ -31,10 +18,11 @@ jobs:
           TARGET: ${{ secrets.AWS_PATH_PROJECT }}
         with: 
           script: |
-            git clean -f -d &&
-            git fetch --all &&
-            git reset --hard origin/master &&
-            git pull origin master &&
+            git clean -f -d
+            git fetch --all
+            git reset --hard origin/master
+            git pull origin master
+          run: '
             sudo chmod -R 777 bootstrap/cache &&
             sudo chmod -R 777 storage &&
             composer update --no-dev --no-interaction --prefer-dist --optimize-autoloader &&
@@ -46,3 +34,4 @@ jobs:
             git add . &&
             git commit -am "Update from automation deploy" &&
             git push origin master
+          '
