@@ -9,14 +9,12 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-
       - name: Configure SSH
         run: |
           mkdir -p ~/.ssh/
           echo "${{ secrets.AWS_SSH_PEM }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H ${{ secrets.AWS_HOSTNAME }} >> ~/.ssh/known_hosts
-
       - name: Deploy to EC2
         run: |
           ssh -i ~/.ssh/id_rsa ${{ secrets.AWS_USERNAME }}@${{ secrets.AWS_HOSTNAME }} '
@@ -30,31 +28,5 @@ jobs:
             php artisan route:clear &&
             php artisan migrate --force
           '
-
       - name: Clear SSH key
         run: rm ~/.ssh/id_rsa
-
-      # - name: Deploy to EC2
-      #   uses: easingthemes/ssh-deploy@main
-      #   env:
-      #     SSH_PRIVATE_KEY: ${{ secrets.AWS_SSH_PEM }}
-      #     REMOTE_HOST: ${{ secrets.AWS_HOSTNAME }}
-      #     REMOTE_USER: ${{ secrets.AWS_USERNAME }}
-      #     TARGET: ${{ secrets.AWS_PATH_PROJECT }}
-      #   with: 
-      #     run: |
-      #       git clean -f -d &&
-      #       git fetch --all &&
-      #       git reset --hard origin/master &&
-      #       git pull origin master &&
-            # sudo chmod -R 777 bootstrap/cache &&
-            # sudo chmod -R 777 storage && &&
-            # composer update --no-dev --no-interaction --prefer-dist --optimize-autoloader &&
-            # php artisan config:clear &&
-            # php artisan cache:clear &&
-            # php artisan view:clear &&
-            # php artisan route:clear &&
-            # php artisan migrate &&
-            # git add . &&
-            # git commit -am "Update from automation deploy" &&
-            # git push origin master
