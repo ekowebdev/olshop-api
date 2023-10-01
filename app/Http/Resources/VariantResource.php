@@ -20,6 +20,7 @@ class VariantResource extends JsonResource
                 'item_gift_description' => $this->item_gifts->item_gift_description,
                 'item_gift_point' => $this->item_gifts->item_gift_point ?? 0,
                 'fitem_gift_point' => $this->formatFitemGiftPoint($this->item_gifts),
+                'item_gift_weight' => $this->item_gifts->item_gift_weight ?? 0,
                 'item_gift_quantity' => $this->item_gifts->item_gift_quantity ?? 0,
                 'item_gift_status' => $this->item_gifts->item_gift_status,
                 'item_gift_images' => $this->item_gifts->item_gift_images->map(function ($image) {

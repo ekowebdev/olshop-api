@@ -20,7 +20,7 @@ class ItemGift extends BaseModel
     use HasFactory;
 
     protected $table = 'item_gifts';
-    protected $fillable = ['item_gift_code', 'item_gift_name', 'category_id', 'brand_id', 'item_gift_slug', 'item_gift_description', 'item_gift_point', 'item_gift_quantity', 'item_gift_status'];
+    protected $fillable = ['item_gift_code', 'item_gift_name', 'category_id', 'brand_id', 'item_gift_slug', 'item_gift_description', 'item_gift_point', 'item_gift_weight', 'item_gift_quantity', 'item_gift_status'];
 
     public function item_gift_images()
     {
@@ -74,6 +74,7 @@ class ItemGift extends BaseModel
                     'item_gift_slug', 
                     'item_gift_description', 
                     'item_gift_point',
+                    'item_gift_weight',
                     'item_gift_quantity',
                     'item_gift_status',
                     DB::raw('(SELECT COUNT(*) FROM reviews WHERE reviews.item_gift_id = item_gifts.id) AS total_reviews'),

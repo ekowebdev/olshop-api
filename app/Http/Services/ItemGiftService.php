@@ -27,6 +27,7 @@ class ItemGiftService extends BaseService
             'category_id' => 'category_id',
             'brand_id' => 'brand_id',
             'item_gift_slug' => 'item_gift_slug',
+            'item_gift_weight' => 'item_gift_weight',
             'item_gift_quantity' => 'item_gift_quantity',
             'item_gift_point' => 'item_gift_point',
             'total_rating' => 'total_rating',
@@ -40,6 +41,7 @@ class ItemGiftService extends BaseService
             'item_gift_slug' => 'item_gift_slug',
             'item_gift_quantity' => 'item_gift_quantity',
             'item_gift_point' => 'item_gift_point',
+            'item_gift_weight' => 'item_gift_weight',
             'total_rating' => 'total_rating',
         ];
 
@@ -65,6 +67,7 @@ class ItemGiftService extends BaseService
             'brand_id',
             'item_gift_description',
             'item_gift_point',
+            'item_gift_weight',
             'item_gift_quantity',
             'item_gift_images',
         ]);
@@ -90,6 +93,10 @@ class ItemGiftService extends BaseService
                     'nullable',
                     'numeric',
                 ],
+                'item_gift_weight' => [
+                    'nullable',
+                    'numeric',
+                ],
                 'item_gift_quantity' => [
                     'nullable',
                     'numeric',
@@ -105,6 +112,7 @@ class ItemGiftService extends BaseService
         $data_request['item_gift_code'] = Str::random(15);
         $data_request['item_gift_slug'] = Str::slug($data_request['item_gift_name']);
         $data_request['item_gift_point'] = $data_request['item_gift_point'] ?? null;
+        $data_request['item_gift_weight'] = $data_request['item_gift_weight'] ?? null;
         $data_request['item_gift_quantity'] = $data_request['item_gift_quantity'] ?? null;
         $result = $this->model->create($data_request);
         if (isset($data_request['item_gift_images'])) {
@@ -136,6 +144,7 @@ class ItemGiftService extends BaseService
             'item_gift_slug' => $check_data->item_gift_slug,
             'item_gift_description' => $check_data->item_gift_description,
             'item_gift_point' => $check_data->item_gift_point,
+            'item_gift_weight' => $check_data->item_gift_weight,
             'item_gift_quantity' => $check_data->item_gift_quantity,
         ], $data);
 
@@ -146,6 +155,7 @@ class ItemGiftService extends BaseService
             'item_gift_slug',
             'item_gift_description',
             'item_gift_point',
+            'item_gift_weight',
             'item_gift_quantity',
         ]);
 
@@ -167,9 +177,12 @@ class ItemGiftService extends BaseService
                 'item_gift_point' => [
                     'numeric',
                 ],
+                'item_gift_weight' => [
+                    'numeric',
+                ],
                 'item_gift_quantity' => [
                     'numeric',
-                ]
+                ],
             ]
         );
 
