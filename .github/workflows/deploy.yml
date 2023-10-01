@@ -31,5 +31,4 @@ jobs:
           chmod -R 777 storage &&
           php artisan migrate &&
           php artisan config:clear &&
-          php artisan cache:clear &&
-          php artisan up
+          php artisan cache:clear
