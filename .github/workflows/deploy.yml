@@ -20,7 +20,7 @@ jobs:
         env:
           AWS_USERNAME: ${{ secrets.AWS_USERNAME }}
           AWS_HOSTNAME: ${{ secrets.AWS_HOSTNAME }}
-          AWS_PORT: ${{ secrets.AWS_PORT }}
+          # AWS_PORT: ${{ secrets.AWS_PORT }}
           # AWS_PATH_PROJECT: /var/www/html/test
         run: |
           cd /var/www/html
