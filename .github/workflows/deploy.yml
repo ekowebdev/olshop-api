@@ -18,7 +18,8 @@ jobs:
       - name: Deploy to EC2
         run: |
           ssh -i ~/.ssh/id_rsa ${{ secrets.AWS_USERNAME }}@${{ secrets.AWS_HOSTNAME }} '
-            cd ${{ secrets.AWS_PATH_PROJECT }} && 
+            cd ${{ secrets.AWS_PATH_PROJECT }} &&
+            git config --global credential.helper "store --file=.git/credentials" && 
             git checkout . &&
             git clean -f -d &&
             git fetch --all &&
