@@ -21,7 +21,7 @@ jobs:
           AWS_USERNAME: ${{ secrets.AWS_USERNAME }}
           AWS_HOSTNAME: ${{ secrets.AWS_HOSTNAME }}
           AWS_PORT: ${{ secrets.AWS_PORT }}
-          AWS_PATH_PROJECT: var/www/html
+          AWS_PATH_PROJECT: /var/www/html
         run: |
           git clean -f -d
           git fetch --all
