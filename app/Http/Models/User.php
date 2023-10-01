@@ -30,6 +30,7 @@ class User extends Authenticable implements MustVerifyEmail
         'name',
         'username',
         'email',
+		'birthdate',
         'password',
     ];
 
@@ -246,6 +247,7 @@ class User extends Authenticable implements MustVerifyEmail
                     'name', 
                     'username', 
                     'email',
+                    'birthdate',
                     'password',
 					'email_verified_at',
                 ]);

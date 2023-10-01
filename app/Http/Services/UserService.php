@@ -24,6 +24,7 @@ class UserService extends BaseService
         $search = [
             'name' => 'name',
             'username' => 'username',
+            'birthdate' => 'birthdate',
             'email' => 'email',
         ];
 
@@ -32,6 +33,7 @@ class UserService extends BaseService
             'name' => 'name',
             'username' => 'username',
             'email' => 'email',
+            'birthdate' => 'birthdate',
         ];
 
         $sortable_and_searchable_column = [
@@ -54,6 +56,7 @@ class UserService extends BaseService
             'name',
             'username',
             'email',
+            'birthdate',
             'password',
             'role',
         ]);
@@ -72,6 +75,10 @@ class UserService extends BaseService
                     'required',
                     'email:rfc,dns',
                     'unique:users,email'
+                ],
+                'birthdate' => [
+                    'nullable',
+                    'date',
                 ],
                 'password' => [
                     'required',
@@ -105,12 +112,14 @@ class UserService extends BaseService
             'name' => $check_data->name,
             'username' => $check_data->username,
             'email' => $check_data->email,
+            'birthdate' => $check_data->birthdate,
         ], $data);
 
         $data_request = Arr::only($data, [
             'name',
             'username',
             'email',
+            'birthdate',
             'password',
             'role',
         ]);
@@ -124,6 +133,10 @@ class UserService extends BaseService
             'email' => [
                 'email',
                 'unique:users,email,'.$check_data->id,
+            ],
+            'birthdate' => [
+                'nullable',
+                'date',
             ],
             'password' => [
                 'sometimes',

@@ -36,6 +36,7 @@ class WishlistResource extends JsonResource
                 'roles' => $this->users->getRoleNames(),
                 'username' => $this->users->username,
                 'email' => $this->users->email,
+                'birthdate' => $this->users->birthdate,
                 'address' => ($this->users->address) ? [
                     'province_id' => $this->users->address->province_id,
                     'city_id' => $this->users->address->city_id,
