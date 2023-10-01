@@ -7,7 +7,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout the code
+      - name: Checkout repository
         uses: actions/checkout@v2
 
       - name: Configure SSH
@@ -22,7 +22,7 @@ jobs:
           ssh -i ~/.ssh/id_rsa ${{ secrets.AWS_USERNAME }}@${{ secrets.AWS_HOSTNAME }} '
             cd ${{ secrets.AWS_PATH_PROJECT }} && 
             sudo chmod -R 777 bootstrap/cache &&
-            sudo chmod -R 777 storage && &&
+            sudo chmod -R 777 storage &&
             composer update --no-dev --no-interaction --prefer-dist --optimize-autoloader &&
             php artisan config:clear &&
             php artisan cache:clear &&
