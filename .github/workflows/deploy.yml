@@ -23,12 +23,15 @@ jobs:
           AWS_PORT: ${{ secrets.AWS_PORT }}
           AWS_PATH_PROJECT: ${{ secrets.AWS_PATH_PROJECT }}
         run: |
+          sudo chown -R $USER:www-data ${{ secrets.AWS_PATH_PROJECT }} &&
+          git config --global --add safe.directory ${{ secrets.AWS_PATH_PROJECT }} &&
           git checkout master &&
           git fetch --all &&
           git reset --hard origin/master &&
           git pull origin master &&
           composer update --no-dev --prefer-dist --optimize-autoloader &&
-          chmod -R 777 storage &&
+          chmod -R 775 storage &&
           php artisan migrate --force &&
           php artisan config:clear &&
-          php artisan cache:clear
+          php artisan cache:clear &&
+          php artisan up
