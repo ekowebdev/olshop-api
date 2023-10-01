@@ -23,7 +23,7 @@ jobs:
           AWS_PORT: ${{ secrets.AWS_PORT }}
           # AWS_PATH_PROJECT: /var/www/html/test
         run: |
-          cd /var/www/html
+          cd var/www/html
           git clean -f -d
           git fetch --all
           git reset --hard origin/master
