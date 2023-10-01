@@ -19,6 +19,7 @@ jobs:
         run: |
           ssh -i ~/.ssh/id_rsa ${{ secrets.AWS_USERNAME }}@${{ secrets.AWS_HOSTNAME }} '
             cd ${{ secrets.AWS_PATH_PROJECT }} &&
+            git remote set-url origin git@github.com:ekowebdev/olshop-api.git
             git checkout master &&
             git clean -f -d &&
             git fetch --all &&
