@@ -10,7 +10,6 @@ class CartResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            // 'item_gifts' => $this->item_gifts->makeHidden(['created_at', 'updated_at']),
             'item_gifts' => [
                 'id' => $this->item_gifts->id,
                 'item_gift_code' => $this->item_gifts->item_gift_code,
