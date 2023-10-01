@@ -29,6 +29,6 @@ jobs:
           git pull origin master &&
           composer update --no-dev --prefer-dist --optimize-autoloader &&
           chmod -R 777 storage &&
-          php artisan migrate &&
+          php artisan migrate --force &&
           php artisan config:clear &&
           php artisan cache:clear
