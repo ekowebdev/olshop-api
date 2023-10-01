@@ -34,7 +34,7 @@ jobs:
           php artisan cache:clear
           php artisan view:clear
           php artisan route:clear
-          php artisan migrate
+          php artisan migrate --force
           git add .
           git commit -am "Update from automation deploy"
           git push origin master
