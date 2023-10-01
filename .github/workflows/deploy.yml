@@ -31,18 +31,18 @@ jobs:
           TARGET: ${{ secrets.AWS_PATH_PROJECT }}
         with: 
           script: |
-            git clean -f -d
-            git fetch --all
-            git reset --hard origin/master
-            git pull origin master
-            sudo chmod -R 777 bootstrap/cache
-            sudo chmod -R 777 storage
-            composer update --no-dev --no-interaction --prefer-dist --optimize-autoloader
-            php artisan config:clear
-            php artisan cache:clear
-            php artisan view:clear
-            php artisan route:clear
-            php artisan migrate --force
-            git add .
-            git commit -am "Update from automation deploy"
+            git clean -f -d &&
+            git fetch --all &&
+            git reset --hard origin/master &&
+            git pull origin master &&
+            sudo chmod -R 777 bootstrap/cache &&
+            sudo chmod -R 777 storage &&
+            composer update --no-dev --no-interaction --prefer-dist --optimize-autoloader &&
+            php artisan config:clear &&
+            php artisan cache:clear &&
+            php artisan view:clear &&
+            php artisan route:clear &&
+            php artisan migrate &&
+            git add . &&
+            git commit -am "Update from automation deploy" &&
             git push origin master
