@@ -19,6 +19,11 @@ jobs:
         run: |
           ssh -i ~/.ssh/id_rsa ${{ secrets.AWS_USERNAME }}@${{ secrets.AWS_HOSTNAME }} '
             cd ${{ secrets.AWS_PATH_PROJECT }} && 
+            git checkout . &&
+            git clean -f -d &&
+            git fetch --all &&
+            git reset --hard origin/master &&
+            git pull origin master &&
             sudo chmod -R 777 bootstrap/cache &&
             sudo chmod -R 777 storage &&
             composer update --no-dev --no-interaction --prefer-dist --optimize-autoloader &&
@@ -26,7 +31,7 @@ jobs:
             php artisan cache:clear &&
             php artisan view:clear &&
             php artisan route:clear &&
-            php artisan migrate --force
+            php artisan migrate
           '
       - name: Clear SSH key
         run: rm ~/.ssh/id_rsa
