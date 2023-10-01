@@ -17,14 +17,13 @@ jobs:
           REMOTE_USER: ${{ secrets.AWS_USERNAME }}
           TARGET: ${{ secrets.AWS_PATH_PROJECT }}
         with: 
-          script: |
-            git clean -f -d
-            git fetch --all
-            git reset --hard origin/master
-            git pull origin master
-          run: '
+          run: |
+            git clean -f -d &&
+            git fetch --all &&
+            git reset --hard origin/master &&
+            git pull origin master &&
             sudo chmod -R 777 bootstrap/cache &&
-            sudo chmod -R 777 storage &&
+            sudo chmod -R 777 storage && &&
             composer update --no-dev --no-interaction --prefer-dist --optimize-autoloader &&
             php artisan config:clear &&
             php artisan cache:clear &&
@@ -34,4 +33,3 @@ jobs:
             git add . &&
             git commit -am "Update from automation deploy" &&
             git push origin master
-          '
