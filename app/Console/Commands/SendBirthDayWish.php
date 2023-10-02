@@ -32,14 +32,12 @@ class SendBirthDayWish extends Command
      */
     public function handle()
     {
-        $users = User::where('birthdate', '!=', null)->get();
+        $users = User::whereRaw('MONTH(birthdate) = ? AND DAY(birthdate) = ?', [now()->month, now()->day])->get();
 
         foreach ($users as $user) {
-            if (Carbon::parse($user['birthdate'])->isBirthday()) {
-                SendEmailBirtDayWishJob::dispatch($user);
-            }
+            SendEmailBirtDayWishJob::dispatch($user);
         }
 
-        return 0;
+        $this->info('Birthday notifications sent successfully.');
     }
 }
