@@ -33,7 +33,7 @@ class BirthDayWish extends Mailable
     public function envelope()
     {
         return new Envelope(
-            subject: 'Birth Day Wish',
+            subject: 'Birthday Wish',
         );
     }
 

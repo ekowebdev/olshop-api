@@ -2,11 +2,9 @@
 
 namespace App\Console\Commands;
 
-use Carbon\Carbon;
 use App\Http\Models\User;
 use App\Mail\BirthDayWish;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Mail;
 use App\Jobs\SendEmailBirtDayWishJob;
 
 class SendBirthDayWish extends Command
@@ -38,6 +36,6 @@ class SendBirthDayWish extends Command
             SendEmailBirtDayWishJob::dispatch($user);
         }
 
-        $this->info('Birthday notifications sent successfully.');
+        $this->info('Birthday wish notifications sent successfully.');
     }
 }
