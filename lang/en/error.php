@@ -12,7 +12,7 @@ return [
 	"failed_verifcation_email"					  => "Failed verification email",
 	"failed_send_reset_password_link"             => "Failed send reset password link",
 	"failed_reset_password"                       => "Failed reset password",
-	"variant_not_found_in_item_gifts"             => "Variants are not available on this item gifts",
+	"variant_not_found_in_item_gifts"             => "Variants are not available on this item gift ID: :id",
 	"variant_not_found_in_multiple_item_gifts"    => "Variants are not available on item gift ID: :id and variant ID: :variant_id",
 	"variant_required"                            => "Item gift ID: :id has variants",
 	"invalid_signature_midtrans"                  => "Invalid signature Midtrans",
