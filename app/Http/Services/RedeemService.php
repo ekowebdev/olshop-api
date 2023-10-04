@@ -446,13 +446,14 @@ class RedeemService extends BaseService
             $metadata_redeem_item_gifts = [];
             $redeem_code = Str::uuid();
             $item_details = [];
+            $shipping_cost = intval($data_request['shipping_details']['shipping_cost']); 
 
             $redeem = Redeem::create([
                 'user_id' => auth()->user()->id,
                 'redeem_code' => $redeem_code,
                 'total_point' => $total_point,
-                'shipping_fee' => $data_request['shipping_details']['shipping_cost'],
-                'total_amount' => $total_point + $data_request['shipping_details']['shipping_cost'],
+                'shipping_fee' => $shipping_cost,
+                'total_amount' => $total_point + $shipping_cost,
                 'redeem_date' => date('Y-m-d'),
             ]);
 
@@ -527,7 +528,7 @@ class RedeemService extends BaseService
 
             $transaction_details = [
                 'order_id' => $redeem->id . '-' . Str::random(5),
-                'gross_amount' => $total_point + $data_request['shipping_details']['shipping_cost']
+                'gross_amount' => $total_point + $shipping_cost,
             ];
 
             $customer_details = [
@@ -536,7 +537,7 @@ class RedeemService extends BaseService
             ];
 
             array_push($item_details, [
-                'price' => $data_request['shipping_details']['shipping_cost'],
+                'price' => $shipping_cost,
                 'quantity' => 1,
                 'name' => 'Shipping Fee'
             ]);
@@ -553,13 +554,13 @@ class RedeemService extends BaseService
                 'redeem_code' => $redeem_code,
                 'redeem_item_gifts' => $metadata_redeem_item_gifts,
                 'total_point' => $total_point,
-                'shipping_fee' => $data_request['shipping_details']['shipping_cost'],
-                'total_amount' => $total_point + $data_request['shipping_details']['shipping_cost'],
+                'shipping_fee' => $shipping_cost,
+                'total_amount' => $total_point + $shipping_cost,
                 'redeem_date' => date('Y-m-d'),
             ];
             $redeem->total_point = $total_point;
-            $redeem->shipping_fee = intval($data_request['shipping_details']['shipping_cost']);
-            $redeem->total_amount = $total_point + $data_request['shipping_details']['shipping_cost'];
+            $redeem->shipping_fee = $shipping_cost;
+            $redeem->total_amount = $total_point + $shipping_cost;
             $redeem->save();
 
             $shippings = new Shipping([
@@ -570,7 +571,7 @@ class RedeemService extends BaseService
                 'courier' => $data_request['shipping_details']['shipping_courier'],
                 'service' => $data_request['shipping_details']['shipping_service'],
                 'description' => $data_request['shipping_details']['shipping_description'],
-                'cost' => $data_request['shipping_details']['shipping_cost'],
+                'cost' => $shipping_cost,
                 'etd' => $data_request['shipping_details']['shipping_etd'],
             ]);
             $shippings->save();

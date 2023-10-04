@@ -42,6 +42,8 @@ class RedeemResource extends JsonResource
                 ];
             }),
             'total_point' => $this->total_point,
+            "shipping_fee" => intval($this->shipping_fee),
+            "total_amount" => $this->total_amount,
             'redeem_date' => $this->redeem_date,
             'snap_url' => $this->snap_url,
             'metadata' => json_decode($this->metadata),
