@@ -391,54 +391,50 @@ class RedeemService extends BaseService
 
     public function checkout($locale, $data)
     {
-        $data_request = Arr::only($data, [
-            'item_gift_id',
-            'variant_id',
-            'redeem_quantity',
-            'shipping_origin',
-            'shipping_destination',
-            'shipping_weight',
-            'shipping_courier',
-        ]);
+        $data_request = $data;
 
         $this->item_gift_repository->validate($data_request, [
-                'item_gift_id' => [
+                'redeem_item_gifts_details.*.item_gift_id' => [
                     'required',
                 ],
-                'item_gift_id.*' => [
+                'redeem_item_gifts_details.*.item_gift_id.*' => [
                     'required',
                     'exists:item_gifts,id',
                 ],
-                'variant_id' => [
+                'redeem_item_gifts_details.*.variant_id' => [
                     'nullable',
                 ],
-                'variant_id.*' => [
+                'redeem_item_gifts_details.*.variant_id.*' => [
                     'nullable',
                     'exists:variants,id',
                 ],
-                'redeem_quantity' => [
+                'redeem_item_gifts_details.*.redeem_quantity' => [
                     'required',
                 ],
-                'redeem_quantity.*' => [
+                'redeem_item_gifts_details.*.redeem_quantity.*' => [
                     'required',
                     'numeric',
                     'min:1',
                 ],
-                'shipping_origin' => [
+                'shipping_details.shipping_origin' => [
                     'required',
                     'string',
                 ],
-                'shipping_destination' => [
+                'shipping_details.shipping_destination' => [
                     'required',
                     'string',
                 ],
-                'shipping_weight' => [
+                'shipping_details.shipping_weight' => [
                     'required',
                     'numeric',
                 ],
-                'shipping_courier' => [
+                'shipping_details.shipping_courier' => [
                     'required',
                     'in:jne,pos,tiki',
+                ],
+                'shipping_details.shipping_cost' => [
+                    'required',
+                    'numeric',
                 ],
             ]
         );
@@ -455,22 +451,16 @@ class RedeemService extends BaseService
                 'user_id' => auth()->user()->id,
                 'redeem_code' => $redeem_code,
                 'total_point' => $total_point,
+                'shipping_fee' => $data_request['shipping_details']['shipping_cost'],
+                'total_amount' => $total_point + $data_request['shipping_details']['shipping_cost'],
                 'redeem_date' => date('Y-m-d'),
             ]);
 
-            foreach ($data_request['item_gift_id'] as $key => $item_gift_id) {
-                $quantity = $data_request['redeem_quantity'][$key];
-                $variant_id = $data_request['variant_id'][$key] ?? null;
+            foreach ($data_request['redeem_item_gifts_details'] as $key => $redeem_item_gifts) {
+                $quantity = $redeem_item_gifts['redeem_quantity'];
+                $variant_id = $redeem_item_gifts['variant_id'] ?? null;
 
-                // Lock the item_gift row for update
-                $item_gift = ItemGift::lockForUpdate()->find($item_gift_id);
-
-                if (!$item_gift || $item_gift->item_gift_quantity < $quantity || $item_gift->item_gift_status == 'O') {
-                    return response()->json([
-                        'message' => trans('error.out_of_stock', ['id' => $item_gift->id]),
-                        'status' => 400,
-                    ], 400);
-                }
+                $item_gift = ItemGift::lockForUpdate()->find($redeem_item_gifts['item_gift_id']);
 
                 if ($item_gift->variants->count() > 0) {
                     if (!isset($variant_id)) {
@@ -479,6 +469,13 @@ class RedeemService extends BaseService
                             'status' => 400,
                         ], 400);
                     }
+                }
+                
+                if (!$item_gift || $item_gift->item_gift_quantity < $quantity || $item_gift->item_gift_status == 'O') {
+                    return response()->json([
+                        'message' => trans('error.out_of_stock', ['id' => $item_gift->id]),
+                        'status' => 400,
+                    ], 400);
                 }
 
                 if ($item_gift->variants->count() == 0) {
@@ -493,7 +490,6 @@ class RedeemService extends BaseService
                 $subtotal = 0;
 
                 if ($variant_id) {
-                    // Lock the variant row for update
                     $variant = $item_gift->variants()->lockForUpdate()->find($variant_id);
                     
                     if ($variant) {
@@ -518,7 +514,7 @@ class RedeemService extends BaseService
                 array_push($metadata_redeem_item_gifts, $redeem_item_gift->toArray());
                 array_push($item_details, [
                     'id' => $item_gift->id,
-                    'price' => $item_gift->item_gift_point,
+                    'price' => ($variant_id) ? $variant->variant_point : $item_gift->item_gift_point,
                     'quantity' => $quantity,
                     'name' => ($item_gift->variants->count() > 0) ? mb_strimwidth($item_gift->item_gift_name . ' - ' . $variant->variant_name, 0, 50, '..') : mb_strimwidth($item_gift->item_gift_name, 0, 50, '..'),
                 ]);
@@ -529,36 +525,21 @@ class RedeemService extends BaseService
                 $item_gift->save();
             }
 
-            $request = [
-                'origin_city' => $data_request['shipping_origin'],
-                'destination_city' => $data_request['shipping_destination'],
-                'weight' => $data_request['shipping_weight'],
-                'courier' => $data_request['shipping_courier'],
-            ];
-
-            $shippings = $this->rajaongkir_service->getCost($locale, $request);
-
-            dd($shippings);
-
-            $shipping = new Shipping([
-                'redeem_id' => $redeem->id,
-                'origin' => $data_request['shipping_origin'],
-                'destination' => $data_request['shipping_destination'],
-                'weight' => $data_request['shipping_weight'],
-                'courier' => $data_request['shipping_courier'],
-                'cost' => $shipping_costs['cost'],
-            ]);
-            $shipping->save();
-
             $transaction_details = [
                 'order_id' => $redeem->id . '-' . Str::random(5),
-                'gross_amount' => $total_point
+                'gross_amount' => $total_point + $data_request['shipping_details']['shipping_cost']
             ];
 
             $customer_details = [
                 'first_name' => auth()->user()->name,
                 'email' => auth()->user()->email
             ];
+
+            array_push($item_details, [
+                'price' => $data_request['shipping_details']['shipping_cost'],
+                'quantity' => 1,
+                'name' => 'Shipping Fee'
+            ]);
     
             $midtrans_params = [
                 'transaction_details' => $transaction_details,
@@ -572,10 +553,27 @@ class RedeemService extends BaseService
                 'redeem_code' => $redeem_code,
                 'redeem_item_gifts' => $metadata_redeem_item_gifts,
                 'total_point' => $total_point,
+                'shipping_fee' => $data_request['shipping_details']['shipping_cost'],
+                'total_amount' => $total_point + $data_request['shipping_details']['shipping_cost'],
                 'redeem_date' => date('Y-m-d'),
             ];
             $redeem->total_point = $total_point;
+            $redeem->shipping_fee = intval($data_request['shipping_details']['shipping_cost']);
+            $redeem->total_amount = $total_point + $data_request['shipping_details']['shipping_cost'];
             $redeem->save();
+
+            $shippings = new Shipping([
+                'redeem_id' => $redeem->id,
+                'origin' => $data_request['shipping_details']['shipping_origin'],
+                'destination' => $data_request['shipping_details']['shipping_destination'],
+                'weight' => $data_request['shipping_details']['shipping_weight'],
+                'courier' => $data_request['shipping_details']['shipping_courier'],
+                'service' => $data_request['shipping_details']['shipping_service'],
+                'description' => $data_request['shipping_details']['shipping_description'],
+                'cost' => $data_request['shipping_details']['shipping_cost'],
+                'etd' => $data_request['shipping_details']['shipping_etd'],
+            ]);
+            $shippings->save();
 
             DB::commit();
 

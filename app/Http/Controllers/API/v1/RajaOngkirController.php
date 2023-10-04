@@ -35,6 +35,6 @@ class RajaOngkirController extends BaseController
 
     public function getCost($locale, Request $request)
     {
-        return $this->service->getListCost($locale, $request);
+        return $this->service->getCost($locale, $request);
     }
 }

@@ -2,18 +2,8 @@
 
 namespace App\Http\Models;
 
-use App\Http\Models\Cart;
-use App\Http\Models\Brand;
 use App\Http\Models\Redeem;
-use App\Http\Models\Review;
-use Illuminate\Support\Str;
-use App\Http\Models\Variant;
-use App\Http\Models\Category;
 use App\Http\Models\BaseModel;
-use App\Http\Models\Wishlists;
-use App\Http\Models\ShippingImage;
-use Illuminate\Support\Facades\DB;
-use App\Http\Models\RedeemShipping;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Shipping extends BaseModel
@@ -21,11 +11,11 @@ class Shipping extends BaseModel
     use HasFactory;
 
     protected $table = 'shippings';
-    protected $fillable = ['redeem_id', 'origin', 'destination', 'weight', 'courier', 'cost'];
+    protected $fillable = ['redeem_id', 'origin', 'destination', 'weight', 'courier', 'service', 'description', 'cost', 'etd'];
 
     public function redeem()
     {
-        return $this->belongsTo(Redeem::class);
+        return $this->belongsTo(Redeem::class, 'redeem_id');
     }
 
     public function scopeGetAll($query)
@@ -37,7 +27,10 @@ class Shipping extends BaseModel
                     'destination', 
                     'weight', 
                     'courier', 
-                    'cost'
+                    'service', 
+                    'description', 
+                    'cost', 
+                    'etd',
                 ]);
     }
 }

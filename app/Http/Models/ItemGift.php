@@ -62,6 +62,11 @@ class ItemGift extends BaseModel
         return $this->hasMany(Cart::class);
     }
 
+    public function shippings()
+    {
+        return $this->hasOne(Address::class);
+    }
+
     public function scopeGetAll($query)
     {   
         $user_id = auth()->user()->id ?? 0;

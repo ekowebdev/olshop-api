@@ -46,6 +46,16 @@ class RedeemResource extends JsonResource
             'snap_url' => $this->snap_url,
             'metadata' => json_decode($this->metadata),
             'redeem_status' => $this->redeem_status,
+            'shippings' => [
+                'shipping_origin' => $this->shippings->origin,
+                'shipping_destination' => $this->shippings->destination,
+                'shipping_weight' => $this->shippings->weight,
+                'shipping_courier' => $this->shippings->courier,
+                'shipping_service' => $this->shippings->service,
+                'shipping_description' => $this->shippings->description,
+                'shipping_cost' => $this->shippings->cost,
+                'shipping_etd' => $this->shippings->etd,
+            ],
             'users' => [
                 'id' => $this->users->id,
                 'name' => $this->users->name,
