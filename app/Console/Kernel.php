@@ -15,7 +15,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('send:birthdaywish')->daily()->timezone('Asia/Jakarta');
+        $schedule->command('send:birthdaywish')->daily();
     }
 
     /**
