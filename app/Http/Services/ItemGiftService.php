@@ -178,6 +178,7 @@ class ItemGiftService extends BaseService
                     'numeric',
                 ],
                 'item_gift_weight' => [
+                    'nullable',
                     'numeric',
                 ],
                 'item_gift_quantity' => [

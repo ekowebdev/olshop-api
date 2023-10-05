@@ -594,18 +594,20 @@ class RedeemService extends BaseService
         $check_data = $this->repository->getSingleData($locale, $id);
         
         DB::beginTransaction();
-        $redeem_item_gift = $check_data->redeem_item_gifts()->get();
-        foreach ($redeem_item_gift as $value) {
-            $item_gift = ItemGift::find($value->item_gift_id);
-            $item_gift->update([
-                'item_gift_quantity' => $item_gift->item_gift_quantity + $value->redeem_quantity,
-            ]);
-            if($item_gift->variants()->count() > 0) {
-                $variant = $item_gift->variants()->get();
-                foreach ($variant as $v) {
-                    $v->update([
-                        'variant_quantity' => $v->variant_quantity + $value->redeem_quantity,
-                    ]);
+        if($check_data->redeem_status != 'success'){
+            $redeem_item_gift = $check_data->redeem_item_gifts()->get();
+            foreach ($redeem_item_gift as $value) {
+                $item_gift = ItemGift::find($value->item_gift_id);
+                $item_gift->update([
+                    'item_gift_quantity' => $item_gift->item_gift_quantity + $value->redeem_quantity,
+                ]);
+                if($item_gift->variants()->count() > 0) {
+                    $variant = $item_gift->variants()->get();
+                    foreach ($variant as $v) {
+                        $v->update([
+                            'variant_quantity' => $v->variant_quantity + $value->redeem_quantity,
+                        ]);
+                    }
                 }
             }
         }
