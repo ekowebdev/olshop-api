@@ -190,7 +190,7 @@ class ItemGiftService extends BaseService
         DB::beginTransaction();
         $data_request['item_gift_slug'] = Str::slug($data_request['item_gift_name']);
         $data_request['item_gift_point'] = ($check_data->variants->count() > 0) ? min($check_data->variants->pluck('variant_point')->toArray()) : $data_request['item_gift_point'];
-        $data_request['item_gift_quantity'] = ($check_data->variants->count() > 0) ? $check_data->item_gift_quantity : $data_request['item_gift_quantity'];
+        // $data_request['item_gift_quantity'] = ($check_data->variants->count() > 0) ? $check_data->item_gift_quantity : $data_request['item_gift_quantity'];
         $check_data->update($data_request);
         DB::commit();
 
