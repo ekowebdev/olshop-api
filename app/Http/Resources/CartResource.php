@@ -17,7 +17,7 @@ class CartResource extends JsonResource
                 'category' => ($this->item_gifts->category_id != null) ? $this->item_gifts->category->makeHidden(['created_at', 'updated_at']) : null,
                 'brand' => ($this->item_gifts->brand_id != null) ? $this->item_gifts->brand->makeHidden(['created_at', 'updated_at']) : null,
                 'item_gift_description' => $this->item_gifts->item_gift_description,
-                'fitem_gift_point' => $this->formatFitemGiftPoint($this->item_gifts),
+                'fitem_gift_point' => $this->format_item_gift_point($this->item_gifts),
                 'item_gift_weight' => $this->item_gifts->item_gift_weight ?? 0,
                 'item_gift_status' => $this->item_gifts->item_gift_status,
                 'item_gift_images' => $this->item_gifts->item_gift_images->map(function ($image) {
@@ -47,7 +47,7 @@ class CartResource extends JsonResource
         ];
     }
 
-    private function formatFitemGiftPoint($item)
+    private function format_item_gift_point($item)
     {
         $variant_points = $item->variants->pluck('variant_point')->toArray();
         

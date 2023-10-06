@@ -23,7 +23,7 @@ class RedeemResource extends JsonResource
                         'category' => ($redeem_item_gift->item_gifts->category_id != null) ? $redeem_item_gift->item_gifts->category->makeHidden(['created_at', 'updated_at']) : null,
                         'brand' => ($redeem_item_gift->item_gifts->brand_id != null) ? $redeem_item_gift->item_gifts->brand->makeHidden(['created_at', 'updated_at']) : null,
                         'item_gift_description' => $redeem_item_gift->item_gifts->item_gift_description,
-                        'fitem_gift_point' => $this->formatFitemGiftPoint($redeem_item_gift->item_gifts),
+                        'fitem_gift_point' => $this->format_item_gift_point($redeem_item_gift->item_gifts),
                         'item_gift_weight' => $redeem_item_gift->item_gifts->item_gift_weight ?? 0,
                         'item_gift_status' => $redeem_item_gift->item_gifts->item_gift_status,
                         'item_gift_images' => $redeem_item_gift->item_gifts->item_gift_images->map(function ($image) {
@@ -76,7 +76,7 @@ class RedeemResource extends JsonResource
         ];
     }
 
-    private function formatFitemGiftPoint($item)
+    private function format_item_gift_point($item)
     {
         $variant_points = $item->variants->pluck('variant_point')->toArray();
         

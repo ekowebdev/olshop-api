@@ -17,7 +17,7 @@ class ItemGiftResource extends JsonResource
             'item_gift_slug' => $this->item_gift_slug,
             'item_gift_description' => $this->item_gift_description,
             'item_gift_point' => $this->item_gift_point ?? 0,
-            'fitem_gift_point' => $this->formatFitemGiftPoint(),
+            'fitem_gift_point' => $this->format_item_gift_point(),
             'item_gift_weight' => $this->item_gift_weight ?? 0,
             'item_gift_quantity' => $this->item_gift_quantity ?? 0,
             'item_gift_status' => $this->item_gift_status,
@@ -42,7 +42,7 @@ class ItemGiftResource extends JsonResource
         ];
     }
 
-    private function formatFitemGiftPoint()
+    private function format_item_gift_point()
     {
         $variant_points = $this->variants->pluck('variant_point')->toArray();
         
