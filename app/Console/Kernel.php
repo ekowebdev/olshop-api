@@ -15,7 +15,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('send:birthdaywish')->dailyAt('09:30')->withoutOverlapping(5);
+        $schedule->command('send:birthdaywish')->dailyAt('09:30');
     }
 
     /**
