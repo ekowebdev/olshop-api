@@ -31,7 +31,8 @@ jobs:
             php artisan cache:clear &&
             php artisan view:clear &&
             php artisan route:clear &&
-            php artisan migrate
+            php artisan migrate &&
+            php artisan up
           '
       - name: Clear SSH key
         run: rm ~/.ssh/id_rsa
