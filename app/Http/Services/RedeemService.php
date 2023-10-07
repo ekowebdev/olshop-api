@@ -15,21 +15,19 @@ use App\Http\Services\RedeemService;
 use Illuminate\Support\Facades\Mail;
 use App\Exceptions\ValidationException;
 use Illuminate\Database\QueryException;
-use App\Http\Services\RajaOngkirService;
 use App\Http\Repositories\RedeemRepository;
 use App\Jobs\SendEmailRedeemConfirmationJob;
 use App\Http\Repositories\ItemGiftRepository;
 
 class RedeemService extends BaseService
 {
-    private $model, $repository, $item_gift_repository, $rajaongkir_service;
+    private $model, $repository, $item_gift_repository;
     
-    public function __construct(Redeem $model, RedeemRepository $repository, ItemGiftRepository $item_gift_repository, RajaOngkirService $rajaongkir_service)
+    public function __construct(Redeem $model, RedeemRepository $repository, ItemGiftRepository $item_gift_repository)
     {
         $this->model = $model;
         $this->repository = $repository;
         $this->item_gift_repository = $item_gift_repository;
-        $this->rajaongkir_service = $rajaongkir_service;
     }
 
     public function getIndexData($locale, $data)

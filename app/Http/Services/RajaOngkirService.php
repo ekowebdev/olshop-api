@@ -7,14 +7,16 @@ use Illuminate\Support\Collection;
 use Illuminate\Pagination\Paginator;
 use App\Exceptions\DataEmptyException;
 use Illuminate\Pagination\LengthAwarePaginator;
+use App\Http\Repositories\SubdistrictRepository;
 
 class RajaOngkirService extends BaseService
 {
-    private $api_key;
+    private $api_key, $subdistrict_repository;
 
-    public function __construct()
+    public function __construct(SubdistrictRepository $subdistrict_repository)
     {
         $this->api_key = env('RAJAONGKIR_API_KEY');
+        $this->subdistrict_repository = $subdistrict_repository;
     }
 
     public function getProvince($locale, $id, $page, $per_page)
@@ -143,6 +145,28 @@ class RajaOngkirService extends BaseService
         }
 
         return $response;
+    }
+
+    public function getSubdistrict($locale, $data)
+    {
+        $search = [
+            'city_id' => 'city_id',
+            'subdistrict_name' => 'subdistrict_name',
+        ];
+
+        $search_column = [
+            'subdistrict_id' => 'subdistrict_id',
+            'city_id' => 'city_id',
+            'subdistrict_name' => 'subdistrict_name',
+        ];
+
+        $sortable_and_searchable_column = [
+            'search'        => $search,
+            'search_column' => $search_column,
+            'sort_column'   => array_merge($search, $search_column),
+        ];
+        
+        return $this->subdistrict_repository->getIndexData($locale, $sortable_and_searchable_column);
     }
 
     public function getCost($locale, $request)

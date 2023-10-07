@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers\API\v1;
 
-use App\Http\Services\RajaOngkirService;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Request;
 use App\Http\Controllers\BaseController;
+use App\Http\Services\RajaOngkirService;
+use App\Http\Resources\SubdistrictResource;
 
 class RajaOngkirController extends BaseController
 {
@@ -31,6 +32,15 @@ class RajaOngkirController extends BaseController
         $page = request('page');
         $per_page = request('per_page');
         return $this->service->getCity($locale, $id, $province_id, $page, $per_page);
+    }
+
+    public function getSubdistrict($locale)
+    {
+        $data = $this->service->getSubdistrict($locale, Request::all());
+        return (SubdistrictResource::collection($data))
+                ->additional([
+                    'sortable_and_searchable_column' => $data->sortableAndSearchableColumn,
+                ]);
     }
 
     public function getCost($locale, Request $request)
