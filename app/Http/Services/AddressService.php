@@ -57,7 +57,7 @@ class AddressService extends BaseService
             'user_id',
             'province_id',
             'city_id',
-            'district_id',
+            'subdistrict_id',
             'postal_code',
             'address',
         ]);
@@ -76,7 +76,7 @@ class AddressService extends BaseService
                     'required',
                     'integer',
                 ],
-                'district_id' => [
+                'subdistrict_id' => [
                     'nullable',
                     'integer',
                 ],
@@ -106,7 +106,7 @@ class AddressService extends BaseService
             'user_id' => $check_data->user_id,
             'province_id' => $check_data->province_id,
             'city_id' => $check_data->city_id,
-            'district_id' => $check_data->district_id,
+            'subdistrict_id' => $check_data->subdistrict_id,
             'postal_code' => $check_data->postal_code,
             'address' => $check_data->address,
         ], $data);
@@ -115,7 +115,7 @@ class AddressService extends BaseService
             'user_id',
             'province_id',
             'city_id',
-            'district_id',
+            'subdistrict_id',
             'postal_code',
             'address',
         ]);
@@ -131,7 +131,7 @@ class AddressService extends BaseService
             'city_id' => [
                 'integer',
             ],
-            'district_id' => [
+            'subdistrict_id' => [
                 'nullable',
                 'integer',
             ],
