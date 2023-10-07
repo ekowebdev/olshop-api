@@ -57,6 +57,13 @@ class RajaOngkirService extends BaseService
 
         $data = json_decode($response, true);
 
+        if ($data['rajaongkir']['status']['code'] == 400) {
+            return response()->json([
+                'message' => $data['rajaongkir']['status']['description'],
+                'status' => 400,
+            ], 400);
+        }
+
         $collection = collect($data['rajaongkir']['results']);
 
         if($collection->isEmpty()) throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => 'Province'], $locale));
@@ -115,6 +122,13 @@ class RajaOngkirService extends BaseService
         }
 
         $data = json_decode($response, true);
+
+        if ($data['rajaongkir']['status']['code'] == 400) {
+            return response()->json([
+                'message' => $data['rajaongkir']['status']['description'],
+                'status' => 400,
+            ], 400);
+        }
 
         $collection = collect($data['rajaongkir']['results']);
 
@@ -184,6 +198,13 @@ class RajaOngkirService extends BaseService
         }
 
         $data = json_decode($response, true);
+
+        if ($data['rajaongkir']['status']['code'] == 400) {
+            return response()->json([
+                'message' => $data['rajaongkir']['status']['description'],
+                'status' => 400,
+            ], 400);
+        }
 
         $collection = collect($data['rajaongkir']['results']);
 

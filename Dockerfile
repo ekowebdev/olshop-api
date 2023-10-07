@@ -24,36 +24,36 @@ COPY ./docker/nginx/nginx.conf /etc/nginx/nginx.conf
 RUN pecl install xdebug && docker-php-ext-enable xdebug
 
 # Set working directory
-WORKDIR /var/www/html
+WORKDIR /var/www
 
 # Copy files from current folder to container current folder (set in workdir).
 COPY --chown=www-data:www-data . .
 
 # Create laravel caching folders.
-RUN mkdir -p /var/www/html/storage/framework
-RUN mkdir -p /var/www/html/storage/framework/cache
-RUN mkdir -p /var/www/html/storage/framework/testing
-RUN mkdir -p /var/www/html/storage/framework/sessions
-RUN mkdir -p /var/www/html/storage/framework/views
+RUN mkdir -p /var/www/storage/framework
+RUN mkdir -p /var/www/storage/framework/cache
+RUN mkdir -p /var/www/storage/framework/testing
+RUN mkdir -p /var/www/storage/framework/sessions
+RUN mkdir -p /var/www/storage/framework/views
 
 # Fix files ownership.
-RUN chown -R www-data /var/www/html/storage
-RUN chown -R www-data /var/www/html/storage/framework
-RUN chown -R www-data /var/www/html/storage/framework/sessions
+RUN chown -R www-data /var/www/storage
+RUN chown -R www-data /var/www/storage/framework
+RUN chown -R www-data /var/www/storage/framework/sessions
 
 # Set correct permission.
-RUN chmod -R 755 /var/www/html/storage
-RUN chmod -R 755 /var/www/html/storage/logs
-RUN chmod -R 755 /var/www/html/storage/framework
-RUN chmod -R 755 /var/www/html/storage/framework/sessions
-RUN chmod -R 755 /var/www/html/bootstrap
+RUN chmod -R 755 /var/www/storage
+RUN chmod -R 755 /var/www/storage/logs
+RUN chmod -R 755 /var/www/storage/framework
+RUN chmod -R 755 /var/www/storage/framework/sessions
+RUN chmod -R 755 /var/www/bootstrap
 
 # Adjust user permission & group
 RUN usermod --uid 1000 www-data
 RUN groupmod --gid 1001 www-data
 
 # Set permission entrypoint file
-RUN chmod +x /var/www/html/docker/entrypoint.sh
+RUN chmod +x /var/www/docker/entrypoint.sh
 
 # Run the entrypoint file.
 ENTRYPOINT [ "docker/entrypoint.sh" ]
