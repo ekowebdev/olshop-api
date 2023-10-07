@@ -16,9 +16,18 @@ class UserResource extends JsonResource
             'email' => $this->email,
             'birthdate' => $this->birthdate,
             'address' => ($this->address) ? [
-                'province_id' => $this->address->province_id,
-                'city_id' => $this->address->city_id,
-                'district_id' => $this->address->district_id,
+                'province' => [
+                    'id' => $this->address->province->province_id,
+                    'province_name' => $this->address->province->province_name
+                ],
+                'city' => [
+                    'id' => $this->address->city->city_id,
+                    'city_name' => $this->address->city->city_name
+                ],
+                'subdistrict' => [
+                    'id' => $this->address->subdistrict->subdistrict_id,
+                    'subdistrict_name' => $this->address->subdistrict->subdistrict_name
+                ],
                 'postal_code' => $this->address->postal_code,
                 'address' => $this->address->address,
             ] : null,

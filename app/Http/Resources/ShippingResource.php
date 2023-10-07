@@ -4,13 +4,12 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class PaymentLogResource extends JsonResource
+class ShippingResource extends JsonResource
 {
     public function toArray($request)
     {
         return [
             'id' => $this->id,
-            'payment_type' => $this->payment_type,
             'redeems' => [
                 'redeem_id' => $this->redeems->id,
                 'redeem_code' => $this->redeems->redeem_code,
@@ -51,8 +50,21 @@ class PaymentLogResource extends JsonResource
                     ];
                 })
             ],
-            'raw_response' => json_decode($this->raw_response),
-            'payment_status' => $this->payment_status,
+            'origin' => [
+                'id' => $this->city_origin->city_id,
+                'city_name' => $this->city_origin->city_name
+            ],
+            'destination' => [
+                'id' => $this->city_destination->city_id,
+                'city_name' => $this->city_destination->city_name
+            ],
+            'weight' => $this->weight,
+            'fweight' => $this->weight . ' Gram',
+            'courier' => $this->courier,
+            'service' => $this->service,
+            'description' => $this->description,
+            'cost' => $this->cost,
+            'etd' => $this->etd,
         ];
     }
 
@@ -69,7 +81,7 @@ class PaymentLogResource extends JsonResource
             if ($min_value === $max_value) {
                 return strval($min_value);
             }
-            
+
             return format_money($min_value) . " ~ " . format_money($max_value);
         } else {
             return format_money(strval($this->item_gift_point ?? 0));

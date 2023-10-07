@@ -25,6 +25,7 @@ class RedeemResource extends JsonResource
                         'item_gift_description' => $redeem_item_gift->item_gifts->item_gift_description,
                         'fitem_gift_point' => $this->format_item_gift_point($redeem_item_gift->item_gifts),
                         'item_gift_weight' => $redeem_item_gift->item_gifts->item_gift_weight ?? 0,
+                        'fitem_gift_weight' => ($redeem_item_gift->item_gifts->item_gift_weight == null) ? '0 Gram' : $redeem_item_gift->item_gifts->item_gift_weight . ' Gram',
                         'item_gift_status' => $redeem_item_gift->item_gifts->item_gift_status,
                         'item_gift_images' => $redeem_item_gift->item_gifts->item_gift_images->map(function ($image) {
                             return [
@@ -66,9 +67,18 @@ class RedeemResource extends JsonResource
                 'email' => $this->users->email,
                 'birthdate' => $this->users->birthdate,
                 'address' => ($this->users->address) ? [
-                    'province_id' => $this->users->address->province_id,
-                    'city_id' => $this->users->address->city_id,
-                    'district_id' => $this->users->address->district_id,
+                    'province' => [
+                        'id' => $this->users->address->province->province_id,
+                        'province_name' => $this->users->address->province->province_name
+                    ],
+                    'city' => [
+                        'id' => $this->users->address->city->city_id,
+                        'city_name' => $this->users->address->city->city_name
+                    ],
+                    'subdistrict' => [
+                        'id' => $this->users->address->subdistrict->subdistrict_id,
+                        'subdistrict_name' => $this->users->address->subdistrict->subdistrict_name
+                    ],
                     'postal_code' => $this->users->address->postal_code,
                     'address' => $this->users->address->address,
                 ] : null,

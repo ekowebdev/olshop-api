@@ -253,7 +253,7 @@ class User extends Authenticable implements MustVerifyEmail
                 ]);
     }
 
-	public function getAccessToken()
+	public function get_access_token()
     {
         return $this->accessToken;
     }

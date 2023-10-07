@@ -19,6 +19,7 @@ class ItemGiftResource extends JsonResource
             'item_gift_point' => $this->item_gift_point ?? 0,
             'fitem_gift_point' => $this->format_item_gift_point(),
             'item_gift_weight' => $this->item_gift_weight ?? 0,
+            'fitem_gift_weight' => ($this->item_gifts->item_gift_weight == null) ? '0 Gram' : $this->item_gifts->item_gift_weight . ' Gram',
             'item_gift_quantity' => $this->item_gift_quantity ?? 0,
             'item_gift_status' => $this->item_gift_status,
             'item_gift_images' => $this->item_gift_images->makeHidden(['created_at', 'updated_at']),

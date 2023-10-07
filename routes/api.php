@@ -45,6 +45,9 @@ Route::middleware(['xssclean'])->group(function () {
                 // Payment Log
                 Route::get('/payment-logs', '\App\Http\Controllers\API\v1\PaymentLogController@index');
                 Route::get('/payment-logs/{id}', '\App\Http\Controllers\API\v1\PaymentLogController@show');
+                // Shipping
+                Route::get('/shippings', '\App\Http\Controllers\API\v1\ShippingController@index');
+                Route::get('/shippings/{id}', '\App\Http\Controllers\API\v1\ShippingController@show');
             });
             Route::group(['middleware' => ['role:admin|customer']], function () {
                 // Address
