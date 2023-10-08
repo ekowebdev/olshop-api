@@ -1,13 +1,13 @@
 # Olshop API
 
-Ini merupakan RESTful API yang dibuat untuk keperluan pembuatan toko online. Aplikasi ini di deploy menggunakan AWS EC2 instance dan aplikasi ini dapat diakses dengan link `http://ec2-18-143-187-165.ap-southeast-1.compute.amazonaws.com/`. Aplikasi ini juga telah menerapkan fitur multi bahasa dan juga RBAC dimana hak akses dalam aplikasi ini terbagi menjadi 2 yaitu `admin` & `customer`.
+Ini merupakan RESTful API yang dibuat untuk keperluan pembuatan toko online. Aplikasi ini di deploy menggunakan AWS EC2 instance dan dapat diakses dengan link ini `http://ec2-18-143-187-165.ap-southeast-1.compute.amazonaws.com/`. Aplikasi ini juga telah menerapkan fitur multi bahasa dan juga multiple hak akses yang terbagi menjadi 2 yaitu `admin` & `customer`.
 
 ## Spesifikasi Teknis
 
 -   Framework: Laravel
 -   Server Web: Nginx
 -   Kontainerisasi: Docker
--   Library Utama: Passport, Spatie Permission, AWS S3
+-   Library Utama: Passport, Spatie Permission, AWS S3, Midtrans, RajaOngkir
 -   Pola Arsitektur: Repository Pattern
 
 ## Arsitektur/Modularitas
@@ -31,10 +31,10 @@ Berikut adalah langkah-langkah untuk melakukan setup aplikasi di lokal server An
 -   Buka terminal dan arahkan ke direktori aplikasi.
 -   Duplikat file .env.example dan ubah namanya menjadi .env. Sesuaikan konfigurasi yang dibutuhkan, seperti pengaturan database dan AWS S3.
 -   Jalankan perintah `docker-compose up -d` untuk memulai kontainer Docker.
--   Setelah kontainer selesai dijalankan, jalankan perintah `docker-compose exec app php artisan key:generate` untuk menghasilkan kunci aplikasi yang baru.
--   Jalankan perintah `docker-compose exec app php artisan migrate --seed` untuk menjalankan migrasi database dan pengisian awal.
--   Jalankan perintah `docker-compose exec app php artisan passport:install`.
--   Aplikasi sekarang siap untuk digunakan di lokal komputer Anda. Buka browser dan akses URL `http://localhost` untuk melihat aplikasi.
+-   Setelah kontainer selesai dijalankan, jalankan perintah `docker-compose exec api php artisan key:generate` untuk menghasilkan kunci aplikasi yang baru.
+-   Jalankan perintah `docker-compose exec api php artisan migrate --seed` untuk menjalankan migrasi database dan pengisian awal.
+-   Jalankan perintah `docker-compose exec api php artisan passport:install`.
+-   Aplikasi sekarang siap untuk digunakan di lokal komputer Anda. Buka browser dan akses URL `http://localhost:8000` untuk menjalankan aplikasi.
 
 ### Automate Testing
 
@@ -42,7 +42,7 @@ Jika Anda ingin menjalankan automation test, berikut adalah langkah-langkahnya:
 
 -   Pastikan lokal server sudah disiapkan seperti yang dijelaskan sebelumnya.
 -   Buka terminal dan arahkan ke direktori aplikasi.
--   Jalankan perintah `docker-compose exec app php artisan test` untuk menjalankan semua tes yang ada.
+-   Jalankan perintah `docker-compose exec api php artisan test` untuk menjalankan semua tes yang ada.
 
 ### Setup Deployment
 
