@@ -18,7 +18,7 @@ return new class extends Migration
                 $table->integer('province_id')->change();
                 $table->integer('city_id')->change();
             }
-            if (Schema::hasTable('cities') && Schema::hasTable('provinces')) {
+            if (!$this->isFK('cities', 'city_id') && !$this->isFK('provinces', 'province_id')) {
                 $table->foreign('city_id')->references('city_id')->on('cities')->onDelete('cascade');
                 $table->foreign('province_id')->references('province_id')->on('provinces')->onDelete('cascade');
             }
@@ -38,5 +38,16 @@ return new class extends Migration
             $table->dropColumn('city_id');
             $table->dropColumn('province_id');
         });
+    }
+
+    private function isFK(string $table, string $column): bool
+    {  
+        $fkColumns = Schema::getConnection()
+            ->getDoctrineSchemaManager()
+            ->listTableForeignKeys($table);
+
+        return collect($fkColumns)->map(function ($fkColumn) {
+            return $fkColumn->getColumns();
+        })->flatten()->contains($column);
     }
 };

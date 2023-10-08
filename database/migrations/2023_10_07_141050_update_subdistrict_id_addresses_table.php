@@ -17,7 +17,7 @@ return new class extends Migration
             if (Schema::hasColumn('addresses', 'subdistrict_id')) {
                 $table->integer('subdistrict_id')->change();
             }
-            if (Schema::hasTable('subdistricts')) {
+            if (!$this->isFK('subdistricts', 'subdistrict_id')) {
                 $table->foreign('subdistrict_id')->references('subdistrict_id')->on('subdistricts')->onDelete('cascade');
             }
         });
@@ -34,5 +34,16 @@ return new class extends Migration
             $table->dropForeign(['subdistrict_id']);
             $table->dropColumn('subdistrict_id');
         });
+    }
+
+    private function isFK(string $table, string $column): bool
+    {  
+        $fkColumns = Schema::getConnection()
+            ->getDoctrineSchemaManager()
+            ->listTableForeignKeys($table);
+
+        return collect($fkColumns)->map(function ($fkColumn) {
+            return $fkColumn->getColumns();
+        })->flatten()->contains($column);
     }
 };
