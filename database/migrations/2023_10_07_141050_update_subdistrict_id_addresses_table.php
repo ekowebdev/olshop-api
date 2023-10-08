@@ -16,6 +16,8 @@ return new class extends Migration
         Schema::table('addresses', function (Blueprint $table) {
             if (Schema::hasColumn('addresses', 'subdistrict_id')) {
                 $table->integer('subdistrict_id')->change();
+            }
+            if (Schema::hasForeign('subdistrict_id')) {
                 $table->foreign('subdistrict_id')->references('subdistrict_id')->on('subdistricts')->onDelete('cascade');
             }
         });

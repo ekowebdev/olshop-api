@@ -17,6 +17,8 @@ return new class extends Migration
             if (Schema::hasColumn('addresses', 'city_id') && Schema::hasColumn('addresses', 'province_id')) {
                 $table->integer('province_id')->change();
                 $table->integer('city_id')->change();
+            }
+            if (Schema::hasForeign('city_id') && Schema::hasForeign('province_id')) {
                 $table->foreign('city_id')->references('city_id')->on('cities')->onDelete('cascade');
                 $table->foreign('province_id')->references('province_id')->on('provinces')->onDelete('cascade');
             }
