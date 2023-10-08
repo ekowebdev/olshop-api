@@ -17,7 +17,7 @@ return new class extends Migration
             if (Schema::hasColumn('addresses', 'subdistrict_id')) {
                 $table->integer('subdistrict_id')->change();
             }
-            if (Schema::hasForeign('subdistrict_id')) {
+            if (!$table->hasForeign('subdistrict_id')) {
                 $table->foreign('subdistrict_id')->references('subdistrict_id')->on('subdistricts')->onDelete('cascade');
             }
         });
