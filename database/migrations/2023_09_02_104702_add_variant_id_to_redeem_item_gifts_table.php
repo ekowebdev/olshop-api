@@ -27,7 +27,8 @@ return new class extends Migration
     public function down()
     {
         Schema::table('redeem_item_gifts', function (Blueprint $table) {
-            //
+            $table->dropForeign(['variant_id']);
+            $table->dropColumn('variant_id');
         });
     }
 };

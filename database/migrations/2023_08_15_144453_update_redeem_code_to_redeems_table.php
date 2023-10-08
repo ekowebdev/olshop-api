@@ -28,7 +28,7 @@ return new class extends Migration
     public function down()
     {
         Schema::table('redeems', function (Blueprint $table) {
-            //
+            $table->string('redeem_code', 20)->change();
         });
     }
 };

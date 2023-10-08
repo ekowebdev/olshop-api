@@ -29,10 +29,8 @@ return new class extends Migration
     public function down()
     {
         Schema::table('shippings', function($table) {
-            $table->dropForeign('origin');
-            $table->dropColumn('origin');
-            $table->dropForeign('destination');
-            $table->dropColumn('destination');
+            $table->dropForeign(['origin']);
+            $table->dropForeign(['destination']);
         });
     }
 };

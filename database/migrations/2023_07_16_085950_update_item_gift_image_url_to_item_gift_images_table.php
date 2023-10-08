@@ -28,7 +28,7 @@ return new class extends Migration
     public function down()
     {
         Schema::table('item_gift_images', function (Blueprint $table) {
-            //
+            $table->renameColumn('item_gift_image', 'item_gift_image_url');
         });
     }
 };

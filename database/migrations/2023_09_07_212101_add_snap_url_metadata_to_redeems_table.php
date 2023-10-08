@@ -29,7 +29,8 @@ return new class extends Migration
     public function down()
     {
         Schema::table('redeems', function (Blueprint $table) {
-            //
+            $table->dropColumn('snap_url');
+            $table->dropColumn('metadata');
         });
     }
 };

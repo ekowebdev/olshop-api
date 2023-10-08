@@ -29,7 +29,7 @@ return new class extends Migration
     public function down()
     {
         Schema::table('addresses', function($table) {
-            $table->dropForeign('subdistrict_id');
+            $table->dropForeign(['subdistrict_id']);
             $table->dropColumn('subdistrict_id');
         });
     }

@@ -28,7 +28,7 @@ return new class extends Migration
     public function down()
     {
         Schema::table('item_gifts', function (Blueprint $table) {
-            //
+            $table->dropColumn('item_gift_weight');
         });
     }
 };

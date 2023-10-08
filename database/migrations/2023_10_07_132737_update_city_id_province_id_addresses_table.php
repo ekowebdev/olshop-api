@@ -31,9 +31,9 @@ return new class extends Migration
     public function down()
     {
         Schema::table('addresses', function($table) {
-            $table->dropForeign('city_id');
+            $table->dropForeign(['city_id']);
+            $table->dropForeign(['province_id']);
             $table->dropColumn('city_id');
-            $table->dropForeign('province_id');
             $table->dropColumn('province_id');
         });
     }

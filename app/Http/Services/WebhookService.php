@@ -102,8 +102,6 @@ class WebhookService extends BaseService
                 ];
             }
 
-            // Mail::to($redeem->users->email)->send(new RedeemConfirmation($header_data, $detail_data));   
-            
             SendEmailRedeemConfirmationJob::dispatch($redeem->users->email, $header_data, $detail_data);
         }
 
