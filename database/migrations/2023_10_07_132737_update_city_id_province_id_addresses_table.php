@@ -24,6 +24,8 @@ return new class extends Migration
                 $table->foreign('city_id')->references('city_id')->on('cities')->onDelete('cascade');
                 $table->foreign('province_id')->references('province_id')->on('provinces')->onDelete('cascade');
             }
+            $table->foreign('city_id')->references('city_id')->on('cities')->onDelete('cascade');
+            $table->foreign('province_id')->references('province_id')->on('provinces')->onDelete('cascade');
         });
     }
 

@@ -21,6 +21,7 @@ return new class extends Migration
                 $table->dropForeign(['subdistrict_id']);
                 $table->foreign('subdistrict_id')->references('subdistrict_id')->on('subdistricts')->onDelete('cascade');
             }
+            $table->foreign('subdistrict_id')->references('subdistrict_id')->on('subdistricts')->onDelete('cascade');
         });
     }
 

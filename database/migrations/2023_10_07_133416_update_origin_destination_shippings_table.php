@@ -20,6 +20,8 @@ return new class extends Migration
                 $table->foreign('origin')->references('city_id')->on('cities')->onDelete('cascade');
                 $table->foreign('destination')->references('city_id')->on('cities')->onDelete('cascade');
             }
+            $table->foreign('origin')->references('city_id')->on('cities')->onDelete('cascade');
+            $table->foreign('destination')->references('city_id')->on('cities')->onDelete('cascade');
         });
     }
 

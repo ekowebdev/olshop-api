@@ -28,7 +28,9 @@ return new class extends Migration
     public function down()
     {
         Schema::table('addresses', function($table) {
-            $table->renameColumn('subdistrict_id', 'district_id');
+            if (Schema::hasColumn('addresses', 'subdistrict_id')) {
+                $table->renameColumn('subdistrict_id', 'district_id');
+            }
         });
     }
 };
