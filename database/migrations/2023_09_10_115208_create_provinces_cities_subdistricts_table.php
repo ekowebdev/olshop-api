@@ -14,7 +14,7 @@ return new class extends Migration
      */
     public function up()
     {
-        $sql_file = storage_path('app/public/database/rajaongkir.sql');
+        $sql_file = storage_path('app/public/rajaongkir.sql');
         $sql = file_get_contents($sql_file);
 
         DB::statement('SET FOREIGN_KEY_CHECKS=0');
