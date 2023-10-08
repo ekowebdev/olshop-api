@@ -14,7 +14,9 @@ return new class extends Migration
     public function up()
     {
         Schema::table('shippings', function (Blueprint $table) {
-            if (Schema::hasColumn('shippings', 'origin') && Schema::hasColumn('shippings', 'destination')) {
+            if ($this->isFK('cities', 'city_id')) {
+                $table->dropForeign(['origin']);
+                $table->dropForeign(['destination']);
                 $table->foreign('origin')->references('city_id')->on('cities')->onDelete('cascade');
                 $table->foreign('destination')->references('city_id')->on('cities')->onDelete('cascade');
             }
@@ -32,5 +34,16 @@ return new class extends Migration
             $table->dropForeign(['origin']);
             $table->dropForeign(['destination']);
         });
+    }
+
+    private function isFK(string $table, string $column): bool
+    {  
+        $fkColumns = Schema::getConnection()
+            ->getDoctrineSchemaManager()
+            ->listTableForeignKeys($table);
+
+        return collect($fkColumns)->map(function ($fkColumn) {
+            return $fkColumn->getColumns();
+        })->flatten()->contains($column);
     }
 };
