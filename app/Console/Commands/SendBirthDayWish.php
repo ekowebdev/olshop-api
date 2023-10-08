@@ -21,7 +21,7 @@ class SendBirthDayWish extends Command
      *
      * @var string
      */
-    protected $description = 'Command For Sending Birthday Wish to User';
+    protected $description = 'Command for sending birthday wish to user';
 
     /**
      * Execute the console command.

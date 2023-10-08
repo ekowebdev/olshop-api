@@ -77,7 +77,9 @@ class WebhookService extends BaseService
         if ($redeem->redeem_status === 'success') {
             $header_data = [
                 'redeem_code' => $redeem->redeem_code,
-                'total_price' => $redeem->total_point
+                'total_price' => $redeem->total_point,
+                'shipping_fee' => $redeem->shipping_fee,
+                'total_amount' => $redeem->total_amount,
             ];
 
             $redeem_item_gifts = RedeemItemGift::with(['item_gifts', 'variants'])
