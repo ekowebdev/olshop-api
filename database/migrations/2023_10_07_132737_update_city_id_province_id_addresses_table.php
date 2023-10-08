@@ -18,7 +18,7 @@ return new class extends Migration
                 $table->integer('province_id')->change();
                 $table->integer('city_id')->change();
             }
-            if (Schema::table('cities') && Schema::table('provinces')) {
+            if (Schema::hasTable('cities') && Schema::hasTable('provinces')) {
                 $table->foreign('city_id')->references('city_id')->on('cities')->onDelete('cascade');
                 $table->foreign('province_id')->references('province_id')->on('provinces')->onDelete('cascade');
             }
