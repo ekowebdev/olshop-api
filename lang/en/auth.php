@@ -13,11 +13,11 @@ return [
     |
     */
     
-    'failed'                         => 'These credentials do not match.',
-    'throttle'                       => 'Too many login attempts. Please try again in :seconds seconds.',
-    'wrong_email_or_password'        => 'Incorrect email or password.',
-    'wrong_username_or_password'     => 'Incorrect username or password.',
-    'not_authorize_access'           => 'Not authorized to access.',
-    'not_verified_account'           => 'You need to verify account.',
-    'verification_failed'            => 'You code verify failed.',
+    'failed'                         => 'These credentials do not match',
+    'throttle'                       => 'Too many login attempts. Please try again in :seconds seconds',
+    'wrong_email_or_password'        => 'Incorrect email or password',
+    'wrong_username_or_password'     => 'Incorrect username or password',
+    'not_authorize_access'           => 'Not authorized to access',
+    'not_verified_account'           => 'You need to verify account',
+    'verification_failed'            => 'You code verify failed',
 ];

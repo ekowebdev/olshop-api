@@ -13,12 +13,12 @@ return [
     |
     */
     
-    'failed'                         => 'Kredensial tidak sesuai.',
-    'throttle'                       => 'Terlalu banyak upaya masuk. Silakan coba lagi dalam :seconds detik.',
-    'wrong_email_or_password'        => 'Email atau sandi salah.',
-    'wrong_username_or_password'     => 'Username atau sandi salah.',
-    'not_authorize_access'           => 'Tidak ada otoritas akses.',
-    'not_verified_account'           => 'Anda harus memverifikasi akun terlebih dahulu.',
-    'verification_failed'            => 'Verifikasi kode Anda gagal.',
+    'failed'                         => 'Kredensial tidak sesuai',
+    'throttle'                       => 'Terlalu banyak upaya masuk. Silakan coba lagi dalam :seconds detik',
+    'wrong_email_or_password'        => 'Email atau sandi salah',
+    'wrong_username_or_password'     => 'Username atau sandi salah',
+    'not_authorize_access'           => 'Tidak ada otoritas akses',
+    'not_verified_account'           => 'Anda harus memverifikasi akun terlebih dahulu',
+    'verification_failed'            => 'Verifikasi kode Anda gagal',
 ];
 
