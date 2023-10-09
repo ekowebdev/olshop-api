@@ -36,8 +36,6 @@ Route::middleware(['xssclean'])->group(function () {
                 Route::patch('/gifts/{id}', '\App\Http\Controllers\API\v1\ItemGiftController@update');
                 Route::delete('/gifts/{id}', '\App\Http\Controllers\API\v1\ItemGiftController@delete');
                 // Item Gift Image
-                Route::get('/gifts/images', '\App\Http\Controllers\API\v1\ItemGiftImageController@index');
-                Route::get('/gifts/images/{id}', '\App\Http\Controllers\API\v1\ItemGiftImageController@show');
                 Route::post('/gifts/images', '\App\Http\Controllers\API\v1\ItemGiftImageController@store');
                 Route::post('/gifts/images/{id}', '\App\Http\Controllers\API\v1\ItemGiftImageController@update');
                 Route::delete('/gifts/images/{id}', '\App\Http\Controllers\API\v1\ItemGiftImageController@delete');
@@ -88,6 +86,9 @@ Route::middleware(['xssclean'])->group(function () {
         // Item Gift
         Route::get('/gifts', '\App\Http\Controllers\API\v1\ItemGiftController@index');
         Route::get('/gifts/{id}', '\App\Http\Controllers\API\v1\ItemGiftController@show');
+        // Item Gift Image
+        Route::get('/gifts/images', '\App\Http\Controllers\API\v1\ItemGiftImageController@index');
+        Route::get('/gifts/images/{id}', '\App\Http\Controllers\API\v1\ItemGiftImageController@show');
         // Variant
         Route::get('/variants', '\App\Http\Controllers\API\v1\VariantController@index');
         Route::get('/variants/{id}', '\App\Http\Controllers\API\v1\VariantController@show');
