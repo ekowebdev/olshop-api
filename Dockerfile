@@ -7,10 +7,14 @@ ENV PHP_OPCACHE_VALIDATE_TIMESTAMPS=0
 ENV PHP_OPCACHE_REVALIDATE_FREQ=0
 
 # Install dependencies.
-RUN apt-get update && apt-get install -y unzip libpq-dev libcurl4-gnutls-dev nginx libonig-dev
+RUN apt-get update && apt-get install -y zip unzip libpq-dev libcurl4-gnutls-dev nginx libonig-dev libpng-dev libjpeg-dev libgd-dev libfreetype6-dev libjpeg62-turbo-dev libmcrypt-dev
+
+# Clear cache
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Install PHP extensions.
-RUN docker-php-ext-install mysqli pdo pdo_mysql bcmath curl opcache mbstring
+RUN docker-php-ext-configure gd --enable-gd --with-freetype --with-jpeg
+RUN docker-php-ext-install mysqli pdo pdo_mysql bcmath curl opcache mbstring gd
 
 # Copy composer executable.
 COPY --from=composer:2.3.5 /usr/bin/composer /usr/bin/composer

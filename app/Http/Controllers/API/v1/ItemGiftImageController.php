@@ -6,6 +6,7 @@ use App\Http\Resources\DeletedResource;
 use Illuminate\Support\Facades\Request;
 use App\Http\Controllers\BaseController;
 use App\Http\Services\ItemGiftImageService;
+use App\Http\Resources\ItemGiftImageResource;
 
 class ItemGiftImageController extends BaseController
 {
@@ -17,14 +18,36 @@ class ItemGiftImageController extends BaseController
         $this->service = $service;
     }
 
-    public function store($locale, $id)
+    public function index($locale)
     {
-        return $this->service->store($locale, $id, Request::all());
+        $data = $this->service->getIndexData($locale, Request::all());
+        return (ItemGiftImageResource::collection($data))
+                ->additional([
+                    'sortable_and_searchable_column' => $data->sortableAndSearchableColumn,
+                ]);
     }
 
-    public function delete($locale, $id, $image_name)
+    public function show($locale, $id)
     {
-        $data = $this->service->delete($locale, $id, $image_name, Request::all());
+        $data = $this->service->getSingleData($locale, $id);
+        return new ItemGiftImageResource($data);
+    }
+
+    public function store($locale)
+    {
+        $data = $this->service->store($locale, Request::all());
+        return new ItemGiftImageResource($data);
+    }
+
+    public function update($locale, $id)
+    {
+        $data = $this->service->update($locale, $id, Request::all());
+        return new ItemGiftImageResource($data);
+    }
+
+    public function delete($locale, $id)
+    {
+        $data = $this->service->delete($locale, $id, Request::all());
         return new DeletedResource($data);
     }
 }

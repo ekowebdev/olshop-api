@@ -36,8 +36,11 @@ Route::middleware(['xssclean'])->group(function () {
                 Route::patch('/gifts/{id}', '\App\Http\Controllers\API\v1\ItemGiftController@update');
                 Route::delete('/gifts/{id}', '\App\Http\Controllers\API\v1\ItemGiftController@delete');
                 // Item Gift Image
-                Route::post('/gifts/{itemGiftId}/images', '\App\Http\Controllers\API\v1\ItemGiftImageController@store');
-                Route::delete('/gifts/{itemGiftId}/{imageName}/images', '\App\Http\Controllers\API\v1\ItemGiftImageController@delete');
+                Route::get('/gifts/images', '\App\Http\Controllers\API\v1\ItemGiftImageController@index');
+                Route::get('/gifts/images/{id}', '\App\Http\Controllers\API\v1\ItemGiftImageController@show');
+                Route::post('/gifts/images', '\App\Http\Controllers\API\v1\ItemGiftImageController@store');
+                Route::post('/gifts/images/{id}', '\App\Http\Controllers\API\v1\ItemGiftImageController@update');
+                Route::delete('/gifts/images/{id}', '\App\Http\Controllers\API\v1\ItemGiftImageController@delete');
                 // Variant
                 Route::post('/variants', '\App\Http\Controllers\API\v1\VariantController@store');
                 Route::put('/variants/{id}', '\App\Http\Controllers\API\v1\VariantController@update');

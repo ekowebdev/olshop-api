@@ -11,7 +11,7 @@ class ItemGiftImage extends BaseModel
     use HasFactory;
 
     protected $table = 'item_gift_images';
-    protected $guarded = [];
+    protected $fillable = ['item_gift_id', 'item_gift_image'];
     protected $appends = ['item_gift_image_url', 'item_gift_image_thumb_url'];
 
     public function getItemGiftImageUrlAttribute($value)
@@ -29,6 +29,7 @@ class ItemGiftImage extends BaseModel
     public function scopeGetAll($query)
     {      
         return $query->select([
+                    'id',
                     'item_gift_id', 
                     'item_gift_image',
                 ]);
