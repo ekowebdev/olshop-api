@@ -28,7 +28,7 @@ class CartResource extends JsonResource
                     ];
                 }),
             ],
-            'variants' => $this->variants->map(function ($variant) {
+            'variants' => $this->item_gifts->variants->map(function ($variant) {
                 return [
                     'id' => $variant->id,
                     'variant_name' => $variant->variant_name,
@@ -44,7 +44,13 @@ class CartResource extends JsonResource
                 'roles' => $this->users->getRoleNames(),
                 'username' => $this->users->username,
                 'email' => $this->users->email,
-                'birthdate' => $this->users->birthdate,
+                'profile' => ($this->users->profile) ? [
+                    'id' => $this->users->profile->id,
+                    'birthdate' => $this->users->profile->birthdate,
+                    'phone_number' => $this->users->profile->phone_number,
+                    'avatar' => $this->users->profile->avatar,
+                    'avatar_url' => $this->users->profile->avatar_url,
+                ] : null,
                 'address' => $this->users->address->map(function ($address) {
                     return [
                         'province' => [

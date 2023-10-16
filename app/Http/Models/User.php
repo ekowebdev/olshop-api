@@ -8,6 +8,7 @@ use App\Http\Models\Rating;
 use App\Http\Models\Redeem;
 use Illuminate\Support\Arr;
 use App\Http\Models\Address;
+use App\Http\Models\Profile;
 use App\Http\Models\Wishlists;
 use Laravel\Passport\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
@@ -30,7 +31,6 @@ class User extends Authenticable implements MustVerifyEmail
         'name',
         'username',
         'email',
-		'birthdate',
         'password',
     ];
 
@@ -270,6 +270,11 @@ class User extends Authenticable implements MustVerifyEmail
         return $this->hasMany(Address::class);
     }
 
+	public function profile()
+    {
+        return $this->hasOne(Profile::class);
+    }
+
     public function scopeGetAll($query)
     {      
         return $query->select([
@@ -277,7 +282,6 @@ class User extends Authenticable implements MustVerifyEmail
                     'name', 
                     'username', 
                     'email',
-                    'birthdate',
                     'password',
 					'email_verified_at',
                 ]);

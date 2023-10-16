@@ -24,11 +24,11 @@ Route::middleware(['xssclean'])->group(function () {
                 Route::delete('/users/{id}', '\App\Http\Controllers\API\v1\UserController@delete');
                 // Category
                 Route::post('/category', '\App\Http\Controllers\API\v1\CategoryController@store');
-                Route::put('/category/{id}', '\App\Http\Controllers\API\v1\CategoryController@update');
+                Route::post('/category/{id}', '\App\Http\Controllers\API\v1\CategoryController@update');
                 Route::delete('/category/{id}', '\App\Http\Controllers\API\v1\CategoryController@delete');
                 // Brand
                 Route::post('/brand', '\App\Http\Controllers\API\v1\BrandController@store');
-                Route::put('/brand/{id}', '\App\Http\Controllers\API\v1\BrandController@update');
+                Route::post('/brand/{id}', '\App\Http\Controllers\API\v1\BrandController@update');
                 Route::delete('/brand/{id}', '\App\Http\Controllers\API\v1\BrandController@delete');
                 // Item Gift
                 Route::post('/gifts', '\App\Http\Controllers\API\v1\ItemGiftController@store');
@@ -51,6 +51,12 @@ Route::middleware(['xssclean'])->group(function () {
                 Route::get('/shippings/{id}', '\App\Http\Controllers\API\v1\ShippingController@show');
             });
             Route::group(['middleware' => ['role:admin|customer']], function () {
+                // Profile
+                Route::get('/profile', '\App\Http\Controllers\API\v1\ProfileController@index');
+                Route::get('/profile/{id}', '\App\Http\Controllers\API\v1\ProfileController@show');
+                Route::post('/profile', '\App\Http\Controllers\API\v1\ProfileController@store');
+                Route::post('/profile/{id}', '\App\Http\Controllers\API\v1\ProfileController@update');
+                Route::delete('/profile/{id}', '\App\Http\Controllers\API\v1\ProfileController@delete');
                 // Address
                 Route::get('/address', '\App\Http\Controllers\API\v1\AddressController@index');
                 Route::get('/address/{id}', '\App\Http\Controllers\API\v1\AddressController@show');

@@ -31,8 +31,14 @@ class SendBirthDayWish extends Command
     public function handle()
     {
         $i = 0;
-        $users = User::whereMonth('birthdate', '=', date('m'))->whereDay('birthdate', '=', date('d'))->get();  
 
+        // $users = User::whereMonth('birthdate', '=', date('m'))->whereDay('birthdate', '=', date('d'))->get();  
+
+        $users = User::whereHas('profile', function ($query) {
+            $query->whereMonth('birthdate', '=', date('m'))
+                ->whereDay('birthdate', '=', date('d'));
+        })->get();
+        
         foreach($users as $user) {
             Mail::to($user->email)->send(new BirthDayWish($user));
             $i++;

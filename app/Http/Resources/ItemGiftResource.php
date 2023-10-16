@@ -43,6 +43,13 @@ class ItemGiftResource extends JsonResource
                         'username' => $review->users->username,
                         'email' => $review->users->email,
                         'birthdate' => $review->users->birthdate,
+                        'profile' => ($review->users->profile) ? [
+                            'id' => $review->users->profile->id,
+                            'birthdate' => $review->users->profile->birthdate,
+                            'phone_number' => $review->users->profile->phone_number,
+                            'avatar' => $review->users->profile->avatar,
+                            'avatar_url' => $review->users->profile->avatar_url,
+                        ] : null,
                         'address' => $review->users->address->map(function ($address) {
                             return [
                                 'province' => [

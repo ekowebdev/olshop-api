@@ -13,7 +13,16 @@ class Brand extends BaseModel
     use HasFactory;
 
     protected $table = 'brands';
-    protected $fillable = ['brand_name', 'brand_slug', 'brand_sort'];
+    protected $fillable = ['brand_name', 'brand_slug', 'brand_logo', 'brand_sort'];
+    protected $appends = ['brand_logo_url'];
+
+    public function getBrandLogoUrlAttribute()
+    {
+        if ($this->brand_logo != null) {
+            $url = 'https://'. env('AWS_BUCKET') .'.s3-'. env('AWS_DEFAULT_REGION') .'.amazonaws.com/images/brand/' . $this->brand_logo;
+        }
+        return $url ?? null;
+    }
 
     public function item_gifts()
     {
@@ -25,8 +34,9 @@ class Brand extends BaseModel
         return $query->select([
                     'id', 
                     'brand_name', 
-                    'brand_slug', 
+                    'brand_slug',
                     'brand_sort',
+                    'brand_logo',
                 ]);
     }
 }

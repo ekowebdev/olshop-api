@@ -14,7 +14,13 @@ class UserResource extends JsonResource
             'roles' => $this->getRoleNames(),
             'username' => $this->username,
             'email' => $this->email,
-            'birthdate' => $this->birthdate,
+            'profile' => ($this->profile) ? [
+                'id' => $this->profile->id,
+                'birthdate' => $this->profile->birthdate,
+                'phone_number' => $this->profile->phone_number,
+                'avatar' => $this->profile->avatar,
+                'avatar_url' => $this->profile->avatar_url,
+            ] : null,
             'address' => $this->address->map(function ($address) {
                 return [
                     'province' => [

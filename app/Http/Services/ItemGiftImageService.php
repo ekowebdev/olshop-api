@@ -59,7 +59,8 @@ class ItemGiftImageService extends BaseService
                 'item_gift_image' => [
                     'required',
                     'max:1000',
-                    'mimes:jpg,png'
+                    'image',
+                    'mimes:jpg,png',
                 ],
             ]
         );
@@ -85,11 +86,6 @@ class ItemGiftImageService extends BaseService
     {
         $check_data = $this->repository->getSingleData($locale, $id);
 
-        $data = array_merge([
-            'item_gift_id' => $check_data->item_gift_id,
-            'item_gift_image' => $check_data->item_gift_image,
-        ], $data);
-
         $data_request = Arr::only($data, [
             'item_gift_id',
             'item_gift_image',
@@ -97,33 +93,34 @@ class ItemGiftImageService extends BaseService
 
         $this->repository->validate($data_request, [
                 'item_gift_id' => [
-                    'required',
                     'exists:item_gifts,id',
                 ],
                 'item_gift_image' => [
-                    'required',
                     'max:1000',
+                    'image',
                     'mimes:jpg,png',
                 ],
             ]
         );
 
         DB::beginTransaction();
-        if(Storage::disk('s3')->exists('images/' . $check_data->item_gift_image)) {
-            Storage::disk('s3')->delete('images/' . $check_data->item_gift_image);
+        if (isset($data_request['item_gift_image'])) {
+            if(Storage::disk('s3')->exists('images/' . $check_data->item_gift_image)) {
+                Storage::disk('s3')->delete('images/' . $check_data->item_gift_image);
+            }
+            if(Storage::disk('s3')->exists('images/' . 'thumbnails/' . $check_data->item_gift_image)) {
+                Storage::disk('s3')->delete('images/' . 'thumbnails/' . $check_data->item_gift_image);
+            }
+            $image = $data_request['item_gift_image'];
+            $image_name = time() . '.' . $image->getClientOriginalExtension();
+            Storage::disk('s3')->put('images/' . $image_name, file_get_contents($image));
+            $img = Image::make($image);
+            $img_thumb = $img->crop(5, 5);
+            $img_thumb = $img_thumb->stream()->detach();
+            Storage::disk('s3')->put('images/thumbnails/' . $image_name, $img_thumb);
+            $check_data->item_gift_image = $image_name;
         }
-        if(Storage::disk('s3')->exists('images/' . 'thumbnails/' . $check_data->item_gift_image)) {
-            Storage::disk('s3')->delete('images/' . 'thumbnails/' . $check_data->item_gift_image);
-        }
-        $image = $data_request['item_gift_image'];
-        $image_name = time() . '.' . $image->getClientOriginalExtension();
-        Storage::disk('s3')->put('images/' . $image_name, file_get_contents($image));
-        $img = Image::make($image);
-        $img_thumb = $img->crop(5, 5);
-        $img_thumb = $img_thumb->stream()->detach();
-        Storage::disk('s3')->put('images/thumbnails/' . $image_name, $img_thumb);
-        $check_data->item_gift_id = $data_request['item_gift_id'];
-        $check_data->item_gift_image = $image_name;
+        $check_data->item_gift_id = $data_request['item_gift_id'] ?? $check_data->item_gift_id;
         $check_data->save();
         DB::commit();
 

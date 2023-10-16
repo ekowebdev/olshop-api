@@ -13,8 +13,17 @@ class Category extends BaseModel
     use HasFactory;
 
     protected $table = 'categories';
-    protected $fillable = ['category_code', 'category_name', 'category_slug', 'category_sort', 'category_status'];
-    
+    protected $fillable = ['category_code', 'category_name', 'category_slug', 'category_image', 'category_sort', 'category_status'];
+    protected $appends = ['category_image_url'];
+
+    public function getCategoryImageUrlAttribute()
+    {
+        if ($this->category_image != null) {
+            $url = 'https://'. env('AWS_BUCKET') .'.s3-'. env('AWS_DEFAULT_REGION') .'.amazonaws.com/images/category/' . $this->category_image;
+        }
+        return $url ?? null;
+    }
+
     public function item_gifts()
     {
         return $this->hasOne(ItemGift::class);
@@ -29,6 +38,7 @@ class Category extends BaseModel
                     'category_slug', 
                     'category_sort',
                     'category_status',
+                    'category_image',
                 ]);
     }
 }

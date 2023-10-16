@@ -44,11 +44,11 @@ class PaymentLogResource extends JsonResource
                         ],
                         'variants' => ($redeem_item_gift->item_gifts->variants->count() > 0) 
                             ? [
-                                'id' => $redeem_item_gift->variants->id,
-                                'variant_name' => $redeem_item_gift->variants->variant_name,
-                                'variant_quantity' => $redeem_item_gift->variants->variant_quantity,
-                                'variant_point' => $redeem_item_gift->variants->variant_point,
-                                'fvariant_point' => format_money(strval($redeem_item_gift->variants->variant_point)),
+                                'id' => $redeem_item_gift->item_gifts->variants->id,
+                                'variant_name' => $redeem_item_gift->item_gifts->variants->variant_name,
+                                'variant_quantity' => $redeem_item_gift->item_gifts->variants->variant_quantity,
+                                'variant_point' => $redeem_item_gift->item_gifts->variants->variant_point,
+                                'fvariant_point' => format_money(strval($redeem_item_gift->item_gifts->variants->variant_point)),
                             ] : null,
                     ];
                 })

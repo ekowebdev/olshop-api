@@ -14,16 +14,26 @@ class ItemGiftImage extends BaseModel
     protected $fillable = ['item_gift_id', 'item_gift_image'];
     protected $appends = ['item_gift_image_url', 'item_gift_image_thumb_url'];
 
-    public function getItemGiftImageUrlAttribute($value)
+    public function getItemGiftImageUrlAttribute()
     {
-        $url = 'https://'. env('AWS_BUCKET') .'.s3-'. env('AWS_DEFAULT_REGION') .'.amazonaws.com/images/';
-        return $url . $this->item_gift_image;
+        if ($this->item_gift_image != null) {
+            $url = 'https://'. env('AWS_BUCKET') .'.s3-'. env('AWS_DEFAULT_REGION') .'.amazonaws.com/images/' . $this->item_gift_image;
+        }
+        return $url ?? null;
+
+        // $url = 'https://'. env('AWS_BUCKET') .'.s3-'. env('AWS_DEFAULT_REGION') .'.amazonaws.com/images/';
+        // return $url . $this->item_gift_image;
     }
 
-    public function getItemGiftImageThumbUrlAttribute($value)
+    public function getItemGiftImageThumbUrlAttribute()
     {
-        $url = 'https://'. env('AWS_BUCKET') .'.s3-'. env('AWS_DEFAULT_REGION') .'.amazonaws.com/images/thumbnails/';
-        return $url . $this->item_gift_image;
+        if ($this->item_gift_image != null) {
+            $url = 'https://'. env('AWS_BUCKET') .'.s3-'. env('AWS_DEFAULT_REGION') .'.amazonaws.com/images/thumbnails/' . $this->item_gift_image;
+        }
+        return $url ?? null;
+
+        // $url = 'https://'. env('AWS_BUCKET') .'.s3-'. env('AWS_DEFAULT_REGION') .'.amazonaws.com/images/thumbnails/';
+        // return $url . $this->item_gift_image;
     }
 
     public function scopeGetAll($query)
