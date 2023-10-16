@@ -6,20 +6,24 @@ use App\Http\Services\BaseService;
 use Illuminate\Support\Collection;
 use Illuminate\Pagination\Paginator;
 use App\Exceptions\DataEmptyException;
+use App\Http\Repositories\CityRepository;
+use App\Http\Repositories\ProvinceRepository;
 use Illuminate\Pagination\LengthAwarePaginator;
 use App\Http\Repositories\SubdistrictRepository;
 
 class RajaOngkirService extends BaseService
 {
-    private $api_key, $subdistrict_repository;
+    private $api_key, $province_repository, $city_repository, $subdistrict_repository;
 
-    public function __construct(SubdistrictRepository $subdistrict_repository)
+    public function __construct(ProvinceRepository $province_repository, CityRepository $city_repository, SubdistrictRepository $subdistrict_repository)
     {
         $this->api_key = env('RAJAONGKIR_API_KEY');
+        $this->province_repository = $province_repository;
+        $this->city_repository = $city_repository;
         $this->subdistrict_repository = $subdistrict_repository;
     }
 
-    public function getProvince($locale, $id, $page, $per_page)
+    public function getProvince3rd($locale, $id, $page, $per_page)
     {
         $id = $id ?? null;
 
@@ -81,7 +85,7 @@ class RajaOngkirService extends BaseService
         return $response;
     }
 
-    public function getCity($locale, $id, $province_id, $page, $per_page)
+    public function getCity3rd($locale, $id, $province_id, $page, $per_page)
     {
         $id = $id ?? null;
         $province_id = $province_id ?? null;
@@ -145,6 +149,50 @@ class RajaOngkirService extends BaseService
         }
 
         return $response;
+    }
+
+    public function getProvince($locale, $data)
+    {
+        $search = [
+            'province_name' => 'province_name',
+        ];
+
+        $search_column = [
+            'province_id' => 'province_id',
+            'province_name' => 'province_name',
+        ];
+
+        $sortable_and_searchable_column = [
+            'search'        => $search,
+            'search_column' => $search_column,
+            'sort_column'   => array_merge($search, $search_column),
+        ];
+        
+        return $this->province_repository->getIndexData($locale, $sortable_and_searchable_column);
+    }
+
+    public function getCity($locale, $data)
+    {
+        $search = [
+            'province_id' => 'province_id',
+            'city_name' => 'city_name',
+            'postal_code' => 'postal_code',
+        ];
+
+        $search_column = [
+            'city_id' => 'city_id',
+            'province_id' => 'province_id',
+            'city_name' => 'city_name',
+            'postal_code' => 'postal_code',
+        ];
+
+        $sortable_and_searchable_column = [
+            'search'        => $search,
+            'search_column' => $search_column,
+            'sort_column'   => array_merge($search, $search_column),
+        ];
+        
+        return $this->city_repository->getIndexData($locale, $sortable_and_searchable_column);
     }
 
     public function getSubdistrict($locale, $data)

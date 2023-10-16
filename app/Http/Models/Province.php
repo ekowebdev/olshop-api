@@ -2,8 +2,9 @@
 
 namespace App\Http\Models;
 
-use App\Http\Models\Address;
+use App\Http\Models\City;
 use Illuminate\Support\Str;
+use App\Http\Models\Address;
 use App\Http\Models\BaseModel;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -18,6 +19,11 @@ class Province extends BaseModel
     public function address()
     {
         return $this->hasMany(Address::class);
+    }
+
+    public function city()
+    {
+        return $this->hasMany(City::class);
     }
 
     public function scopeGetAll($query)
