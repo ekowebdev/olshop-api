@@ -32,6 +32,7 @@ class ReviewResource extends JsonResource
                     return [
                         'item_gift_id' => $image->item_gift_id,
                         'item_gift_image_url' => $image->item_gift_image_url,
+                        'item_gift_image_thumbnail_url' => $image->item_gift_image_thumb_url,
                     ];
                 }),
                 'variants' => $this->item_gifts->variants->map(function ($variant) {
@@ -59,6 +60,7 @@ class ReviewResource extends JsonResource
                 ] : null,
                 'address' => $this->users->address->map(function ($address) {
                     return [
+                        'id' => $address->id,
                         'province' => [
                             'id' => $address->province->province_id,
                             'province_name' => $address->province->province_name

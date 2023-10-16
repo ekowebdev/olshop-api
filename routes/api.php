@@ -100,13 +100,13 @@ Route::middleware(['xssclean'])->group(function () {
         Route::get('/brand', '\App\Http\Controllers\API\v1\BrandController@index');
         Route::get('/brand/{id}', '\App\Http\Controllers\API\v1\BrandController@show');
         Route::get('/brand/slug/{slug}', '\App\Http\Controllers\API\v1\BrandController@showBySlug');
+        // Item Gift Image
+        Route::get('/gifts/images', '\App\Http\Controllers\API\v1\ItemGiftImageController@index');
+        Route::get('/gifts/images/{id}', '\App\Http\Controllers\API\v1\ItemGiftImageController@show');
         // Item Gift
         Route::get('/gifts', '\App\Http\Controllers\API\v1\ItemGiftController@index');
         Route::get('/gifts/{id}', '\App\Http\Controllers\API\v1\ItemGiftController@show');
         Route::get('/gifts/slug/{slug}', '\App\Http\Controllers\API\v1\ItemGiftController@showBySlug');
-        // Item Gift Image
-        Route::get('/gifts/images', '\App\Http\Controllers\API\v1\ItemGiftImageController@index');
-        Route::get('/gifts/images/{id}', '\App\Http\Controllers\API\v1\ItemGiftImageController@show');
         // Variant
         Route::get('/variants', '\App\Http\Controllers\API\v1\VariantController@index');
         Route::get('/variants/{id}', '\App\Http\Controllers\API\v1\VariantController@show');

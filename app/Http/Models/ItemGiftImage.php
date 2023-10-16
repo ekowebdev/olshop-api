@@ -20,9 +20,6 @@ class ItemGiftImage extends BaseModel
             $url = 'https://'. env('AWS_BUCKET') .'.s3-'. env('AWS_DEFAULT_REGION') .'.amazonaws.com/images/' . $this->item_gift_image;
         }
         return $url ?? null;
-
-        // $url = 'https://'. env('AWS_BUCKET') .'.s3-'. env('AWS_DEFAULT_REGION') .'.amazonaws.com/images/';
-        // return $url . $this->item_gift_image;
     }
 
     public function getItemGiftImageThumbUrlAttribute()
@@ -31,9 +28,6 @@ class ItemGiftImage extends BaseModel
             $url = 'https://'. env('AWS_BUCKET') .'.s3-'. env('AWS_DEFAULT_REGION') .'.amazonaws.com/images/thumbnails/' . $this->item_gift_image;
         }
         return $url ?? null;
-
-        // $url = 'https://'. env('AWS_BUCKET') .'.s3-'. env('AWS_DEFAULT_REGION') .'.amazonaws.com/images/thumbnails/';
-        // return $url . $this->item_gift_image;
     }
 
     public function scopeGetAll($query)

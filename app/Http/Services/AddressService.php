@@ -6,7 +6,6 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use App\Http\Models\Address;
 use Illuminate\Validation\Rule;
-use App\Rules\UniqueMainAddress;
 use Illuminate\Support\Facades\DB;
 use App\Http\Repositories\AddressRepository;
 
@@ -69,7 +68,6 @@ class AddressService extends BaseService
                 'user_id' => [
                     'required',
                     'exists:users,id',
-                    new UniqueMainAddress,
                 ],
                 'province_id' => [
                     'required',
@@ -132,7 +130,6 @@ class AddressService extends BaseService
         $this->repository->validate($data_request, [
             'user_id' => [
                 'exists:users,id',
-                new UniqueMainAddress,
             ],
             'province_id' => [
                 'integer',

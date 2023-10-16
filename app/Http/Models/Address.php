@@ -19,6 +19,24 @@ class Address extends BaseModel
     protected $table = 'addresses';
     protected $fillable = ['user_id', 'province_id', 'city_id', 'subdistrict_id', 'postal_code', 'address', 'is_main'];
 
+    public static function boot()
+    {
+        parent::boot();
+
+        static::saving(function ($address) {
+            if ($address->is_main === 'yes' && $address->user_id) {
+                $existingMainAddress = $address->users->address()
+                    ->where('is_main', 'yes')
+                    ->where('id', '<>', $address->id)
+                    ->first();
+
+                if ($existingMainAddress) {
+                    throw new \Exception(trans('error.main_address_exists', ['id' => $address->user_id]));
+                }
+            }
+        });
+    }
+
     public function users()
     {
         return $this->belongsTo(User::class, 'user_id');

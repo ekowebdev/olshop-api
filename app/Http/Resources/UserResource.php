@@ -23,6 +23,7 @@ class UserResource extends JsonResource
             ] : null,
             'address' => $this->address->map(function ($address) {
                 return [
+                    'id' => $address->id,
                     'province' => [
                         'id' => $address->province->province_id,
                         'province_name' => $address->province->province_name

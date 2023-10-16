@@ -53,6 +53,7 @@ class CartResource extends JsonResource
                 ] : null,
                 'address' => $this->users->address->map(function ($address) {
                     return [
+                        'id' => $address->id,
                         'province' => [
                             'id' => $address->province->province_id,
                             'province_name' => $address->province->province_name

@@ -28,6 +28,7 @@ class VariantResource extends JsonResource
                     return [
                         'item_gift_id' => $image->item_gift_id,
                         'item_gift_image_url' => $image->item_gift_image_url,
+                        'item_gift_image_thumbnail_url' => $image->item_gift_image_thumb_url,
                     ];
                 }),
             ],

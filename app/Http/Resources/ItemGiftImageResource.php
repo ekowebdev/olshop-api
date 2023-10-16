@@ -26,8 +26,8 @@ class ItemGiftImageResource extends JsonResource
                 'item_gift_status' => $this->item_gifts->item_gift_status,
             ],
             'item_gift_image' => $this->item_gift_image,
-            'fitem_gift_image' => $this->item_gift_image_url,
-            'fitem_gift_image_thumbnail' => $this->item_gift_image_thumb_url,
+            'item_gift_image_url' => $this->item_gift_image_url,
+            'item_gift_image_thumbnail_url' => $this->item_gift_image_thumb_url,
         ];
     }
 
