@@ -45,7 +45,9 @@ class ShippingResource extends JsonResource
                             ? [
                                 'id' => $redeem_item_gift->variants->id,
                                 'variant_name' => $redeem_item_gift->variants->variant_name,
+                                'variant_quantity' => $redeem_item_gift->variants->variant_quantity,
                                 'variant_point' => $redeem_item_gift->variants->variant_point,
+                                'fvariant_point' => format_money(strval($redeem_item_gift->variants->variant_point)),
                             ] : null,
                     ];
                 })

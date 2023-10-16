@@ -24,7 +24,8 @@ class AddressResource extends JsonResource
             ],
             'postal_code' => $this->postal_code,
             'address' => $this->address,
-            'users' => $this->users->makeHidden(['created_at', 'updated_at']),
+            'is_main' => $this->is_main,
+            'users' => $this->users->makeHidden(['email_verified_at', 'created_at', 'updated_at']),
         ];
     }
 }

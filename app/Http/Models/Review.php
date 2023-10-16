@@ -22,7 +22,8 @@ class Review extends BaseModel
                     'item_gift_id', 
                     'review_text', 
                     'review_rating', 
-                    'review_date'
+                    'review_date',
+                    'created_at',
                 ]);
     }
 

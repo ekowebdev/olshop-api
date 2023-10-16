@@ -16,4 +16,5 @@ return [
 	"variant_not_found_in_multiple_item_gifts"    => "Variants are not available on item gift ID: :id and variant ID: :variant_id",
 	"variant_required"                            => "Item gift ID: :id has variants",
 	"invalid_signature_midtrans"                  => "Invalid signature Midtrans",
+	"main_address_exists"                         => "User ID: :id already has a main address",
 ];

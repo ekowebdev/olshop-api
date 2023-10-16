@@ -23,7 +23,7 @@ class RajaOngkirService extends BaseService
         $this->subdistrict_repository = $subdistrict_repository;
     }
 
-    public function getProvince3rd($locale, $id, $page, $per_page)
+    public function getProvince($locale, $id, $page, $per_page)
     {
         $id = $id ?? null;
 
@@ -85,7 +85,7 @@ class RajaOngkirService extends BaseService
         return $response;
     }
 
-    public function getCity3rd($locale, $id, $province_id, $page, $per_page)
+    public function getCity($locale, $id, $province_id, $page, $per_page)
     {
         $id = $id ?? null;
         $province_id = $province_id ?? null;
@@ -149,72 +149,6 @@ class RajaOngkirService extends BaseService
         }
 
         return $response;
-    }
-
-    public function getProvince($locale, $data)
-    {
-        $search = [
-            'province_name' => 'province_name',
-        ];
-
-        $search_column = [
-            'province_id' => 'province_id',
-            'province_name' => 'province_name',
-        ];
-
-        $sortable_and_searchable_column = [
-            'search'        => $search,
-            'search_column' => $search_column,
-            'sort_column'   => array_merge($search, $search_column),
-        ];
-        
-        return $this->province_repository->getIndexData($locale, $sortable_and_searchable_column);
-    }
-
-    public function getCity($locale, $data)
-    {
-        $search = [
-            'province_id' => 'province_id',
-            'city_name' => 'city_name',
-            'postal_code' => 'postal_code',
-        ];
-
-        $search_column = [
-            'city_id' => 'city_id',
-            'province_id' => 'province_id',
-            'city_name' => 'city_name',
-            'postal_code' => 'postal_code',
-        ];
-
-        $sortable_and_searchable_column = [
-            'search'        => $search,
-            'search_column' => $search_column,
-            'sort_column'   => array_merge($search, $search_column),
-        ];
-        
-        return $this->city_repository->getIndexData($locale, $sortable_and_searchable_column);
-    }
-
-    public function getSubdistrict($locale, $data)
-    {
-        $search = [
-            'city_id' => 'city_id',
-            'subdistrict_name' => 'subdistrict_name',
-        ];
-
-        $search_column = [
-            'subdistrict_id' => 'subdistrict_id',
-            'city_id' => 'city_id',
-            'subdistrict_name' => 'subdistrict_name',
-        ];
-
-        $sortable_and_searchable_column = [
-            'search'        => $search,
-            'search_column' => $search_column,
-            'sort_column'   => array_merge($search, $search_column),
-        ];
-        
-        return $this->subdistrict_repository->getIndexData($locale, $sortable_and_searchable_column);
     }
 
     public function getCost($locale, $request)

@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use Carbon\Carbon;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class ReviewResource extends JsonResource
@@ -11,8 +12,9 @@ class ReviewResource extends JsonResource
         return [
             'id' => $this->id,
             'review_text' => $this->review_text,
-            'review_rating' => $this->review_rating,
+            'review_rating' => (float) $this->review_rating,
             'review_date' => $this->review_date,
+            'freview_date' => Carbon::parse($this->created_at)->diffForHumans(),
             'item_gifts' => [
                 'id' => $this->item_gifts->id,
                 'item_gift_code' => $this->item_gifts->item_gift_code,
@@ -32,7 +34,15 @@ class ReviewResource extends JsonResource
                         'item_gift_image_url' => $image->item_gift_image_url,
                     ];
                 }),
-                'variants' => $this->item_gifts->variants->makeHidden(['created_at', 'updated_at']),
+                'variants' => $this->item_gifts->variants->map(function ($variant) {
+                    return [
+                        'id' => $variant->id,
+                        'variant_name' => $variant->variant_name,
+                        'variant_quantity' => $variant->variant_quantity,
+                        'variant_point' => $variant->variant_point,
+                        'fvariant_point' => format_money(strval($variant->variant_point)),
+                    ];
+                }),
             ],
             'users' => [
                 'id' => $this->users->id,
@@ -41,22 +51,24 @@ class ReviewResource extends JsonResource
                 'username' => $this->users->username,
                 'email' => $this->users->email,
                 'birthdate' => $this->users->birthdate,
-                'address' => ($this->users->address) ? [
-                    'province' => [
-                        'id' => $this->users->address->province->province_id,
-                        'province_name' => $this->users->address->province->province_name
-                    ],
-                    'city' => [
-                        'id' => $this->users->address->city->city_id,
-                        'city_name' => $this->users->address->city->city_name
-                    ],
-                    'subdistrict' => [
-                        'id' => $this->users->address->subdistrict->subdistrict_id,
-                        'subdistrict_name' => $this->users->address->subdistrict->subdistrict_name
-                    ],
-                    'postal_code' => $this->users->address->postal_code,
-                    'address' => $this->users->address->address,
-                ] : null,
+                'address' => $this->users->address->map(function ($address) {
+                    return [
+                        'province' => [
+                            'id' => $address->province->province_id,
+                            'province_name' => $address->province->province_name
+                        ],
+                        'city' => [
+                            'id' => $address->city->city_id,
+                            'city_name' => $address->city->city_name
+                        ],
+                        'subdistrict' => [
+                            'id' => $address->subdistrict->subdistrict_id,
+                            'subdistrict_name' => $address->subdistrict->subdistrict_name
+                        ],
+                        'postal_code' => $address->postal_code,
+                        'is_main' => $address->is_main,
+                    ];
+                }),
             ]
         ];
     }

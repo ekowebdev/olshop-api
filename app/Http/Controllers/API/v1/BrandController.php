@@ -33,6 +33,12 @@ class BrandController extends BaseController
         return new BrandResource($data);
     }
 
+    public function showBySlug($locale, $slug)
+    {
+        $data = $this->service->getSingleDataBySlug($locale, $slug);
+        return new BrandResource($data);
+    }
+
     public function store($locale)
     {
         $data = $this->service->store($locale, Request::all());

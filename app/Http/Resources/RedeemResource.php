@@ -38,7 +38,9 @@ class RedeemResource extends JsonResource
                         ? [
                             'id' => $redeem_item_gift->variants->id,
                             'variant_name' => $redeem_item_gift->variants->variant_name,
+                            'variant_quantity' => $redeem_item_gift->variants->variant_quantity,
                             'variant_point' => $redeem_item_gift->variants->variant_point,
+                            'fvariant_point' => format_money(strval($redeem_item_gift->variants->variant_point)),
                         ] : null,
                 ];
             }),
@@ -50,9 +52,16 @@ class RedeemResource extends JsonResource
             'metadata' => json_decode($this->metadata),
             'redeem_status' => $this->redeem_status,
             'shippings' => [
-                'shipping_origin' => $this->shippings->origin,
-                'shipping_destination' => $this->shippings->destination,
-                'shipping_weight' => $this->shippings->weight,
+                'shipping_origin' => [
+                    'id' => $this->shippings->city_origin->city_id,
+                    'city_name' => $this->shippings->city_origin->city_name
+                ],
+                'shipping_destination' => [
+                    'id' => $this->shippings->city_destination->city_id,
+                    'city_name' => $this->shippings->city_destination->city_name
+                ],
+                'shipping_weight' => (int) $this->shippings->weight,
+                'fshipping_weight' => (int) $this->shippings->weight . ' Gram',
                 'shipping_courier' => $this->shippings->courier,
                 'shipping_service' => $this->shippings->service,
                 'shipping_description' => $this->shippings->description,
@@ -66,22 +75,24 @@ class RedeemResource extends JsonResource
                 'username' => $this->users->username,
                 'email' => $this->users->email,
                 'birthdate' => $this->users->birthdate,
-                'address' => ($this->users->address) ? [
-                    'province' => [
-                        'id' => $this->users->address->province->province_id,
-                        'province_name' => $this->users->address->province->province_name
-                    ],
-                    'city' => [
-                        'id' => $this->users->address->city->city_id,
-                        'city_name' => $this->users->address->city->city_name
-                    ],
-                    'subdistrict' => [
-                        'id' => $this->users->address->subdistrict->subdistrict_id,
-                        'subdistrict_name' => $this->users->address->subdistrict->subdistrict_name
-                    ],
-                    'postal_code' => $this->users->address->postal_code,
-                    'address' => $this->users->address->address,
-                ] : null,
+                'address' => $this->users->address->map(function ($address) {
+                    return [
+                        'province' => [
+                            'id' => $address->province->province_id,
+                            'province_name' => $address->province->province_name
+                        ],
+                        'city' => [
+                            'id' => $address->city->city_id,
+                            'city_name' => $address->city->city_name
+                        ],
+                        'subdistrict' => [
+                            'id' => $address->subdistrict->subdistrict_id,
+                            'subdistrict_name' => $address->subdistrict->subdistrict_name
+                        ],
+                        'postal_code' => $address->postal_code,
+                        'is_main' => $address->is_main,
+                    ];
+                }),
             ]
         ];
     }

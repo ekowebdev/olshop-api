@@ -77,15 +77,27 @@ Route::middleware(['xssclean'])->group(function () {
             });
             Route::post('/logout', '\App\Http\Controllers\API\v1\Auth\AuthController@logout');
         });
+        // Province
+        Route::get('/province', '\App\Http\Controllers\API\v1\ProvinceController@index');
+        Route::get('/province/{id}', '\App\Http\Controllers\API\v1\ProvinceController@show');
+        // City
+        Route::get('/city', '\App\Http\Controllers\API\v1\CityController@index');
+        Route::get('/city/{id}', '\App\Http\Controllers\API\v1\CityController@show');
+        // Subdistrict
+        Route::get('/subdistrict', '\App\Http\Controllers\API\v1\SubdistrictController@index');
+        Route::get('/subdistrict/{id}', '\App\Http\Controllers\API\v1\SubdistrictController@show');
         // Category
         Route::get('/category', '\App\Http\Controllers\API\v1\CategoryController@index');
         Route::get('/category/{id}', '\App\Http\Controllers\API\v1\CategoryController@show');
+        Route::get('/category/slug/{slug}', '\App\Http\Controllers\API\v1\CategoryController@showBySlug');
         // Brand
         Route::get('/brand', '\App\Http\Controllers\API\v1\BrandController@index');
         Route::get('/brand/{id}', '\App\Http\Controllers\API\v1\BrandController@show');
+        Route::get('/brand/slug/{slug}', '\App\Http\Controllers\API\v1\BrandController@showBySlug');
         // Item Gift
         Route::get('/gifts', '\App\Http\Controllers\API\v1\ItemGiftController@index');
         Route::get('/gifts/{id}', '\App\Http\Controllers\API\v1\ItemGiftController@show');
+        Route::get('/gifts/slug/{slug}', '\App\Http\Controllers\API\v1\ItemGiftController@showBySlug');
         // Item Gift Image
         Route::get('/gifts/images', '\App\Http\Controllers\API\v1\ItemGiftImageController@index');
         Route::get('/gifts/images/{id}', '\App\Http\Controllers\API\v1\ItemGiftImageController@show');
@@ -93,10 +105,9 @@ Route::middleware(['xssclean'])->group(function () {
         Route::get('/variants', '\App\Http\Controllers\API\v1\VariantController@index');
         Route::get('/variants/{id}', '\App\Http\Controllers\API\v1\VariantController@show');
         // RajaOngkir
-        Route::get('/rajaongkir/get-province', '\App\Http\Controllers\API\v1\RajaOngkirController@getProvince');
-        Route::get('/rajaongkir/get-city', '\App\Http\Controllers\API\v1\RajaOngkirController@getCity');
-        Route::get('/rajaongkir/get-subdistrict', '\App\Http\Controllers\API\v1\RajaOngkirController@getSubdistrict');
-        Route::post('/rajaongkir/get-cost', '\App\Http\Controllers\API\v1\RajaOngkirController@getCost');
+        Route::get('/rajaongkir/province', '\App\Http\Controllers\API\v1\RajaOngkirController@getProvince');
+        Route::get('/rajaongkir/city', '\App\Http\Controllers\API\v1\RajaOngkirController@getCity');
+        Route::post('/rajaongkir/cost', '\App\Http\Controllers\API\v1\RajaOngkirController@getCost');
         // Webhook
         Route::post('/webhook/midtrans', '\App\Http\Controllers\API\v1\WebhookController@midtransHandler');
     });

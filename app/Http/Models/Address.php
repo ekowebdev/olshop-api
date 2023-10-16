@@ -17,7 +17,7 @@ class Address extends BaseModel
     use HasFactory;
 
     protected $table = 'addresses';
-    protected $fillable = ['user_id', 'province_id', 'city_id', 'subdistrict_id', 'postal_code', 'address'];
+    protected $fillable = ['user_id', 'province_id', 'city_id', 'subdistrict_id', 'postal_code', 'address', 'is_main'];
 
     public function users()
     {
@@ -48,7 +48,8 @@ class Address extends BaseModel
                     'city_id',
                     'subdistrict_id', 
                     'postal_code', 
-                    'address'
+                    'address',
+                    'is_main',
                 ]);
     }
 }

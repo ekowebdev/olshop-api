@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use Carbon\Carbon;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class ItemGiftResource extends JsonResource
@@ -23,18 +24,49 @@ class ItemGiftResource extends JsonResource
             'item_gift_quantity' => $this->item_gift_quantity ?? 0,
             'item_gift_status' => $this->item_gift_status,
             'item_gift_images' => $this->item_gift_images->makeHidden(['created_at', 'updated_at']),
-            'variants' => $this->variants->makeHidden(['created_at', 'updated_at']),
+            'variants' => $this->variants->map(function ($variant) {
+                return [
+                    'id' => $variant->id,
+                    'variant_name' => $variant->variant_name,
+                    'variant_quantity' => $variant->variant_quantity,
+                    'variant_point' => $variant->variant_point,
+                    'fvariant_point' => format_money(strval($variant->variant_point)),
+                ];
+            }),
             'reviews' => $this->reviews->map(function ($review) {
                 return [
                     'id' => $review->id,
                     'users' => [
                         'id' => $review->users->id,
                         'name' => $review->users->name,
+                        'roles' => $review->users->getRoleNames(),
+                        'username' => $review->users->username,
+                        'email' => $review->users->email,
+                        'birthdate' => $review->users->birthdate,
+                        'address' => $review->users->address->map(function ($address) {
+                            return [
+                                'province' => [
+                                    'id' => $address->province->province_id,
+                                    'province_name' => $address->province->province_name
+                                ],
+                                'city' => [
+                                    'id' => $address->city->city_id,
+                                    'city_name' => $address->city->city_name
+                                ],
+                                'subdistrict' => [
+                                    'id' => $address->subdistrict->subdistrict_id,
+                                    'subdistrict_name' => $address->subdistrict->subdistrict_name
+                                ],
+                                'postal_code' => $address->postal_code,
+                                'is_main' => $address->is_main,
+                            ];
+                        }),
                     ],
                     'item_gift_id' => $review->item_gift_id,
                     'review_text' => $review->review_text,
-                    'review_rating' => $review->review_rating,
+                    'review_rating' => (float) $review->review_rating,
                     'review_date' => $review->review_date,
+                    'freview_date' => Carbon::parse($review->created_at)->diffForHumans(),
                 ];
             }),
             'total_reviews' => $this->total_reviews,

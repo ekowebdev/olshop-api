@@ -240,19 +240,6 @@ class User extends Authenticable implements MustVerifyEmail
 		return true;
 	}
 
-    public function scopeGetAll($query)
-    {      
-        return $query->select([
-                    'id', 
-                    'name', 
-                    'username', 
-                    'email',
-                    'birthdate',
-                    'password',
-					'email_verified_at',
-                ]);
-    }
-
 	public function get_access_token()
     {
         return $this->accessToken;
@@ -280,6 +267,19 @@ class User extends Authenticable implements MustVerifyEmail
 
 	public function address()
     {
-        return $this->hasOne(Address::class);
+        return $this->hasMany(Address::class);
+    }
+
+    public function scopeGetAll($query)
+    {      
+        return $query->select([
+                    'id', 
+                    'name', 
+                    'username', 
+                    'email',
+                    'birthdate',
+                    'password',
+					'email_verified_at',
+                ]);
     }
 }

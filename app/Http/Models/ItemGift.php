@@ -67,6 +67,11 @@ class ItemGift extends BaseModel
         return $this->hasOne(Address::class);
     }
 
+    public function getItemGiftWeightAttribute($value)
+    {
+        return (int) $value;
+    }
+
     public function scopeGetAll($query)
     {   
         $user_id = auth()->user()->id ?? 0;

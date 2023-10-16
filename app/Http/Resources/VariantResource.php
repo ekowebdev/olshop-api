@@ -31,8 +31,9 @@ class VariantResource extends JsonResource
                     ];
                 }),
             ],
-            'variant_point' => $this->variant_point,
             'variant_quantity' => $this->variant_quantity,
+            'variant_point' => $this->variant_point,
+            'fvariant_point' => format_money(strval($this->variant_point)),
         ];
     }
 

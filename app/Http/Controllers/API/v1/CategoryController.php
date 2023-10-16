@@ -33,6 +33,12 @@ class CategoryController extends BaseController
         return new CategoryResource($data);
     }
 
+    public function showBySlug($locale, $slug)
+    {
+        $data = $this->service->getSingleDataBySlug($locale, $slug);
+        return new CategoryResource($data);
+    }
+
     public function store($locale)
     {
         $data = $this->service->store($locale, Request::all());

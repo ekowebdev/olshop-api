@@ -15,22 +15,24 @@ class UserResource extends JsonResource
             'username' => $this->username,
             'email' => $this->email,
             'birthdate' => $this->birthdate,
-            'address' => ($this->address) ? [
-                'province' => [
-                    'id' => $this->address->province->province_id,
-                    'province_name' => $this->address->province->province_name
-                ],
-                'city' => [
-                    'id' => $this->address->city->city_id,
-                    'city_name' => $this->address->city->city_name
-                ],
-                'subdistrict' => [
-                    'id' => $this->address->subdistrict->subdistrict_id,
-                    'subdistrict_name' => $this->address->subdistrict->subdistrict_name
-                ],
-                'postal_code' => $this->address->postal_code,
-                'address' => $this->address->address,
-            ] : null,
+            'address' => $this->address->map(function ($address) {
+                return [
+                    'province' => [
+                        'id' => $address->province->province_id,
+                        'province_name' => $address->province->province_name
+                    ],
+                    'city' => [
+                        'id' => $address->city->city_id,
+                        'city_name' => $address->city->city_name
+                    ],
+                    'subdistrict' => [
+                        'id' => $address->subdistrict->subdistrict_id,
+                        'subdistrict_name' => $address->subdistrict->subdistrict_name
+                    ],
+                    'postal_code' => $address->postal_code,
+                    'is_main' => $address->is_main,
+                ];
+            }),
         ];
     }
 }

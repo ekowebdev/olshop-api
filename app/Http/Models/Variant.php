@@ -37,9 +37,9 @@ class Variant extends BaseModel
         return $query->select([
                     'id', 
                     'item_gift_id', 
-                    'variant_name', 
-                    'variant_point', 
-                    'variant_quantity'
+                    'variant_name',  
+                    'variant_quantity',
+                    'variant_point',
                 ]);
     }
 }

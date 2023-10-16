@@ -33,6 +33,12 @@ class ItemGiftController extends BaseController
         return new ItemGiftResource($data);
     }
 
+    public function showBySlug($locale, $slug)
+    {
+        $data = $this->service->getSingleDataBySlug($locale, $slug);
+        return new ItemGiftResource($data);
+    }
+
     public function store($locale)
     {
         $data = $this->service->store($locale, Request::all());

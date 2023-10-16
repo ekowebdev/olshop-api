@@ -2,9 +2,11 @@
 
 namespace App\Http\Services;
 
-use App\Http\Models\Address;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use App\Http\Models\Address;
+use Illuminate\Validation\Rule;
+use App\Rules\UniqueMainAddress;
 use Illuminate\Support\Facades\DB;
 use App\Http\Repositories\AddressRepository;
 
@@ -60,13 +62,14 @@ class AddressService extends BaseService
             'subdistrict_id',
             'postal_code',
             'address',
+            'is_main',
         ]);
 
         $this->repository->validate($data_request, [
                 'user_id' => [
                     'required',
                     'exists:users,id',
-                    'unique:addresses,user_id',
+                    new UniqueMainAddress,
                 ],
                 'province_id' => [
                     'required',
@@ -88,10 +91,14 @@ class AddressService extends BaseService
                     'required',
                     'string',
                 ],
+                'is_main' => [
+                    'in:yes,no',
+                ],
             ]
         );
 
         DB::beginTransaction();
+        $data_request['is_main'] = $data_request['is_main'] ?? 'no';
         $result = $this->model->create($data_request);
         DB::commit();
 
@@ -109,6 +116,7 @@ class AddressService extends BaseService
             'subdistrict_id' => $check_data->subdistrict_id,
             'postal_code' => $check_data->postal_code,
             'address' => $check_data->address,
+            'is_main' => $check_data->is_main,
         ], $data);
 
         $data_request = Arr::only($data, [
@@ -118,12 +126,13 @@ class AddressService extends BaseService
             'subdistrict_id',
             'postal_code',
             'address',
+            'is_main',
         ]);
 
         $this->repository->validate($data_request, [
             'user_id' => [
                 'exists:users,id',
-                'unique:addresses,user_id,' . $id,
+                new UniqueMainAddress,
             ],
             'province_id' => [
                 'integer',
@@ -140,6 +149,9 @@ class AddressService extends BaseService
             ],
             'address' => [
                 'string',
+            ],
+            'is_main' => [
+                'in:yes,no',
             ],
         ]);
 

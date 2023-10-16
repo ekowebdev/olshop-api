@@ -28,7 +28,15 @@ class CartResource extends JsonResource
                     ];
                 }),
             ],
-            'variants' => ($this->variant_id != null) ? $this->variants->makeHidden(['created_at', 'updated_at']) : null,
+            'variants' => $this->variants->map(function ($variant) {
+                return [
+                    'id' => $variant->id,
+                    'variant_name' => $variant->variant_name,
+                    'variant_quantity' => $variant->variant_quantity,
+                    'variant_point' => $variant->variant_point,
+                    'fvariant_point' => format_money(strval($variant->variant_point)),
+                ];
+            }),
             'cart_quantity' => $this->cart_quantity,
             'users' => [
                 'id' => $this->users->id,
@@ -37,22 +45,24 @@ class CartResource extends JsonResource
                 'username' => $this->users->username,
                 'email' => $this->users->email,
                 'birthdate' => $this->users->birthdate,
-                'address' => ($this->users->address) ? [
-                    'province' => [
-                        'id' => $this->users->address->province->province_id,
-                        'province_name' => $this->users->address->province->province_name
-                    ],
-                    'city' => [
-                        'id' => $this->users->address->city->city_id,
-                        'city_name' => $this->users->address->city->city_name
-                    ],
-                    'subdistrict' => [
-                        'id' => $this->users->address->subdistrict->subdistrict_id,
-                        'subdistrict_name' => $this->users->address->subdistrict->subdistrict_name
-                    ],
-                    'postal_code' => $this->users->address->postal_code,
-                    'address' => $this->users->address->address,
-                ] : null,
+                'address' => $this->users->address->map(function ($address) {
+                    return [
+                        'province' => [
+                            'id' => $address->province->province_id,
+                            'province_name' => $address->province->province_name
+                        ],
+                        'city' => [
+                            'id' => $address->city->city_id,
+                            'city_name' => $address->city->city_name
+                        ],
+                        'subdistrict' => [
+                            'id' => $address->subdistrict->subdistrict_id,
+                            'subdistrict_name' => $address->subdistrict->subdistrict_name
+                        ],
+                        'postal_code' => $address->postal_code,
+                        'is_main' => $address->is_main,
+                    ];
+                }),
             ]
         ];
     }

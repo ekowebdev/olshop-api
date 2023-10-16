@@ -59,6 +59,11 @@ class ItemGiftService extends BaseService
         return $this->repository->getSingleData($locale, $id);
     }
 
+    public function getSingleDataBySlug($locale, $slug)
+    {
+        return $this->repository->getSingleDataBySlug($locale, $slug);
+    }
+
     public function store($locale, $data)
     {
         $data_request = Arr::only($data, [

@@ -16,4 +16,5 @@ return [
 	"variant_not_found_in_multiple_item_gifts"    => "Variant tidak tersedia pada item gift ID: :id dan varian ID: :variant_id",
 	"variant_required"                            => "Item gift ID: :id memiliki varian",
 	"invalid_signature_midtrans"                  => "Tanda tangan Midtrans tidak valid",
+	"main_address_exists"                         => "User ID: :id sudah memiliki alamat utama",
 ];
