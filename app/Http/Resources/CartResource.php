@@ -67,6 +67,7 @@ class CartResource extends JsonResource
                             'subdistrict_name' => $address->subdistrict->subdistrict_name
                         ],
                         'postal_code' => $address->postal_code,
+                        'address' => $address->address,
                         'is_main' => $address->is_main,
                     ];
                 }),
