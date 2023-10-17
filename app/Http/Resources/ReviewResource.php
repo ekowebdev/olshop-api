@@ -48,36 +48,8 @@ class ReviewResource extends JsonResource
             'users' => [
                 'id' => $this->users->id,
                 'name' => $this->users->name,
-                'roles' => $this->users->getRoleNames(),
                 'username' => $this->users->username,
                 'email' => $this->users->email,
-                'profile' => ($this->users->profile) ? [
-                    'id' => $this->users->profile->id,
-                    'birthdate' => $this->users->profile->birthdate,
-                    'phone_number' => $this->users->profile->phone_number,
-                    'avatar' => $this->users->profile->avatar,
-                    'avatar_url' => $this->users->profile->avatar_url,
-                ] : null,
-                'address' => $this->users->address->map(function ($address) {
-                    return [
-                        'id' => $address->id,
-                        'province' => [
-                            'id' => $address->province->province_id,
-                            'province_name' => $address->province->province_name
-                        ],
-                        'city' => [
-                            'id' => $address->city->city_id,
-                            'city_name' => $address->city->city_name
-                        ],
-                        'subdistrict' => [
-                            'id' => $address->subdistrict->subdistrict_id,
-                            'subdistrict_name' => $address->subdistrict->subdistrict_name
-                        ],
-                        'postal_code' => $address->postal_code,
-                        'address' => $address->address,
-                        'is_main' => $address->is_main,
-                    ];
-                }),
             ]
         ];
     }

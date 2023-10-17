@@ -6,6 +6,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use App\Http\Models\Address;
 use Illuminate\Validation\Rule;
+use App\Rules\UniqueMainAddress;
 use Illuminate\Support\Facades\DB;
 use App\Http\Repositories\AddressRepository;
 
@@ -90,13 +91,13 @@ class AddressService extends BaseService
                     'string',
                 ],
                 'is_main' => [
+                    'required',
                     'in:yes,no',
                 ],
             ]
         );
 
         DB::beginTransaction();
-        $data_request['is_main'] = $data_request['is_main'] ?? 'no';
         $result = $this->model->create($data_request);
         DB::commit();
 

@@ -13,7 +13,6 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Models\RedeemItemGift;
 use App\Http\Services\RedeemService;
 use Illuminate\Support\Facades\Mail;
-use App\Exceptions\ValidationException;
 use Illuminate\Database\QueryException;
 use App\Http\Repositories\RedeemRepository;
 use App\Jobs\SendEmailRedeemConfirmationJob;
@@ -442,9 +441,11 @@ class RedeemService extends BaseService
             $redeem_code = Str::uuid();
             $item_details = [];
             $shipping_cost = intval($data_request['shipping_details']['shipping_cost']); 
+            $address = $data_request['address_details'];
 
             $redeem = Redeem::create([
                 'user_id' => auth()->user()->id,
+                'address_id' => (int) $address['id'],
                 'redeem_code' => $redeem_code,
                 'total_point' => $total_point,
                 'shipping_fee' => $shipping_cost,
@@ -546,6 +547,7 @@ class RedeemService extends BaseService
             $redeem->snap_url = $this->get_snap_url_midtrans($midtrans_params);
             $redeem->metadata = [
                 'user_id' => auth()->user()->id,
+                'address_id' => (int) $address['id'],
                 'redeem_code' => $redeem_code,
                 'redeem_item_gifts' => $metadata_redeem_item_gifts,
                 'total_point' => $total_point,

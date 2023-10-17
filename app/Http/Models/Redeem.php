@@ -3,6 +3,7 @@
 namespace App\Http\Models;
 
 use App\Http\Models\User;
+use App\Http\Models\Address;
 use App\Http\Models\Shipping;
 use App\Http\Models\BaseModel;
 use App\Http\Models\PaymentLog;
@@ -15,7 +16,7 @@ class Redeem extends BaseModel
     use HasFactory;
 
     protected $table = 'redeems';
-    protected $fillable = ['user_id', 'redeem_code', 'total_point', 'shipping_fee', 'total_amount', 'redeem_date', 'snap_url', 'metadata', 'redeem_status'];
+    protected $fillable = ['user_id', 'address_id', 'redeem_code', 'total_point', 'shipping_fee', 'total_amount', 'redeem_date', 'snap_url', 'metadata', 'redeem_status'];
 
     public function users()
     {
@@ -37,11 +38,17 @@ class Redeem extends BaseModel
         return $this->hasOne(Shipping::class);
     }
 
+    public function address()
+    {
+        return $this->belongsTo(Address::class, 'address_id');
+    }
+
     public function scopeGetAll($query)
     {      
         return $query->select([
                     'id', 
                     'user_id', 
+                    'address_id', 
                     'redeem_code', 
                     'total_point', 
                     'shipping_fee', 
@@ -50,6 +57,7 @@ class Redeem extends BaseModel
                     'snap_url', 
                     'metadata', 
                     'redeem_status',
+                    'created_at',
                 ]);
     }
 }

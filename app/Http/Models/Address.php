@@ -4,12 +4,14 @@ namespace App\Http\Models;
 
 use App\Http\Models\City;
 use App\Http\Models\User;
+use App\Http\Models\Redeem;
 use Illuminate\Support\Str;
 use App\Http\Models\ItemGift;
 use App\Http\Models\Province;
 use App\Http\Models\BaseModel;
 use App\Http\Models\Subdistrict;
 use Illuminate\Support\Facades\DB;
+use App\Exceptions\ValidationException;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Address extends BaseModel
@@ -25,13 +27,13 @@ class Address extends BaseModel
 
         static::saving(function ($address) {
             if ($address->is_main === 'yes' && $address->user_id) {
-                $existingMainAddress = $address->users->address()
+                $existing_main_address = $address->users->address()
                     ->where('is_main', 'yes')
                     ->where('id', '<>', $address->id)
                     ->first();
 
-                if ($existingMainAddress) {
-                    throw new \Exception(trans('error.main_address_exists', ['id' => $address->user_id]));
+                if ($existing_main_address) {
+                    throw new ValidationException(json_encode(['user_id' => [trans('error.main_address_exists', ['id' => $address->user_id])]]));
                 }
             }
         });
@@ -55,6 +57,11 @@ class Address extends BaseModel
     public function subdistrict()
     {
         return $this->belongsTo(Subdistrict::class, 'subdistrict_id', 'subdistrict_id');
+    }
+
+    public function redeems()
+    {
+        return $this->hasMany(Redeem::class);
     }
 
     public function scopeGetAll($query)

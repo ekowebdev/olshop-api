@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use Carbon\Carbon;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class PaymentLogResource extends JsonResource
@@ -16,6 +17,7 @@ class PaymentLogResource extends JsonResource
                 'redeem_code' => $this->redeems->redeem_code,
                 'total_point' => $this->redeems->total_point,
                 'redeem_date' => $this->redeems->redeem_date,
+                'fredeem_date' => Carbon::parse($this->redeems->created_at)->diffForHumans(),
                 'snap_url' => $this->redeems->snap_url,
                 'metadata' => json_decode($this->redeems->metadata),
                 'redeem_status' => $this->redeems->redeem_status,

@@ -29,6 +29,11 @@ class Shipping extends BaseModel
         return $this->belongsTo(City::class, 'destination', 'city_id');
     }
 
+    public function getWeightAttribute($value)
+    {
+        return (int) $value;
+    }
+
     public function scopeGetAll($query)
     {
         return $query->select([

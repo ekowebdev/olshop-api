@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use Carbon\Carbon;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class RedeemResource extends JsonResource
@@ -49,10 +50,12 @@ class RedeemResource extends JsonResource
             "shipping_fee" => intval($this->shipping_fee),
             "total_amount" => $this->total_amount,
             'redeem_date' => $this->redeem_date,
+            'fredeem_date' => Carbon::parse($this->created_at)->diffForHumans(),
             'snap_url' => $this->snap_url,
             'metadata' => json_decode($this->metadata),
             'redeem_status' => $this->redeem_status,
             'shippings' => [
+                'id' => $this->shippings->id,
                 'shipping_origin' => [
                     'id' => $this->shippings->city_origin->city_id,
                     'city_name' => $this->shippings->city_origin->city_name
@@ -82,26 +85,23 @@ class RedeemResource extends JsonResource
                     'avatar' => $this->users->profile->avatar,
                     'avatar_url' => $this->users->profile->avatar_url,
                 ] : null,
-                'address' => $this->users->address->map(function ($address) {
-                    return [
-                        'id' => $address->id,
-                        'province' => [
-                            'id' => $address->province->province_id,
-                            'province_name' => $address->province->province_name
-                        ],
-                        'city' => [
-                            'id' => $address->city->city_id,
-                            'city_name' => $address->city->city_name
-                        ],
-                        'subdistrict' => [
-                            'id' => $address->subdistrict->subdistrict_id,
-                            'subdistrict_name' => $address->subdistrict->subdistrict_name
-                        ],
-                        'postal_code' => $address->postal_code,
-                        'address' => $address->address,
-                        'is_main' => $address->is_main,
-                    ];
-                }),
+                'address' => ($this->address) ? [
+                    'id' => $this->address->id,
+                    'province' => [
+                        'id' => $this->address->province->province_id,
+                        'province_name' => $this->address->province->province_name
+                    ],
+                    'city' => [
+                        'id' => $this->address->city->city_id,
+                        'city_name' => $this->address->city->city_name
+                    ],
+                    'subdistrict' => [
+                        'id' => $this->address->subdistrict->subdistrict_id,
+                        'subdistrict_name' => $this->address->subdistrict->subdistrict_name
+                    ],
+                    'postal_code' => $this->address->postal_code,
+                    'address' => $this->address->address,
+                ] : null,
             ]
         ];
     }
