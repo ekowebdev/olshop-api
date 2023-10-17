@@ -45,7 +45,7 @@ class PaymentLogResource extends JsonResource
                                 ];
                             }),
                         ],
-                        'variants' => ($redeem_item_gift->variants->count() > 0) 
+                        'variants' => ($redeem_item_gift->variants) 
                             ? [
                                 'id' => $redeem_item_gift->variants->id,
                                 'variant_name' => $redeem_item_gift->variants->variant_name,

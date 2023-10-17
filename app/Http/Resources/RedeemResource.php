@@ -36,7 +36,7 @@ class RedeemResource extends JsonResource
                             ];
                         }),
                     ],
-                    'variants' => ($redeem_item_gift->item_gifts->variants->count() > 0) 
+                    'variants' => ($redeem_item_gift->item_gifts->variants) 
                         ? [
                             'id' => $redeem_item_gift->variants->id,
                             'variant_name' => $redeem_item_gift->variants->variant_name,
