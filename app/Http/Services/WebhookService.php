@@ -88,17 +88,19 @@ class WebhookService extends BaseService
 
             $detail_data = [];
 
-            foreach ($redeem_item_gifts as $item) {
+            foreach ($redeem_item_gifts as $redeem_item) {
                 $variant_name = '';
+                $price = $redeem_item->item_gifts->item_gift_point;
 
-                if ($item->variants) {
-                    $variant_name = ' - ' . $item->variants->variant_name;
+                if ($redeem_item->variants) {
+                    $variant_name = ' - ' . $redeem_item->variants->variant_name;
+                    $price = $redeem_item->variants->variant_point;
                 }
 
                 $detail_data[] = [
-                    'price' => intval($item->item_gifts->item_gift_point),
-                    'quantity' => $item->redeem_quantity,
-                    'name' => $item->item_gifts->item_gift_name . $variant_name,
+                    'price' => intval($price),
+                    'quantity' => $redeem_item->redeem_quantity,
+                    'name' => $redeem_item->item_gifts->item_gift_name . $variant_name,
                 ];
             }
 
