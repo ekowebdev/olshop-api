@@ -53,4 +53,44 @@ class ItemGiftRepository extends BaseRepository
 		if($result === null) throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => $this->repository_name], $locale));
         return $result;	
 	}
+
+    public function getSingleDataByCategory($locale, array $sortable_and_searchable_column, $category)
+	{
+        $this->validate(Request::all(), [
+            'per_page' => ['numeric']
+        ]);
+		$result = $this->model
+                ->getAll()
+                ->whereHas('category', function ($query) use ($category) {
+                    $query->where('category_slug', $category);
+                })
+                ->setSortableAndSearchableColumn($sortable_and_searchable_column)
+                ->search()
+                ->sort()
+                ->orderByDesc('id')
+                ->paginate(Arr::get(Request::all(), 'per_page', 15));
+        $result->sortableAndSearchableColumn = $sortable_and_searchable_column;
+        if($result->total() == 0) throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => $this->repository_name], $locale));
+        return $result;
+	}
+
+    public function getDataByBrand($locale, array $sortable_and_searchable_column, $brand)
+	{
+		$this->validate(Request::all(), [
+            'per_page' => ['numeric']
+        ]);
+		$result = $this->model
+                ->getAll()
+                ->whereHas('brand', function ($query) use ($brand) {
+                    $query->where('brand_slug', $brand);
+                })
+                ->setSortableAndSearchableColumn($sortable_and_searchable_column)
+                ->search()
+                ->sort()
+                ->orderByDesc('id')
+                ->paginate(Arr::get(Request::all(), 'per_page', 15));
+        $result->sortableAndSearchableColumn = $sortable_and_searchable_column;
+        if($result->total() == 0) throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => $this->repository_name], $locale));
+        return $result;	
+	}
 }

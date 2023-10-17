@@ -39,6 +39,24 @@ class ItemGiftController extends BaseController
         return new ItemGiftResource($data);
     }
 
+    public function showByCategory($locale, $category)
+    {
+        $data = $this->service->getDataByCategory($locale, $category);
+        return (ItemGiftResource::collection($data))
+                ->additional([
+                    'sortable_and_searchable_column' => $data->sortableAndSearchableColumn,
+                ]);
+    }
+
+    public function showByBrand($locale, $brand)
+    {
+        $data = $this->service->getDataByBrand($locale, $brand);
+        return (ItemGiftResource::collection($data))
+                ->additional([
+                    'sortable_and_searchable_column' => $data->sortableAndSearchableColumn,
+                ]);
+    }
+
     public function store($locale)
     {
         $data = $this->service->store($locale, Request::all());

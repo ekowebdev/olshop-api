@@ -33,16 +33,6 @@ class RedeemController extends BaseController
         return new RedeemResource($data);
     }
 
-    public function redeem($locale, $id)
-    {
-        return $this->service->redeem($locale, $id, Request::all());
-    }
-
-    public function redeem_multiple($locale)
-    {
-        return $this->service->redeem_multiple($locale, Request::all());
-    }
-
     public function checkout($locale)
     {
         return $this->service->checkout($locale, Request::all());

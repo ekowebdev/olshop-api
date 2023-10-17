@@ -64,6 +64,74 @@ class ItemGiftService extends BaseService
         return $this->repository->getSingleDataBySlug($locale, $slug);
     }
 
+    public function getDataByCategory($locale, $category)
+    {
+        $search = [
+            'item_gift_name' => 'item_gift_name',
+            'category_id' => 'category_id',
+            'brand_id' => 'brand_id',
+            'item_gift_slug' => 'item_gift_slug',
+            'item_gift_weight' => 'item_gift_weight',
+            'item_gift_quantity' => 'item_gift_quantity',
+            'item_gift_point' => 'item_gift_point',
+            'total_rating' => 'total_rating',
+        ];
+
+        $search_column = [
+            'id' => 'id',
+            'item_gift_name' => 'item_gift_name',
+            'category_id' => 'category_id',
+            'brand_id' => 'brand_id',
+            'item_gift_slug' => 'item_gift_slug',
+            'item_gift_quantity' => 'item_gift_quantity',
+            'item_gift_point' => 'item_gift_point',
+            'item_gift_weight' => 'item_gift_weight',
+            'total_rating' => 'total_rating',
+        ];
+
+        $sortable_and_searchable_column = [
+            'search'        => $search,
+            'search_column' => $search_column,
+            'sort_column'   => array_merge($search, $search_column),
+        ];
+
+        return $this->repository->getSingleDataByCategory($locale, $sortable_and_searchable_column, $category);
+    }
+
+    public function getDataByBrand($locale, $brand)
+    {
+        $search = [
+            'item_gift_name' => 'item_gift_name',
+            'category_id' => 'category_id',
+            'brand_id' => 'brand_id',
+            'item_gift_slug' => 'item_gift_slug',
+            'item_gift_weight' => 'item_gift_weight',
+            'item_gift_quantity' => 'item_gift_quantity',
+            'item_gift_point' => 'item_gift_point',
+            'total_rating' => 'total_rating',
+        ];
+
+        $search_column = [
+            'id' => 'id',
+            'item_gift_name' => 'item_gift_name',
+            'category_id' => 'category_id',
+            'brand_id' => 'brand_id',
+            'item_gift_slug' => 'item_gift_slug',
+            'item_gift_quantity' => 'item_gift_quantity',
+            'item_gift_point' => 'item_gift_point',
+            'item_gift_weight' => 'item_gift_weight',
+            'total_rating' => 'total_rating',
+        ];
+
+        $sortable_and_searchable_column = [
+            'search'        => $search,
+            'search_column' => $search_column,
+            'sort_column'   => array_merge($search, $search_column),
+        ];
+        
+        return $this->repository->getDataByBrand($locale, $sortable_and_searchable_column, $brand);
+    }
+
     public function store($locale, $data)
     {
         $data_request = Arr::only($data, [

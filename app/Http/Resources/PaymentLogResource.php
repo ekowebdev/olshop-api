@@ -34,7 +34,7 @@ class PaymentLogResource extends JsonResource
                             'brand' => ($redeem_item_gift->item_gifts->brand_id != null) ? $redeem_item_gift->item_gifts->brand->makeHidden(['created_at', 'updated_at']) : null,
                             'item_gift_description' => $redeem_item_gift->item_gifts->item_gift_description,
                             'item_gift_point' => $redeem_item_gift->item_gifts->item_gift_point ?? 0,
-                            'fitem_gift_point' => $this->format_item_gift_point($redeem_item_gift->item_gifts),
+                            'fitem_gift_point' => $this->format_item_gift_point($redeem_item_gift),
                             'item_gift_weight' => $redeem_item_gift->item_gifts->item_gift_weight ?? 0,
                             'fitem_gift_weight' => ($redeem_item_gift->item_gifts->item_gift_weight == null) ? '0 Gram' : $redeem_item_gift->item_gifts->item_gift_weight . ' Gram',
                             'item_gift_status' => $redeem_item_gift->item_gifts->item_gift_status,
@@ -64,7 +64,7 @@ class PaymentLogResource extends JsonResource
 
     private function format_item_gift_point($item)
     {
-        $variant_points = $item->variants->pluck('variant_point')->toArray();
+        $variant_points = $item->item_gifts->variants->pluck('variant_point')->toArray();
         
         if (count($variant_points) == 1) {
             return strval($variant_points[0]);
@@ -75,10 +75,10 @@ class PaymentLogResource extends JsonResource
             if ($min_value === $max_value) {
                 return strval($min_value);
             }
-            
+
             return format_money($min_value) . " ~ " . format_money($max_value);
         } else {
-            return format_money(strval($this->item_gift_point ?? 0));
+            return format_money(strval($item->item_gifts->item_gift_point ?? 0));
         }
     }
 }

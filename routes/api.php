@@ -107,6 +107,8 @@ Route::middleware(['xssclean'])->group(function () {
         Route::get('/gifts', '\App\Http\Controllers\API\v1\ItemGiftController@index');
         Route::get('/gifts/{id}', '\App\Http\Controllers\API\v1\ItemGiftController@show');
         Route::get('/gifts/slug/{slug}', '\App\Http\Controllers\API\v1\ItemGiftController@showBySlug');
+        Route::get('/gifts/category/{slug}', '\App\Http\Controllers\API\v1\ItemGiftController@showByCategory');
+        Route::get('/gifts/brand/{slug}', '\App\Http\Controllers\API\v1\ItemGiftController@showByBrand');
         // Variant
         Route::get('/variants', '\App\Http\Controllers\API\v1\VariantController@index');
         Route::get('/variants/{id}', '\App\Http\Controllers\API\v1\VariantController@show');
