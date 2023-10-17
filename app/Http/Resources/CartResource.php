@@ -28,15 +28,14 @@ class CartResource extends JsonResource
                     ];
                 }),
             ],
-            'variants' => $this->item_gifts->variants->map(function ($variant) {
-                return [
-                    'id' => $variant->id,
-                    'variant_name' => $variant->variant_name,
-                    'variant_quantity' => $variant->variant_quantity,
-                    'variant_point' => $variant->variant_point,
-                    'fvariant_point' => format_money(strval($variant->variant_point)),
-                ];
-            }),
+            'variants' => ($this->variants) 
+                ? [
+                    'id' => $this->variants->id,
+                    'variant_name' => $this->variants->variant_name,
+                    'variant_quantity' => $this->variants->variant_quantity,
+                    'variant_point' => $this->variants->variant_point,
+                    'fvariant_point' => format_money(strval($this->variants->variant_point)),
+                ] : null,
             'cart_quantity' => $this->cart_quantity,
             'users' => [
                 'id' => $this->users->id,
