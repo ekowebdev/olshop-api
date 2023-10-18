@@ -51,6 +51,7 @@ class RedeemResource extends JsonResource
             'shipping_fee' => intval($this->shipping_fee),
             'total_amount' => $this->total_amount,
             'redeem_date' => $this->redeem_date,
+            'note' => $this->note,
             'fredeem_date' => Carbon::parse($this->created_at)->diffForHumans(),
             'snap_url' => $this->snap_url,
             'metadata' => json_decode($this->metadata),
@@ -88,6 +89,8 @@ class RedeemResource extends JsonResource
                 ] : null,
                 'address' => ($this->address) ? [
                     'id' => $this->address->id,
+                    'person_name' => $this->address->person_name,
+                    'person_phone' => $this->address->person_phone,
                     'province' => [
                         'id' => $this->address->province->province_id,
                         'province_name' => $this->address->province->province_name

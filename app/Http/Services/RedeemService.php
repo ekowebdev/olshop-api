@@ -36,6 +36,7 @@ class RedeemService extends BaseService
             'redeem_code' => 'redeem_code',
             'user_id' => 'user_id',
             'total_point' => 'total_point',
+            'note' => 'note',
         ];
 
         $search_column = [
@@ -43,6 +44,7 @@ class RedeemService extends BaseService
             'redeem_code' => 'redeem_code',
             'user_id' => 'user_id',
             'total_point' => 'total_point',
+            'note' => 'note',
         ];
 
         $sortable_and_searchable_column = [
@@ -64,6 +66,9 @@ class RedeemService extends BaseService
         $data_request = $data;
 
         $this->item_gift_repository->validate($data_request, [
+                'redeem_item_gifts_details' => [
+                    'required',
+                ],
                 'redeem_item_gifts_details.*.item_gift_id' => [
                     'required',
                 ],
@@ -86,6 +91,9 @@ class RedeemService extends BaseService
                     'numeric',
                     'min:1',
                 ],
+                'shipping_details' => [
+                    'required',
+                ],
                 'shipping_details.shipping_destination' => [
                     'required',
                     'string',
@@ -102,6 +110,12 @@ class RedeemService extends BaseService
                     'required',
                     'numeric',
                 ],
+                'address_details' => [
+                    'required',
+                ],
+                'address_details.id' => [
+                    'required',
+                ],
             ]
         );
 
@@ -113,16 +127,18 @@ class RedeemService extends BaseService
             $redeem_code = Str::uuid();
             $item_details = [];
             $shipping_cost = intval($data_request['shipping_details']['shipping_cost']); 
-            $address = $data_request['address_details'];
+            $address_details = $data_request['address_details'];
+            $redeem_details = $data_request['redeem_details'];
 
             $redeem = Redeem::create([
                 'user_id' => auth()->user()->id,
-                'address_id' => (int) $address['id'],
+                'address_id' => (int) $address_details['id'],
                 'redeem_code' => $redeem_code,
                 'total_point' => $total_point,
                 'shipping_fee' => $shipping_cost,
                 'total_amount' => $total_point + $shipping_cost,
                 'redeem_date' => date('Y-m-d'),
+                'note' => $redeem_details['note'],
             ]);
 
             foreach ($data_request['redeem_item_gifts_details'] as $key => $redeem_item_gifts) {
@@ -201,6 +217,7 @@ class RedeemService extends BaseService
 
             $customer_details = [
                 'first_name' => auth()->user()->name,
+                'phone' => auth()->user()->profile->phone_number,
                 'email' => auth()->user()->email
             ];
 
@@ -219,13 +236,14 @@ class RedeemService extends BaseService
             $redeem->snap_url = $this->get_snap_url_midtrans($midtrans_params);
             $redeem->metadata = [
                 'user_id' => auth()->user()->id,
-                'address_id' => (int) $address['id'],
+                'address_id' => (int) $address_details['id'],
                 'redeem_code' => $redeem_code,
                 'redeem_item_gifts' => $metadata_redeem_item_gifts,
                 'total_point' => $total_point,
                 'shipping_fee' => $shipping_cost,
                 'total_amount' => $total_point + $shipping_cost,
                 'redeem_date' => date('Y-m-d'),
+                'note' => $redeem_details['note'],
             ];
             $redeem->total_point = $total_point;
             $redeem->shipping_fee = $shipping_cost;

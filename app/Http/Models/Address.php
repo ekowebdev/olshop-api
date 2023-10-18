@@ -19,7 +19,7 @@ class Address extends BaseModel
     use HasFactory;
 
     protected $table = 'addresses';
-    protected $fillable = ['user_id', 'province_id', 'city_id', 'subdistrict_id', 'postal_code', 'address', 'is_main'];
+    protected $fillable = ['user_id', 'person_name', 'person_phone', 'province_id', 'city_id', 'subdistrict_id', 'postal_code', 'address', 'is_main'];
 
     public static function boot()
     {
@@ -69,6 +69,8 @@ class Address extends BaseModel
         return $query->select([
                     'id', 
                     'user_id', 
+                    'person_name', 
+                    'person_phone',
                     'province_id', 
                     'city_id',
                     'subdistrict_id', 

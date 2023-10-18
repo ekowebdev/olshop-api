@@ -24,6 +24,8 @@ class UserResource extends JsonResource
             'address' => $this->address->map(function ($address) {
                 return [
                     'id' => $address->id,
+                    'person_name' => $address->person_name,
+                    'person_phone' => $address->person_phone,
                     'province' => [
                         'id' => $address->province->province_id,
                         'province_name' => $address->province->province_name

@@ -24,6 +24,8 @@ class AddressService extends BaseService
     {
         $search = [
             'user_id' => 'user_id',
+            'person_name' => 'person_name',
+            'person_phone' => 'person_phone',
             'province_id' => 'province_id',
             'city_id' => 'city_id',
             'postal_code' => 'postal_code',
@@ -33,6 +35,8 @@ class AddressService extends BaseService
         $search_column = [
             'id' => 'id',
             'user_id' => 'user_id',
+            'person_name' => 'person_name',
+            'person_phone' => 'person_phone',
             'province_id' => 'province_id',
             'city_id' => 'city_id',
             'postal_code' => 'postal_code',
@@ -57,6 +61,8 @@ class AddressService extends BaseService
     {
         $data_request = Arr::only($data, [
             'user_id',
+            'person_name',
+            'person_phone',
             'province_id',
             'city_id',
             'subdistrict_id',
@@ -69,6 +75,13 @@ class AddressService extends BaseService
                 'user_id' => [
                     'required',
                     'exists:users,id',
+                ],
+                'person_name' => [
+                    'required',
+                    'string',
+                ],
+                'person_phone' => [
+                    'required',
                 ],
                 'province_id' => [
                     'required',
@@ -110,6 +123,8 @@ class AddressService extends BaseService
 
         $data = array_merge([
             'user_id' => $check_data->user_id,
+            'person_name' => $check_data->person_name,
+            'person_phone' => $check_data->person_phone,
             'province_id' => $check_data->province_id,
             'city_id' => $check_data->city_id,
             'subdistrict_id' => $check_data->subdistrict_id,
@@ -120,6 +135,8 @@ class AddressService extends BaseService
 
         $data_request = Arr::only($data, [
             'user_id',
+            'person_name',
+            'person_phone',
             'province_id',
             'city_id',
             'subdistrict_id',
@@ -131,6 +148,9 @@ class AddressService extends BaseService
         $this->repository->validate($data_request, [
             'user_id' => [
                 'exists:users,id',
+            ],
+            'person_name' => [
+                'string',
             ],
             'province_id' => [
                 'integer',
