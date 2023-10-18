@@ -46,6 +46,10 @@ Route::middleware(['xssclean'])->group(function () {
                 // Shipping
                 Route::get('/shippings', '\App\Http\Controllers\API\v1\ShippingController@index');
                 Route::get('/shippings/{id}', '\App\Http\Controllers\API\v1\ShippingController@show');
+                // RajaOngkir
+                Route::get('/rajaongkir/province', '\App\Http\Controllers\API\v1\RajaOngkirController@getProvince');
+                Route::get('/rajaongkir/city', '\App\Http\Controllers\API\v1\RajaOngkirController@getCity');
+                Route::post('/rajaongkir/cost', '\App\Http\Controllers\API\v1\RajaOngkirController@getCost');
             });
             Route::group(['middleware' => ['role:admin|customer']], function () {
                 // User
@@ -114,10 +118,6 @@ Route::middleware(['xssclean'])->group(function () {
         // Variant
         Route::get('/variants', '\App\Http\Controllers\API\v1\VariantController@index');
         Route::get('/variants/{id}', '\App\Http\Controllers\API\v1\VariantController@show');
-        // RajaOngkir
-        Route::get('/rajaongkir/province', '\App\Http\Controllers\API\v1\RajaOngkirController@getProvince');
-        Route::get('/rajaongkir/city', '\App\Http\Controllers\API\v1\RajaOngkirController@getCity');
-        Route::post('/rajaongkir/cost', '\App\Http\Controllers\API\v1\RajaOngkirController@getCost');
         // Webhook
         Route::post('/webhook/midtrans', '\App\Http\Controllers\API\v1\WebhookController@midtransHandler');
     });
