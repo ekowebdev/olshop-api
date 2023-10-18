@@ -2,6 +2,7 @@
 
 namespace App\Http\Services;
 
+use App\Http\Models\User;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use App\Http\Models\Address;
@@ -68,7 +69,6 @@ class AddressService extends BaseService
             'subdistrict_id',
             'postal_code',
             'address',
-            'is_main',
         ]);
 
         $this->repository->validate($data_request, [
@@ -103,10 +103,6 @@ class AddressService extends BaseService
                     'required',
                     'string',
                 ],
-                'is_main' => [
-                    'required',
-                    'in:yes,no',
-                ],
             ]
         );
 
@@ -130,7 +126,6 @@ class AddressService extends BaseService
             'subdistrict_id' => $check_data->subdistrict_id,
             'postal_code' => $check_data->postal_code,
             'address' => $check_data->address,
-            'is_main' => $check_data->is_main,
         ], $data);
 
         $data_request = Arr::only($data, [
@@ -142,7 +137,6 @@ class AddressService extends BaseService
             'subdistrict_id',
             'postal_code',
             'address',
-            'is_main',
         ]);
 
         $this->repository->validate($data_request, [
@@ -167,9 +161,6 @@ class AddressService extends BaseService
             ],
             'address' => [
                 'string',
-            ],
-            'is_main' => [
-                'in:yes,no',
             ],
         ]);
 

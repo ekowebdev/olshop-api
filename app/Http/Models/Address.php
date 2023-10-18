@@ -19,25 +19,25 @@ class Address extends BaseModel
     use HasFactory;
 
     protected $table = 'addresses';
-    protected $fillable = ['user_id', 'person_name', 'person_phone', 'province_id', 'city_id', 'subdistrict_id', 'postal_code', 'address', 'is_main'];
+    protected $fillable = ['user_id', 'person_name', 'person_phone', 'province_id', 'city_id', 'subdistrict_id', 'postal_code', 'address'];
 
-    public static function boot()
-    {
-        parent::boot();
+    // public static function boot()
+    // {
+    //     parent::boot();
 
-        static::saving(function ($address) {
-            if ($address->is_main === 'yes' && $address->user_id) {
-                $existing_main_address = $address->users->address()
-                    ->where('is_main', 'yes')
-                    ->where('id', '<>', $address->id)
-                    ->first();
+    //     static::saving(function ($address) {
+    //         if ($address->is_main === 'yes' && $address->user_id) {
+    //             $existing_main_address = $address->users->address()
+    //                 ->where('is_main', 'yes')
+    //                 ->where('id', '<>', $address->id)
+    //                 ->first();
 
-                if ($existing_main_address) {
-                    throw new ValidationException(json_encode(['user_id' => [trans('error.main_address_exists', ['id' => $address->user_id])]]));
-                }
-            }
-        });
-    }
+    //             if ($existing_main_address) {
+    //                 throw new ValidationException(json_encode(['user_id' => [trans('error.main_address_exists', ['id' => $address->user_id])]]));
+    //             }
+    //         }
+    //     });
+    // }
 
     public function users()
     {
@@ -67,17 +67,25 @@ class Address extends BaseModel
     public function scopeGetAll($query)
     {
         return $query->select([
-                    'id', 
-                    'user_id', 
-                    'person_name', 
-                    'person_phone',
-                    'province_id', 
-                    'city_id',
-                    'subdistrict_id', 
-                    'postal_code', 
-                    'address',
-                    'is_main',
-                ]);
+                    'addresses.id', 
+                    'addresses.user_id', 
+                    'addresses.person_name', 
+                    'addresses.person_phone',
+                    'addresses.province_id', 
+                    'addresses.city_id',
+                    'addresses.subdistrict_id', 
+                    'addresses.postal_code', 
+                    'addresses.address',
+                    DB::raw('
+                        (
+                            CASE WHEN users.main_address_id = addresses.id 
+                                THEN 1 
+                                ELSE 0 
+                            END
+                        ) AS is_main
+                    '),
+                ])
+                ->leftJoin('users', 'users.main_address_id', '=', 'addresses.id');
     }
 }
 

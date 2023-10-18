@@ -173,4 +173,31 @@ class UserService extends BaseService
 
         return $result;
     }
+
+    public function set_main_address($locale, $id, $data)
+    {
+        $check_data = $this->repository->getSingleData($locale, $id);
+
+        $data = array_merge([
+            'address_id' => $check_data->main_address_id,
+        ], $data);
+
+        $data_request = Arr::only($data, [
+            'address_id',
+        ]);
+
+        $this->repository->validate($data_request, [
+            'address_id' => [
+                'required',
+                'exists:addresses,id',
+            ],
+        ]);
+
+        DB::beginTransaction();
+        $check_data->main_address_id = $data_request['address_id'];
+        $check_data->save();
+        DB::commit();
+
+        return $this->repository->getSingleData($locale, $id);
+    }
 }

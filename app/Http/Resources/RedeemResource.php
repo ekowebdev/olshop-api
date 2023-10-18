@@ -105,6 +105,7 @@ class RedeemResource extends JsonResource
                     ],
                     'postal_code' => $this->address->postal_code,
                     'address' => $this->address->address,
+                    'is_main' => ($this->users->main_address_id == $this->address->id) ? 1 : 0,
                 ] : null,
             ]
         ];

@@ -32,6 +32,7 @@ class User extends Authenticable implements MustVerifyEmail
         'username',
         'email',
         'password',
+		'main_address_id',
     ];
 
     protected $hidden = [
@@ -275,6 +276,12 @@ class User extends Authenticable implements MustVerifyEmail
         return $this->hasOne(Profile::class);
     }
 
+	public function main_address()
+	{
+		return $this->belongsTo(Address::class, 'main_address_id');
+	}
+
+
     public function scopeGetAll($query)
     {      
         return $query->select([
@@ -283,6 +290,7 @@ class User extends Authenticable implements MustVerifyEmail
                     'username', 
                     'email',
                     'password',
+                    'main_address_id',
 					'email_verified_at',
                 ]);
     }

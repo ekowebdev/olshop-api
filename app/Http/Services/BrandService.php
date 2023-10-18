@@ -108,7 +108,7 @@ class BrandService extends BaseService
 
         $this->repository->validate($data_request, [
             'brand_name' => [
-                'unique:brands,brand_name',
+                'unique:brands,brand_name,' . $id,
             ],
             'brand_sort' => [
                 'integer',

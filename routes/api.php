@@ -17,10 +17,7 @@ Route::middleware(['xssclean'])->group(function () {
             Route::group(['middleware' => ['role:admin']], function () {
                 // User
                 Route::get('/users', '\App\Http\Controllers\API\v1\UserController@index');
-                Route::get('/users/{id}', '\App\Http\Controllers\API\v1\UserController@show');
                 Route::post('/users', '\App\Http\Controllers\API\v1\UserController@store');
-                Route::put('/users/{id}', '\App\Http\Controllers\API\v1\UserController@update');
-                Route::patch('/users/{id}', '\App\Http\Controllers\API\v1\UserController@update');
                 Route::delete('/users/{id}', '\App\Http\Controllers\API\v1\UserController@delete');
                 // Category
                 Route::post('/category', '\App\Http\Controllers\API\v1\CategoryController@store');
@@ -51,6 +48,11 @@ Route::middleware(['xssclean'])->group(function () {
                 Route::get('/shippings/{id}', '\App\Http\Controllers\API\v1\ShippingController@show');
             });
             Route::group(['middleware' => ['role:admin|customer']], function () {
+                // User
+                Route::get('/users/{id}', '\App\Http\Controllers\API\v1\UserController@show');
+                Route::put('/users/{id}', '\App\Http\Controllers\API\v1\UserController@update');
+                Route::patch('/users/{id}', '\App\Http\Controllers\API\v1\UserController@update');
+                Route::post('/users/main-address/{id}', '\App\Http\Controllers\API\v1\UserController@set_main_address');
                 // Profile
                 Route::get('/profile', '\App\Http\Controllers\API\v1\ProfileController@index');
                 Route::get('/profile/{id}', '\App\Http\Controllers\API\v1\ProfileController@show');

@@ -110,7 +110,7 @@ class CategoryService extends BaseService
 
         $this->repository->validate($data_request, [
             'category_name' => [
-                'unique:categories,category_name',
+                'unique:categories,category_name,' . $id,
             ],
             'category_sort' => [
                 'integer',

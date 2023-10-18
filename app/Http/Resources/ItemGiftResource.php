@@ -42,7 +42,6 @@ class ItemGiftResource extends JsonResource
                         'roles' => $review->users->getRoleNames(),
                         'username' => $review->users->username,
                         'email' => $review->users->email,
-                        'birthdate' => $review->users->birthdate,
                         'profile' => ($review->users->profile) ? [
                             'id' => $review->users->profile->id,
                             'birthdate' => $review->users->profile->birthdate,
@@ -50,6 +49,25 @@ class ItemGiftResource extends JsonResource
                             'avatar' => $review->users->profile->avatar,
                             'avatar_url' => $review->users->profile->avatar_url,
                         ] : null,
+                        'main_address' => [
+                            'id' => $review->users->main_address->id,
+                            'person_name' => $review->users->main_address->person_name,
+                            'person_phone' => $review->users->main_address->person_phone,
+                            'province' => [
+                                'id' => $review->users->main_address->province->province_id,
+                                'province_name' => $review->users->main_address->province->province_name
+                            ],
+                            'city' => [
+                                'id' => $review->users->main_address->city->city_id,
+                                'city_name' => $review->users->main_address->city->city_name
+                            ],
+                            'subdistrict' => [
+                                'id' => $review->users->main_address->subdistrict->subdistrict_id,
+                                'subdistrict_name' => $review->users->main_address->subdistrict->subdistrict_name
+                            ],
+                            'postal_code' => $review->users->main_address->postal_code,
+                            'address' => $review->users->main_address->address,
+                        ],
                         'address' => $review->users->address->map(function ($address) {
                             return [
                                 'id' => $address->id,
@@ -66,7 +84,7 @@ class ItemGiftResource extends JsonResource
                                     'subdistrict_name' => $address->subdistrict->subdistrict_name
                                 ],
                                 'postal_code' => $address->postal_code,
-                                'is_main' => $address->is_main,
+                                'is_main' => ($address->users->main_address_id == $address->id) ? 1 : 0,
                             ];
                         }),
                     ],

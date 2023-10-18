@@ -21,6 +21,25 @@ class UserResource extends JsonResource
                 'avatar' => $this->profile->avatar,
                 'avatar_url' => $this->profile->avatar_url,
             ] : null,
+            'main_address' => [
+                'id' => $this->main_address->id,
+                'person_name' => $this->main_address->person_name,
+                'person_phone' => $this->main_address->person_phone,
+                'province' => [
+                    'id' => $this->main_address->province->province_id,
+                    'province_name' => $this->main_address->province->province_name
+                ],
+                'city' => [
+                    'id' => $this->main_address->city->city_id,
+                    'city_name' => $this->main_address->city->city_name
+                ],
+                'subdistrict' => [
+                    'id' => $this->main_address->subdistrict->subdistrict_id,
+                    'subdistrict_name' => $this->main_address->subdistrict->subdistrict_name
+                ],
+                'postal_code' => $this->main_address->postal_code,
+                'address' => $this->main_address->address,
+            ],
             'address' => $this->address->map(function ($address) {
                 return [
                     'id' => $address->id,
@@ -40,7 +59,7 @@ class UserResource extends JsonResource
                     ],
                     'postal_code' => $address->postal_code,
                     'address' => $address->address,
-                    'is_main' => $address->is_main,
+                    'is_main' => ($this->main_address_id == $address->id) ? 1 : 0,
                 ];
             }),
         ];
