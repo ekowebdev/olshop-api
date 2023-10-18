@@ -19,11 +19,20 @@ class ItemGiftImageResource extends JsonResource
                 'item_gift_slug' => $this->item_gifts->item_gift_slug,
                 'item_gift_description' => $this->item_gifts->item_gift_description,
                 'item_gift_point' => $this->item_gifts->item_gift_point ?? 0,
-                'fitem_gift_point' => $this->format_item_gift_point(),
+                'fitem_gift_point' => $this->format_item_gift_point($this->item_gifts),
                 'item_gift_weight' => $this->item_gifts->item_gift_weight ?? 0,
                 'fitem_gift_weight' => ($this->item_gifts->item_gift_weight == null) ? '0 Gram' : $this->item_gifts->item_gift_weight . ' Gram',
                 'item_gift_quantity' => $this->item_gifts->item_gift_quantity ?? 0,
                 'item_gift_status' => $this->item_gifts->item_gift_status,
+                'variants' => $this->item_gifts->variants->map(function ($variant) {
+                    return [
+                        'id' => $variant->id,
+                        'variant_name' => $variant->variant_name,
+                        'variant_quantity' => $variant->variant_quantity,
+                        'variant_point' => $variant->variant_point,
+                        'fvariant_point' => format_money(strval($variant->variant_point)),
+                    ];
+                }),
             ],
             'item_gift_image' => $this->item_gift_image,
             'item_gift_image_url' => $this->item_gift_image_url,
@@ -31,9 +40,9 @@ class ItemGiftImageResource extends JsonResource
         ];
     }
 
-    private function format_item_gift_point()
+    private function format_item_gift_point($item)
     {
-        $variant_points = $this->item_gifts->variants->pluck('variant_point')->toArray();
+        $variant_points = $item->variants->pluck('variant_point')->toArray();
         
         if (count($variant_points) == 1) {
             return strval($variant_points[0]);
@@ -47,7 +56,7 @@ class ItemGiftImageResource extends JsonResource
 
             return format_money($min_value) . " ~ " . format_money($max_value);
         } else {
-            return format_money(strval($this->item_gift_point ?? 0));
+            return format_money(strval($item->item_gift_point ?? 0));
         }
     }
 }
