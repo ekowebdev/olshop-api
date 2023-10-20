@@ -1,6 +1,9 @@
 <?php
 
+use App\Events\TestEvent;
+use App\Http\Models\User;
 use Illuminate\Support\Facades\Route;
+use App\Notifications\RealTimeNotification;
 
 Route::middleware(['xssclean'])->group(function () {
     Route::get('/email/verify/{id}', '\App\Http\Controllers\API\v1\Auth\AuthController@verify')->name('verification.verify');

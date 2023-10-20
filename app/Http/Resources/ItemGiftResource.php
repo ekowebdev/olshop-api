@@ -49,7 +49,7 @@ class ItemGiftResource extends JsonResource
                             'avatar' => $review->users->profile->avatar,
                             'avatar_url' => $review->users->profile->avatar_url,
                         ] : null,
-                        'main_address' => [
+                        'main_address' => ($review->users->main_address) ? [
                             'id' => $review->users->main_address->id,
                             'person_name' => $review->users->main_address->person_name,
                             'person_phone' => $review->users->main_address->person_phone,
@@ -67,7 +67,7 @@ class ItemGiftResource extends JsonResource
                             ],
                             'postal_code' => $review->users->main_address->postal_code,
                             'address' => $review->users->main_address->address,
-                        ],
+                        ] : null,
                         'address' => $review->users->address->map(function ($address) {
                             return [
                                 'id' => $address->id,

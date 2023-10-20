@@ -129,4 +129,10 @@
             </div>
         </div>
     </body>
+    <script>
+        window.Echo.private(`App.Http.Models.User.` + 14)
+            .notification((notification) => {
+            console.log(notification);
+        });
+    </script>
 </html>

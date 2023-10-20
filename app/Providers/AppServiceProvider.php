@@ -2,6 +2,9 @@
 
 namespace App\Providers;
 
+use App\Http\Models\ItemGift;
+use App\Observers\ItemObserver;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -23,6 +26,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        ItemGift::observe(ItemObserver::class);
+        Schema::defaultStringLength(191);
     }
 }
