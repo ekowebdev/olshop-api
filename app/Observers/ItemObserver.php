@@ -12,7 +12,7 @@ class ItemObserver
     {
         $users = User::all();
         foreach ($users as $user) {
-            $user->notify(new NewItem($item, User::find(1)));
+            $user->notify(new NewItem($item, User::find(auth()->user()->id)));
         }
     }
 }
