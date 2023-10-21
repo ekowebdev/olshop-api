@@ -20,7 +20,3 @@ use Illuminate\Support\Facades\Broadcast;
 Broadcast::channel('App.Http.Models.User.{id}', function ($user, $id) {
     return (int) $user->id === (int) $id;
 });
-
-// Broadcast::channel('events', function ($user) {
-//     return true;
-// });

@@ -11,4 +11,5 @@ Route::get('/', function () {
 
 Route::get('/send-event/{user}', function ($user) {
     broadcast(new NotificationEvent($user));
+    return "Event berhasil dikirim";
 });
