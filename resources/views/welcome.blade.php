@@ -39,7 +39,7 @@
             Echo.channel('events')
                 .listen('NotificationEvent', (e) => {
                     console.log(e);
-                    document.getElementById('user_name').innerText = e.user;
+                    document.getElementById('user_name').innerText = e.data;
                 })
         });
     </script>

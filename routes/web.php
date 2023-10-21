@@ -10,7 +10,7 @@ Route::get('/', function () {
 });
 
 Route::get('/send-event/{user}', function ($user) {
-    $user = ucfirst($user);
+    $user = ucwords($user);
     broadcast(new NotificationEvent($user));
     return "Event berhasil dikirim";
 });
