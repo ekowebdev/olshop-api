@@ -44,9 +44,9 @@ services:
     container_name: websockets
     image: olafnorge/laravel:8.1.13-websocket
     environment:
-      - LARAVEL_WEBSOCKETS_PORT=${PUSHER_APP_PORT}
+      - LARAVEL_WEBSOCKETS_PORT=${PUSHER_PORT}
     ports:
-      - ${PUSHER_APP_PORT}:6001
+      - ${PUSHER_PORT}:6001
     volumes:
       - ./:/var/www/html
     depends_on:

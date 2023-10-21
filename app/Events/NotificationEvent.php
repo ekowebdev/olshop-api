@@ -6,7 +6,7 @@ use App\Http\Models\User;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Broadcasting\PrivateChannel;
-// use Illuminate\Broadcasting\PresenceChannel;
+use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
@@ -22,14 +22,9 @@ class NotificationEvent implements ShouldBroadcast
      *
      * @return void
      */
-    public function __construct(User $user)
+    public function __construct($user)
     {
         $this->user = $user;
-    }
-
-    public function handle()
-    {
-        dd($this->user);
     }
 
     /**
@@ -39,8 +34,13 @@ class NotificationEvent implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        // return new PresenceChannel('TestChannel');
         return new Channel('events');
-        // return new PrivateChannel('channel-name');
+    }
+
+    public function broadcastWith()
+    {
+        return [
+            'data' => $this->user
+        ];
     }
 }
