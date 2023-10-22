@@ -15,9 +15,9 @@
                     <div class="w-full md:w-2/2 xl:w-3/3 p-3">
                         <div class="bg-white border rounded shadow p-2">
                             <div class="flex flex-row items-center">
-                                <div class="flex-shrink pr-4">
+                                {{-- <div class="flex-shrink pr-4">
                                     <div class="rounded p-3 bg-yellow-600"><i class="fas fa-user-plus fa-2x fa-fw fa-inverse"></i></div>
-                                </div>
+                                </div> --}}
                                 <div class="flex-1 text-right md:text-center">
                                     <h5 class="font-bold uppercase text-gray-800">Bio</h5>
                                     <h3 class="font-bold text-2xl">
@@ -38,7 +38,6 @@
         document.addEventListener('DOMContentLoaded', function() {
             Echo.channel('events')
                 .listen('NotificationEvent', (e) => {
-                    console.log(e);
                     document.getElementById('user_name').innerText = e.data;
                 })
         });
