@@ -32,6 +32,7 @@ jobs:
             php artisan view:clear &&
             php artisan route:clear &&
             php artisan optimize:clear &&
+            npm install &&
             npm run build &&
             php artisan migrate &&
             php artisan up
