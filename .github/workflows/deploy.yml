@@ -25,8 +25,7 @@ jobs:
             nvm use --lts &&
             npm install -g npm@latest &&
             node --version &&
-            npm --version &&
-            npm run build
+            npm --version
           '
       - name: Deploy to EC2
         run: |
@@ -46,6 +45,7 @@ jobs:
             php artisan route:clear &&
             php artisan optimize:clear &&
             php artisan migrate --force &&
+            npm run build &&
             php artisan up
           '
       - name: Clear SSH key
