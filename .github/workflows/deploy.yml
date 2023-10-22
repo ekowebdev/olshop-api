@@ -15,6 +15,18 @@ jobs:
           echo "${{ secrets.AWS_SSH_PEM }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H ${{ secrets.AWS_HOSTNAME }} >> ~/.ssh/known_hosts
+      - name: Install Node.js and NPM
+        uses: actions/setup-node@v2
+        with:
+          node-version: '18'
+      - name: Install NPM dependencies
+        run: |
+          cd ${{ secrets.AWS_PATH_PROJECT }}
+          npm install
+      - name: Build project
+        run: |
+          cd ${{ secrets.AWS_PATH_PROJECT }}
+          npm run production
       - name: Deploy to EC2
         run: |
           ssh -i ~/.ssh/id_rsa ${{ secrets.AWS_USERNAME }}@${{ secrets.AWS_HOSTNAME }} '
@@ -32,8 +44,6 @@ jobs:
             php artisan view:clear &&
             php artisan route:clear &&
             php artisan optimize:clear &&
-            npm install &&
-            npm run production &&
             php artisan migrate &&
             php artisan up
           '
