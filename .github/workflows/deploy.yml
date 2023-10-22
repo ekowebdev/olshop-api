@@ -18,7 +18,7 @@ jobs:
       - name: Install Node.js and NPM
         uses: actions/setup-node@v2
         with:
-          node-version: '18'
+          node-version: '16'
       - name: Install NPM dependencies
         run: |
           ssh -i ~/.ssh/id_rsa ${{ secrets.AWS_USERNAME }}@${{ secrets.AWS_HOSTNAME }} '
