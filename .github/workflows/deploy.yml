@@ -19,22 +19,17 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: '16'
-      - name: Upgrade Node.js and NPM
+      - name: Install Node.js and NPM
         run: |
           ssh -i ~/.ssh/id_rsa ${{ secrets.AWS_USERNAME }}@${{ secrets.AWS_HOSTNAME }} '
             cd ${{ secrets.AWS_PATH_PROJECT }} &&
-            curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
+            curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash &&
             source ~/.nvm/nvm.sh &&
             nvm install --lts &&
             nvm use --lts &&
             npm install -g npm@latest &&
             node --version &&
-            npm --version
-          '
-      - name: Build project
-        run: |
-          ssh -i ~/.ssh/id_rsa ${{ secrets.AWS_USERNAME }}@${{ secrets.AWS_HOSTNAME }} '
-            cd ${{ secrets.AWS_PATH_PROJECT }} &&
+            npm --version &&
             npm run production
           '
       - name: Deploy to EC2
