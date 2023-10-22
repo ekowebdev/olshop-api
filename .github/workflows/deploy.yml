@@ -23,6 +23,9 @@ jobs:
         run: |
           ssh -i ~/.ssh/id_rsa ${{ secrets.AWS_USERNAME }}@${{ secrets.AWS_HOSTNAME }} '
             cd ${{ secrets.AWS_PATH_PROJECT }} &&
+            rm -rf node_modules &&
+            rm package-lock.json &&
+            npm cache clear --force &&
             npm install
           '
       - name: Build project
