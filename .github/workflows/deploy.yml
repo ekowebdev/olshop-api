@@ -16,10 +16,6 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H ${{ secrets.AWS_HOSTNAME }} >> ~/.ssh/known_hosts
       - name: Install Node.js and NPM
-        uses: actions/setup-node@v2
-        with:
-          node-version: '16'
-      - name: Install Node.js and NPM
         run: |
           ssh -i ~/.ssh/id_rsa ${{ secrets.AWS_USERNAME }}@${{ secrets.AWS_HOSTNAME }} '
             cd ${{ secrets.AWS_PATH_PROJECT }} &&
