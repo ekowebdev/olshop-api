@@ -21,12 +21,16 @@ jobs:
           node-version: '18'
       - name: Install NPM dependencies
         run: |
-          cd ${{ secrets.AWS_PATH_PROJECT }}
-          npm install
+          ssh -i ~/.ssh/id_rsa ${{ secrets.AWS_USERNAME }}@${{ secrets.AWS_HOSTNAME }} '
+            cd ${{ secrets.AWS_PATH_PROJECT }} &&
+            npm install
+          '
       - name: Build project
         run: |
-          cd ${{ secrets.AWS_PATH_PROJECT }}
-          npm run production
+          ssh -i ~/.ssh/id_rsa ${{ secrets.AWS_USERNAME }}@${{ secrets.AWS_HOSTNAME }} '
+            cd ${{ secrets.AWS_PATH_PROJECT }} &&
+            npm run production
+          '
       - name: Deploy to EC2
         run: |
           ssh -i ~/.ssh/id_rsa ${{ secrets.AWS_USERNAME }}@${{ secrets.AWS_HOSTNAME }} '
