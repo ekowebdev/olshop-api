@@ -26,14 +26,14 @@ jobs:
             git pull origin master &&
             sudo chmod -R 777 bootstrap/cache &&
             sudo chmod -R 777 storage &&
-            composer update --no-dev --no-interaction --prefer-dist --optimize-autoloader &&
+            composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader &&
             php artisan config:clear &&
             php artisan cache:clear &&
             php artisan view:clear &&
             php artisan route:clear &&
             php artisan optimize:clear &&
             npm install &&
-            npm run build &&
+            npm run production &&
             php artisan migrate &&
             php artisan up
           '
