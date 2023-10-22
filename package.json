@@ -6,6 +6,7 @@
         "production": "vite production"
     },
     "devDependencies": {
+        "@types/source-map-support": "^0.5.9",
         "axios": "^1.1.2",
         "laravel-mix": "^6.0.49",
         "laravel-vite-plugin": "^0.7.8",
