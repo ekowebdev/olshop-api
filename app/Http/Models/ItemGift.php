@@ -67,6 +67,11 @@ class ItemGift extends BaseModel
         return $this->hasOne(Address::class);
     }
 
+    // public function totalSales()
+    // {
+    //     return $this->hasMany(RedeemItemGift::class)->sum('redeem_quantity');
+    // }
+
     public function getItemGiftWeightAttribute($value)
     {
         return (int) $value;
@@ -97,6 +102,7 @@ class ItemGift extends BaseModel
                             AND wishlists.user_id = ". $user_id ."
                         ) AS is_wishlist
                     "),
+                    DB::raw('(SELECT SUM(redeem_item_gifts.redeem_quantity) FROM redeem_item_gifts WHERE redeem_item_gifts.item_gift_id = item_gifts.id) AS total_redeem'),
                 ])
                 ->from(DB::raw('item_gifts FORCE INDEX (index_item_gifts)'));
     }

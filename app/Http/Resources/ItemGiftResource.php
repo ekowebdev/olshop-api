@@ -97,6 +97,7 @@ class ItemGiftResource extends JsonResource
             }),
             'total_reviews' => $this->total_reviews,
             'total_rating' => floatval(rtrim($this->total_rating, '0')),
+            'total_redeem' => (int) $this->total_redeem,
             'is_wishlist' => $this->is_wishlist
         ];
     }

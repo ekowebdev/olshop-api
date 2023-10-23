@@ -31,6 +31,7 @@ class ItemGiftService extends BaseService
             'item_gift_quantity' => 'item_gift_quantity',
             'item_gift_point' => 'item_gift_point',
             'total_rating' => 'total_rating',
+            'total_redeem' => 'total_redeem',
         ];
 
         $search_column = [
@@ -43,6 +44,7 @@ class ItemGiftService extends BaseService
             'item_gift_point' => 'item_gift_point',
             'item_gift_weight' => 'item_gift_weight',
             'total_rating' => 'total_rating',
+            'total_redeem' => 'total_redeem',
         ];
 
         $sortable_and_searchable_column = [
@@ -75,6 +77,7 @@ class ItemGiftService extends BaseService
             'item_gift_quantity' => 'item_gift_quantity',
             'item_gift_point' => 'item_gift_point',
             'total_rating' => 'total_rating',
+            'total_redeem' => 'total_redeem',
         ];
 
         $search_column = [
@@ -87,6 +90,7 @@ class ItemGiftService extends BaseService
             'item_gift_point' => 'item_gift_point',
             'item_gift_weight' => 'item_gift_weight',
             'total_rating' => 'total_rating',
+            'total_redeem' => 'total_redeem',
         ];
 
         $sortable_and_searchable_column = [
@@ -109,6 +113,7 @@ class ItemGiftService extends BaseService
             'item_gift_quantity' => 'item_gift_quantity',
             'item_gift_point' => 'item_gift_point',
             'total_rating' => 'total_rating',
+            'total_redeem' => 'total_redeem',
         ];
 
         $search_column = [
@@ -121,6 +126,7 @@ class ItemGiftService extends BaseService
             'item_gift_point' => 'item_gift_point',
             'item_gift_weight' => 'item_gift_weight',
             'total_rating' => 'total_rating',
+            'total_redeem' => 'total_redeem',
         ];
 
         $sortable_and_searchable_column = [
