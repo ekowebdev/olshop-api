@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f677e23eeb9de8ac0ce38d87e8df3ddb",
+    "content-hash": "15b473fd3e0622d747ea7d6c8661c7e3",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -154,6 +154,63 @@
                 "source": "https://github.com/aws/aws-sdk-php/tree/3.283.9"
             },
             "time": "2023-10-20T20:03:26+00:00"
+        },
+        {
+            "name": "baopham/dynamodb",
+            "version": "6.4.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/baopham/laravel-dynamodb.git",
+                "reference": "43bcfc6e6161612c784e8c7f565cc768831c5d67"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/baopham/laravel-dynamodb/zipball/43bcfc6e6161612c784e8c7f565cc768831c5d67",
+                "reference": "43bcfc6e6161612c784e8c7f565cc768831c5d67",
+                "shasum": ""
+            },
+            "require": {
+                "aws/aws-sdk-php": "^3.0.0",
+                "illuminate/database": "5.1.* || 5.2.* || 5.3.* || 5.4.* || 5.5.* || 5.6.* || 5.7.* || 5.8.* || ^6.0 || ^7.0 || ^8.0 || ^9.0|^10.0",
+                "illuminate/support": "5.1.* || 5.2.* || 5.3.* || 5.4.* || 5.5.* || 5.6.* || 5.7.* || 5.8.* || ^6.0 || ^7.0 || ^8.0 || ^9.0|^10.0"
+            },
+            "require-dev": {
+                "orchestra/testbench": "~3.0 || ~5.0|^8.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "BaoPham\\DynamoDb\\DynamoDbServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "BaoPham\\DynamoDb\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Bao Pham",
+                    "email": "gbaopham@gmail.com"
+                }
+            ],
+            "description": "Eloquent syntax for DynamoDB",
+            "keywords": [
+                "aws",
+                "dynamodb",
+                "laravel"
+            ],
+            "support": {
+                "issues": "https://github.com/baopham/laravel-dynamodb/issues",
+                "source": "https://github.com/baopham/laravel-dynamodb/tree/6.4.0"
+            },
+            "time": "2023-07-10T05:36:48+00:00"
         },
         {
             "name": "beyondcode/laravel-websockets",

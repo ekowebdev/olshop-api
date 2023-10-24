@@ -2,8 +2,13 @@
 
 use App\Events\TestEvent;
 use App\Http\Models\User;
+use Illuminate\Support\Str;
+use App\Http\Models\SearchLog;
+use Aws\DynamoDb\DynamoDbClient;
 use Illuminate\Support\Facades\Route;
+use BaoPham\DynamoDb\Facades\DynamoDb;
 use App\Notifications\RealTimeNotification;
+use Aws\DynamoDb\Exception\DynamoDbException;
 
 Route::middleware(['xssclean'])->group(function () {
     Route::get('/email/verify/{id}', '\App\Http\Controllers\API\v1\Auth\AuthController@verify')->name('verification.verify');
@@ -89,6 +94,13 @@ Route::middleware(['xssclean'])->group(function () {
                 Route::post('/carts', '\App\Http\Controllers\API\v1\CartController@store');
                 Route::get('/carts/{id}', '\App\Http\Controllers\API\v1\CartController@show');
                 Route::delete('/carts/{id}', '\App\Http\Controllers\API\v1\CartController@delete');
+                // Search Log
+                Route::get('/search-logs', '\App\Http\Controllers\API\v1\SearchLogController@index');
+                Route::post('/search-logs', '\App\Http\Controllers\API\v1\SearchLogController@store');
+                Route::get('/search-logs/{id}', '\App\Http\Controllers\API\v1\SearchLogController@show');
+                Route::get('/search-logs/user/{id}', '\App\Http\Controllers\API\v1\SearchLogController@showByUser');
+                Route::put('/search-logs/{id}', '\App\Http\Controllers\API\v1\SearchLogController@update');
+                Route::delete('/search-logs/{id}', '\App\Http\Controllers\API\v1\SearchLogController@delete');
             });
             Route::post('/logout', '\App\Http\Controllers\API\v1\Auth\AuthController@logout');
         });

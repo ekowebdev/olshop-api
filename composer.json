@@ -6,6 +6,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.0.2",
+        "baopham/dynamodb": "^6.4",
         "beyondcode/laravel-websockets": "^1.14",
         "doctrine/dbal": "^3.6",
         "guzzlehttp/guzzle": "^7.2",
