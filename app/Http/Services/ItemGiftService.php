@@ -171,7 +171,7 @@ class ItemGiftService extends BaseService
             'sort_column'   => array_merge($search, $search_column),
         ];
         
-        return $this->repository->getDataByUserRecomendation($locale);
+        return $this->repository->getDataByUserRecomendation($locale, $sortable_and_searchable_column);
     }
 
     public function store($locale, $data)

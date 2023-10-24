@@ -6,6 +6,7 @@ use Illuminate\Support\Arr;
 use App\Http\Models\ItemGift;
 use App\Http\Models\SearchLog;
 use App\Exceptions\DataEmptyException;
+use BaoPham\DynamoDb\Facades\DynamoDb;
 use Illuminate\Support\Facades\Request;
 
 class ItemGiftRepository extends BaseRepository 
@@ -95,27 +96,66 @@ class ItemGiftRepository extends BaseRepository
         return $result;	
 	}
 
-    public function getDataByUserRecomendation($locale)
+    public function getDataByUserRecomendation($locale, array $sortable_and_searchable_column)
 	{
         $this->validate(Request::all(), [
-            'per_page' => ['numeric']
+            'total_search' => ['numeric'],
+            'per_page' => ['numeric'],
         ]);
-        $serach_logs = SearchLog::query()
-                                ->where('user_id', auth()->user()->id)
-                                ->get();
-        $item_gifts = $this->model->getAll()->get();
-        $result = [];
-        foreach ($serach_logs as $log) {
-            $search_text = strtolower(trim($log->search_text));
-            foreach ($item_gifts as $item) {
-                $item_name = strtolower(trim($item->item_gift_name));
-                if (strpos($item_name, $search_text) !== false) {
-                    array_push($result, $item);
+
+        $search_logs = SearchLog::query()->where('user_id', auth()->user()->id)->get();
+        $search_logs = $search_logs->toArray();
+
+        $output_array = [];
+
+        // Urutkan $search_logs berdasarkan panjang search_text secara descending
+        usort($search_logs, function ($a, $b) {
+            return strlen($b['search_text']) - strlen($a['search_text']);
+        });
+
+        foreach ($search_logs as $item) {
+            $search_text = $item["search_text"];
+            // Cari key yang mirip
+            $found = false;
+            foreach ($output_array as $key => $value) {
+                similar_text($search_text, $key, $percent);
+                // Jika ada yang mirip, tambahkan ke nilai yang sudah ada
+                if ($percent >= 65) {
+                    $output_array[$key] += 1;
+                    $found = true;
+                    break;
                 }
             }
+            // Jika tidak ada yang mirip, buat key baru
+            if (!$found) {
+                $output_array[$search_text] = 1;
+            }
         }
-        $result = array_slice(array_unique($result), 0, Arr::get(Request::all(), 'per_page', 10));
-        if($result == []) throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => $this->repository_name], $locale));
+
+        $min_search = Arr::get(Request::all(), 'min_search', 5);
+
+        $final_array = array_filter($output_array, function ($count) use ($min_search) {
+            return $count >= $min_search;
+        });
+        $final_array = array_keys($final_array);
+
+        if(count($final_array) == 0){
+            throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => $this->repository_name], $locale));
+        }
+
+        $item_gifts = $this->model->getAll();
+        foreach ($final_array as $arr) {
+            $item_gifts->orWhere('item_gift_name', 'LIKE', '%' . $arr . '%');
+        }
+        $result = $item_gifts
+                    ->setSortableAndSearchableColumn($sortable_and_searchable_column)
+                    ->search()
+                    ->sort()
+                    ->orderByDesc('id')
+                    ->groupBy('id')
+                    ->paginate(Arr::get(Request::all(), 'per_page', 15));
+        $result->sortableAndSearchableColumn = $sortable_and_searchable_column;
+        if($result->total() == 0) throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => $this->repository_name], $locale));
         return $result;	
 	}
 }

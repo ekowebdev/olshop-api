@@ -60,7 +60,10 @@ class ItemGiftController extends BaseController
     public function showByUserRecomendation($locale)
     {
         $data = $this->service->getDataByUserRecomendation($locale);
-        return (ItemGiftResource::collection($data));
+        return (ItemGiftResource::collection($data))
+                ->additional([
+                    'sortable_and_searchable_column' => $data->sortableAndSearchableColumn,
+                ]);
     }
 
     public function store($locale)
