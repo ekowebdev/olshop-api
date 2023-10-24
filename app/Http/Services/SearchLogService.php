@@ -45,10 +45,6 @@ class SearchLogService extends BaseService
         ]);
 
         $this->repository->validate($data_request, [
-                'user_id' => [
-                    'required',
-                    'exists:users,id',
-                ],
                 'search_text' => [
                     'required',
                     'string',
@@ -87,10 +83,6 @@ class SearchLogService extends BaseService
         ]);
 
         $this->repository->validate($data_request, [
-            'user_id' => [
-                'exists:users,id',
-                'numeric',
-            ],
             'search_text' => [
                 'string',
             ],
