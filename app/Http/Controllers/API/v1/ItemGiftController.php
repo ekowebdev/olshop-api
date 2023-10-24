@@ -57,6 +57,12 @@ class ItemGiftController extends BaseController
                 ]);
     }
 
+    public function showByUserRecomendation($locale)
+    {
+        $data = $this->service->getDataByUserRecomendation($locale);
+        return (ItemGiftResource::collection($data));
+    }
+
     public function store($locale)
     {
         $data = $this->service->store($locale, Request::all());

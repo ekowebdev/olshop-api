@@ -3,8 +3,10 @@
 use App\Events\TestEvent;
 use App\Http\Models\User;
 use Illuminate\Support\Str;
+use App\Http\Models\ItemGift;
 use App\Http\Models\SearchLog;
 use Aws\DynamoDb\DynamoDbClient;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use BaoPham\DynamoDb\Facades\DynamoDb;
 use App\Notifications\RealTimeNotification;
@@ -77,6 +79,8 @@ Route::middleware(['xssclean'])->group(function () {
                 Route::post('/address', '\App\Http\Controllers\API\v1\AddressController@store');
                 Route::put('/address/{id}', '\App\Http\Controllers\API\v1\AddressController@update');
                 Route::delete('/address/{id}', '\App\Http\Controllers\API\v1\AddressController@delete');
+                // Item Gift
+                Route::get('/gifts/recomendation', '\App\Http\Controllers\API\v1\ItemGiftController@showByUserRecomendation');
                 // Redeem Item Gift
                 Route::get('/gifts/redeem', '\App\Http\Controllers\API\v1\RedeemController@index');
                 Route::get('/gifts/redeem/{id}', '\App\Http\Controllers\API\v1\RedeemController@show');

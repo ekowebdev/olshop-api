@@ -96,7 +96,7 @@ class BaseModel extends Model
 			{				
 				foreach ($request['search_column'] as $arr_search_column => $value_search_column) {
 					if($request['search_text'][$arr_search_column] != utf8_encode($request['search_text'][$arr_search_column])){
-						throw new \App\Exceptions\AuthenticationException('Periksa text pencarian anda, mungkin mengandung karakter yang tidak kita ijinkan!');
+						throw new \App\Exceptions\AuthenticationException('Periksa text pencarian anda, mungkin mengandung karakter yang tidak kita izinkan!');
 					}
 					$query = $this->searchOperator($query, $request['search_column'][$arr_search_column], $request['search_text'][$arr_search_column], Arr::get($request,'search_operator.'.$arr_search_column,'like'));
 				}	
@@ -104,7 +104,7 @@ class BaseModel extends Model
 			else
 			{	
 				if($request['search_text'] != utf8_encode($request['search_text'])){
-					throw new \App\Exceptions\AuthenticationException('Periksa text pencarian anda, mungkin mengandung karakter yang tidak kita ijinkan!');
+					throw new \App\Exceptions\AuthenticationException('Periksa text pencarian anda, mungkin mengandung karakter yang tidak kita izinkan!');
 				}
 				$query = $this->searchOperator($query, $request['search_column'], $request['search_text'], Arr::get($request,'search_operator','like'));
 			}
@@ -113,7 +113,7 @@ class BaseModel extends Model
 		if(isset($request['search']))
 		{			
 			if($request['search'] != utf8_encode($request['search'])){
-				throw new \App\Exceptions\AuthenticationException('Periksa text pencarian anda, mungkin mengandung karakter yang tidak kita ijinkan!');
+				throw new \App\Exceptions\AuthenticationException('Periksa text pencarian anda, mungkin mengandung karakter yang tidak kita izinkan!');
 			}
 
 			$query->where(function ($query) use ($search,$request) {
