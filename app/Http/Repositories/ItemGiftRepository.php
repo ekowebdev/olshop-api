@@ -114,7 +114,7 @@ class ItemGiftRepository extends BaseRepository
                 }
             }
         }
-        $result = array_slice($result, 0, Arr::get(Request::all(), 'per_page', 10));
+        $result = array_slice(array_unique($result), 0, Arr::get(Request::all(), 'per_page', 10));
         if($result == []) throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => $this->repository_name], $locale));
         return $result;	
 	}
