@@ -58,7 +58,7 @@ class SearchLogService extends BaseService
             $data = $this->model;
             $data->id = strval(Str::uuid());
             $data->user_id = intval(auth()->user()->id);
-            $data->search_text = $data_request['search_text'];
+            $data->search_text = strtolower($data_request['search_text']);
             $data->save();
             DB::commit();
         } catch (DynamoDbException $e) {
@@ -92,6 +92,7 @@ class SearchLogService extends BaseService
 
         DB::beginTransaction();
         $data_request['user_id'] = intval(auth()->user()->id);
+        $data_request['search_text'] = strtolower($data_request['search_text']);
         $check_data->update($data_request);
         DB::commit();
 

@@ -46,6 +46,10 @@ Route::middleware(['xssclean'])->group(function () {
                 Route::post('/gifts/images', '\App\Http\Controllers\API\v1\ItemGiftImageController@store');
                 Route::post('/gifts/images/{id}', '\App\Http\Controllers\API\v1\ItemGiftImageController@update');
                 Route::delete('/gifts/images/{id}', '\App\Http\Controllers\API\v1\ItemGiftImageController@delete');
+                // Search Log
+                Route::get('/search-logs', '\App\Http\Controllers\API\v1\SearchLogController@index');
+                Route::get('/search-logs/{id}', '\App\Http\Controllers\API\v1\SearchLogController@show');
+                Route::put('/search-logs/{id}', '\App\Http\Controllers\API\v1\SearchLogController@update');
                 // Variant
                 Route::post('/variants', '\App\Http\Controllers\API\v1\VariantController@store');
                 Route::put('/variants/{id}', '\App\Http\Controllers\API\v1\VariantController@update');
@@ -99,11 +103,8 @@ Route::middleware(['xssclean'])->group(function () {
                 Route::get('/carts/{id}', '\App\Http\Controllers\API\v1\CartController@show');
                 Route::delete('/carts/{id}', '\App\Http\Controllers\API\v1\CartController@delete');
                 // Search Log
-                Route::get('/search-logs', '\App\Http\Controllers\API\v1\SearchLogController@index');
                 Route::post('/search-logs', '\App\Http\Controllers\API\v1\SearchLogController@store');
-                Route::get('/search-logs/{id}', '\App\Http\Controllers\API\v1\SearchLogController@show');
                 Route::get('/search-logs/user/{id}', '\App\Http\Controllers\API\v1\SearchLogController@showByUser');
-                Route::put('/search-logs/{id}', '\App\Http\Controllers\API\v1\SearchLogController@update');
                 Route::delete('/search-logs/{id}', '\App\Http\Controllers\API\v1\SearchLogController@delete');
             });
             Route::post('/logout', '\App\Http\Controllers\API\v1\Auth\AuthController@logout');
