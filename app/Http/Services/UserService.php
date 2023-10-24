@@ -148,6 +148,12 @@ class UserService extends BaseService
             ],
         ]);
 
+        $roles = auth()->user()->getRoleNames()->toArray();
+
+        if(count($roles) == 1 && in_array('customer', $roles)){
+            unset($data_request['role']);
+        }
+
         DB::beginTransaction();
         if(!empty($data_request['password'])){
             $data_request['password'] = Hash::make($data_request['password']);
