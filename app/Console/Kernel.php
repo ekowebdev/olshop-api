@@ -17,7 +17,7 @@ class Kernel extends ConsoleKernel
     {
         $schedule->command('send:birthdaywish')->daily();
         $schedule->command('update:order')->hourly();
-        $schedule->command('delete:search-logs')->hourly();
+        $schedule->command('delete:search-logs')->daily();
     }
 
     /**

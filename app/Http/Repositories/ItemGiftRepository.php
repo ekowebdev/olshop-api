@@ -5,6 +5,7 @@ namespace App\Http\Repositories;
 use Illuminate\Support\Arr;
 use App\Http\Models\ItemGift;
 use App\Http\Models\SearchLog;
+use Illuminate\Support\Facades\Cache;
 use App\Exceptions\DataEmptyException;
 use BaoPham\DynamoDb\Facades\DynamoDb;
 use Illuminate\Support\Facades\Request;
@@ -24,13 +25,15 @@ class ItemGiftRepository extends BaseRepository
         $this->validate(Request::all(), [
             'per_page' => ['numeric']
         ]);
-        $result = $this->model
-                    ->getAll()
-                    ->setSortableAndSearchableColumn($sortable_and_searchable_column)
-                    ->search()
-                    ->sort()
-                    ->orderByDesc('id')
-                    ->paginate(Arr::get(Request::all(), 'per_page', 15));
+        $result = Cache::remember('item_gifts', now()->addMinutes(100), function () use ($sortable_and_searchable_column) {
+            return $this->model
+                ->getAll()
+                ->setSortableAndSearchableColumn($sortable_and_searchable_column)
+                ->search()
+                ->sort()
+                ->orderByDesc('id')
+                ->paginate(Arr::get(Request::all(), 'per_page', 15));
+        });
         $result->sortableAndSearchableColumn = $sortable_and_searchable_column;
         if($result->total() == 0) throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => $this->repository_name], $locale));
         return $result;
