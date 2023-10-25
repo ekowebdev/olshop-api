@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Models\User;
+use App\Http\Models\SearchLog;
 use App\Events\NotificationEvent;
 use Illuminate\Support\Facades\Route;
 

@@ -82,15 +82,22 @@ class CartService extends BaseService
             $cart = $this->repository->getByItemAndVariant($item_gift->id, $data_request['variant_id'] ?? null);
             if(isset($data_request['variant_id'])){
                 $variant = Variant::where('id', $data_request['variant_id'])->where('item_gift_id', $item_gift->id)->first();
-                if ($item_gift->variants->count() < 1) {
+                if(is_null($variant)) {
                     return response()->json([
-                        'message' => trans('error.variant_not_found_in_item_gifts'),
+                        'message' => trans('error.variant_not_found_in_item_gifts', ['id' => $item_gift->id]),
                         'status' => 400,
                     ], 400);
+                } else {
+                    if($variant->variant_quantity < $data_request['cart_quantity']){
+                        return response()->json([
+                            'message' => trans('error.variant_out_of_stock', ['id' => $item_gift->id, 'variant_id' => $variant->id]),
+                            'status' => 400,
+                        ], 400);
+                    }
                 }
-                if($variant->variant_quantity < $data_request['cart_quantity']){
+                if ($item_gift->variants->count() < 0) {
                     return response()->json([
-                        'message' => trans('error.out_of_stock', ['id' => $item_gift->id]),
+                        'message' => trans('error.variant_not_found_in_item_gifts', ['id' => $item_gift->id]),
                         'status' => 400,
                     ], 400);
                 }

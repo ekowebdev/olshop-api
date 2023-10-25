@@ -103,8 +103,7 @@ class ItemGiftRepository extends BaseRepository
             'per_page' => ['numeric'],
         ]);
 
-        $search_logs = SearchLog::query()->where('user_id', auth()->user()->id)->get();
-        $search_logs = $search_logs->toArray();
+        $search_logs = SearchLog::LastMonth()->where('user_id', auth()->user()->id)->get()->toArray();
 
         $output_array = [];
 
@@ -144,8 +143,8 @@ class ItemGiftRepository extends BaseRepository
         }
 
         $item_gifts = $this->model->getAll();
-        foreach ($final_array as $arr) {
-            $item_gifts->orWhere('item_gift_name', 'LIKE', '%' . $arr . '%');
+        foreach ($final_array as $search) {
+            $item_gifts->orWhere('item_gift_name', 'LIKE', '%' . $search . '%');
         }
         $result = $item_gifts
                     ->setSortableAndSearchableColumn($sortable_and_searchable_column)
