@@ -12,7 +12,7 @@ class DeleteSearchLogPastMonth extends Command
      *
      * @var string
      */
-    protected $signature = 'delete:search-logs';
+    protected $signature = 'delete:searchlogs';
 
     /**
      * The console command description.
