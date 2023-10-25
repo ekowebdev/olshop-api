@@ -24,13 +24,13 @@ jobs:
             git fetch --all &&
             git reset --hard origin/master &&
             git pull origin master &&
-            sudo chmod -R 777 bootstrap/cache &&
-            sudo chmod -R 777 storage &&
             curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash &&
             source ~/.nvm/nvm.sh &&
             nvm install --lts &&
             nvm use --lts &&
             npm install -g npm@latest &&
+            sudo chmod -R 777 bootstrap/cache &&
+            sudo chmod -R 777 storage &&
             composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader &&
             php artisan config:clear &&
             php artisan cache:clear &&
