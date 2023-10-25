@@ -9,6 +9,8 @@ services:
         - APP_ENV=${APP_ENV}
     environment:
       - APP_ENV=${APP_ENV}
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
     ports:
       - ${APP_PORT}:8080
     working_dir: /var/www/html
@@ -17,6 +19,10 @@ services:
     depends_on:
       - database
       - redis
+      - "dynamodb-local"
+    links:
+      - "dynamodb-local"
+    # command: dynamodb describe-limits --endpoint-url http://dynamodb-local:8010 --region ap-southeast-1
   database:
     container_name: database
     image: mysql:8.0
@@ -51,5 +57,14 @@ services:
       - ./:/var/www/html
     depends_on:
       - api
+  dynamodb-local:
+    container_name: dynamodb-local
+    image: amazon/dynamodb-local:latest
+    ports:
+      - 8010:8000
+    volumes:
+      - ./docker/dynamodb:/home/dynamodblocal/data
+    working_dir: /home/dynamodblocal
+    command: -jar DynamoDBLocal.jar -sharedDb -dbPath ./data
 volumes:
   db-data: ~
