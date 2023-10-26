@@ -209,14 +209,13 @@ class ItemGiftService extends BaseService
                     'nullable',
                     'array',
                 ],
-                'item_gift_spesification.*' => [
-                    'distinct',
+                'item_gift_spesification.*.key' => [
                     'string',
-                    function ($attribute, $value, $fail) {
-                        if (strpos($attribute, ' ') !== false) {
-                            $fail("Kunci \"$attribute\" dalam array mengandung spasi.");
-                        }
-                    },
+                    'required_with:item_gift_spesification.*.value',
+                ],
+                'item_gift_spesification.*.value' => [
+                    'string',
+                    'required_with:item_gift_spesification.*.key',
                 ],
                 'item_gift_point' => [
                     'nullable',
@@ -236,7 +235,6 @@ class ItemGiftService extends BaseService
                 ],
             ]
         );
-
         DB::beginTransaction();
         $data_request['item_gift_code'] = Str::random(15);
         $data_request['item_gift_slug'] = Str::slug($data_request['item_gift_name']);
@@ -310,14 +308,13 @@ class ItemGiftService extends BaseService
                     'nullable',
                     'array',
                 ],
-                'item_gift_spesification.*' => [
-                    'distinct',
+                'item_gift_spesification.*.key' => [
                     'string',
-                    function ($attribute, $value, $fail) {
-                        if (strpos($attribute, ' ') !== false) {
-                            $fail("Kunci \"$attribute\" dalam array mengandung spasi.");
-                        }
-                    },
+                    'required_with:item_gift_spesification.*.value',
+                ],
+                'item_gift_spesification.*.value' => [
+                    'string',
+                    'required_with:item_gift_spesification.*.key',
                 ],
                 'item_gift_point' => [
                     'numeric',
