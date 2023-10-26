@@ -5,8 +5,6 @@ use App\Events\NotificationEvent;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Broadcast;
 
-Broadcast::routes(['middleware' => ['web']]);
-
 Route::get('/', function () {
     // return 'Baktiweb Olshop API versi 1';
     return view('welcome');
