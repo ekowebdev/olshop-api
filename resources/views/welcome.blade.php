@@ -38,10 +38,6 @@
                     console.log(e);
                     document.getElementById('count').innerText = e.count_data;
                 })
-            // Echo.private('App.Http.Models.User.14')
-            //     .notification((notification) => {
-            //         console.log(notification.data);
-            //     });
         });
     </script>
 </html>
