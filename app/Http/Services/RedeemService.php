@@ -9,6 +9,8 @@ use App\Http\Models\Variant;
 use App\Http\Models\ItemGift;
 use App\Http\Models\Shipping;
 use App\Mail\RedeemConfirmation;
+use App\Events\NotificationEvent;
+use App\Http\Models\Notification;
 use Illuminate\Support\Facades\DB;
 use App\Http\Models\RedeemItemGift;
 use App\Http\Services\RedeemService;
@@ -262,6 +264,15 @@ class RedeemService extends BaseService
                 'etd' => $data_request['shipping_details']['shipping_etd'],
             ]);
             $shippings->save();
+
+            $notification = [];
+            $notification['user_id'] = auth()->user()->id;
+            $notification['title'] = 'Transaksi Berhasil';
+            $notification['text'] = 'Anda telah berhasil melakukan transaksi!';
+            $notification['type'] = 0;
+            $notification['status_read'] = 0;
+            $data_notification = store_notification($notification);
+            broadcast(new NotificationEvent($data_notification));
 
             DB::commit();
 

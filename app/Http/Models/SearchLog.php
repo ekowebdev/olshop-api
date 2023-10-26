@@ -18,8 +18,8 @@ class SearchLog extends DynamoDbModel
 
     public function scopeLastMonth($query)
     {
-        $endDate = now()->subMonth()->format('Y-m-d H:i:s');
-        return $query->where('created_at', '>=', $endDate);
+        $date = now()->subMonth()->format('Y-m-d H:i:s');
+        return $query->where('created_at', '>=', $date);
     }
 
     public function users()

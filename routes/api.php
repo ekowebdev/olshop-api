@@ -1,16 +1,10 @@
 <?php
 
-use App\Events\TestEvent;
-use App\Http\Models\User;
 use Illuminate\Support\Str;
-use App\Http\Models\ItemGift;
-use App\Http\Models\SearchLog;
-use Aws\DynamoDb\DynamoDbClient;
+use App\Events\NotificationEvent;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
-use BaoPham\DynamoDb\Facades\DynamoDb;
-use App\Notifications\RealTimeNotification;
-use Aws\DynamoDb\Exception\DynamoDbException;
+use Illuminate\Support\Facades\Broadcast;
 
 Route::middleware(['xssclean'])->group(function () {
     Route::get('/email/verify/{id}', '\App\Http\Controllers\API\v1\Auth\AuthController@verify')->name('verification.verify');
@@ -106,6 +100,12 @@ Route::middleware(['xssclean'])->group(function () {
                 Route::post('/search-logs', '\App\Http\Controllers\API\v1\SearchLogController@store');
                 Route::get('/search-logs/user/{id}', '\App\Http\Controllers\API\v1\SearchLogController@showByUser');
                 Route::delete('/search-logs/{id}', '\App\Http\Controllers\API\v1\SearchLogController@delete');
+                // Notification
+                Route::get('/notifications', '\App\Http\Controllers\API\v1\NotificationController@index');
+                Route::get('/notifications/{id}', '\App\Http\Controllers\API\v1\NotificationController@show');
+                Route::get('/notifications/user/{id}', '\App\Http\Controllers\API\v1\NotificationController@showByUser');
+                Route::put('/notifications/{id}', '\App\Http\Controllers\API\v1\NotificationController@update');
+                Route::delete('/notifications/{id}', '\App\Http\Controllers\API\v1\NotificationController@delete');
             });
             Route::post('/logout', '\App\Http\Controllers\API\v1\Auth\AuthController@logout');
         });
