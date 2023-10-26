@@ -31,4 +31,10 @@ window.Echo = new Echo({
     wsPort: import.meta.env.VITE_PUSHER_PORT,
     forceTLS: false,
     disableStats: true,
+    authEndpoint: window.location.hostname + '/broadcasting/auth',
+    auth: {
+        headers: {
+            Authorization: "Bearer " + import.meta.env.AUTH_TOKEN
+        }
+    }
 });

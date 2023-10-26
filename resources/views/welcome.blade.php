@@ -38,9 +38,10 @@
             //         console.log(e);
             //         document.getElementById('count').innerText = e.count_data;
             //     })
-            Echo.private('App.Http.Models.User.1')
+            Echo.private('App.Models.User.1')
                 .notification((notification) => {
                     console.log(notification.data);
+                    document.getElementById('count').innerText = e.count_data;
                 });
         });
     </script>
