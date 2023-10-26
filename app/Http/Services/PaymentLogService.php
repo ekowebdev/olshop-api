@@ -22,7 +22,6 @@ class PaymentLogService extends BaseService
             'payment_type' => 'payment_type',
             'redeem_id' => 'redeem_id',
             'payment_status' => 'payment_status',
-            'raw_response' => 'raw_response',
         ];
 
         $search_column = [
@@ -30,7 +29,6 @@ class PaymentLogService extends BaseService
             'payment_type' => 'payment_type',
             'redeem_id' => 'user_id',
             'payment_status' => 'payment_status',
-            'raw_response' => 'raw_response',
         ];
 
         $sortable_and_searchable_column = [

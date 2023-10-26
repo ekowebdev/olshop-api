@@ -12,7 +12,7 @@ else
 fi
 
 php artisan migrate
-php artisan optimize clear
+php artisan optimize:clear
 php artisan view:clear
 php artisan route:clear
 

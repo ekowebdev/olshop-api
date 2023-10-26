@@ -19,9 +19,9 @@ services:
     depends_on:
       - database
       - redis
-      - "dynamodb-local"
+      - dynamodb-local
     links:
-      - "dynamodb-local"
+      - dynamodb-local
     # command: dynamodb describe-limits --endpoint-url http://dynamodb-local:8010 --region ap-southeast-1
   database:
     container_name: database
@@ -61,7 +61,7 @@ services:
     container_name: dynamodb-local
     image: amazon/dynamodb-local:latest
     ports:
-      - 8010:8000
+      - ${DYNAMODB_PORT}:8000
     volumes:
       - ./docker/dynamodb:/home/dynamodblocal/data
     working_dir: /home/dynamodblocal

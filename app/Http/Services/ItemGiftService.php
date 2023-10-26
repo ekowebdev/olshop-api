@@ -185,6 +185,7 @@ class ItemGiftService extends BaseService
             'item_gift_weight',
             'item_gift_quantity',
             'item_gift_images',
+            'item_gift_spesification',
         ]);
 
         $this->repository->validate($data_request, [
@@ -203,6 +204,19 @@ class ItemGiftService extends BaseService
                 'item_gift_description' => [
                     'required',
                     'string',
+                ],
+                'item_gift_spesification' => [
+                    'nullable',
+                    'array',
+                ],
+                'item_gift_spesification.*' => [
+                    'distinct',
+                    'string',
+                    function ($attribute, $value, $fail) {
+                        if (strpos($attribute, ' ') !== false) {
+                            $fail("Kunci \"$attribute\" dalam array mengandung spasi.");
+                        }
+                    },
                 ],
                 'item_gift_point' => [
                     'nullable',
@@ -229,6 +243,7 @@ class ItemGiftService extends BaseService
         $data_request['item_gift_point'] = $data_request['item_gift_point'] ?? null;
         $data_request['item_gift_weight'] = $data_request['item_gift_weight'] ?? null;
         $data_request['item_gift_quantity'] = $data_request['item_gift_quantity'] ?? null;
+        $data_request['item_gift_spesification'] = (isset($data_request['item_gift_spesification'])) ? json_encode($data_request['item_gift_spesification']) : null;
         $result = $this->model->create($data_request);
         if (isset($data_request['item_gift_images'])) {
             foreach ($data_request['item_gift_images'] as $image) {
@@ -261,6 +276,7 @@ class ItemGiftService extends BaseService
             'item_gift_point' => $check_data->item_gift_point,
             'item_gift_weight' => $check_data->item_gift_weight,
             'item_gift_quantity' => $check_data->item_gift_quantity,
+            'item_gift_spesification' => json_decode($check_data->item_gift_spesification),
         ], $data);
 
         $data_request = Arr::only($data, [
@@ -272,6 +288,7 @@ class ItemGiftService extends BaseService
             'item_gift_point',
             'item_gift_weight',
             'item_gift_quantity',
+            'item_gift_spesification',
         ]);
 
         $this->repository->validate($data_request, [
@@ -289,6 +306,19 @@ class ItemGiftService extends BaseService
                 'item_gift_description' => [
                     'string',
                 ],
+                'item_gift_spesification' => [
+                    'nullable',
+                    'array',
+                ],
+                'item_gift_spesification.*' => [
+                    'distinct',
+                    'string',
+                    function ($attribute, $value, $fail) {
+                        if (strpos($attribute, ' ') !== false) {
+                            $fail("Kunci \"$attribute\" dalam array mengandung spasi.");
+                        }
+                    },
+                ],
                 'item_gift_point' => [
                     'numeric',
                 ],
@@ -305,6 +335,7 @@ class ItemGiftService extends BaseService
         DB::beginTransaction();
         $data_request['item_gift_slug'] = Str::slug($data_request['item_gift_name']);
         $data_request['item_gift_point'] = ($check_data->variants->count() > 0) ? min($check_data->variants->pluck('variant_point')->toArray()) : $data_request['item_gift_point'];
+        $data_request['item_gift_spesification'] = (isset($data_request['item_gift_spesification'])) ? json_encode($data_request['item_gift_spesification']) : null;
         $check_data->update($data_request);
         DB::commit();
 
