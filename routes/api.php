@@ -86,6 +86,8 @@ Route::middleware(['xssclean'])->group(function () {
                 Route::delete('/gifts/redeem/{id}', '\App\Http\Controllers\API\v1\RedeemController@delete');
                 // Wishlist Item Gift
                 Route::get('/gifts/wishlist', '\App\Http\Controllers\API\v1\WishlistController@index');
+                Route::get('/gifts/wishlist/{id}', '\App\Http\Controllers\API\v1\WishlistController@show');
+                Route::get('/gifts/wishlist/user/{userId}', '\App\Http\Controllers\API\v1\WishlistController@showByUser');
                 Route::post('/gifts/{itemGiftId}/wishlist', '\App\Http\Controllers\API\v1\WishlistController@wishlist');
                 // Review Item Gift
                 Route::get('/gifts/review', '\App\Http\Controllers\API\v1\ReviewController@index');
@@ -95,15 +97,16 @@ Route::middleware(['xssclean'])->group(function () {
                 Route::get('/carts', '\App\Http\Controllers\API\v1\CartController@index');
                 Route::post('/carts', '\App\Http\Controllers\API\v1\CartController@store');
                 Route::get('/carts/{id}', '\App\Http\Controllers\API\v1\CartController@show');
+                Route::get('/carts/user/{userId}', '\App\Http\Controllers\API\v1\CartController@showByUser');
                 Route::delete('/carts/{id}', '\App\Http\Controllers\API\v1\CartController@delete');
                 // Search Log
                 Route::post('/search-logs', '\App\Http\Controllers\API\v1\SearchLogController@store');
-                Route::get('/search-logs/user/{id}', '\App\Http\Controllers\API\v1\SearchLogController@showByUser');
+                Route::get('/search-logs/user/{userId}', '\App\Http\Controllers\API\v1\SearchLogController@showByUser');
                 Route::delete('/search-logs/{id}', '\App\Http\Controllers\API\v1\SearchLogController@delete');
                 // Notification
                 Route::get('/notifications', '\App\Http\Controllers\API\v1\NotificationController@index');
                 Route::get('/notifications/{id}', '\App\Http\Controllers\API\v1\NotificationController@show');
-                Route::get('/notifications/user/{id}', '\App\Http\Controllers\API\v1\NotificationController@showByUser');
+                Route::get('/notifications/user/{userId}', '\App\Http\Controllers\API\v1\NotificationController@showByUser');
                 Route::put('/notifications/{id}', '\App\Http\Controllers\API\v1\NotificationController@update');
                 Route::delete('/notifications/{id}', '\App\Http\Controllers\API\v1\NotificationController@delete');
             });

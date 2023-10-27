@@ -8,6 +8,7 @@ use App\Exceptions\DataEmptyException;
 use BaoPham\DynamoDb\RawDynamoDbQuery;
 use Illuminate\Support\Facades\Request;
 use BaoPham\DynamoDb\DynamoDbQueryBuilder;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class SearchLogRepository extends BaseRepository 
 {
@@ -21,12 +22,30 @@ class SearchLogRepository extends BaseRepository
 
     public function getIndexData($locale)
     {
-        $result = $this->model
-                    ->query()
-                    ->orderBy('created_at', 'desc')
-                    ->limit(intval(Request::get('per_page') ?? 10))
-                    ->get();
-        if($result->isEmpty()) throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => $this->repository_name], $locale));
+        $per_page = intval(Request::get('per_page', 10));
+        $page = intval(Request::get('page', 1));
+
+        $data = $this->model
+            ->query()
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        if ($data->isEmpty()) {
+            throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => $this->repository_name], $locale));
+        }
+
+        $result = new LengthAwarePaginator(
+            $data->forPage($page, $per_page),
+            $data->count(),
+            $per_page,
+            $page,
+            ['path' => url('/carts')]
+        );
+
+        if ($result->isEmpty()) {
+            throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => $this->repository_name], $locale));
+        }
+
         return $result;
     }
 
@@ -40,16 +59,34 @@ class SearchLogRepository extends BaseRepository
         return $result;	
 	}
 
-    public function getDataByUser($locale, $id)
+    public function getDataByUser($locale, $user_id)
 	{
-        $id = intval($id);
-		$result = $this->model
+        $user_id = intval($user_id);
+        $per_page = intval(Request::get('per_page', 10));
+        $page = intval(Request::get('page', 1));
+
+		$data = $this->model
                     ->query()
                     ->orderBy('created_at', 'desc')
-                    ->where('user_id', $id)	
-                    ->limit(intval(Request::get('per_page') ?? 10))
+                    ->where('user_id', $user_id)
                     ->get();
-		if($result->isEmpty()) throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => $this->repository_name], $locale));
-        return $result;	
+        
+        if ($data->isEmpty()) {
+            throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => $this->repository_name], $locale));
+        }
+
+        $result = new LengthAwarePaginator(
+            $data->forPage($page, $per_page),
+            $data->count(),
+            $per_page,
+            $page,
+            ['path' => url('/carts')]
+        );
+
+        if ($result->isEmpty()) {
+            throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => $this->repository_name], $locale));
+        }
+
+        return $result;
 	}
 }

@@ -20,10 +20,19 @@ class WishlistController extends BaseController
     public function index($locale)
     {
         $data = $this->service->getIndexData($locale, Request::all());
-        return (WishlistResource::collection($data))
-                ->additional([
-                    'sortable_and_searchable_column' => $data->sortableAndSearchableColumn,
-                ]);
+        return (WishlistResource::collection($data));
+    }
+
+    public function show($locale, $id)
+    {
+        $data = $this->service->getSingleData($locale, $id);
+        return new WishlistResource($data);
+    }
+
+    public function showByUser($locale, $id)
+    {
+        $data = $this->service->getDataByUser($locale, $id);
+        return (WishlistResource::collection($data));
     }
 
     public function wishlist($locale, $id)

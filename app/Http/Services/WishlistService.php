@@ -2,6 +2,7 @@
 
 namespace App\Http\Services;
 
+use Illuminate\Support\Str;
 use App\Http\Models\Wishlist;
 use Illuminate\Support\Facades\DB;
 use App\Exceptions\ValidationException;
@@ -21,37 +22,30 @@ class WishlistService extends BaseService
 
     public function getIndexData($locale, $data)
     {
-        $search = [
-            'user_id' => 'user_id',
-            'item_gift_id' => 'item_gift_id',
-        ];
+        return $this->repository->getIndexData($locale);
+    }
 
-        $search_column = [
-            'id' => 'id',
-            'user_id' => 'user_id',
-            'item_gift_id' => 'item_gift_id',
-        ];
+    public function getSingleData($locale, $id)
+    {
+        return $this->repository->getSingleData($locale, $id);
+    }
 
-        $sortable_and_searchable_column = [
-            'search'        => $search,
-            'search_column' => $search_column,
-            'sort_column'   => array_merge($search, $search_column),
-        ];
-        
-        return $this->repository->getIndexData($locale, $sortable_and_searchable_column);
+    public function getDataByUser($locale, $id)
+    {
+        return $this->repository->getDataByUser($locale, $id);
     }
 
     public function wishlist($locale, $id, $data)
     {
         $item_gift = $this->item_gift_repository->getSingleData($locale, $id);
-        $check_wishlist = $this->repository->getDataByUserAndItem($locale, $item_gift->id);
-
+        $check_wishlist = $this->repository->getDataByUserAndItem($locale, $item_gift->id)->first();
         DB::beginTransaction();
-        if(!isset($check_wishlist)){
-            Wishlist::create([
-                'user_id' => auth()->user()->id,
-                'item_gift_id' => $item_gift->id,
-            ]);
+        if(is_null($check_wishlist)){
+            $wishlist_model = $this->model;
+            $wishlist_model->id = strval(Str::uuid());
+            $wishlist_model->user_id = intval(auth()->user()->id);
+            $wishlist_model->item_gift_id = intval($item_gift->id);
+            $wishlist_model->save();
             $response = response()->json([
                 'message' => trans('all.success_add_to_wishlists'),
                 'status' => 200,

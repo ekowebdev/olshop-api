@@ -4,11 +4,14 @@ namespace App\Http\Services;
 
 use App\Http\Models\Cart;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use App\Http\Models\Variant;
 use App\Http\Models\ItemGift;
 use Illuminate\Support\Facades\DB;
+use App\Exceptions\ValidationException;
 use Illuminate\Database\QueryException;
 use App\Http\Repositories\CartRepository;
+use Aws\DynamoDb\Exception\DynamoDbException;
 
 class CartService extends BaseService
 {
@@ -22,33 +25,17 @@ class CartService extends BaseService
 
     public function getIndexData($locale, $data)
     {
-        $search = [
-            'user_id' => 'user_id',
-            'item_gift_id' => 'item_gift_id',
-            'variant_id' => 'variant_id',
-            'cart_quantity' => 'cart_quantity',
-        ];
-
-        $search_column = [
-            'id' => 'id',
-            'user_id' => 'user_id',
-            'item_gift_id' => 'item_gift_id',
-            'variant_id' => 'variant_id',
-            'cart_quantity' => 'cart_quantity',
-        ];
-
-        $sortable_and_searchable_column = [
-            'search'        => $search,
-            'search_column' => $search_column,
-            'sort_column'   => array_merge($search, $search_column),
-        ];
-        
-        return $this->repository->getIndexData($locale, $sortable_and_searchable_column);
+        return $this->repository->getIndexData($locale);
     }
 
     public function getSingleData($locale, $id)
     {
         return $this->repository->getSingleData($locale, $id);
+    }
+
+    public function getDataByUser($locale, $id)
+    {
+        return $this->repository->getDataByUser($locale, $id);
     }
 
     public function store($locale, $data)
@@ -75,11 +62,12 @@ class CartService extends BaseService
             ]
         );
 
-        DB::beginTransaction();
+        
         try {
+            DB::beginTransaction();
             $data_request['user_id'] = auth()->user()->id;
             $item_gift = ItemGift::find($data_request['item_gift_id']);
-            $cart = $this->repository->getByItemAndVariant($item_gift->id, $data_request['variant_id'] ?? null);
+            $cart = $this->repository->getByItemAndVariant(intval($item_gift->id), isset($data_request['variant_id']) ? intval($data_request['variant_id']) : null)->first();
             if(isset($data_request['variant_id'])){
                 $variant = Variant::where('id', $data_request['variant_id'])->where('item_gift_id', $item_gift->id)->first();
                 if(is_null($variant)) {
@@ -127,15 +115,22 @@ class CartService extends BaseService
                     'error' => 0,
                 ]);
             }
-            $this->model->create($data_request);
+            $cart_model = $this->model;
+            $cart_model->id = strval(Str::uuid());
+            $cart_model->user_id = intval(auth()->user()->id);
+            $cart_model->item_gift_id = intval($data_request['item_gift_id']);
+            $cart_model->variant_id = (isset($data_request['variant_id'])) ? intval($data_request['variant_id']) : '';
+            $cart_model->cart_quantity = intval($data_request['cart_quantity']);
+            $cart_model->save();
             DB::commit();
             return response()->json([
                 'message' => trans('all.success_add_to_cart'),
                 'status' => 200,
                 'error' => 0,
             ]);
-        } catch (QueryException $e) {
+        } catch (DynamoDbException $e) {
             DB::rollback();
+            throw new ValidationException(json_encode([$e->getMessage()]));
         }
     }
 

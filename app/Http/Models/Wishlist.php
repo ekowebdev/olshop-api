@@ -4,23 +4,17 @@ namespace App\Http\Models;
 
 use App\Http\Models\User;
 use App\Http\Models\ItemGift;
-use App\Http\Models\BaseModel;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use BaoPham\DynamoDb\DynamoDbModel;
 
-class Wishlist extends BaseModel
+class Wishlist extends DynamoDbModel
 {
-    use HasFactory;
-
-    protected $table = 'wishlists';
+    protected $primaryKey = 'id';
     protected $fillable = ['user_id', 'item_gift_id'];
 
-    public function scopeGetAll($query)
-    {      
-        return $query->select([
-                    'id', 
-                    'user_id', 
-                    'item_gift_id'
-                ]);
+    public function getTable()
+    {
+        $table = env('APP_ENV') === 'local' ? 'local_wishlists' : 'wishlists';
+        return $table;
     }
 
     public function users()

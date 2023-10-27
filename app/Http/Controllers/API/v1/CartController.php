@@ -21,16 +21,19 @@ class CartController extends BaseController
     public function index($locale)
     {
         $data = $this->service->getIndexData($locale, Request::all());
-        return (CartResource::collection($data))
-                ->additional([
-                    'sortable_and_searchable_column' => $data->sortableAndSearchableColumn,
-                ]);
+        return (CartResource::collection($data));
     }
 
     public function show($locale, $id)
     {
         $data = $this->service->getSingleData($locale, $id);
         return new CartResource($data);
+    }
+
+    public function showByUser($locale, $id)
+    {
+        $data = $this->service->getDataByUser($locale, $id);
+        return (CartResource::collection($data));
     }
 
     public function store($locale)

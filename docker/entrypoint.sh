@@ -12,9 +12,11 @@ else
 fi
 
 php artisan migrate
-php artisan optimize:clear
+php artisan config:clear
+php artisan cache:clear
 php artisan view:clear
 php artisan route:clear
+php artisan optimize:clear
 
 php-fpm -D
 nginx -g "daemon off;"
