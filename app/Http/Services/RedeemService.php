@@ -121,9 +121,11 @@ class RedeemService extends BaseService
             ]
         );
 
-        DB::beginTransaction();
+        
 
         try {
+            DB::beginTransaction();
+            
             $total_point = 0;
             $metadata_redeem_item_gifts = [];
             $redeem_code = Str::uuid();

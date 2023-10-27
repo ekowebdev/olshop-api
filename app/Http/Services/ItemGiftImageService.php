@@ -4,8 +4,11 @@ namespace App\Http\Services;
 
 use Image;
 use Illuminate\Support\Arr;
+use App\Http\Models\Variant;
 use App\Http\Models\ItemGiftImage;
 use Illuminate\Support\Facades\DB;
+use App\Exceptions\ValidationException;
+use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Repositories\ItemGiftImageRepository;
 
@@ -23,11 +26,13 @@ class ItemGiftImageService extends BaseService
     {
         $search = [
             'item_gift_id' => 'item_gift_id',
+            'variant_id' => 'variant_id',
         ];
 
         $search_column = [
             'id' => 'id',
             'item_gift_id' => 'item_gift_id',
+            'variant_id' => 'variant_id',
         ];
 
         $sortable_and_searchable_column = [
@@ -48,6 +53,7 @@ class ItemGiftImageService extends BaseService
     {
         $data_request = Arr::only($data, [
             'item_gift_id',
+            'variant_id',
             'item_gift_image',
         ]);
 
@@ -55,6 +61,10 @@ class ItemGiftImageService extends BaseService
                 'item_gift_id' => [
                     'required',
                     'exists:item_gifts,id',
+                ],
+                'variant_id' => [
+                    'nullable',
+                    'exists:variants,id',
                 ],
                 'item_gift_image' => [
                     'required',
@@ -66,6 +76,15 @@ class ItemGiftImageService extends BaseService
         );
 
         DB::beginTransaction();
+        if(isset($data_request['variant_id'])){
+            $variant = Variant::where('id', $data_request['variant_id'])->where('item_gift_id', $data_request['item_gift_id'])->first();
+            if(is_null($variant)) {
+                return response()->json([
+                    'message' => trans('error.variant_not_found_in_item_gifts', ['id' => $data_request['item_gift_id']]),
+                    'status' => 400,
+                ], 400);
+            }
+        }
         $image = $data_request['item_gift_image'];
         $image_name = time() . '.' . $image->getClientOriginalExtension();
         Storage::disk('s3')->put('images/' . $image_name, file_get_contents($image));
@@ -75,6 +94,7 @@ class ItemGiftImageService extends BaseService
         Storage::disk('s3')->put('images/thumbnails/' . $image_name, $img_thumb);
         $result = $this->model->create([
             'item_gift_id' => $data_request['item_gift_id'],
+            'variant_id' => (isset($data_request['variant_id'])) ? $data_request['variant_id'] : null,
             'item_gift_image' => $image_name,
         ]);
         DB::commit();
@@ -88,12 +108,16 @@ class ItemGiftImageService extends BaseService
 
         $data_request = Arr::only($data, [
             'item_gift_id',
+            'variant_id',
             'item_gift_image',
         ]);
 
         $this->repository->validate($data_request, [
                 'item_gift_id' => [
                     'exists:item_gifts,id',
+                ],
+                'variant_id' => [
+                    'exists:variants,id',
                 ],
                 'item_gift_image' => [
                     'max:1000',
@@ -104,6 +128,12 @@ class ItemGiftImageService extends BaseService
         );
 
         DB::beginTransaction();
+        if(isset($data_request['variant_id']) && !empty($data_request['variant_id'])){
+            $variant = Variant::where('id', $data_request['variant_id'])->where('item_gift_id', isset($data_request['item_gift_id']) ? $data_request['item_gift_id'] : $check_data->item_gift_id)->first();
+            if(is_null($variant)) {
+                throw new ValidationException(json_encode(['id' => [trans('error.variant_not_found_in_item_gifts', ['id' => $data_request['item_gift_id']])]])); 
+            }
+        }
         if (isset($data_request['item_gift_image'])) {
             if(Storage::disk('s3')->exists('images/' . $check_data->item_gift_image)) {
                 Storage::disk('s3')->delete('images/' . $check_data->item_gift_image);
@@ -120,10 +150,20 @@ class ItemGiftImageService extends BaseService
             Storage::disk('s3')->put('images/thumbnails/' . $image_name, $img_thumb);
             $check_data->item_gift_image = $image_name;
         }
+        if(isset($data_request['variant_id'])) {
+            if($data_request['variant_id'] == ''){
+                $variant_id = null;
+            } else {
+                $variant_id = $data_request['variant_id'];
+            }
+        } else {
+            $variant_id = $check_data->variant_id;
+        }
         $check_data->item_gift_id = $data_request['item_gift_id'] ?? $check_data->item_gift_id;
+        $check_data->variant_id = $variant_id;
         $check_data->save();
         DB::commit();
-
+        
         return $this->repository->getSingleData($locale, $id);
     }
 

@@ -35,6 +35,14 @@ class ItemGiftImageResource extends JsonResource
                     ];
                 }),
             ],
+            'variants' => ($this->variants) 
+                ? [
+                    'id' => $this->variants->id,
+                    'variant_name' => $this->variants->variant_name,
+                    'variant_quantity' => $this->variants->variant_quantity,
+                    'variant_point' => $this->variants->variant_point,
+                    'fvariant_point' => format_money(strval($this->variants->variant_point)),
+                ] : null,
             'item_gift_image' => $this->item_gift_image,
             'item_gift_image_url' => $this->item_gift_image_url,
             'item_gift_image_thumbnail_url' => $this->item_gift_image_thumb_url,

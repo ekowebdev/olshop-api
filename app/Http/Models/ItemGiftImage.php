@@ -2,6 +2,7 @@
 
 namespace App\Http\Models;
 
+use App\Http\Models\Variant;
 use App\Http\Models\ItemGift;
 use App\Http\Models\BaseModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -11,7 +12,7 @@ class ItemGiftImage extends BaseModel
     use HasFactory;
 
     protected $table = 'item_gift_images';
-    protected $fillable = ['item_gift_id', 'item_gift_image'];
+    protected $fillable = ['item_gift_id', 'variant_id', 'item_gift_image'];
     protected $appends = ['item_gift_image_url', 'item_gift_image_thumb_url'];
 
     public function getItemGiftImageUrlAttribute()
@@ -35,6 +36,7 @@ class ItemGiftImage extends BaseModel
         return $query->select([
                     'id',
                     'item_gift_id', 
+                    'variant_id', 
                     'item_gift_image',
                 ]);
     }
@@ -42,5 +44,10 @@ class ItemGiftImage extends BaseModel
     public function item_gifts()
     {
         return $this->belongsTo(ItemGift::class, 'item_gift_id');
+    }
+
+    public function variants()
+    {
+        return $this->belongsTo(Variant::class, 'variant_id');
     }
 }
