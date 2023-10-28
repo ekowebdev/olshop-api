@@ -73,22 +73,13 @@ class RedeemService extends BaseService
                 ],
                 'redeem_item_gifts_details.*.item_gift_id' => [
                     'required',
-                ],
-                'redeem_item_gifts_details.*.item_gift_id.*' => [
-                    'required',
                     'exists:item_gifts,id',
                 ],
                 'redeem_item_gifts_details.*.variant_id' => [
                     'nullable',
-                ],
-                'redeem_item_gifts_details.*.variant_id.*' => [
-                    'nullable',
                     'exists:variants,id',
                 ],
                 'redeem_item_gifts_details.*.redeem_quantity' => [
-                    'required',
-                ],
-                'redeem_item_gifts_details.*.redeem_quantity.*' => [
                     'required',
                     'numeric',
                     'min:1',
@@ -118,14 +109,18 @@ class RedeemService extends BaseService
                 'address_details.id' => [
                     'required',
                 ],
+                'address_details.person_name' => [
+                    'required',
+                    'string',
+                ],
+                'address_details.person_phone' => [
+                    'required',
+                ],
             ]
         );
 
-        
-
         try {
             DB::beginTransaction();
-            
             $total_point = 0;
             $metadata_redeem_item_gifts = [];
             $redeem_code = Str::uuid();
@@ -228,13 +223,13 @@ class RedeemService extends BaseService
             array_push($item_details, [
                 'price' => $shipping_cost,
                 'quantity' => 1,
-                'name' => 'Shipping Fee'
+                'name' => '(+) Shipping Fee'
             ]);
     
             $midtrans_params = [
                 'transaction_details' => $transaction_details,
                 'item_details' => $item_details,
-                'customer_details' => $customer_details
+                'customer_details' => $customer_details,
             ];
 
             $redeem->snap_url = $this->get_snap_url_midtrans($midtrans_params);
@@ -275,7 +270,6 @@ class RedeemService extends BaseService
             $notification['status_read'] = 0;
             $data_notification = store_notification($notification);
             broadcast(new NotificationEvent($data_notification));
-
             DB::commit();
 
             return response()->json([
@@ -294,19 +288,17 @@ class RedeemService extends BaseService
         
         DB::beginTransaction();
         if($check_data->redeem_status != 'success'){
-            $redeem_item_gift = $check_data->redeem_item_gifts()->get();
-            foreach ($redeem_item_gift as $value) {
-                $item_gift = ItemGift::find($value->item_gift_id);
-                $item_gift->update([
-                    'item_gift_quantity' => $item_gift->item_gift_quantity + $value->redeem_quantity,
-                ]);
-                if($item_gift->variants()->count() > 0) {
-                    $variant = $item_gift->variants()->get();
-                    foreach ($variant as $v) {
-                        $v->update([
-                            'variant_quantity' => $v->variant_quantity + $value->redeem_quantity,
-                        ]);
-                    }
+            $redeem_item_gifts = $check_data->redeem_item_gifts()->get();
+            foreach ($redeem_item_gifts as $redeem_item) {
+                $item_gift = ItemGift::find($redeem_item->item_gift_id);
+                $variant = Variant::find($redeem_item->variant_id);
+                if ($item_gift) {
+                    $item_gift->item_gift_quantity += $redeem_item->redeem_quantity;
+                    $item_gift->save();
+                }
+                if ($variant) {
+                    $variant->variant_quantity += $redeem_item->redeem_quantity;
+                    $variant->save();
                 }
             }
         }
