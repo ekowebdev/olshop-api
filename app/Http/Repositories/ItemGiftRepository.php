@@ -5,6 +5,7 @@ namespace App\Http\Repositories;
 use Illuminate\Support\Arr;
 use App\Http\Models\ItemGift;
 use App\Http\Models\SearchLog;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
 use App\Exceptions\DataEmptyException;
 use BaoPham\DynamoDb\Facades\DynamoDb;
