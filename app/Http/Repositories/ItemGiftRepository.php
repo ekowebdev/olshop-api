@@ -106,7 +106,7 @@ class ItemGiftRepository extends BaseRepository
 
         $search_logs = SearchLog::LastMonth()->where('user_id', auth()->user()->id)->get()->toArray();
 
-        $output_array = [];
+        $match_item_gifts = [];
 
         // Urutkan $search_logs berdasarkan panjang search_text secara descending
         usort($search_logs, function ($a, $b) {
@@ -117,43 +117,48 @@ class ItemGiftRepository extends BaseRepository
             $search_text = $item["search_text"];
             // Cari key yang mirip
             $found = false;
-            foreach ($output_array as $key => $value) {
+            foreach ($match_item_gifts as $key => $value) {
                 similar_text($search_text, $key, $percent);
                 // Jika ada yang mirip, tambahkan ke nilai yang sudah ada
                 if ($percent >= 65) {
-                    $output_array[$key] += 1;
+                    $match_item_gifts[$key] += 1;
                     $found = true;
                     break;
                 }
             }
             // Jika tidak ada yang mirip, buat key baru
             if (!$found) {
-                $output_array[$search_text] = 1;
+                $match_item_gifts[$search_text] = 1;
             }
         }
 
         $min_search = Arr::get(Request::all(), 'min_search', 5);
 
-        $final_array = array_filter($output_array, function ($count) use ($min_search) {
+        $item_gifts = array_filter($match_item_gifts, function ($count) use ($min_search) {
             return $count >= $min_search;
         });
-        $final_array = array_keys($final_array);
+        $item_gifts = array_keys($item_gifts);
 
-        if(count($final_array) == 0){
+        if(count($item_gifts) == 0){
             throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => $this->repository_name], $locale));
         }
 
-        $item_gifts = $this->model->getAll();
-        foreach ($final_array as $search) {
-            $item_gifts->orWhere('item_gift_name', 'LIKE', '%' . $search . '%');
-        }
+        // $item_gifts = $this->model->getAll();
+        // foreach ($item_gifts as $item) {
+        //     $item_gifts->orWhere('item_gift_name', 'LIKE', '%' . $item . '%');
+        // }
         
-        $result = $item_gifts
+        $result = $this->model->getAll()
+                    ->where(function ($query) use ($item_gifts) {
+                        foreach ($item_gifts as $item) {
+                            $query->orWhere('item_gift_name', 'LIKE', '%' . $item . '%');
+                        }
+                    })
                     ->setSortableAndSearchableColumn($sortable_and_searchable_column)
                     ->search()
                     ->sort()
-                    ->orderByDesc('total_redeem')
-                    ->groupBy('id')
+                    ->groupBy('item_gift_name')
+                    ->havingRaw('total_redeem = MAX(total_redeem)')
                     ->paginate(Arr::get(Request::all(), 'per_page', 15));
         $result->sortableAndSearchableColumn = $sortable_and_searchable_column;
         if($result->total() == 0) throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => $this->repository_name], $locale));

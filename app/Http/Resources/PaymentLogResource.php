@@ -34,7 +34,7 @@ class PaymentLogResource extends JsonResource
                             'category' => ($redeem_item_gift->item_gifts->category_id != null) ? $redeem_item_gift->item_gifts->category->makeHidden(['created_at', 'updated_at']) : null,
                             'brand' => ($redeem_item_gift->item_gifts->brand_id != null) ? $redeem_item_gift->item_gifts->brand->makeHidden(['created_at', 'updated_at']) : null,
                             'item_gift_description' => $redeem_item_gift->item_gifts->item_gift_description,
-                            'item_gift_spesification' => json_decode($redeem_item_gift->item_gifts->item_gift_spesification),
+                            'item_gift_spesification' => json_decode($redeem_item_gift->item_gifts->item_gift_spesification) ?? [],
                             'item_gift_point' => $redeem_item_gift->item_gifts->item_gift_point ?? 0,
                             'fitem_gift_point' => $this->format_item_gift_point($redeem_item_gift),
                             'item_gift_weight' => $redeem_item_gift->item_gifts->item_gift_weight ?? 0,

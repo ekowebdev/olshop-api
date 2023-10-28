@@ -22,7 +22,7 @@ class ReviewResource extends JsonResource
                 'category' => ($this->item_gifts->category_id != null) ? $this->item_gifts->category->makeHidden(['created_at', 'updated_at']) : null,
                 'brand' => ($this->item_gifts->brand_id != null) ? $this->item_gifts->brand->makeHidden(['created_at', 'updated_at']) : null,
                 'item_gift_description' => $this->item_gifts->item_gift_description,
-                'item_gift_spesification' => json_decode($this->item_gifts->item_gift_spesification),
+                'item_gift_spesification' => json_decode($this->item_gifts->item_gift_spesification) ?? [],
                 'item_gift_point' => $this->item_gifts->item_gift_point ?? 0,
                 'fitem_gift_point' => $this->format_item_gift_point($this->item_gifts),
                 'item_gift_weight' => $this->item_gifts->item_gift_weight ?? 0,

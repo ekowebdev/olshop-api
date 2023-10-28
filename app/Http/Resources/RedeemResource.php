@@ -24,7 +24,7 @@ class RedeemResource extends JsonResource
                         'category' => ($redeem_item_gift->item_gifts->category_id != null) ? $redeem_item_gift->item_gifts->category->makeHidden(['created_at', 'updated_at']) : null,
                         'brand' => ($redeem_item_gift->item_gifts->brand_id != null) ? $redeem_item_gift->item_gifts->brand->makeHidden(['created_at', 'updated_at']) : null,
                         'item_gift_description' => $redeem_item_gift->item_gifts->item_gift_description,
-                        'item_gift_spesification' => json_decode($redeem_item_gift->item_gifts->item_gift_spesification),
+                        'item_gift_spesification' => json_decode($redeem_item_gift->item_gifts->item_gift_spesification) ?? [],
                         'item_gift_point' => $redeem_item_gift->item_gifts->item_gift_point ?? 0,
                         'fitem_gift_point' => $this->format_item_gift_point($redeem_item_gift),
                         'item_gift_weight' => $redeem_item_gift->item_gifts->item_gift_weight ?? 0,
@@ -49,7 +49,7 @@ class RedeemResource extends JsonResource
                 ];
             }),
             'total_point' => $this->total_point,
-            'shipping_fee' => intval($this->shipping_fee),
+            'shipping_fee' => $this->shipping_fee,
             'total_amount' => $this->total_amount,
             'redeem_date' => $this->redeem_date,
             'note' => $this->note,
@@ -67,8 +67,8 @@ class RedeemResource extends JsonResource
                     'id' => $this->shippings->city_destination->city_id,
                     'city_name' => $this->shippings->city_destination->city_name
                 ],
-                'shipping_weight' => (int) $this->shippings->weight,
-                'fshipping_weight' => (int) $this->shippings->weight . ' Gram',
+                'shipping_weight' => $this->shippings->weight,
+                'fshipping_weight' => $this->shippings->weight . ' Gram',
                 'shipping_courier' => $this->shippings->courier,
                 'shipping_service' => $this->shippings->service,
                 'shipping_description' => $this->shippings->description,

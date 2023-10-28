@@ -100,6 +100,7 @@ class ItemGift extends BaseModel
                     "),
                     DB::raw('(SELECT SUM(redeem_item_gifts.redeem_quantity) FROM redeem_item_gifts WHERE redeem_item_gifts.item_gift_id = item_gifts.id) AS total_redeem'),
                 ])
+                ->where('item_gift_status', 'A')
                 ->from(DB::raw('item_gifts FORCE INDEX (index_item_gifts)'));
     }
 }

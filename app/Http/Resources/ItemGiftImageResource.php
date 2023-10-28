@@ -18,24 +18,13 @@ class ItemGiftImageResource extends JsonResource
                 'brand' => ($this->item_gifts->brand_id != null) ? $this->item_gifts->brand->makeHidden(['created_at', 'updated_at']) : null,
                 'item_gift_slug' => $this->item_gifts->item_gift_slug,
                 'item_gift_description' => $this->item_gifts->item_gift_description,
-                'item_gift_spesification' => json_decode($this->item_gifts->item_gift_spesification),
+                'item_gift_spesification' => json_decode($this->item_gifts->item_gift_spesification) ?? [],
                 'item_gift_point' => $this->item_gifts->item_gift_point ?? 0,
                 'fitem_gift_point' => $this->format_item_gift_point($this->item_gifts),
                 'item_gift_weight' => $this->item_gifts->item_gift_weight ?? 0,
                 'fitem_gift_weight' => $this->format_item_gift_weight($this->item_gifts),
                 'item_gift_quantity' => $this->item_gifts->item_gift_quantity ?? 0,
                 'item_gift_status' => $this->item_gifts->item_gift_status,
-                'variants' => $this->item_gifts->variants->map(function ($variant) {
-                    return [
-                        'id' => $variant->id,
-                        'variant_name' => $variant->variant_name,
-                        'variant_quantity' => $variant->variant_quantity,
-                        'variant_point' => $variant->variant_point,
-                        'fvariant_point' => format_money(strval($variant->variant_point)),
-                        'variant_weight' => $variant->variant_weight,
-                        'fvariant_weight' => $variant->variant_weight . ' Gram',
-                    ];
-                }),
             ],
             'variants' => ($this->variants) 
                 ? [

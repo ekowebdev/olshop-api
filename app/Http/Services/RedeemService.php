@@ -196,7 +196,7 @@ class RedeemService extends BaseService
                 $redeem_item_gift = new RedeemItemGift([
                     'item_gift_id' => $item_gift->id,
                     'variant_id' => $variant_id,
-                    'redeem_quantity' => $quantity,
+                    'redeem_quantity' => (int) $quantity,
                     'redeem_point' => $subtotal,
                 ]);
 
@@ -220,8 +220,8 @@ class RedeemService extends BaseService
             ];
 
             $customer_details = [
-                'first_name' => auth()->user()->name,
-                'phone' => auth()->user()->profile->phone_number,
+                'first_name' => $address_details['person_name'],
+                'phone' => $address_details['person_phone'],
                 'email' => auth()->user()->email
             ];
 
@@ -286,7 +286,6 @@ class RedeemService extends BaseService
         } catch (QueryException $e) {
             DB::rollback();
         }
-
     }
 
     public function delete($locale, $id)

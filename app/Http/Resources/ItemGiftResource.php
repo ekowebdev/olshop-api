@@ -17,7 +17,7 @@ class ItemGiftResource extends JsonResource
             'brand' => ($this->brand_id != null) ? $this->brand->makeHidden(['created_at', 'updated_at']) : null,
             'item_gift_slug' => $this->item_gift_slug,
             'item_gift_description' => $this->item_gift_description,
-            'item_gift_spesification' => json_decode($this->item_gift_spesification),
+            'item_gift_spesification' => json_decode($this->item_gift_spesification) ?? [],
             'item_gift_point' => $this->item_gift_point ?? 0,
             'fitem_gift_point' => $this->format_item_gift_point(),
             'item_gift_weight' => $this->item_gift_weight ?? 0,
