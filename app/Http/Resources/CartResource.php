@@ -18,9 +18,10 @@ class CartResource extends JsonResource
                 'brand' => ($this->item_gifts->brand_id != null) ? $this->item_gifts->brand->makeHidden(['created_at', 'updated_at']) : null,
                 'item_gift_description' => $this->item_gifts->item_gift_description,
                 'item_gift_spesification' => json_decode($this->item_gifts->item_gift_spesification),
+                'item_gift_point' => $this->item_gifts->item_gift_point ?? 0,
                 'fitem_gift_point' => $this->format_item_gift_point($this->item_gifts),
                 'item_gift_weight' => $this->item_gifts->item_gift_weight ?? 0,
-                'fitem_gift_weight' => ($this->item_gifts->item_gift_weight == null) ? '0 Gram' : $this->item_gifts->item_gift_weight . ' Gram',
+                'fitem_gift_weight' => $this->format_item_gift_weight($this->item_gifts),
                 'item_gift_status' => $this->item_gifts->item_gift_status,
                 'item_gift_images' => $this->item_gifts->item_gift_images->map(function ($image) {
                     return [
@@ -45,6 +46,19 @@ class CartResource extends JsonResource
                 'email' => $this->users->email,
             ]
         ];
+    }
+
+    private function format_item_gift_weight($item)
+    {
+        $variant_weight = $item->variants->pluck('variant_weight')->toArray();
+        if (count($variant_weight) == 1) {
+            return strval($variant_weight[0]) . ' Gram';
+        } elseif (count($variant_weight) > 1) {
+            $variant_weight = min($variant_weight);
+            return strval($variant_weight) . ' Gram';
+        } else {
+            return strval($this->item_gift_weight ?? 0) . ' Gram';
+        }
     }
 
     private function format_item_gift_point($item)

@@ -147,11 +147,12 @@ class ItemGiftRepository extends BaseRepository
         foreach ($final_array as $search) {
             $item_gifts->orWhere('item_gift_name', 'LIKE', '%' . $search . '%');
         }
+        
         $result = $item_gifts
                     ->setSortableAndSearchableColumn($sortable_and_searchable_column)
                     ->search()
                     ->sort()
-                    ->orderByDesc('id')
+                    ->orderByDesc('total_redeem')
                     ->groupBy('id')
                     ->paginate(Arr::get(Request::all(), 'per_page', 15));
         $result->sortableAndSearchableColumn = $sortable_and_searchable_column;

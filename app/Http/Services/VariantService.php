@@ -28,6 +28,7 @@ class VariantService extends BaseService
             'variant_name' => 'variant_name',
             'variant_quantity' => 'variant_quantity',
             'variant_point' => 'variant_point',
+            'variant_weight' => 'variant_weight',
         ];
 
         $search_column = [
@@ -36,6 +37,7 @@ class VariantService extends BaseService
             'variant_name' => 'variant_name',
             'variant_quantity' => 'variant_quantity',
             'variant_point' => 'variant_point',
+            'variant_weight' => 'variant_weight',
         ];
 
         $sortable_and_searchable_column = [
@@ -58,6 +60,7 @@ class VariantService extends BaseService
             'item_gift_id',
             'variant_name',
             'variant_point',
+            'variant_weight',
             'variant_quantity',
         ]);
 
@@ -74,6 +77,10 @@ class VariantService extends BaseService
                     'required',
                     'numeric',
                 ],
+                'variant_weight' => [
+                    'required',
+                    'numeric',
+                ],
                 'variant_quantity' => [
                     'required',
                     'numeric',
@@ -87,12 +94,15 @@ class VariantService extends BaseService
             if($item_gift->variants->count() == 0){
                 $quantity = $data_request['variant_quantity'];
                 $total_point = $data_request['variant_point'];
+                $total_weight = $data_request['variant_weight'];
             } else {
                 $quantity = $item_gift->item_gift_quantity + $data_request['variant_quantity'];
-                $total_point = min($item_gift->variants->pluck('variant_point')->toArray());
+                $total_point = (min($item_gift->variants->pluck('variant_point')->toArray()) > (int) $data_request['variant_point']) ? (int) $data_request['variant_point'] : min($item_gift->variants->pluck('variant_point')->toArray());
+                $total_weight = (min($item_gift->variants->pluck('variant_weight')->toArray()) > (int) $data_request['variant_weight']) ? (int) $data_request['variant_weight'] : min($item_gift->variants->pluck('variant_weight')->toArray());
             }
             $item_gift->update([
                 'item_gift_point' => $total_point,
+                'item_gift_weight' => $total_weight,
                 'item_gift_quantity' => $quantity,
             ]);
             $result = $this->model->create($data_request);
@@ -112,6 +122,7 @@ class VariantService extends BaseService
             'item_gift_id' => $check_data->item_gift_id,
             'variant_name' => $check_data->variant_name,
             'variant_point' => $check_data->variant_point,
+            'variant_weight' => $check_data->variant_weight,
             'variant_quantity' => $check_data->variant_quantity,
         ], $data);
 
@@ -119,6 +130,7 @@ class VariantService extends BaseService
             'item_gift_id',
             'variant_name',
             'variant_point',
+            'variant_weight',
             'variant_quantity',
         ]);
 
@@ -132,23 +144,28 @@ class VariantService extends BaseService
                 'variant_point' => [
                     'numeric',
                 ],
+                'variant_weight' => [
+                    'numeric',
+                ],
                 'variant_quantity' => [
                     'numeric',
-                ]
+                ],
             ]
         );
 
         DB::beginTransaction();
         try {
             $item_gift = ItemGift::find($check_data->item_gift_id);
-            $total_point = ($item_gift->variants->count() > 0) ? min($item_gift->variants->pluck('variant_point')->toArray()) : $item_gift->item_gift_point;
+            $check_data->update($data_request);
+            $total_weight = min($check_data->where('item_gift_id', $data_request['item_gift_id'])->pluck('variant_weight')->toArray());
+            $total_point = min($check_data->where('item_gift_id', $data_request['item_gift_id'])->pluck('variant_point')->toArray());
             $qty_item_gift = $item_gift->item_gift_quantity - $check_data->variant_quantity;
             $qty_update = ($item_gift->variants->count() > 0) ? $qty_item_gift + $data_request['variant_quantity'] : $item_gift->item_gift_quantity;
             $item_gift->update([
                 'item_gift_point' => $total_point,
+                'item_gift_weight' => $total_weight,
                 'item_gift_quantity' => $qty_update,
             ]);
-            $check_data->update($data_request);
             DB::commit();
         } catch (QueryException $e) {
             DB::rollback();
@@ -169,6 +186,7 @@ class VariantService extends BaseService
         });
         $item_gift->update([
             'item_gift_point' => (!empty(array_column($filtered_variant, 'variant_point'))) ? min(array_column($filtered_variant, 'variant_point')) : 0,
+            'item_gift_weight' => (!empty(array_column($filtered_variant, 'variant_weight'))) ? min(array_column($filtered_variant, 'variant_weight')) : 0,
             'item_gift_quantity' => $qty_item_gift,
         ]);
         $result = $check_data->delete();

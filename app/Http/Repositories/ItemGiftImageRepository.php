@@ -43,4 +43,14 @@ class ItemGiftImageRepository extends BaseRepository
 		if($result === null) throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => $this->repository_name], $locale));
         return $result;	
 	}
+
+    public function getSingleDataByItemGiftVariant($locale, $item_gift_id, $variant_id)
+	{
+		$result = $this->model
+                  ->getAll()
+                  ->where('item_gift_id', $item_gift_id)	
+                  ->where('variant_id', $variant_id)	
+                  ->first();
+		return $result;	
+	}
 }

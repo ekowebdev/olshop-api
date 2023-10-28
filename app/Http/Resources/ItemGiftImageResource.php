@@ -22,7 +22,7 @@ class ItemGiftImageResource extends JsonResource
                 'item_gift_point' => $this->item_gifts->item_gift_point ?? 0,
                 'fitem_gift_point' => $this->format_item_gift_point($this->item_gifts),
                 'item_gift_weight' => $this->item_gifts->item_gift_weight ?? 0,
-                'fitem_gift_weight' => ($this->item_gifts->item_gift_weight == null) ? '0 Gram' : $this->item_gifts->item_gift_weight . ' Gram',
+                'fitem_gift_weight' => $this->format_item_gift_weight($this->item_gifts),
                 'item_gift_quantity' => $this->item_gifts->item_gift_quantity ?? 0,
                 'item_gift_status' => $this->item_gifts->item_gift_status,
                 'variants' => $this->item_gifts->variants->map(function ($variant) {
@@ -32,6 +32,8 @@ class ItemGiftImageResource extends JsonResource
                         'variant_quantity' => $variant->variant_quantity,
                         'variant_point' => $variant->variant_point,
                         'fvariant_point' => format_money(strval($variant->variant_point)),
+                        'variant_weight' => $variant->variant_weight,
+                        'fvariant_weight' => $variant->variant_weight . ' Gram',
                     ];
                 }),
             ],
@@ -47,6 +49,19 @@ class ItemGiftImageResource extends JsonResource
             'item_gift_image_url' => $this->item_gift_image_url,
             'item_gift_image_thumbnail_url' => $this->item_gift_image_thumb_url,
         ];
+    }
+
+    private function format_item_gift_weight($item)
+    {
+        $variant_weight = $item->variants->pluck('variant_weight')->toArray();
+        if (count($variant_weight) == 1) {
+            return strval($variant_weight[0]) . ' Gram';
+        } elseif (count($variant_weight) > 1) {
+            $variant_weight = min($variant_weight);
+            return strval($variant_weight) . ' Gram';
+        } else {
+            return strval($this->item_gift_weight ?? 0) . ' Gram';
+        }
     }
 
     private function format_item_gift_point($item)

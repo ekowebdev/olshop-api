@@ -15,7 +15,7 @@ class Variant extends BaseModel
     use HasFactory;
 
     protected $table = 'variants';
-    protected $fillable = ['item_gift_id', 'variant_name', 'variant_point', 'variant_quantity'];
+    protected $fillable = ['item_gift_id', 'variant_name', 'variant_point', 'variant_weight', 'variant_quantity'];
 
     public function item_gifts()
     {
@@ -32,6 +32,11 @@ class Variant extends BaseModel
         return $this->hasMany(Cart::class);
     }
 
+    public function getVariantWeightAttribute($value)
+    {
+        return (int) $value;
+    }
+
     public function scopeGetAll($query)
     {
         return $query->select([
@@ -40,6 +45,7 @@ class Variant extends BaseModel
                     'variant_name',  
                     'variant_quantity',
                     'variant_point',
+                    'variant_weight',
                 ]);
     }
 }

@@ -79,10 +79,10 @@ class ItemGiftImageService extends BaseService
         if(isset($data_request['variant_id'])){
             $variant = Variant::where('id', $data_request['variant_id'])->where('item_gift_id', $data_request['item_gift_id'])->first();
             if(is_null($variant)) {
-                return response()->json([
-                    'message' => trans('error.variant_not_found_in_item_gifts', ['id' => $data_request['item_gift_id']]),
-                    'status' => 400,
-                ], 400);
+                throw new ValidationException(json_encode(['id' => [trans('error.variant_not_found_in_item_gifts', ['id' => $data_request['item_gift_id']])]]));           }
+            $exist_variant = $this->repository->getSingleDataByItemGiftVariant($locale, $data_request['item_gift_id'], $data_request['variant_id']);
+            if(!is_null($exist_variant)){
+                throw new ValidationException(json_encode(['id' => [trans('error.exists_image_variant_item_gifts', ['id' => $data_request['item_gift_id'], 'variant_id' => $data_request['variant_id']])]]));
             }
         }
         $image = $data_request['item_gift_image'];
@@ -151,6 +151,10 @@ class ItemGiftImageService extends BaseService
             $check_data->item_gift_image = $image_name;
         }
         if(isset($data_request['variant_id'])) {
+            $exist_variant = $this->repository->getSingleDataByItemGiftVariant($locale, $data_request['item_gift_id'], $data_request['variant_id']);
+            if(!is_null($exist_variant)){
+                throw new ValidationException(json_encode(['id' => [trans('error.exists_image_variant_item_gifts', ['id' => $data_request['item_gift_id'], 'variant_id' => $data_request['variant_id']])]]));
+            }
             if($data_request['variant_id'] == ''){
                 $variant_id = null;
             } else {
