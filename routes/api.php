@@ -127,6 +127,9 @@ Route::middleware(['xssclean'])->group(function () {
         Route::get('/brand', '\App\Http\Controllers\API\v1\BrandController@index');
         Route::get('/brand/{id}', '\App\Http\Controllers\API\v1\BrandController@show');
         Route::get('/brand/slug/{slug}', '\App\Http\Controllers\API\v1\BrandController@showBySlug');
+        // Review Item Gift
+        Route::get('/gifts/review', '\App\Http\Controllers\API\v1\ReviewController@index');
+        Route::get('/gifts/review/{id}', '\App\Http\Controllers\API\v1\ReviewController@show');
         // Item Gift Image
         Route::get('/gifts/images', '\App\Http\Controllers\API\v1\ItemGiftImageController@index');
         Route::get('/gifts/images/{id}', '\App\Http\Controllers\API\v1\ItemGiftImageController@show');
@@ -139,9 +142,6 @@ Route::middleware(['xssclean'])->group(function () {
         // Variant
         Route::get('/variants', '\App\Http\Controllers\API\v1\VariantController@index');
         Route::get('/variants/{id}', '\App\Http\Controllers\API\v1\VariantController@show');
-        // Review Item Gift
-        Route::get('/gifts/review', '\App\Http\Controllers\API\v1\ReviewController@index');
-        Route::get('/gifts/review/{id}', '\App\Http\Controllers\API\v1\ReviewController@show');
         // Webhook
         Route::post('/webhook/midtrans', '\App\Http\Controllers\API\v1\WebhookController@midtransHandler');
     });
