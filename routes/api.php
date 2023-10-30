@@ -90,8 +90,6 @@ Route::middleware(['xssclean'])->group(function () {
                 Route::get('/gifts/wishlist/user/{userId}', '\App\Http\Controllers\API\v1\WishlistController@showByUser');
                 Route::post('/gifts/{itemGiftId}/wishlist', '\App\Http\Controllers\API\v1\WishlistController@wishlist');
                 // Review Item Gift
-                Route::get('/gifts/review', '\App\Http\Controllers\API\v1\ReviewController@index');
-                Route::get('/gifts/review/{id}', '\App\Http\Controllers\API\v1\ReviewController@show');
                 Route::post('/gifts/{itemGiftId}/rating', '\App\Http\Controllers\API\v1\ReviewController@rating');
                 // Cart
                 Route::get('/carts', '\App\Http\Controllers\API\v1\CartController@index');
@@ -141,6 +139,9 @@ Route::middleware(['xssclean'])->group(function () {
         // Variant
         Route::get('/variants', '\App\Http\Controllers\API\v1\VariantController@index');
         Route::get('/variants/{id}', '\App\Http\Controllers\API\v1\VariantController@show');
+        // Review Item Gift
+        Route::get('/gifts/review', '\App\Http\Controllers\API\v1\ReviewController@index');
+        Route::get('/gifts/review/{id}', '\App\Http\Controllers\API\v1\ReviewController@show');
         // Webhook
         Route::post('/webhook/midtrans', '\App\Http\Controllers\API\v1\WebhookController@midtransHandler');
     });

@@ -125,9 +125,11 @@ class RedeemService extends BaseService
             $metadata_redeem_item_gifts = [];
             $redeem_code = Str::uuid();
             $item_details = [];
-            $shipping_cost = intval($data_request['shipping_details']['shipping_cost']); 
-            $address_details = $data_request['address_details'];
             $redeem_details = $data_request['redeem_details'];
+            $redeem_item_gifts_details = $data_request['redeem_item_gifts_details'];
+            $address_details = $data_request['address_details'];
+            $shipping_details = $data_request['shipping_details'];
+            $shipping_cost = (int) $shipping_details['shipping_cost']; 
 
             $redeem = Redeem::create([
                 'user_id' => auth()->user()->id,
@@ -140,8 +142,8 @@ class RedeemService extends BaseService
                 'note' => $redeem_details['note'],
             ]);
 
-            foreach ($data_request['redeem_item_gifts_details'] as $key => $redeem_item_gifts) {
-                $quantity = $redeem_item_gifts['redeem_quantity'];
+            foreach ($redeem_item_gifts_details as $key => $redeem_item_gifts) {
+                $redeem_quantity = $redeem_item_gifts['redeem_quantity'];
                 $variant_id = $redeem_item_gifts['variant_id'] ?? null;
 
                 $item_gift = ItemGift::lockForUpdate()->find($redeem_item_gifts['item_gift_id']);
@@ -155,7 +157,7 @@ class RedeemService extends BaseService
                     }
                 }
                 
-                if (!$item_gift || $item_gift->item_gift_quantity < $quantity || $item_gift->item_gift_status == 'O') {
+                if (!$item_gift || $item_gift->item_gift_quantity < $redeem_quantity || $item_gift->item_gift_status == 'O') {
                     return response()->json([
                         'message' => trans('error.out_of_stock', ['id' => $item_gift->id]),
                         'status' => 400,
@@ -177,13 +179,13 @@ class RedeemService extends BaseService
                     $variant = $item_gift->variants()->lockForUpdate()->find($variant_id);
                     
                     if ($variant) {
-                        $subtotal = $variant->variant_point * $quantity;
+                        $subtotal = $variant->variant_point * $redeem_quantity;
                         $variant->update([
-                            'variant_quantity' => $variant->variant_quantity - $quantity,
+                            'variant_quantity' => $variant->variant_quantity - $redeem_quantity,
                         ]);
                     }
                 } else {
-                    $subtotal = $item_gift->item_gift_point * $quantity;
+                    $subtotal = $item_gift->item_gift_point * $redeem_quantity;
                 }
 
                 $total_point += $subtotal;
@@ -191,7 +193,7 @@ class RedeemService extends BaseService
                 $redeem_item_gift = new RedeemItemGift([
                     'item_gift_id' => $item_gift->id,
                     'variant_id' => $variant_id,
-                    'redeem_quantity' => (int) $quantity,
+                    'redeem_quantity' => (int) $redeem_quantity,
                     'redeem_point' => $subtotal,
                 ]);
 
@@ -199,13 +201,13 @@ class RedeemService extends BaseService
                 array_push($item_details, [
                     'id' => $item_gift->id,
                     'price' => ($variant_id) ? $variant->variant_point : $item_gift->item_gift_point,
-                    'quantity' => $quantity,
+                    'quantity' => $redeem_quantity,
                     'name' => ($item_gift->variants->count() > 0) ? mb_strimwidth($item_gift->item_gift_name . ' - ' . $variant->variant_name, 0, 50, '..') : mb_strimwidth($item_gift->item_gift_name, 0, 50, '..'),
                 ]);
         
                 $redeem->redeem_item_gifts()->save($redeem_item_gift);
 
-                $item_gift->item_gift_quantity -= $quantity;
+                $item_gift->item_gift_quantity -= $redeem_quantity;
                 $item_gift->save();
             }
 
@@ -249,18 +251,18 @@ class RedeemService extends BaseService
             $redeem->total_amount = $total_point + $shipping_cost;
             $redeem->save();
 
-            $shippings = new Shipping([
+            $shipping = new Shipping([
                 'redeem_id' => $redeem->id,
                 'origin' => $this->origin,
-                'destination' => $data_request['shipping_details']['shipping_destination'],
-                'weight' => $data_request['shipping_details']['shipping_weight'],
-                'courier' => $data_request['shipping_details']['shipping_courier'],
-                'service' => $data_request['shipping_details']['shipping_service'],
-                'description' => $data_request['shipping_details']['shipping_description'],
+                'destination' => $shipping_details['shipping_destination'],
+                'weight' => $shipping_details['shipping_weight'],
+                'courier' => $shipping_details['shipping_courier'],
+                'service' => $shipping_details['shipping_service'],
+                'description' => $shipping_details['shipping_description'],
                 'cost' => $shipping_cost,
-                'etd' => $data_request['shipping_details']['shipping_etd'],
+                'etd' => $shipping_details['shipping_etd'],
             ]);
-            $shippings->save();
+            $shipping->save();
 
             $notification = [];
             $notification['user_id'] = auth()->user()->id;

@@ -42,54 +42,9 @@ class ItemGiftResource extends JsonResource
                     'users' => [
                         'id' => $review->users->id,
                         'name' => $review->users->name,
-                        'roles' => $review->users->getRoleNames(),
                         'username' => $review->users->username,
                         'email' => $review->users->email,
-                        'profile' => ($review->users->profile) ? [
-                            'id' => $review->users->profile->id,
-                            'birthdate' => $review->users->profile->birthdate,
-                            'phone_number' => $review->users->profile->phone_number,
-                            'avatar' => $review->users->profile->avatar,
-                            'avatar_url' => $review->users->profile->avatar_url,
-                        ] : null,
-                        'main_address' => ($review->users->main_address) ? [
-                            'id' => $review->users->main_address->id,
-                            'person_name' => $review->users->main_address->person_name,
-                            'person_phone' => $review->users->main_address->person_phone,
-                            'province' => [
-                                'id' => $review->users->main_address->province->province_id,
-                                'province_name' => $review->users->main_address->province->province_name
-                            ],
-                            'city' => [
-                                'id' => $review->users->main_address->city->city_id,
-                                'city_name' => $review->users->main_address->city->city_name
-                            ],
-                            'subdistrict' => [
-                                'id' => $review->users->main_address->subdistrict->subdistrict_id,
-                                'subdistrict_name' => $review->users->main_address->subdistrict->subdistrict_name
-                            ],
-                            'postal_code' => $review->users->main_address->postal_code,
-                            'address' => $review->users->main_address->address,
-                        ] : null,
-                        'address' => $review->users->address->map(function ($address) {
-                            return [
-                                'id' => $address->id,
-                                'province' => [
-                                    'id' => $address->province->province_id,
-                                    'province_name' => $address->province->province_name
-                                ],
-                                'city' => [
-                                    'id' => $address->city->city_id,
-                                    'city_name' => $address->city->city_name
-                                ],
-                                'subdistrict' => [
-                                    'id' => $address->subdistrict->subdistrict_id,
-                                    'subdistrict_name' => $address->subdistrict->subdistrict_name
-                                ],
-                                'postal_code' => $address->postal_code,
-                                'is_main' => ($address->users->main_address_id == $address->id) ? 1 : 0,
-                            ];
-                        }),
+                        'avatar_url' => ($review->users->profile) ? $review->users->profile->avatar_url : null,
                     ],
                     'item_gift_id' => $review->item_gift_id,
                     'review_text' => $review->review_text,

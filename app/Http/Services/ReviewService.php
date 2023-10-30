@@ -24,6 +24,7 @@ class ReviewService extends BaseService
     {
         $search = [
             'user_id' => 'user_id',
+            'item_gift_id' => 'item_gift_id',
             'review_text' => 'review_text',
             'review_rating' => 'review_rating',
             'review_date' => 'review_date',
@@ -32,6 +33,7 @@ class ReviewService extends BaseService
         $search_column = [
             'id' => 'id',
             'user_id' => 'user_id',
+            'item_gift_id' => 'item_gift_id',
             'review_text' => 'review_text',
             'review_rating' => 'review_rating',
             'review_date' => 'review_date',

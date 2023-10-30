@@ -143,11 +143,6 @@ class ItemGiftRepository extends BaseRepository
         if(count($item_gifts) == 0){
             throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => $this->repository_name], $locale));
         }
-
-        // $item_gifts = $this->model->getAll();
-        // foreach ($item_gifts as $item) {
-        //     $item_gifts->orWhere('item_gift_name', 'LIKE', '%' . $item . '%');
-        // }
         
         $result = $this->model->getAll()
                     ->where(function ($query) use ($item_gifts) {
