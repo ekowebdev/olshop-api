@@ -231,6 +231,9 @@ class ItemGiftService extends BaseService
                     'nullable',
                     'numeric',
                 ],
+                'item_gift_images' => [
+                    'required',
+                ],
                 'item_gift_images.*' => [
                     'required',
                     'max:10000',
