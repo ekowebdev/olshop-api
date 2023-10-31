@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use Carbon\Carbon;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class CartResource extends JsonResource
@@ -44,7 +45,8 @@ class CartResource extends JsonResource
                 'name' => $this->users->name,
                 'username' => $this->users->username,
                 'email' => $this->users->email,
-            ]
+            ],
+            'created_at' => Carbon::parse($this->created_at)->format('Y-m-d H:i:s'),
         ];
     }
 

@@ -16,6 +16,7 @@ class ShippingResource extends JsonResource
                 'redeem_code' => $this->redeems->redeem_code,
                 'total_point' => $this->redeems->total_point,
                 'redeem_date' => $this->redeems->redeem_date,
+                'redeem_date' => Carbon::parse($this->redeems->created_at)->format('Y-m-d H:i:s'),
                 'fredeem_date' => Carbon::parse($this->redeems->created_at)->diffForHumans(),
                 'note' => $this->redeems->note,
                 'snap_url' => $this->redeems->snap_url,
