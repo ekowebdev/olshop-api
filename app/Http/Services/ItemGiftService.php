@@ -232,6 +232,7 @@ class ItemGiftService extends BaseService
                     'numeric',
                 ],
                 'item_gift_images.*' => [
+                    'required',
                     'max:10000',
                     'mimes:jpg,png',
                 ],
