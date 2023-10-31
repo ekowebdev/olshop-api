@@ -66,8 +66,8 @@ class CartRepository extends BaseRepository
 
 		$data = $this->model
                     ->query()
-                    ->orderBy('created_at', 'desc')
                     ->where('user_id', $user_id)
+                    ->orderBy('created_at', 'desc')
                     ->get();
 
 		if ($data->isEmpty()) {

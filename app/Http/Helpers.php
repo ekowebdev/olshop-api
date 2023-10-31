@@ -2,7 +2,6 @@
 
 use Illuminate\Support\Str;
 use App\Http\Models\Notification;
-use Illuminate\Support\Facades\DB;
 
 function calculate_rating($rating)
 {

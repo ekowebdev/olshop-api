@@ -236,7 +236,7 @@ class ItemGiftService extends BaseService
                 ],
                 'item_gift_images.*' => [
                     'required',
-                    'max:10000',
+                    'max:1000',
                     'mimes:jpg,png',
                 ],
             ]
@@ -249,18 +249,16 @@ class ItemGiftService extends BaseService
         $data_request['item_gift_quantity'] = $data_request['item_gift_quantity'] ?? null;
         $data_request['item_gift_spesification'] = (isset($data_request['item_gift_spesification'])) ? json_encode($data_request['item_gift_spesification']) : null;
         $result = $this->model->create($data_request);
-        if (isset($data_request['item_gift_images'])) {
-            foreach ($data_request['item_gift_images'] as $image) {
-                $image_name = time() . '.' . $image->getClientOriginalExtension();
-                Storage::disk('s3')->put('images/' . $image_name, file_get_contents($image));
-                $img = Image::make($image);
-                $img_thumb = $img->crop(5, 5);
-                $img_thumb = $img_thumb->stream()->detach();
-                Storage::disk('s3')->put('images/thumbnails/' . $image_name, $img_thumb);
-                $result->item_gift_images()->create([
-                    'item_gift_image' => $image_name,
-                ]);
-            }
+        foreach ($data_request['item_gift_images'] as $image) {
+            $image_name = time() . '.' . $image->getClientOriginalExtension();
+            Storage::disk('s3')->put('images/' . $image_name, file_get_contents($image));
+            $img = Image::make($image);
+            $img_thumb = $img->crop(5, 5);
+            $img_thumb = $img_thumb->stream()->detach();
+            Storage::disk('s3')->put('images/thumbnails/' . $image_name, $img_thumb);
+            $result->item_gift_images()->create([
+                'item_gift_image' => $image_name,
+            ]);
         }
         DB::commit();
 
