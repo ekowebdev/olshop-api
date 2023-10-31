@@ -53,6 +53,13 @@ class ReviewResource extends JsonResource
                 'name' => $this->users->name,
                 'username' => $this->users->username,
                 'email' => $this->users->email,
+                'profile' => ($this->users->profile) ? [
+                    'id' => $this->users->profile->id,
+                    'birthdate' => $this->users->profile->birthdate,
+                    'phone_number' => $this->users->profile->phone_number,
+                    'avatar' => $this->users->profile->avatar,
+                    'avatar_url' => $this->users->profile->avatar_url,
+                ] : null,
             ]
         ];
     }
