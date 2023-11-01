@@ -80,13 +80,13 @@ class SearchLogService extends BaseService
 
         $data_request = Arr::only($data, [
             'user_id',
-            'min:3',
             'search_text',
         ]);
 
         $this->repository->validate($data_request, [
             'search_text' => [
-                'string',
+                'string',    
+                'min:3',
             ],
         ]);
 
