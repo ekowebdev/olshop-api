@@ -38,29 +38,30 @@ class WishlistService extends BaseService
     public function wishlist($locale, $id, $data)
     {
         $item_gift = $this->item_gift_repository->getSingleData($locale, $id);
+        $user = auth()->user();
         $check_wishlist = $this->repository->getDataByUserAndItem($locale, $item_gift->id)->first();
+
         DB::beginTransaction();
-        if(is_null($check_wishlist)){
+        
+        if (is_null($check_wishlist)) {
             $wishlist_model = $this->model;
             $wishlist_model->id = strval(Str::uuid());
-            $wishlist_model->user_id = intval(auth()->user()->id);
-            $wishlist_model->item_gift_id = intval($item_gift->id);
+            $wishlist_model->user_id = $user->id;
+            $wishlist_model->item_gift_id = $item_gift->id;
             $wishlist_model->save();
-            $response = response()->json([
-                'message' => trans('all.success_add_to_wishlists'),
-                'status' => 200,
-                'error' => 0
-            ]);
+
+            $message = trans('all.success_add_to_wishlists');
         } else {
             $check_wishlist->delete();
-            $response = response()->json([
-                'message' => trans('all.success_delete_from_wishlists'),
-                'status' => 200,
-                'error' => 0
-            ]);
+            $message = trans('all.success_delete_from_wishlists');
         }
+
         DB::commit();
 
-        return $response;
+        return response()->json([
+            'message' => $message,
+            'status' => 200,
+            'error' => 0
+        ]);
     }
 }

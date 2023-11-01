@@ -73,27 +73,32 @@ class ReviewService extends BaseService
         );
 
         $item_gift = $this->item_gift_repository->getSingleData($locale, $id);
+        $user = auth()->user();
         $check_rating = $this->repository->getDataByUserAndItem($locale, $item_gift->id);
 
         DB::beginTransaction();
-        if(!isset($check_rating)){
-            Review::create([
-                'user_id' => auth()->user()->id,
-                'item_gift_id' => $item_gift->id,
-                'review_text' => $data_request['review_text'],
-                'review_rating' => calculate_rating($data_request['review_rating']),
-                'review_date' => date('Y-m-d'),
-            ]);
-        } else {
-            DB::rollback();
-            throw new ValidationException(json_encode(['item_gift_id' => [trans('error.already_reviews', ['id' => $item_gift->id])]])); 
+
+        if (isset($check_rating)) {
+            return response()->json([
+                'message' => trans('error.already_reviews', ['id' => $item_gift->id]),
+                'status' => 409,
+            ], 409);
         }
+
+        Review::create([
+            'user_id' => $user->id,
+            'item_gift_id' => $item_gift->id,
+            'review_text' => $data_request['review_text'],
+            'review_rating' => calculate_rating($data_request['review_rating']),
+            'review_date' => date('Y-m-d'),
+        ]);
+
         DB::commit();
 
         return response()->json([
             'message' => trans('all.success_reviews'),
             'status' => 200,
-            'error' => 0
+            'error' => 0,
         ]);
     }
 }
