@@ -82,6 +82,7 @@ class RedeemResource extends JsonResource
                 'roles' => $this->users->getRoleNames(),
                 'username' => $this->users->username,
                 'email' => $this->users->email,
+                'email_verified_at' => $this->users->email_verified_at,
                 'profile' => ($this->users->profile) ? [
                     'id' => $this->users->profile->id,
                     'birthdate' => $this->users->profile->birthdate,

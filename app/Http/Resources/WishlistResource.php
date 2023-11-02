@@ -48,6 +48,7 @@ class WishlistResource extends JsonResource
                 'name' => $this->users->name,
                 'username' => $this->users->username,
                 'email' => $this->users->email,
+                'email_verified_at' => $this->users->email_verified_at,
                 'profile' => ($this->users->profile) ? [
                     'id' => $this->users->profile->id,
                     'birthdate' => $this->users->profile->birthdate,

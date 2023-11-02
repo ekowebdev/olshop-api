@@ -85,17 +85,14 @@ class UserService extends BaseService
                     'min:6',
                     'max:20',
                 ],
-                'role' => [
-                    'required',
-                ],
                 'role.*' => [
-                    'required',
                     'in:admin,customer',
                 ],
             ]
         );
 
         DB::beginTransaction();
+        $data_request['role'] = ($data_request['role']) ? $data_request['role'] : 'customer';
         $data_request['password'] = Hash::make($data_request['password']);
         $result = $this->model->create($data_request);
         $result->assignRole($data_request['role']);

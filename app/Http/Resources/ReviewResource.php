@@ -15,6 +15,54 @@ class ReviewResource extends JsonResource
             'review_rating' => (float) $this->review_rating,
             'review_date' => $this->review_date,
             'freview_date' => Carbon::parse($this->created_at)->diffForHumans(),
+            'redeems' => ($this->redeems) ? [
+                'redeem_id' => $this->redeems->id,
+                'redeem_code' => $this->redeems->redeem_code,
+                'total_point' => $this->redeems->total_point,
+                'redeem_date' => $this->redeems->redeem_date,
+                'redeem_date' => Carbon::parse($this->redeems->created_at)->format('Y-m-d H:i:s'),
+                'fredeem_date' => Carbon::parse($this->redeems->created_at)->diffForHumans(),
+                'note' => $this->redeems->note,
+                'snap_url' => $this->redeems->snap_url,
+                'metadata' => json_decode($this->redeems->metadata),
+                'redeem_status' => $this->redeems->redeem_status,
+                'redeem_item_gifts' => $this->redeems->redeem_item_gifts->map(function ($redeem_item_gift){
+                    return [
+                        'redeem_id' => $redeem_item_gift->redeem_id,
+                        'redeem_quantity' => $redeem_item_gift->redeem_quantity,
+                        'redeem_point' => $redeem_item_gift->redeem_point,
+                        'item_gifts' => [
+                            'id' => $redeem_item_gift->item_gifts->id,
+                            'item_gift_code' => $redeem_item_gift->item_gifts->item_gift_code,
+                            'item_gift_name' => $redeem_item_gift->item_gifts->item_gift_name,
+                            'category' => ($redeem_item_gift->item_gifts->category_id != null) ? $redeem_item_gift->item_gifts->category->makeHidden(['created_at', 'updated_at']) : null,
+                            'brand' => ($redeem_item_gift->item_gifts->brand_id != null) ? $redeem_item_gift->item_gifts->brand->makeHidden(['created_at', 'updated_at']) : null,
+                            'item_gift_description' => $redeem_item_gift->item_gifts->item_gift_description,
+                            'item_gift_spesification' => json_decode($redeem_item_gift->item_gifts->item_gift_spesification) ?? [],
+                            'item_gift_point' => $redeem_item_gift->item_gifts->item_gift_point ?? 0,
+                            'fitem_gift_point' => $this->format_item_gift_point($redeem_item_gift),
+                            'item_gift_weight' => $redeem_item_gift->item_gifts->item_gift_weight ?? 0,
+                            'fitem_gift_weight' => $this->format_item_gift_weight($redeem_item_gift),
+                            'item_gift_status' => $redeem_item_gift->item_gifts->item_gift_status,
+                            'item_gift_images' => $redeem_item_gift->item_gifts->item_gift_images->map(function ($image) {
+                                return [
+                                    'item_gift_id' => $image->item_gift_id,
+                                    'item_gift_image_url' => $image->item_gift_image_url,
+                                    'item_gift_image_thumbnail_url' => $image->item_gift_image_thumb_url,
+                                ];
+                            }),
+                        ],
+                        'variants' => ($redeem_item_gift->variants) 
+                            ? [
+                                'id' => $redeem_item_gift->variants->id,
+                                'variant_name' => $redeem_item_gift->variants->variant_name,
+                                'variant_quantity' => $redeem_item_gift->variants->variant_quantity,
+                                'variant_point' => $redeem_item_gift->variants->variant_point,
+                                'fvariant_point' => format_money(strval($redeem_item_gift->variants->variant_point)),
+                            ] : null,
+                    ];
+                })
+            ] : null,
             'item_gifts' => [
                 'id' => $this->item_gifts->id,
                 'item_gift_code' => $this->item_gifts->item_gift_code,
@@ -53,6 +101,7 @@ class ReviewResource extends JsonResource
                 'name' => $this->users->name,
                 'username' => $this->users->username,
                 'email' => $this->users->email,
+                'email_verified_at' => $this->users->email_verified_at,
                 'profile' => ($this->users->profile) ? [
                     'id' => $this->users->profile->id,
                     'birthdate' => $this->users->profile->birthdate,

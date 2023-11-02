@@ -7,23 +7,24 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use App\Exceptions\ValidationException;
 use App\Http\Repositories\ReviewRepository;
-use App\Http\Repositories\ItemGiftRepository;
+use App\Http\Repositories\RedeemRepository;
 
 class ReviewService extends BaseService
 {
-    private $model, $repository, $item_gift_repository;
+    private $model, $repository, $redeem_repository;
     
-    public function __construct(Review $model, ReviewRepository $repository, ItemGiftRepository $item_gift_repository)
+    public function __construct(Review $model, ReviewRepository $repository, RedeemRepository $redeem_repository)
     {
         $this->model = $model;
         $this->repository = $repository;
-        $this->item_gift_repository = $item_gift_repository;
+        $this->redeem_repository = $redeem_repository;
     }
 
     public function getIndexData($locale, $data)
     {
         $search = [
             'user_id' => 'user_id',
+            'redeem_id' => 'redeem_id',
             'item_gift_id' => 'item_gift_id',
             'review_text' => 'review_text',
             'review_rating' => 'review_rating',
@@ -33,6 +34,7 @@ class ReviewService extends BaseService
         $search_column = [
             'id' => 'id',
             'user_id' => 'user_id',
+            'redeem_id' => 'redeem_id',
             'item_gift_id' => 'item_gift_id',
             'review_text' => 'review_text',
             'review_rating' => 'review_rating',
@@ -53,14 +55,24 @@ class ReviewService extends BaseService
         return $this->repository->getSingleData($locale, $id);
     }
 
-    public function rating($locale, $id, $data)
+    public function review($locale, $data)
     {
         $data_request = Arr::only($data, [
+            'redeem_id',
+            'item_gift_id',
             'review_text',
             'review_rating',
         ]);
 
-        $this->item_gift_repository->validate($data_request, [
+        $this->repository->validate($data_request, [
+                'redeem_id' => [
+                    'required',
+                    'exists:redeems,id',
+                ],
+                'item_gift_id' => [
+                    'required',
+                    'exists:item_gifts,id',
+                ],
                 'review_text' => [
                     'required'
                 ],
@@ -72,22 +84,31 @@ class ReviewService extends BaseService
             ]
         );
 
-        $item_gift = $this->item_gift_repository->getSingleData($locale, $id);
-        $user = auth()->user();
-        $check_rating = $this->repository->getDataByUserAndItem($locale, $item_gift->id);
-
         DB::beginTransaction();
+
+        $user = auth()->user();
+        $redeem = $this->redeem_repository->getSingleData($locale, $data_request['redeem_id']);
+
+        if ($redeem->redeem_status != 'success') {
+            return response()->json([
+                'message' => trans('error.payment_not_complete'),
+                'status' => 400,
+            ], 400);
+        }
+
+        $check_rating = $this->repository->getDataByUserRedeemAndItem($locale, $data_request['redeem_id'], $data_request['item_gift_id']);
 
         if (isset($check_rating)) {
             return response()->json([
-                'message' => trans('error.already_reviews', ['id' => $item_gift->id]),
+                'message' => trans('error.already_reviews', ['id' => $data_request['item_gift_id']]),
                 'status' => 409,
             ], 409);
         }
 
         Review::create([
             'user_id' => $user->id,
-            'item_gift_id' => $item_gift->id,
+            'redeem_id' => $data_request['redeem_id'],
+            'item_gift_id' => $data_request['item_gift_id'],
             'review_text' => $data_request['review_text'],
             'review_rating' => calculate_rating($data_request['review_rating']),
             'review_date' => date('Y-m-d'),

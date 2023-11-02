@@ -10,6 +10,7 @@ use Illuminate\Support\Arr;
 use App\Http\Models\Address;
 use App\Http\Models\Profile;
 use App\Http\Models\Wishlists;
+use Illuminate\Support\Carbon;
 use Laravel\Passport\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 use App\Exceptions\ValidationException;
@@ -43,6 +44,11 @@ class User extends Authenticable implements MustVerifyEmail
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+	public function getEmailVerifiedAtAttribute($value)
+    {
+        return Carbon::parse($value)->format('Y-m-d H:i:s');
+    }
 
     public function scopeSetSortableAndSearchableColumn($query, $value = [])
 	{

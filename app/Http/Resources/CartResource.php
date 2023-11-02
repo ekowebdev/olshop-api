@@ -45,6 +45,7 @@ class CartResource extends JsonResource
                 'name' => $this->users->name,
                 'username' => $this->users->username,
                 'email' => $this->users->email,
+                'email_verified_at' => $this->users->email_verified_at,
             ],
             'created_at' => Carbon::parse($this->created_at)->format('Y-m-d H:i:s'),
         ];

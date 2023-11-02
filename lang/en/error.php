@@ -18,4 +18,5 @@ return [
 	"exists_image_variant_item_gifts"             => "Item gift ID: :id and variant ID: :variant_id has exists images",
 	"invalid_signature_midtrans"                  => "Invalid signature Midtrans",
 	"main_address_exists"                         => "User ID: :id already has a main address",
+	"payment_not_complete"                        => "Complete the payment to be able to do the product reviews",
 ];

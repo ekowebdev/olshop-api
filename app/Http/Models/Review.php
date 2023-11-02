@@ -3,6 +3,7 @@
 namespace App\Http\Models;
 
 use App\Http\Models\User;
+use App\Http\Models\Redeem;
 use App\Http\Models\ItemGift;
 use App\Http\Models\BaseModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -12,13 +13,14 @@ class Review extends BaseModel
     use HasFactory;
 
     protected $table = 'reviews';
-    protected $fillable = ['user_id', 'item_gift_id', 'review_text', 'review_rating', 'review_date'];
+    protected $fillable = ['user_id', 'redeem_id', 'item_gift_id', 'review_text', 'review_rating', 'review_date'];
 
     public function scopeGetAll($query)
     {      
         return $query->select([
                     'id', 
-                    'user_id', 
+                    'user_id',
+                    'redeem_id', 
                     'item_gift_id', 
                     'review_text', 
                     'review_rating', 
@@ -35,5 +37,10 @@ class Review extends BaseModel
     public function item_gifts()
     {
         return $this->belongsTo(ItemGift::class, 'item_gift_id');
+    }
+
+    public function redeems()
+    {
+        return $this->belongsTo(Redeem::class, 'redeem_id');
     }
 }

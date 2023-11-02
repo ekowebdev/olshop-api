@@ -79,6 +79,8 @@ Route::middleware(['xssclean'])->group(function () {
                 Route::delete('/address/{id}', '\App\Http\Controllers\API\v1\AddressController@delete');
                 // Item Gift
                 Route::get('/gifts/recomendation', '\App\Http\Controllers\API\v1\ItemGiftController@showByUserRecomendation');
+                // Review Item Gift
+                Route::post('/gifts/review', '\App\Http\Controllers\API\v1\ReviewController@review');
                 // Redeem Item Gift
                 Route::get('/gifts/redeem', '\App\Http\Controllers\API\v1\RedeemController@index');
                 Route::get('/gifts/redeem/{id}', '\App\Http\Controllers\API\v1\RedeemController@show');
@@ -89,8 +91,6 @@ Route::middleware(['xssclean'])->group(function () {
                 Route::get('/gifts/wishlist/{id}', '\App\Http\Controllers\API\v1\WishlistController@show');
                 Route::get('/gifts/wishlist/user/{userId}', '\App\Http\Controllers\API\v1\WishlistController@showByUser');
                 Route::post('/gifts/{itemGiftId}/wishlist', '\App\Http\Controllers\API\v1\WishlistController@wishlist');
-                // Review Item Gift
-                Route::post('/gifts/{itemGiftId}/rating', '\App\Http\Controllers\API\v1\ReviewController@rating');
                 // Cart
                 Route::get('/carts', '\App\Http\Controllers\API\v1\CartController@index');
                 Route::post('/carts', '\App\Http\Controllers\API\v1\CartController@store');

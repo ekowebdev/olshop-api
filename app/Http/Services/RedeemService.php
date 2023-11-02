@@ -67,7 +67,7 @@ class RedeemService extends BaseService
     {
         $data_request = $data;
 
-        $this->item_gift_repository->validate($data_request, [
+        $this->repository->validate($data_request, [
                 'redeem_item_gifts_details' => [
                     'required',
                 ],
