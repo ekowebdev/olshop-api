@@ -91,7 +91,7 @@ class ReviewService extends BaseService
 
         if ($redeem->redeem_status != 'success') {
             return response()->json([
-                'message' => trans('error.payment_not_complete'),
+                'message' => trans('error.redeem_not_completed', ['id' => $data_request['redeem_id']]),
                 'status' => 400,
             ], 400);
         }
@@ -121,5 +121,51 @@ class ReviewService extends BaseService
             'status' => 200,
             'error' => 0,
         ]);
+    }
+
+    public function update($locale, $id, $data)
+    {
+        $check_data = $this->repository->getSingleData($locale, $id);
+
+        $data = array_merge([
+            'user_id' => $check_data->user_id,
+            'redeem_id' => $check_data->redeem_id,
+            'item_gift_id' => $check_data->item_gift_id,
+            'review_text' => $check_data->review_text,
+            'review_rating' => $check_data->review_rating,
+        ], $data);
+
+        $data_request = Arr::only($data, [
+            'review_text',
+            'review_rating',
+        ]);
+
+        $this->repository->validate($data_request, [
+                'review_text' => [
+                    'string'
+                ],
+                'review_rating' => [
+                    'numeric',
+                    'between:0.5,5'
+                ],
+            ]
+        );
+
+        DB::beginTransaction();
+        $data_request['review_rating'] = calculate_rating($data_request['review_rating']);
+        $check_data->update($data_request);
+        DB::commit();
+
+        return $this->repository->getSingleData($locale, $id);
+    }
+
+    public function delete($locale, $id)
+    {
+        $check_data = $this->repository->getSingleData($locale, $id);
+        DB::beginTransaction();
+        $result = $check_data->delete();
+        DB::commit();
+
+        return $result;
     }
 }

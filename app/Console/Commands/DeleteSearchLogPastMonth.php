@@ -39,6 +39,6 @@ class DeleteSearchLogPastMonth extends Command
             $i++;
         }
 
-        $this->info($i . ' Delete search logs successfully.');
+        $this->info($i . ' Deleted search logs successfully.');
     }
 }

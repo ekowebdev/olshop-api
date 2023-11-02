@@ -39,6 +39,6 @@ class UpdateOrderStatus extends Command
             $i++;
         }
 
-        $this->info($i . ' Update order status successfully.');
+        $this->info($i . ' Updated order status successfully.');
     }
 }

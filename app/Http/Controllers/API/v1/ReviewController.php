@@ -36,4 +36,16 @@ class ReviewController extends BaseController
     {
         return $this->service->review($locale, Request::all());
     }
+
+    public function update($locale, $id)
+    {
+        $data = $this->service->update($locale, $id, Request::all());
+        return new ReviewResource($data);
+    }
+
+    public function delete($locale, $id)
+    {
+        $data = $this->service->delete($locale, $id, Request::all());
+        return new DeletedResource($data);
+    }
 }
