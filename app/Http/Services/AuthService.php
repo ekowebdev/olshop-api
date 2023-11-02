@@ -45,6 +45,7 @@ class AuthService extends BaseService
         ]);
 
         DB::beginTransaction();
+        $request['role'] = isset($request['role']) ? $request['role'] : 'customer';
         $user = $this->model->create([
             'name' => $request['name'],
             'username' => $request['username'],

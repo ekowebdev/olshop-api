@@ -47,7 +47,7 @@ class User extends Authenticable implements MustVerifyEmail
 
 	public function getEmailVerifiedAtAttribute($value)
     {
-        return Carbon::parse($value)->format('Y-m-d H:i:s');
+        return ($value != null) ? Carbon::parse($value)->format('Y-m-d H:i:s') : null;
     }
 
     public function scopeSetSortableAndSearchableColumn($query, $value = [])

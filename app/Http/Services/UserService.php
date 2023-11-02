@@ -92,7 +92,7 @@ class UserService extends BaseService
         );
 
         DB::beginTransaction();
-        $data_request['role'] = ($data_request['role']) ? $data_request['role'] : 'customer';
+        $data_request['role'] = isset($data_request['role']) ? $data_request['role'] : 'customer';
         $data_request['password'] = Hash::make($data_request['password']);
         $result = $this->model->create($data_request);
         $result->assignRole($data_request['role']);
