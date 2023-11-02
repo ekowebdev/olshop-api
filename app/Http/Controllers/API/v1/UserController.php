@@ -51,9 +51,9 @@ class UserController extends BaseController
         return new DeletedResource($data);
     }
 
-    public function set_main_address($locale, $id)
+    public function set_main_address($locale)
     {
-        $data = $this->service->set_main_address($locale, $id, Request::all());
+        $data = $this->service->set_main_address($locale, Request::all());
         return new UserResource($data);
     }
 }

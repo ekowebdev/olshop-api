@@ -64,7 +64,7 @@ Route::middleware(['xssclean'])->group(function () {
                 Route::get('/users/{id}', '\App\Http\Controllers\API\v1\UserController@show');
                 Route::put('/users/{id}', '\App\Http\Controllers\API\v1\UserController@update');
                 Route::patch('/users/{id}', '\App\Http\Controllers\API\v1\UserController@update');
-                Route::post('/users/main-address/{id}', '\App\Http\Controllers\API\v1\UserController@set_main_address');
+                Route::post('/users/set-main-address', '\App\Http\Controllers\API\v1\UserController@set_main_address');
                 // Profile
                 Route::get('/profile', '\App\Http\Controllers\API\v1\ProfileController@index');
                 Route::get('/profile/{id}', '\App\Http\Controllers\API\v1\ProfileController@show');
