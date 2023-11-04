@@ -8,6 +8,7 @@ use App\Http\Models\Review;
 use Illuminate\Support\Str;
 use App\Http\Models\Variant;
 use App\Http\Models\Category;
+use App\Http\Models\Wishlist;
 use App\Http\Models\BaseModel;
 use App\Http\Models\Wishlists;
 use App\Http\Models\ItemGiftImage;
@@ -19,8 +20,10 @@ class ItemGift extends BaseModel
 {
     use HasFactory;
 
+    protected $primaryKey = 'id';
     protected $table = 'item_gifts';
-    protected $fillable = ['item_gift_code', 'item_gift_name', 'category_id', 'brand_id', 'item_gift_slug', 'item_gift_description', 'item_gift_spesification', 'item_gift_point', 'item_gift_weight', 'item_gift_quantity', 'item_gift_status'];
+    protected $fillable = ['id', 'item_gift_code', 'item_gift_name', 'category_id', 'brand_id', 'item_gift_slug', 'item_gift_description', 'item_gift_spesification', 'item_gift_point', 'item_gift_weight', 'item_gift_quantity', 'item_gift_status'];
+    protected $appends = ['is_wishlist'];
 
     public function item_gift_images()
     {
@@ -72,9 +75,19 @@ class ItemGift extends BaseModel
         return (int) $value;
     }
 
+    public function getIsWishlistAttribute()
+    {
+        $user_id = (auth()->user()) ? auth()->user()->id : 0;
+
+        $wishlists = Wishlist::where('user_id', $user_id)
+            ->where('item_gift_id', $this->getKey())
+            ->get();
+
+        return (count($wishlists) > 0) ? 1 : 0;
+    }
+
     public function scopeGetAll($query)
-    {   
-        $user_id = auth()->user()->id ?? 0;
+    {
         return $query->select([
                     'id', 
                     'item_gift_code', 
@@ -90,14 +103,6 @@ class ItemGift extends BaseModel
                     'item_gift_status',
                     DB::raw('(SELECT COUNT(*) FROM reviews WHERE reviews.item_gift_id = item_gifts.id) AS total_reviews'),
                     DB::raw('(SELECT COALESCE(AVG(review_rating), 0) FROM reviews WHERE reviews.item_gift_id = item_gifts.id) AS total_rating'),
-                    DB::raw("
-                        (
-                            SELECT COUNT(IFNULL(wishlists.item_gift_id, 0))
-                            FROM wishlists
-                            WHERE wishlists.item_gift_id = item_gifts.id
-                            AND wishlists.user_id = ". $user_id ."
-                        ) AS is_wishlist
-                    "),
                     DB::raw('(SELECT SUM(redeem_item_gifts.redeem_quantity) FROM redeem_item_gifts WHERE redeem_item_gifts.item_gift_id = item_gifts.id) AS total_redeem'),
                 ])
                 ->where('item_gift_status', 'A')

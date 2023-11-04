@@ -6,12 +6,15 @@
         "production": "vite production"
     },
     "devDependencies": {
+        "@popperjs/core": "^2.11.6",
         "@types/source-map-support": "^0.5.9",
         "axios": "^1.1.2",
+        "bootstrap": "^5.2.3",
         "laravel-mix": "^6.0.49",
         "laravel-vite-plugin": "^0.7.8",
         "lodash": "^4.17.19",
         "postcss": "^8.1.14",
+        "sass": "^1.56.1",
         "vite": "^4.5.0"
     },
     "dependencies": {

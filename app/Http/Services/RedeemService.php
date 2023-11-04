@@ -8,16 +8,12 @@ use Illuminate\Support\Str;
 use App\Http\Models\Variant;
 use App\Http\Models\ItemGift;
 use App\Http\Models\Shipping;
-use App\Mail\RedeemConfirmation;
-use App\Events\NotificationEvent;
-use App\Http\Models\Notification;
 use Illuminate\Support\Facades\DB;
 use App\Http\Models\RedeemItemGift;
 use App\Http\Services\RedeemService;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Database\QueryException;
+use App\Events\RealTimeNotificationEvent;
 use App\Http\Repositories\RedeemRepository;
-use App\Jobs\SendEmailRedeemConfirmationJob;
 use App\Http\Repositories\ItemGiftRepository;
 
 class RedeemService extends BaseService
@@ -278,7 +274,7 @@ class RedeemService extends BaseService
                 'status_read' => 0,
             ];
             $notification = store_notification($data_notification);
-            broadcast(new NotificationEvent($notification));
+            broadcast(new RealTimeNotificationEvent($notification, $user->id));
         
             DB::commit();
         

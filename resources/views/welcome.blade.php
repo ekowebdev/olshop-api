@@ -33,16 +33,11 @@
     @vite('resources/js/app.js')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Echo.channel('notification-channel')
-            //     .listen('NotificationEvent', (e) => {
-            //         console.log(e);
-            //         document.getElementById('count').innerText = e.count_data;
-            //     })
-            Echo.private('App.Models.User.1')
-                .notification((notification) => {
-                    console.log(notification.data);
+            Echo.private('App.Models.User.14')
+                .listen('RealTimeNotificationEvent', (e) => {
+                    console.log(e);
                     document.getElementById('count').innerText = e.count_data;
-                });
+                })
         });
     </script>
 </html>

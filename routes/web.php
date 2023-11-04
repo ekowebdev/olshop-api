@@ -1,8 +1,8 @@
 <?php
 
-use App\Events\TestEvent;
-use App\Events\NotificationEvent;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use App\Events\RealTimeNotificationEvent;
 use Illuminate\Support\Facades\Broadcast;
 
 Route::get('/', function () {
@@ -11,15 +11,14 @@ Route::get('/', function () {
 });
 
 Route::get('/send-event', function () {
-    // $user = ucwords($user);
-    // broadcast(new TestEvent($user));
-    $notification = [];
-    $notification['user_id'] = 14;
-    $notification['title'] = 'Transaksi Berhasil';
-    $notification['text'] = 'Anda telah berhasil melakukan transaksi!';
-    $notification['type'] = 0;
-    $notification['status_read'] = 0;
-    $data_notification = store_notification($notification);
-    broadcast(new NotificationEvent($data_notification));
+    $data_notification = [
+        'user_id' => 14,
+        'title' => 'Transaksi Berhasil',
+        'text' => 'Anda telah berhasil melakukan transaksi!',
+        'type' => 0,
+        'status_read' => 0,
+    ];
+    $notification = store_notification($data_notification);
+    broadcast(new RealTimeNotificationEvent($notification, 14));
     return "Event berhasil dikirim";
 });

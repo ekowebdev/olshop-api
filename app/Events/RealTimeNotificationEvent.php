@@ -2,7 +2,6 @@
 
 namespace App\Events;
 
-use App\Http\Models\User;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Broadcasting\PrivateChannel;
@@ -11,20 +10,21 @@ use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 
-class TestEvent implements ShouldBroadcast
+class RealTimeNotificationEvent implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $user;
+    public $notification, $user_id;
 
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct($user)
+    public function __construct($notification, $user_id)
     {
-        $this->user = $user;
+        $this->notification = $notification;
+        $this->user_id = $user_id;
     }
 
     /**
@@ -34,13 +34,14 @@ class TestEvent implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return new Channel('test-channel');
+        return new PrivateChannel('App.Models.User.' . $this->user_id);
     }
 
     public function broadcastWith()
     {
         return [
-            'data' => $this->user
+            'data' => $this->notification,
+            'count_data' => count($this->notification)
         ];
     }
 }
