@@ -268,8 +268,8 @@ class RedeemService extends BaseService
             // Create and broadcast a notification
             $data_notification = [
                 'user_id' => $user->id,
-                'title' => 'Transaksi Berhasil',
-                'text' => 'Anda telah berhasil melakukan transaksi!',
+                'title' => trans('all.notification_transaction_title'),
+                'text' => trans('all.notification_transaction_text'),
                 'type' => 0,
                 'status_read' => 0,
             ];

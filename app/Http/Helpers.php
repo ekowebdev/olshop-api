@@ -44,22 +44,23 @@ function store_notification($data = [])
         $model->background_color = "#E9FBE9";
         $model->save();
     } else if($data['type'] == 1){
-        $type_alert = $check->where('type', 1)->get()->toArray();
-        if(count($type_alert) == 0) {
-            $model->url = env('FRONT_URL') . '/my-voucher';
-            $model->icon = '';
-            $model->background_color = "#FEE8E6";
-            $model->save();
-        }
-    } else if($data['type'] == 2){
-        $type_promo = $check->where('type', 2)->get()->toArray();
-        if(count($type_promo) == 0) {
+        $type_info = $check->where('type', 1)->get()->toArray();
+        if(count($type_info) == 0) {
             $model->url = env('FRONT_URL') . '/account';
             $model->icon = '';
             $model->background_color = "#E0E7EC";
             $model->save();
-        }
+        } 
     }
+    // else if($data['type'] == 2){
+    //     $type_promo = $check->where('type', 2)->get()->toArray();
+    //     if(count($type_alert) == 0) {
+    //         $model->url = env('FRONT_URL') . '/my-voucher';
+    //         $model->icon = '';
+    //         $model->background_color = "#FEE8E6";
+    //         $model->save();
+    //     }
+    // }
 
     $notification = $model->query()->where('user_id', $data['user_id'])->get()->toArray();
     return $notification;

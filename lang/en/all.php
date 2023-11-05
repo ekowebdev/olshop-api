@@ -24,4 +24,9 @@ return [
 	"success_reset_password"             => "Success reset password",
 	"success_add_to_cart"                => "Success add to cart",
 	"success_update_cart"                => "Success update cart",
+	"notification_birthday_title"        => "Happy Birthhday <strong>:name</strong>",
+	"notification_birthday_text"		 => "On behalf of <strong>Bakti Shop</strong> I wish you a very happy birthday and send you my best wishes for much happiness in your life",	
+	"notification_transaction_title"     => "Transaction Successful",
+	"notification_transaction_text"      => "You have successfully made a transaction!",
+	"greeting_email_transaction_succes"  => "Thank you for your order!",
 ];

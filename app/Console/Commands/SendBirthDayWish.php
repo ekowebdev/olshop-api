@@ -6,6 +6,7 @@ use App\Http\Models\User;
 use App\Mail\BirthDayWish;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Mail;
+use App\Events\RealTimeNotificationEvent;
 
 class SendBirthDayWish extends Command
 {
@@ -32,8 +33,6 @@ class SendBirthDayWish extends Command
     {
         $i = 0;
 
-        // $users = User::whereMonth('birthdate', '=', date('m'))->whereDay('birthdate', '=', date('d'))->get();  
-
         $users = User::whereHas('profile', function ($query) {
             $query->whereMonth('birthdate', '=', date('m'))
                 ->whereDay('birthdate', '=', date('d'));
@@ -41,6 +40,15 @@ class SendBirthDayWish extends Command
         
         foreach($users as $user) {
             Mail::to($user->email)->send(new BirthDayWish($user));
+            $data_notification = [
+                'user_id' => $user->id,
+                'title' => trans('all.notification_birthday_title', ['name' => $user->name]),
+                'text' => trans('all.notification_birthday_text'),
+                'type' => 1,
+                'status_read' => 0,
+            ];
+            $notification = store_notification($data_notification);
+            broadcast(new RealTimeNotificationEvent($notification, $user->id));
             $i++;
         }
 

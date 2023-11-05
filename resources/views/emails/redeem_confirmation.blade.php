@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Order Confirmation</title>
+    <title>Bakti Shop - Email</title>
 </head>
 <body>
-    <h1 style="color: #333;">Thank you for your order!</h1>
+    <h1 style="color: #333;">{{ trans('all.greeting_email_transaction_succes') }}</h1>
     <h3>#{{ $header_data['redeem_code'] }}</h3>
 
     <table style="border-collapse: collapse; width: 100%;">

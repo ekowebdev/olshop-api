@@ -24,4 +24,9 @@ return [
 	"success_reset_password"             => "Berhasil reset password",
 	"success_add_to_cart"                => "Berhasil ditambah ke keranjang",
 	"success_update_cart"                => "Berhasil ubah keranjang",
+	"notification_birthday_title"        => "Selamat Ulang Tahun <strong>:name</strong>",
+	"notification_birthday_text"		 => "Atas nama <strong>Bakti Shop</strong>, saya mengucapkan selamat ulang tahun dan mengirimkan harapan terbaik saya untuk banyak kebahagiaan dalam hidup Anda",
+	"notification_transaction_title"     => "Transaksi Berhasil",
+	"notification_transaction_text"      => "Anda telah berhasil melakukan transaksi!",
+	"greeting_email_transaction_succes"  => "Terima kasih atas pesanan Anda!",
 ];
