@@ -69,10 +69,12 @@ class RedeemService extends BaseService
                 ],
                 'redeem_item_gifts_details.*.item_gift_id' => [
                     'required',
+                    'numeric',
                     'exists:item_gifts,id',
                 ],
                 'redeem_item_gifts_details.*.variant_id' => [
                     'nullable',
+                    'numeric',
                     'exists:variants,id',
                 ],
                 'redeem_item_gifts_details.*.redeem_quantity' => [
@@ -174,6 +176,13 @@ class RedeemService extends BaseService
                 $subtotal = 0;
                 if ($variant_id) {
                     $variant = $item_gift->variants()->lockForUpdate()->find($variant_id);
+
+                    if ($variant->variant_quantity == 0 || $redeem_quantity > $variant->variant_quantity) {
+                        return response()->json([
+                            'message' => trans('error.out_of_stock'),
+                            'status' => 400,
+                        ], 400);
+                    }
         
                     if ($variant) {
                         $subtotal = $variant->variant_point * $redeem_quantity;
@@ -189,8 +198,8 @@ class RedeemService extends BaseService
         
                 // Create RedeemItemGift entry
                 $redeem_item_gift = new RedeemItemGift([
-                    'item_gift_id' => (int) $item_gift->id,
-                    'variant_id' => (int) $variant_id,
+                    'item_gift_id' => $item_gift->id,
+                    'variant_id' => $variant_id,
                     'redeem_quantity' => (int) $redeem_quantity,
                     'redeem_point' => $subtotal,
                 ]);
@@ -202,9 +211,9 @@ class RedeemService extends BaseService
                     'quantity' => $redeem_quantity,
                     'name' => ($item_gift->variants->count() > 0) ? mb_strimwidth($item_gift->item_gift_name . ' - ' . $variant->variant_name, 0, 50, '..') : mb_strimwidth($item_gift->item_gift_name, 0, 50, '..'),
                 ];
-        
+
                 $redeem->redeem_item_gifts()->save($redeem_item_gift);
-        
+
                 $item_gift->item_gift_quantity -= $redeem_quantity;
                 $item_gift->save();
             }
