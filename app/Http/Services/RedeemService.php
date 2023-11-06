@@ -2,6 +2,7 @@
 
 namespace App\Http\Services;
 
+use App\Http\Models\Cart;
 use App\Http\Models\Redeem;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
