@@ -69,12 +69,10 @@ class RedeemService extends BaseService
                 ],
                 'redeem_item_gifts_details.*.item_gift_id' => [
                     'required',
-                    'numeric',
                     'exists:item_gifts,id',
                 ],
                 'redeem_item_gifts_details.*.variant_id' => [
                     'nullable',
-                    'numeric',
                     'exists:variants,id',
                 ],
                 'redeem_item_gifts_details.*.redeem_quantity' => [
