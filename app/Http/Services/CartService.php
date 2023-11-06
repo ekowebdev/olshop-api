@@ -88,10 +88,20 @@ class CartService extends BaseService
                     'status' => 400,
                 ], 400);
             }
+
+            $check = $this->repository->getByUserItemAndVariant($user->id, $data_request['item_gift_id'], $data_request['variant_id'] ?? null);
+
+            $quantity = $check->cart_quantity + intval($data_request['cart_quantity']);
+
+            if($item_gift->variants->count() > 0){
+                $real_quantity = $variant->variant_quantity;
+            } else {
+                $real_quantity = $item_gift->item_gift_quantity;
+            }
         
-            if ($item_gift->item_gift_quantity < $data_request['cart_quantity']) {
+            if ($quantity > $real_quantity) {
                 return response()->json([
-                    'message' => trans('error.out_of_stock', ['id' => $item_gift->id]),
+                    'message' => trans('error.out_of_stock'),
                     'status' => 400,
                 ], 400);
             }
@@ -123,6 +133,48 @@ class CartService extends BaseService
             DB::rollback();
             throw new ValidationException(json_encode([$e->getMessage()]));
         }        
+    }
+
+    public function update($locale, $id, $data)
+    {
+        $check_data = $this->repository->getSingleData($locale, $id);
+
+        $data = array_merge([
+            'cart_quantity' => $check_data->cart_quantity,
+        ], $data);
+
+        $data_request = Arr::only($data, [
+            'cart_quantity',
+        ]);
+
+        $this->repository->validate($data_request, [
+            'cart_quantity' => [
+                'numeric',
+            ],
+        ]);
+
+        DB::beginTransaction();
+        $check = $this->repository->getByUserItemAndVariant($check_data->user_id, $check_data->item_gift_id, $check_data->variant_id);
+
+        $quantity = $data_request['cart_quantity'];
+
+        $item_gift = ItemGift::find($check_data->item_gift_id);
+
+        if($item_gift->variants->count() > 0){
+            $variant = Variant::where('id', $check_data->variant_id)->where('item_gift_id', $item_gift->id)->first();
+            $real_quantity = $variant->variant_quantity;
+        } else {
+            $real_quantity = $item_gift->item_gift_quantity;
+        }
+    
+        if ($quantity > $real_quantity) {
+            throw new ValidationException(json_encode(['id' => [trans('error.out_of_stock')]]));
+        }
+
+        $check_data->update($data_request);
+        DB::commit();
+
+        return $this->repository->getSingleData($locale, $id);
     }
 
     public function delete($locale, $id)

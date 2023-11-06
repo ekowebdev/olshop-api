@@ -101,6 +101,7 @@ Route::middleware(['xssclean'])->group(function () {
                 Route::post('/carts', '\App\Http\Controllers\API\v1\CartController@store');
                 Route::get('/carts/{id}', '\App\Http\Controllers\API\v1\CartController@show');
                 Route::get('/carts/user/{userId}', '\App\Http\Controllers\API\v1\CartController@showByUser');
+                Route::put('/carts/{id}', '\App\Http\Controllers\API\v1\CartController@update');
                 Route::delete('/carts/{id}', '\App\Http\Controllers\API\v1\CartController@delete');
                 // Search Log
                 Route::post('/search-logs', '\App\Http\Controllers\API\v1\SearchLogController@store');

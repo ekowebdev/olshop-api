@@ -98,4 +98,16 @@ class CartRepository extends BaseRepository
                   ->where('variant_id', '=', $variant_id);
 		return $result;	
 	}
+
+    public function getByUserItemAndVariant($user_id, $item_gift_id, $variant_id)
+	{
+        $variant_id = ($variant_id == null) ? null : intval($variant_id);
+		$result = $this->model
+                  ->all()
+                  ->where('user_id', intval($user_id))
+                  ->where('item_gift_id', intval($item_gift_id))
+                  ->where('variant_id', '=', $variant_id)
+                  ->first();
+		return $result;	
+	}
 }

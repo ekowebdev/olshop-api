@@ -152,7 +152,7 @@ class RedeemService extends BaseService
                 // Check item availability
                 if (!$item_gift || $item_gift->item_gift_quantity < $redeem_quantity || $item_gift->item_gift_status == 'O') {
                     return response()->json([
-                        'message' => trans('error.out_of_stock', ['id' => $item_gift->id]),
+                        'message' => trans('error.out_of_stock'),
                         'status' => 400,
                     ], 400);
                 }
