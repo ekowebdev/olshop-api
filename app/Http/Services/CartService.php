@@ -171,6 +171,7 @@ class CartService extends BaseService
             throw new ValidationException(json_encode(['id' => [trans('error.out_of_stock')]]));
         }
 
+        $data_request['cart_quantity'] = intval($data_request['cart_quantity']);
         $check_data->update($data_request);
         DB::commit();
 
