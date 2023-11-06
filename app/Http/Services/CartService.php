@@ -9,7 +9,6 @@ use App\Http\Models\Variant;
 use App\Http\Models\ItemGift;
 use Illuminate\Support\Facades\DB;
 use App\Exceptions\ValidationException;
-use Illuminate\Database\QueryException;
 use App\Http\Repositories\CartRepository;
 use Aws\DynamoDb\Exception\DynamoDbException;
 

@@ -19,7 +19,7 @@ class WebhookService extends BaseService
         $this->repository = $repository;
     }
 
-    public function midtransHandler($locale, $data)
+    public function midtrans_handler($locale, $data)
     {
         $signature_key = $data['signature_key'];
         $order_id = $data['order_id'];

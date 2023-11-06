@@ -19,7 +19,7 @@ Route::middleware(['xssclean'])->group(function () {
         Route::post('/forget/password', '\App\Http\Controllers\API\v1\Auth\AuthController@forget_password')->name('forget.password'); 
         Route::post('/reset/password', '\App\Http\Controllers\API\v1\Auth\AuthController@reset_password_update')->name('password.update');
         // Webhook
-        Route::post('/webhook/midtrans', '\App\Http\Controllers\API\v1\WebhookController@midtransHandler');
+        Route::post('/webhook/midtrans', '\App\Http\Controllers\API\v1\WebhookController@midtrans_handler');
         Route::group(['middleware' => ['auth:api']], function () {
             Route::group(['middleware' => ['role:admin']], function () {
                 // User

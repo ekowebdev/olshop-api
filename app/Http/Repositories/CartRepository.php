@@ -3,8 +3,6 @@
 namespace App\Http\Repositories;
 
 use App\Http\Models\Cart;
-use Aws\DynamoDb\Marshaler;
-use Illuminate\Support\Arr;
 use App\Exceptions\DataEmptyException;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
