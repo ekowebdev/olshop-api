@@ -1,10 +1,6 @@
 <?php
 
-use Illuminate\Support\Str;
-use App\Events\NotificationEvent;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Broadcast;
 
 Route::middleware(['xssclean'])->group(function () {
     Route::get('/email/verify/{id}', '\App\Http\Controllers\API\v1\Auth\AuthController@verify')->name('verification.verify');

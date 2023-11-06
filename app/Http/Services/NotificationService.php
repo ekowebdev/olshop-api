@@ -2,12 +2,9 @@
 
 namespace App\Http\Services;
 
-use App\Http\Models\User;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use App\Http\Models\Notification;
-use Illuminate\Validation\Rule;
-use App\Rules\UniqueMainNotification;
 use Illuminate\Support\Facades\DB;
 use App\Http\Repositories\NotificationRepository;
 
