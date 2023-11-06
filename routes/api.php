@@ -115,7 +115,7 @@ Route::middleware(['xssclean'])->group(function () {
             });
             Route::post('/logout', '\App\Http\Controllers\API\v1\Auth\AuthController@logout');
         });
-        Route::middleware(['client','auth:api'])->group(function () {
+        // Route::middleware(['client','auth:api'])->group(function () {
             // Province
             Route::get('/province', '\App\Http\Controllers\API\v1\ProvinceController@index');
             Route::get('/province/{id}', '\App\Http\Controllers\API\v1\ProvinceController@show');
@@ -148,6 +148,6 @@ Route::middleware(['xssclean'])->group(function () {
             // Variant
             Route::get('/variants', '\App\Http\Controllers\API\v1\VariantController@index');
             Route::get('/variants/{id}', '\App\Http\Controllers\API\v1\VariantController@show');
-        });
+        // });
     });
 });
