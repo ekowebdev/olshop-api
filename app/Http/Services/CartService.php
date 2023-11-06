@@ -140,7 +140,7 @@ class CartService extends BaseService
             DB::commit();
         
             return response()->json([
-                'message' => !empty($cart) ? trans('all.success_update_cart') : trans('all.success_add_to_cart'),
+                'message' => trans('all.success_add_to_cart'),
                 'status' => 200,
                 'error' => 0,
             ]);

@@ -31,7 +31,7 @@ jobs:
             npm install -g npm@latest &&
             sudo chmod -R 777 bootstrap/cache &&
             sudo chmod -R 777 storage &&
-            composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader &&
+            composer update --no-dev --no-interaction --prefer-dist --optimize-autoloader &&
             php artisan config:clear &&
             php artisan cache:clear &&
             php artisan view:clear &&
