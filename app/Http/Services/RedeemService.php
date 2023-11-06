@@ -150,14 +150,6 @@ class RedeemService extends BaseService
         
                 $item_gift = ItemGift::lockForUpdate()->find($redeem_item_gifts['item_gift_id']);
         
-                // Check item availability
-                if (!$item_gift || $item_gift->item_gift_quantity < $redeem_quantity || $item_gift->item_gift_status == 'O') {
-                    return response()->json([
-                        'message' => trans('error.out_of_stock'),
-                        'status' => 400,
-                    ], 400);
-                }
-        
                 // Check variant if required
                 if ($item_gift->variants->count() > 0 && !isset($variant_id)) {
                     return response()->json([
@@ -167,6 +159,14 @@ class RedeemService extends BaseService
                 } else if ($item_gift->variants->count() == 0 && isset($variant_id)) {
                     return response()->json([
                         'message' => trans('error.variant_not_found_in_item_gifts', ['id' => $item_gift->id]),
+                        'status' => 400,
+                    ], 400);
+                }
+
+                // Check item availability
+                if (!$item_gift || $item_gift->item_gift_quantity < $redeem_quantity || $item_gift->item_gift_status == 'O') {
+                    return response()->json([
+                        'message' => trans('error.out_of_stock'),
                         'status' => 400,
                     ], 400);
                 }

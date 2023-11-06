@@ -67,43 +67,58 @@ class CartService extends BaseService
             
             $user = auth()->user();
             $data_request['user_id'] = $user->id;
-        
-            $item_gift = ItemGift::find($data_request['item_gift_id']);
+
             $variant_id = isset($data_request['variant_id']) ? intval($data_request['variant_id']) : null;
-            
-            if ($variant_id) {
-                $variant = Variant::where('id', $variant_id)->where('item_gift_id', $item_gift->id)->first();
         
-                if (is_null($variant) || $variant->variant_quantity < $data_request['cart_quantity']) {
-                    return response()->json([
-                        'message' => is_null($variant)
-                            ? trans('error.variant_not_found_in_item_gifts', ['id' => $item_gift->id])
-                            : trans('error.variant_out_of_stock', ['id' => $item_gift->id, 'variant_id' => $variant->id]),
-                        'status' => 400,
-                    ], 400);
-                }
-            } elseif ($item_gift->variants->count() > 0) {
+            $item_gift = ItemGift::lockForUpdate()->find($data_request['item_gift_id']);
+
+            if ($item_gift->variants->count() > 0 && !isset($variant_id)) {
                 return response()->json([
                     'message' => trans('error.variant_required', ['id' => $item_gift->id]),
                     'status' => 400,
                 ], 400);
+            } else if ($item_gift->variants->count() == 0 && isset($variant_id)) {
+                return response()->json([
+                    'message' => trans('error.variant_not_found_in_item_gifts', ['id' => $item_gift->id]),
+                    'status' => 400,
+                ], 400);
             }
 
-            $check = $this->repository->getByUserItemAndVariant($user->id, $data_request['item_gift_id'], $data_request['variant_id'] ?? null);
-
-            $quantity = $check->cart_quantity + intval($data_request['cart_quantity']);
-
-            if($item_gift->variants->count() > 0){
-                $real_quantity = $variant->variant_quantity;
-            } else {
-                $real_quantity = $item_gift->item_gift_quantity;
-            }
-        
-            if ($quantity > $real_quantity) {
+            if(!$item_gift || $item_gift->item_gift_quantity < $data_request['cart_quantity'] || $item_gift->item_gift_status == 'O'){
                 return response()->json([
                     'message' => trans('error.out_of_stock'),
                     'status' => 400,
                 ], 400);
+            }
+            
+            if (!is_null($variant_id)) {
+                $variant = $item_gift->variants()->lockForUpdate()->find($variant_id);
+
+                if ($variant->variant_quantity == 0 || $data_request['cart_quantity'] > $variant->variant_quantity) {
+                    return response()->json([
+                        'message' => trans('error.out_of_stock'),
+                        'status' => 400,
+                    ], 400);
+                }
+            }
+
+            $exists = $this->repository->getByUserItemAndVariant($user->id, $data_request['item_gift_id'], $variant_id)->first();
+            
+            if(!empty($exists)) {
+                $quantity = $exists->cart_quantity + intval($data_request['cart_quantity']);
+
+                if($item_gift->variants->count() > 0){
+                    $real_quantity = $variant->variant_quantity;
+                } else {
+                    $real_quantity = $item_gift->item_gift_quantity;
+                }
+            
+                if ($quantity > $real_quantity) {
+                    return response()->json([
+                        'message' => trans('error.out_of_stock'),
+                        'status' => 400,
+                    ], 400);
+                }
             }
         
             $cart = $this->repository->getByItemAndVariant(intval($item_gift->id), $variant_id)->first();
@@ -117,7 +132,7 @@ class CartService extends BaseService
                 $cart_model->id = strval(Str::uuid());
                 $cart_model->user_id = intval($user->id);
                 $cart_model->item_gift_id = intval($data_request['item_gift_id']);
-                $cart_model->variant_id = $variant_id;
+                $cart_model->variant_id = $variant_id ?? '';
                 $cart_model->cart_quantity = intval($data_request['cart_quantity']);
                 $cart_model->save();
             }
@@ -168,7 +183,7 @@ class CartService extends BaseService
         }
     
         if ($quantity > $real_quantity) {
-            throw new ValidationException(json_encode(['id' => [trans('error.out_of_stock')]]));
+            throw new ValidationException(json_encode(['item_gift_quantity' => [trans('error.out_of_stock')]]));
         }
 
         $data_request['cart_quantity'] = intval($data_request['cart_quantity']);
