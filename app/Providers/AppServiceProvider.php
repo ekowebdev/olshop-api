@@ -26,7 +26,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        ItemGift::observe(ItemObserver::class);
+        // ItemGift::observe(ItemObserver::class);
         Schema::defaultStringLength(191);
     }
 }

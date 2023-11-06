@@ -13,10 +13,13 @@ Route::middleware(['xssclean'])->group(function () {
         // Auth
         Route::post('/register', '\App\Http\Controllers\API\v1\Auth\AuthController@register');
         Route::post('/login', '\App\Http\Controllers\API\v1\Auth\AuthController@login');
+        Route::post('/login/system', '\App\Http\Controllers\API\v1\Auth\SystemAccessTokenController@tokenSystem');
         Route::post('/refresh-token', '\App\Http\Controllers\API\v1\Auth\AuthController@refresh_token');
         Route::post('/email/resend', '\App\Http\Controllers\API\v1\Auth\AuthController@resend')->name('verification.resend');
         Route::post('/forget/password', '\App\Http\Controllers\API\v1\Auth\AuthController@forget_password')->name('forget.password'); 
         Route::post('/reset/password', '\App\Http\Controllers\API\v1\Auth\AuthController@reset_password_update')->name('password.update');
+        // Webhook
+        Route::post('/webhook/midtrans', '\App\Http\Controllers\API\v1\WebhookController@midtransHandler');
         Route::group(['middleware' => ['auth:api']], function () {
             Route::group(['middleware' => ['role:admin']], function () {
                 // User
@@ -112,39 +115,39 @@ Route::middleware(['xssclean'])->group(function () {
             });
             Route::post('/logout', '\App\Http\Controllers\API\v1\Auth\AuthController@logout');
         });
-        // Province
-        Route::get('/province', '\App\Http\Controllers\API\v1\ProvinceController@index');
-        Route::get('/province/{id}', '\App\Http\Controllers\API\v1\ProvinceController@show');
-        // City
-        Route::get('/city', '\App\Http\Controllers\API\v1\CityController@index');
-        Route::get('/city/{id}', '\App\Http\Controllers\API\v1\CityController@show');
-        // Subdistrict
-        Route::get('/subdistrict', '\App\Http\Controllers\API\v1\SubdistrictController@index');
-        Route::get('/subdistrict/{id}', '\App\Http\Controllers\API\v1\SubdistrictController@show');
-        // Category
-        Route::get('/category', '\App\Http\Controllers\API\v1\CategoryController@index');
-        Route::get('/category/{id}', '\App\Http\Controllers\API\v1\CategoryController@show');
-        Route::get('/category/slug/{slug}', '\App\Http\Controllers\API\v1\CategoryController@showBySlug');
-        // Brand
-        Route::get('/brand', '\App\Http\Controllers\API\v1\BrandController@index');
-        Route::get('/brand/{id}', '\App\Http\Controllers\API\v1\BrandController@show');
-        Route::get('/brand/slug/{slug}', '\App\Http\Controllers\API\v1\BrandController@showBySlug');
-        // Review Item Gift
-        Route::get('/gifts/review', '\App\Http\Controllers\API\v1\ReviewController@index');
-        Route::get('/gifts/review/{id}', '\App\Http\Controllers\API\v1\ReviewController@show');
-        // Item Gift Image
-        Route::get('/gifts/images', '\App\Http\Controllers\API\v1\ItemGiftImageController@index');
-        Route::get('/gifts/images/{id}', '\App\Http\Controllers\API\v1\ItemGiftImageController@show');
-        // Item Gift
-        Route::get('/gifts', '\App\Http\Controllers\API\v1\ItemGiftController@index');
-        Route::get('/gifts/{id}', '\App\Http\Controllers\API\v1\ItemGiftController@show');
-        Route::get('/gifts/slug/{slug}', '\App\Http\Controllers\API\v1\ItemGiftController@showBySlug');
-        Route::get('/gifts/category/{slug}', '\App\Http\Controllers\API\v1\ItemGiftController@showByCategory');
-        Route::get('/gifts/brand/{slug}', '\App\Http\Controllers\API\v1\ItemGiftController@showByBrand');
-        // Variant
-        Route::get('/variants', '\App\Http\Controllers\API\v1\VariantController@index');
-        Route::get('/variants/{id}', '\App\Http\Controllers\API\v1\VariantController@show');
-        // Webhook
-        Route::post('/webhook/midtrans', '\App\Http\Controllers\API\v1\WebhookController@midtransHandler');
+        Route::middleware(['client','auth:api'])->group(function () {
+            // Province
+            Route::get('/province', '\App\Http\Controllers\API\v1\ProvinceController@index');
+            Route::get('/province/{id}', '\App\Http\Controllers\API\v1\ProvinceController@show');
+            // City
+            Route::get('/city', '\App\Http\Controllers\API\v1\CityController@index');
+            Route::get('/city/{id}', '\App\Http\Controllers\API\v1\CityController@show');
+            // Subdistrict
+            Route::get('/subdistrict', '\App\Http\Controllers\API\v1\SubdistrictController@index');
+            Route::get('/subdistrict/{id}', '\App\Http\Controllers\API\v1\SubdistrictController@show');
+            // Category
+            Route::get('/category', '\App\Http\Controllers\API\v1\CategoryController@index');
+            Route::get('/category/{id}', '\App\Http\Controllers\API\v1\CategoryController@show');
+            Route::get('/category/slug/{slug}', '\App\Http\Controllers\API\v1\CategoryController@showBySlug');
+            // Brand
+            Route::get('/brand', '\App\Http\Controllers\API\v1\BrandController@index');
+            Route::get('/brand/{id}', '\App\Http\Controllers\API\v1\BrandController@show');
+            Route::get('/brand/slug/{slug}', '\App\Http\Controllers\API\v1\BrandController@showBySlug');
+            // Review Item Gift
+            Route::get('/gifts/review', '\App\Http\Controllers\API\v1\ReviewController@index');
+            Route::get('/gifts/review/{id}', '\App\Http\Controllers\API\v1\ReviewController@show');
+            // Item Gift Image
+            Route::get('/gifts/images', '\App\Http\Controllers\API\v1\ItemGiftImageController@index');
+            Route::get('/gifts/images/{id}', '\App\Http\Controllers\API\v1\ItemGiftImageController@show');
+            // Item Gift
+            Route::get('/gifts', '\App\Http\Controllers\API\v1\ItemGiftController@index');
+            Route::get('/gifts/{id}', '\App\Http\Controllers\API\v1\ItemGiftController@show');
+            Route::get('/gifts/slug/{slug}', '\App\Http\Controllers\API\v1\ItemGiftController@showBySlug');
+            Route::get('/gifts/category/{slug}', '\App\Http\Controllers\API\v1\ItemGiftController@showByCategory');
+            Route::get('/gifts/brand/{slug}', '\App\Http\Controllers\API\v1\ItemGiftController@showByBrand');
+            // Variant
+            Route::get('/variants', '\App\Http\Controllers\API\v1\VariantController@index');
+            Route::get('/variants/{id}', '\App\Http\Controllers\API\v1\VariantController@show');
+        });
     });
 });
