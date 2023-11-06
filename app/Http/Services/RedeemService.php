@@ -202,6 +202,27 @@ class RedeemService extends BaseService
                     'redeem_quantity' => (int) $redeem_quantity,
                     'redeem_point' => $subtotal,
                 ]);
+
+                // $user_id = (int) $user->id;
+                // $item_gift_id = (int) $item_gift->id;
+                // $variant_id = (int) $variant_id ?? null;
+                // $redeem_quantity = (int) $redeem_quantity;
+
+                // $cart = Cart::all()
+                //         ->where('user_id', $user_id)
+                //         ->where('item_gift_id', $item_gift_id);
+                // if($variant_id != 0) {
+                //     $cart->where('variant_id', null);
+                // } else {
+                //     $cart->where('variant_id', $variant_id);
+                // }
+                // $cart->where('cart_quantity', $redeem_quantity);
+
+                // $cart->first()->delete();
+
+                // // $cart->delete();
+
+                // // dd($cart);
         
                 $metadata_redeem_item_gifts[] = $redeem_item_gift->toArray();
                 $item_details[] = [

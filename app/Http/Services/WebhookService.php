@@ -114,11 +114,16 @@ class WebhookService extends BaseService
                     $variant_id = (int) $item['variant_id'] ?? null;
                     $redeem_quantity = (int) $item['redeem_quantity'];
 
-                    Cart::where('user_id', $user_id)
-                            ->where('item_gift_id', $item_gift_id)
-                            ->where('variant_id', $variant_id)
-                            ->where('cart_quantity', $redeem_quantity)
-                            ->delete();
+                    $cart = Cart::all()
+                        ->where('user_id', $user_id)
+                        ->where('item_gift_id', $item_gift_id);
+                    if($variant_id != 0) {
+                        $cart->where('variant_id', null);
+                    } else {
+                        $cart->where('variant_id', $variant_id);
+                    }
+                    $cart->where('cart_quantity', $redeem_quantity);
+                    $cart->first()->delete();
                 }
             }
 
