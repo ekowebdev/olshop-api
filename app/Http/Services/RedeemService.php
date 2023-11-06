@@ -189,8 +189,8 @@ class RedeemService extends BaseService
         
                 // Create RedeemItemGift entry
                 $redeem_item_gift = new RedeemItemGift([
-                    'item_gift_id' => $item_gift->id,
-                    'variant_id' => $variant_id,
+                    'item_gift_id' => (int) $item_gift->id,
+                    'variant_id' => (int) $variant_id,
                     'redeem_quantity' => (int) $redeem_quantity,
                     'redeem_point' => $subtotal,
                 ]);

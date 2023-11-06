@@ -2,12 +2,13 @@
 
 namespace App\Http\Services;
 
+use App\Http\Models\Cart;
 use App\Http\Models\PaymentLog;
 use App\Mail\RedeemConfirmation;
 use App\Http\Models\RedeemItemGift;
 use Illuminate\Support\Facades\Mail;
-use App\Jobs\SendEmailRedeemConfirmationJob;
 use App\Http\Repositories\RedeemRepository;
+use App\Jobs\SendEmailRedeemConfirmationJob;
 
 class WebhookService extends BaseService
 {
@@ -102,6 +103,18 @@ class WebhookService extends BaseService
                     'quantity' => $redeem_item->redeem_quantity,
                     'name' => $redeem_item->item_gifts->item_gift_name . $variant_name,
                 ];
+            }
+
+            if($redeem->metadata !== null){
+                $metadata = json_decode($redeem->metadata);
+                $metadata_redeem_item_gifts = $metadata['redeem_item_gifts'];
+                foreach ($metadata_redeem_item_gifts as $item) {
+                    Cart::where('user_id', $redeem->user_id)
+                            ->where('item_gift_id', $item->item_gift_id)
+                            ->where('variant_id', $item->variant_id ?? null)
+                            ->where('cart_quantity', $item->cart_quantity)
+                            ->delete();
+                }
             }
 
             SendEmailRedeemConfirmationJob::dispatch($redeem->users->email, $header_data, $detail_data);
