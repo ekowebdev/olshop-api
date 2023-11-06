@@ -109,10 +109,15 @@ class WebhookService extends BaseService
                 $metadata = json_decode($redeem->metadata, true);
                 $metadata_redeem_item_gifts = $metadata['redeem_item_gifts'];
                 foreach ($metadata_redeem_item_gifts as $item) {
-                    Cart::where('user_id', $redeem->user_id)
-                            ->where('item_gift_id', $item->item_gift_id)
-                            ->where('variant_id', intval($item->variant_id) ?? null)
-                            ->where('cart_quantity', $item->cart_quantity)
+                    $user_id = (int) $redeem->user_id;
+                    $item_gift_id = (int) $item['item_gift_id'];
+                    $variant_id = (int) $item['variant_id'] ?? null;
+                    $cart_quantity = (int) $item['cart_quantity'];
+
+                    Cart::where('user_id', $user_id)
+                            ->where('item_gift_id', $item_gift_id)
+                            ->where('variant_id', $variant_id)
+                            ->where('cart_quantity', $cart_quantity)
                             ->delete();
                 }
             }
