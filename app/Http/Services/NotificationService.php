@@ -3,7 +3,6 @@
 namespace App\Http\Services;
 
 use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
 use App\Http\Models\Notification;
 use Illuminate\Support\Facades\DB;
 use App\Http\Repositories\NotificationRepository;

@@ -5,7 +5,6 @@ namespace App\Http\Services;
 use App\Http\Models\Review;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
-use App\Exceptions\ValidationException;
 use App\Http\Repositories\ReviewRepository;
 use App\Http\Repositories\RedeemRepository;
 

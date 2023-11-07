@@ -2,7 +2,7 @@
 
 namespace App\Http\Models;
 
-use App\Redeem;
+use App\Http\Models\Redeem;
 use App\Http\Models\Variant;
 use App\Http\Models\ItemGift;
 use App\Http\Models\BaseModel;

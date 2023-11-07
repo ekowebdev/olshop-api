@@ -8,7 +8,6 @@ use App\Http\Models\Shipping;
 use App\Http\Models\BaseModel;
 use App\Http\Models\PaymentLog;
 use App\Http\Models\RedeemItemGift;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Redeem extends BaseModel

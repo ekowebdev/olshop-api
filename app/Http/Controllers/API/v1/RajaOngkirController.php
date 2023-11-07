@@ -3,11 +3,8 @@
 namespace App\Http\Controllers\API\v1;
 
 use Illuminate\Http\Request;
-use App\Http\Resources\CityResource;
 use App\Http\Controllers\BaseController;
-use App\Http\Resources\ProvinceResource;
 use App\Http\Services\RajaOngkirService;
-use App\Http\Resources\SubdistrictResource;
 
 class RajaOngkirController extends BaseController
 {

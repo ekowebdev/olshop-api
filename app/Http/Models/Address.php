@@ -5,13 +5,10 @@ namespace App\Http\Models;
 use App\Http\Models\City;
 use App\Http\Models\User;
 use App\Http\Models\Redeem;
-use Illuminate\Support\Str;
-use App\Http\Models\ItemGift;
 use App\Http\Models\Province;
 use App\Http\Models\BaseModel;
 use App\Http\Models\Subdistrict;
 use Illuminate\Support\Facades\DB;
-use App\Exceptions\ValidationException;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Address extends BaseModel

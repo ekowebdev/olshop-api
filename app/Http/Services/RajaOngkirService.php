@@ -2,7 +2,6 @@
 
 namespace App\Http\Services;
 
-use App\Http\Services\BaseService;
 use Illuminate\Support\Collection;
 use Illuminate\Pagination\Paginator;
 use App\Exceptions\DataEmptyException;

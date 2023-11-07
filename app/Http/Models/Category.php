@@ -2,10 +2,8 @@
 
 namespace App\Http\Models;
 
-use Illuminate\Support\Str;
 use App\Http\Models\ItemGift;
 use App\Http\Models\BaseModel;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Category extends BaseModel

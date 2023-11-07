@@ -8,7 +8,6 @@ use App\Http\Models\Variant;
 use App\Http\Models\ItemGiftImage;
 use Illuminate\Support\Facades\DB;
 use App\Exceptions\ValidationException;
-use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Repositories\ItemGiftImageRepository;
 

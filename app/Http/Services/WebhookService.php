@@ -4,9 +4,7 @@ namespace App\Http\Services;
 
 use App\Http\Models\Cart;
 use App\Http\Models\PaymentLog;
-use App\Mail\RedeemConfirmation;
 use App\Http\Models\RedeemItemGift;
-use Illuminate\Support\Facades\Mail;
 use App\Http\Repositories\RedeemRepository;
 use App\Jobs\SendEmailRedeemConfirmationJob;
 

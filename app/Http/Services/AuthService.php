@@ -1,25 +1,19 @@
 <?php
 namespace App\Http\Services;
 
-use Carbon\Carbon;
 use App\Http\Models\User;
 use Illuminate\Support\Str;
-use App\Http\Services\BaseService;
 use App\Http\Traits\PassportToken;
 use Illuminate\Support\Facades\DB;
 use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use App\Jobs\SendEmailVerificationJob;
-use Illuminate\Auth\Events\Registered;
-use App\Jobs\SendEmailResetPasswordLinkJob;
 use Illuminate\Support\Facades\Password;
 use App\Http\Repositories\UserRepository;
 use Illuminate\Auth\Events\PasswordReset;
 use App\Http\Repositories\OauthRepository;
 use App\Exceptions\AuthenticationException;
-use Illuminate\Support\Facades\Notification;
-use App\Notifications\VerifyEmailNotification;
 
 class AuthService extends BaseService
 {  

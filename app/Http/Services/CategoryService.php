@@ -5,7 +5,6 @@ namespace App\Http\Services;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use App\Http\Models\Category;
-use App\Events\NotificationEvent;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Repositories\CategoryRepository;

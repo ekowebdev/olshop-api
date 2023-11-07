@@ -2,9 +2,7 @@
 
 namespace App\Http\Services;
 
-use Image;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
 use App\Http\Models\Variant;
 use App\Http\Models\ItemGift;
 use Illuminate\Support\Facades\DB;

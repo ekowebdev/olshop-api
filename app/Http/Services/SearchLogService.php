@@ -2,11 +2,9 @@
 
 namespace App\Http\Services;
 
-use App\Http\Models\User;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use App\Http\Models\SearchLog;
-use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
 use App\Exceptions\ValidationException;
 use Aws\DynamoDb\Exception\DynamoDbException;

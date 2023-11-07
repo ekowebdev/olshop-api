@@ -2,9 +2,7 @@
 
 namespace App\Console\Commands;
 
-use Carbon\Carbon;
 use App\Http\Models\User;
-use App\Http\Models\Redeem;
 use Illuminate\Console\Command;
 
 class DeleteNotVerifiedUserPastThreeMonth extends Command

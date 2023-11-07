@@ -3,10 +3,8 @@
 namespace App\Http\Models;
 
 use App\Http\Models\Cart;
-use Illuminate\Support\Str;
 use App\Http\Models\ItemGift;
 use App\Http\Models\BaseModel;
-use Illuminate\Support\Facades\DB;
 use App\Http\Models\RedeemItemGift;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 

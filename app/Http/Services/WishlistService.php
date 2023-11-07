@@ -5,7 +5,6 @@ namespace App\Http\Services;
 use Illuminate\Support\Str;
 use App\Http\Models\Wishlist;
 use Illuminate\Support\Facades\DB;
-use App\Exceptions\ValidationException;
 use App\Http\Repositories\ItemGiftRepository;
 use App\Http\Repositories\WishlistRepository;
 

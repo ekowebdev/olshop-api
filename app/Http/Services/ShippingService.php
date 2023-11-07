@@ -3,9 +3,7 @@
 namespace App\Http\Services;
 
 use App\Http\Models\Shipping;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Database\QueryException;
 use App\Http\Repositories\ShippingRepository;
 
 class ShippingService extends BaseService

@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\API\v1\Auth;
 
 use Request;
-use App\Http\Controllers\Controller;
 use Nyholm\Psr7\Response as Psr7Response;
 use Psr\Http\Message\ServerRequestInterface;
 use Laravel\Passport\Http\Controllers\AccessTokenController;

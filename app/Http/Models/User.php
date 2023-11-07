@@ -9,7 +9,7 @@ use App\Http\Models\Redeem;
 use Illuminate\Support\Arr;
 use App\Http\Models\Address;
 use App\Http\Models\Profile;
-use App\Http\Models\Wishlists;
+use App\Http\Models\Wishlist;
 use Illuminate\Support\Carbon;
 use Laravel\Passport\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
@@ -48,6 +48,59 @@ class User extends Authenticable implements MustVerifyEmail
 	public function getEmailVerifiedAtAttribute($value)
     {
         return ($value != null) ? Carbon::parse($value)->format('Y-m-d H:i:s') : null;
+    }
+
+	public function get_access_token()
+    {
+        return $this->accessToken;
+    }
+
+    public function redeems()
+    {
+        return $this->hasMany(Redeem::class);
+    }
+
+    public function wishlists()
+    {
+        return $this->hasMany(Wishlist::class);
+    }
+
+    public function ratings()
+    {
+        return $this->hasMany(Rating::class);
+    }
+
+	public function carts()
+    {
+        return $this->hasMany(Cart::class);
+    }
+
+	public function address()
+    {
+        return $this->hasMany(Address::class);
+    }
+
+	public function profile()
+    {
+        return $this->hasOne(Profile::class);
+    }
+
+	public function main_address()
+	{
+		return $this->belongsTo(Address::class, 'main_address_id');
+	}
+
+    public function scopeGetAll($query)
+    {      
+        return $query->select([
+                    'id', 
+                    'name', 
+                    'username', 
+                    'email',
+                    'password',
+                    'main_address_id',
+					'email_verified_at',
+                ]);
     }
 
     public function scopeSetSortableAndSearchableColumn($query, $value = [])
@@ -90,7 +143,7 @@ class User extends Authenticable implements MustVerifyEmail
 			{				
 				foreach ($request['search_column'] as $arr_search_column => $value_search_column) {
 					if($request['search_text'][$arr_search_column] != utf8_encode($request['search_text'][$arr_search_column])){
-						throw new \App\Exceptions\AuthenticationException('Periksa text pencarian anda, mungkin mengandung karakter yang tidak kita ijinkan!');
+						throw new \App\Exceptions\AuthenticationException('Periksa text pencarian anda, mungkin mengandung karakter yang tidak izinkan');
 					}
 					$query = $this->searchOperator($query, $request['search_column'][$arr_search_column], $request['search_text'][$arr_search_column], Arr::get($request,'search_operator.'.$arr_search_column,'like'));
 				}	
@@ -98,7 +151,7 @@ class User extends Authenticable implements MustVerifyEmail
 			else
 			{	
 				if($request['search_text'] != utf8_encode($request['search_text'])){
-					throw new \App\Exceptions\AuthenticationException('Periksa text pencarian anda, mungkin mengandung karakter yang tidak kita ijinkan!');
+					throw new \App\Exceptions\AuthenticationException('Periksa text pencarian anda, mungkin mengandung karakter yang tidak izinkan');
 				}
 				$query = $this->searchOperator($query, $request['search_column'], $request['search_text'], Arr::get($request,'search_operator','like'));
 			}
@@ -107,7 +160,7 @@ class User extends Authenticable implements MustVerifyEmail
 		if(isset($request['search']))
 		{			
 			if($request['search'] != utf8_encode($request['search'])){
-				throw new \App\Exceptions\AuthenticationException('Periksa text pencarian anda, mungkin mengandung karakter yang tidak kita ijinkan!');
+				throw new \App\Exceptions\AuthenticationException('Periksa text pencarian anda, mungkin mengandung karakter yang tidak izinkan');
 			}
 
 			$query->where(function ($query) use ($search,$request) {
@@ -246,58 +299,4 @@ class User extends Authenticable implements MustVerifyEmail
 		if($validator->fails()) throw new ValidationException($validator->errors());
 		return true;
 	}
-
-	public function get_access_token()
-    {
-        return $this->accessToken;
-    }
-
-    public function redeems()
-    {
-        return $this->hasMany(Redeem::class);
-    }
-
-    public function wishlists()
-    {
-        return $this->hasMany(Wishlist::class);
-    }
-
-    public function ratings()
-    {
-        return $this->hasMany(Rating::class);
-    }
-
-	public function carts()
-    {
-        return $this->hasMany(Cart::class);
-    }
-
-	public function address()
-    {
-        return $this->hasMany(Address::class);
-    }
-
-	public function profile()
-    {
-        return $this->hasOne(Profile::class);
-    }
-
-	public function main_address()
-	{
-		return $this->belongsTo(Address::class, 'main_address_id');
-	}
-
-
-    public function scopeGetAll($query)
-    {      
-        return $query->select([
-                    'id', 
-                    'name', 
-                    'username', 
-                    'email',
-                    'password',
-                    'main_address_id',
-					'email_verified_at',
-                ]);
-    }
 }

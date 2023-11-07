@@ -15,20 +15,6 @@ class Review extends BaseModel
     protected $table = 'reviews';
     protected $fillable = ['user_id', 'redeem_id', 'item_gift_id', 'review_text', 'review_rating', 'review_date'];
 
-    public function scopeGetAll($query)
-    {      
-        return $query->select([
-                    'id', 
-                    'user_id',
-                    'redeem_id', 
-                    'item_gift_id', 
-                    'review_text', 
-                    'review_rating', 
-                    'review_date',
-                    'created_at',
-                ]);
-    }
-
     public function users()
     {
         return $this->belongsTo(User::class, 'user_id');
@@ -42,5 +28,19 @@ class Review extends BaseModel
     public function redeems()
     {
         return $this->belongsTo(Redeem::class, 'redeem_id');
+    }
+    
+    public function scopeGetAll($query)
+    {      
+        return $query->select([
+                    'id', 
+                    'user_id',
+                    'redeem_id', 
+                    'item_gift_id', 
+                    'review_text', 
+                    'review_rating', 
+                    'review_date',
+                    'created_at',
+                ]);
     }
 }

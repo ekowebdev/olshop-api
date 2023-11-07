@@ -8,7 +8,6 @@ use App\Http\Models\Province;
 use App\Http\Models\Shipping;
 use App\Http\Models\BaseModel;
 use App\Http\Models\Subdistrict;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class City extends BaseModel

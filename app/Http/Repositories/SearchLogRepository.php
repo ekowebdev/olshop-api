@@ -5,9 +5,7 @@ namespace App\Http\Repositories;
 use Illuminate\Support\Arr;
 use App\Http\Models\SearchLog;
 use App\Exceptions\DataEmptyException;
-use BaoPham\DynamoDb\RawDynamoDbQuery;
 use Illuminate\Support\Facades\Request;
-use BaoPham\DynamoDb\DynamoDbQueryBuilder;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 class SearchLogRepository extends BaseRepository 

@@ -6,7 +6,6 @@ use App\Http\Models\User;
 use App\Http\Models\Variant;
 use App\Http\Models\ItemGift;
 use BaoPham\DynamoDb\DynamoDbModel;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Cart extends DynamoDbModel
 {

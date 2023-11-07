@@ -4,7 +4,6 @@ namespace App\Http\Services;
 
 use App\Exceptions\ValidationException;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Arr;
 
 class BaseService
 {

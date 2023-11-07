@@ -4,7 +4,6 @@ namespace App\Http\Controllers\API\v1;
 
 use App\Http\Services\PaymentLogService;
 use App\Http\Resources\PaymentLogResource;
-use App\Http\Resources\DeletedResource;
 use Illuminate\Support\Facades\Request;
 use App\Http\Controllers\BaseController;
 

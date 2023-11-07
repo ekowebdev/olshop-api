@@ -2,12 +2,8 @@
 
 namespace App\Http\Services;
 
-use App\Http\Models\User;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
 use App\Http\Models\Address;
-use Illuminate\Validation\Rule;
-use App\Rules\UniqueMainAddress;
 use Illuminate\Support\Facades\DB;
 use App\Http\Repositories\AddressRepository;
 
