@@ -27,17 +27,17 @@ class UserSeeder extends Seeder
         Permission::create(['name' => 'delete item gifts', 'guard_name' => 'api']);
         Permission::create(['name' => 'create item gifts', 'guard_name' => 'api']);
         Permission::create(['name' => 'view item gifts', 'guard_name' => 'api']);
-        $role_admin = Role::create(['name' => 'admin', 'guard_name' => 'api',]);
+        $role_admin = Role::create(['name' => 'admin', 'guard_name' => 'api']);
         $role_admin->givePermissionTo(Permission::all());
         $role_customer = Role::create(['name' => 'customer', 'guard_name' => 'api']);
         $role_customer->givePermissionTo(['view item gifts']);
-        $user = User::create([
+        $user_admin = User::create([
             'name' => 'Administrator',
             'username' => 'admin',
             'email' => 'admin@bakti.shop',
             'email_verified_at' => now(),
             'password' => Hash::make('123456'),
         ]);
-        $user->assignRole('admin');
+        $user_admin->assignRole('admin');
     }
 }
