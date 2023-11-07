@@ -79,8 +79,8 @@ class ItemGiftImageService extends BaseService
             $variant = Variant::where('id', $data_request['variant_id'])->where('item_gift_id', $data_request['item_gift_id'])->first();
             if(is_null($variant)) {
                 throw new ValidationException(json_encode(['item_gift_variants' => [trans('error.variant_not_found_in_item_gifts', ['id' => $data_request['item_gift_id']])]]));           }
-            $exist_variant = $this->repository->getSingleDataByItemGiftVariant($locale, $data_request['item_gift_id'], $data_request['variant_id']);
-            if(!is_null($exist_variant)){
+            $exists_variant = $this->repository->getSingleDataByItemGiftVariant($locale, $data_request['item_gift_id'], $data_request['variant_id']);
+            if(!is_null($exists_variant)){
                 throw new ValidationException(json_encode(['item_gift_images' => [trans('error.exists_image_variant_item_gifts', ['id' => $data_request['item_gift_id'], 'variant_id' => $data_request['variant_id']])]]));
             }
         }

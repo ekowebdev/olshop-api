@@ -9,6 +9,8 @@ use App\Http\Models\Variant;
 use App\Http\Models\ItemGift;
 use Illuminate\Support\Facades\DB;
 use App\Exceptions\ValidationException;
+use Illuminate\Database\QueryException;
+use App\Exceptions\ApplicationException;
 use App\Http\Repositories\CartRepository;
 use Aws\DynamoDb\Exception\DynamoDbException;
 
@@ -101,10 +103,10 @@ class CartService extends BaseService
                 }
             }
 
-            $exists = $this->repository->getByUserItemAndVariant($user->id, $data_request['item_gift_id'], $variant_id)->first();
+            $exists_cart = $this->repository->getByUserItemAndVariant($user->id, $data_request['item_gift_id'], $variant_id)->first();
             
-            if(!empty($exists)) {
-                $quantity = $exists->cart_quantity + intval($data_request['cart_quantity']);
+            if(!empty($exists_cart)) {
+                $quantity = $exists_cart->cart_quantity + intval($data_request['cart_quantity']);
 
                 if($item_gift->variants->count() > 0){
                     $real_quantity = $variant->variant_quantity;
@@ -145,7 +147,7 @@ class CartService extends BaseService
             ]);
         } catch (DynamoDbException $e) {
             DB::rollback();
-            throw new ValidationException(json_encode([$e->getMessage()]));
+            throw new ApplicationException(json_encode([$e->getMessage()]));
         }        
     }
 
@@ -161,17 +163,15 @@ class CartService extends BaseService
             'cart_quantity',
         ]);
 
-        $this->repository->validate($data_request, [
+        $this->repository->validate($data, [
             'cart_quantity' => [
                 'numeric',
             ],
         ]);
 
         DB::beginTransaction();
-        $check = $this->repository->getByUserItemAndVariant($check_data->user_id, $check_data->item_gift_id, $check_data->variant_id);
 
         $quantity = $data_request['cart_quantity'];
-
         $item_gift = ItemGift::find($check_data->item_gift_id);
 
         if($item_gift->variants->count() > 0){
@@ -187,6 +187,7 @@ class CartService extends BaseService
 
         $data_request['cart_quantity'] = intval($data_request['cart_quantity']);
         $check_data->update($data_request);
+
         DB::commit();
 
         return $this->repository->getSingleData($locale, $id);

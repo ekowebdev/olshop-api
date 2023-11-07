@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Models\RedeemItemGift;
 use App\Http\Services\RedeemService;
 use Illuminate\Database\QueryException;
+use App\Exceptions\ApplicationException;
 use App\Events\RealTimeNotificationEvent;
 use App\Http\Repositories\RedeemRepository;
 use App\Http\Repositories\ItemGiftRepository;
@@ -291,6 +292,7 @@ class RedeemService extends BaseService
             ]);
         } catch (QueryException $e) {
             DB::rollback();
+            throw new ApplicationException(json_encode([$e->getMessage()]));
         }        
     }
 

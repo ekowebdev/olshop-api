@@ -150,7 +150,6 @@ class ItemGiftService extends BaseService
             'item_gift_point' => 'item_gift_point',
             'total_rating' => 'total_rating',
             'total_redeem' => 'total_redeem',
-            'is_wishlist' => 'is_wishlist',
         ];
 
         $search_column = [
@@ -164,7 +163,6 @@ class ItemGiftService extends BaseService
             'item_gift_weight' => 'item_gift_weight',
             'total_rating' => 'total_rating',
             'total_redeem' => 'total_redeem',
-            'is_wishlist' => 'is_wishlist',
         ];
 
         $sortable_and_searchable_column = [

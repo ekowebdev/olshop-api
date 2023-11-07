@@ -7,6 +7,7 @@ use App\Http\Models\Variant;
 use App\Http\Models\ItemGift;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\QueryException;
+use App\Exceptions\ApplicationException;
 use App\Http\Repositories\VariantRepository;
 
 class VariantService extends BaseService
@@ -107,6 +108,7 @@ class VariantService extends BaseService
             DB::commit();
         } catch (QueryException $e) {
             DB::rollBack();
+            throw new ApplicationException(json_encode([$e->getMessage()]));
         }
 
         return $this->repository->getSingleData($locale, $result->id);
@@ -166,6 +168,7 @@ class VariantService extends BaseService
             DB::commit();
         } catch (QueryException $e) {
             DB::rollback();
+            throw new ApplicationException(json_encode([$e->getMessage()]));
         }
 
         return $this->repository->getSingleData($locale, $id);
@@ -190,6 +193,7 @@ class VariantService extends BaseService
             DB::commit();
         } catch (QueryException $e) {
             DB::rollback();
+            throw new ApplicationException(json_encode([$e->getMessage()]));
         }
 
         return $result;
