@@ -46,6 +46,8 @@ class RedeemResource extends JsonResource
                             'variant_quantity' => $redeem_item_gift->variants->variant_quantity,
                             'variant_point' => $redeem_item_gift->variants->variant_point,
                             'fvariant_point' => format_money(strval($redeem_item_gift->variants->variant_point)),
+                            'variant_weight' => $redeem_item_gift->variants->variant_weight,
+                            'fvariant_weight' => $redeem_item_gift->variants->variant_weight . ' Gram',
                         ] : null,
                 ];
             }),
