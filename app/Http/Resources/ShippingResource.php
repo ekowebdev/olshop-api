@@ -75,6 +75,7 @@ class ShippingResource extends JsonResource
             'description' => $this->description,
             'cost' => $this->cost,
             'etd' => $this->etd,
+            'resi' => $this->resi,
         ];
     }
 

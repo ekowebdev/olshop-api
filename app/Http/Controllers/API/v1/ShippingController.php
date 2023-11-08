@@ -33,6 +33,12 @@ class ShippingController extends BaseController
         return new ShippingResource($data);
     }
 
+    public function set_resi($locale, $id)
+    {
+        $data = $this->service->set_resi($locale, $id, Request::all());
+        return new ShippingResource($data);
+    }
+
     public function delete($locale, $id)
     {
         $data = $this->service->delete($locale, $id, Request::all());

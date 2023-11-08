@@ -18,5 +18,5 @@ return [
 	"exists_image_variant_item_gifts"             => "Item gift ID: :id dan varian ID: :variant_id sudah memiliki gambar",
 	"invalid_signature_midtrans"                  => "Tanda tangan Midtrans tidak valid",
 	"main_address_exists"                         => "User ID: :id sudah memiliki alamat utama",
-	"redeem_not_completed"                        => "Anda tidak dapat melakukan review karena status redeem ID: :id tidak selesai",
+	"redeem_not_completed"                        => "Anda tidak dapat melakukan ini karena status pembayaran redeem ID: :id belum selesai",
 ];

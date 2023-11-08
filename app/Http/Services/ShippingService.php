@@ -2,8 +2,10 @@
 
 namespace App\Http\Services;
 
+use Illuminate\Support\Arr;
 use App\Http\Models\Shipping;
 use Illuminate\Support\Facades\DB;
+use App\Exceptions\ValidationException;
 use App\Http\Repositories\ShippingRepository;
 
 class ShippingService extends BaseService
@@ -22,7 +24,8 @@ class ShippingService extends BaseService
             'origin' => 'origin',
             'destination' => 'destination',
             'courier' => 'courier',
-            'cart_quantity' => 'cart_quantity',
+            'service' => 'service',
+            'resi' => 'resi',
         ];
 
         $search_column = [
@@ -31,6 +34,7 @@ class ShippingService extends BaseService
             'destination' => 'destination',
             'courier' => 'courier',
             'service' => 'service',
+            'resi' => 'resi',
         ];
 
         $sortable_and_searchable_column = [
@@ -44,6 +48,34 @@ class ShippingService extends BaseService
 
     public function getSingleData($locale, $id)
     {
+        return $this->repository->getSingleData($locale, $id);
+    }
+
+    public function set_resi($locale, $id, $data)
+    {
+        $check_data = $this->repository->getSingleData($locale, $id);
+
+        $data = array_merge([
+            'resi' => $check_data->resi,
+        ], $data);
+
+        $data_request = Arr::only($data, [
+            'resi',
+        ]);
+
+        $this->repository->validate($data_request, [
+            'resi' => [
+                'string',
+            ],
+        ]);
+
+        DB::beginTransaction();
+        if($check_data->redeems->redeem_status != 'success'){
+            throw new ValidationException(json_encode(['redeem_status' => [trans('error.redeem_not_completed', ['id' => $check_data->redeem_id])]]));
+        }
+        $check_data->update($data_request);
+        DB::commit();
+
         return $this->repository->getSingleData($locale, $id);
     }
 

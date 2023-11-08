@@ -18,5 +18,5 @@ return [
 	"exists_image_variant_item_gifts"             => "Item gift ID: :id and variant ID: :variant_id has exists images",
 	"invalid_signature_midtrans"                  => "Invalid signature Midtrans",
 	"main_address_exists"                         => "User ID: :id already has a main address",
-	"redeem_not_completed"                        => "You cannot review because the redeem status of ID: :id is not completed",
+	"redeem_not_completed"                        => "You cannot do this because the ID: :id redeem payment status is not yet complete",
 ];
