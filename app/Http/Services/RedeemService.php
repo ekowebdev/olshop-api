@@ -348,7 +348,7 @@ class RedeemService extends BaseService
         $check_data = $this->repository->getSingleDataStatusNotSuccess($locale, $id);
         
         DB::beginTransaction();
-        if($check_data->redeem_status != 'success'){
+        if($check_data->redeem_status != 'success' && $check_data->redeem_status != 'canceled'){
             $redeem_item_gifts = $check_data->redeem_item_gifts()->get();
             foreach ($redeem_item_gifts as $redeem_item) {
                 $item_gift = ItemGift::find($redeem_item->item_gift_id);
