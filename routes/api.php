@@ -56,7 +56,6 @@ Route::middleware(['xssclean'])->group(function () {
                 // RajaOngkir
                 Route::get('/rajaongkir/province', '\App\Http\Controllers\API\v1\RajaOngkirController@getProvince');
                 Route::get('/rajaongkir/city', '\App\Http\Controllers\API\v1\RajaOngkirController@getCity');
-                Route::post('/rajaongkir/cost', '\App\Http\Controllers\API\v1\RajaOngkirController@getCost');
             });
             Route::group(['middleware' => ['role:admin|customer']], function () {
                 // User
@@ -110,6 +109,10 @@ Route::middleware(['xssclean'])->group(function () {
                 Route::get('/notifications/user/{userId}', '\App\Http\Controllers\API\v1\NotificationController@showByUser');
                 Route::put('/notifications/{id}', '\App\Http\Controllers\API\v1\NotificationController@update');
                 Route::delete('/notifications/{id}', '\App\Http\Controllers\API\v1\NotificationController@delete');
+                // RajaOngkir
+                Route::post('/rajaongkir/cost', '\App\Http\Controllers\API\v1\RajaOngkirController@getCost');
+                // Track Resi
+                Route::post('/track/resi', '\App\Http\Controllers\API\v1\TrackResiController@track');
             });
             Route::post('/logout', '\App\Http\Controllers\API\v1\Auth\AuthController@logout');
         });

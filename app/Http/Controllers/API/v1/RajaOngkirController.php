@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\API\v1;
 
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Request;
 use App\Http\Controllers\BaseController;
 use App\Http\Services\RajaOngkirService;
 
@@ -33,8 +33,8 @@ class RajaOngkirController extends BaseController
         return $this->service->getCity($locale, $id, $province_id, $page, $per_page);
     }
 
-    public function getCost($locale, Request $request)
+    public function getCost($locale)
     {
-        return $this->service->getCost($locale, $request);
+        return $this->service->getCost($locale, Request::all());
     }
 }

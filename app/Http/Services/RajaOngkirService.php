@@ -2,6 +2,7 @@
 
 namespace App\Http\Services;
 
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Pagination\Paginator;
 use App\Exceptions\DataEmptyException;
@@ -150,27 +151,28 @@ class RajaOngkirService extends BaseService
         return $response;
     }
 
-    public function getCost($locale, $request)
+    public function getCost($locale, $data)
     {
-        $request->validate([
-            'origin_city' => 'required',
-            'destination_city' => 'required',
-            'weight' => 'required|integer',
-            'courier' => 'required|in:jne,pos,tiki',
-        ]);
-
-        $data_request = $request->only([
+        $data_request = Arr::only($data, [
             'origin_city',
             'destination_city',
             'weight',
             'courier',
         ]);
 
+        $this->validate($data_request, [
+                'origin_city' => 'required',
+                'destination_city' => 'required',
+                'weight' => 'required|integer',
+                'courier' => 'required|in:jne,pos,tiki',
+            ]
+        );
+
         $body = http_build_query([
-            'origin' => $request['origin_city'],
-            'destination' => $request['destination_city'],
-            'weight' => $request['weight'],
-            'courier' => $request['courier'],
+            'origin' => $data_request['origin_city'],
+            'destination' => $data_request['destination_city'],
+            'weight' => $data_request['weight'],
+            'courier' => $data_request['courier'],
         ]);
 
         $curl = curl_init();
