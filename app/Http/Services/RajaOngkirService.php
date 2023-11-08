@@ -75,7 +75,7 @@ class RajaOngkirService extends BaseService
         if($collection->isEmpty()) throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => 'Province'], $locale));
 
         if(is_multidimensional_array($collection->toArray())) {
-            $response = response()->json($this->format_json($collection, $page, $per_page, ['path' => 'http://localhost:9000/api/v1/id/rajaongkir/get-province']));
+            $response = response()->json($this->format_json($collection, $page, $per_page, ['path' => env('APP_URL') . '/api/v1/id/rajaongkir/get-province']));
         } else {
             $response = response()->json([
                 'data' => $collection
@@ -141,7 +141,7 @@ class RajaOngkirService extends BaseService
         if($collection->isEmpty()) throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => 'City'], $locale));
 
         if(is_multidimensional_array($collection->toArray())) {
-            $response = response()->json($this->format_json($collection, $page, $per_page, ['path' => 'http://localhost:9000/api/v1/id/rajaongkir/get-city']));
+            $response = response()->json($this->format_json($collection, $page, $per_page, ['path' => env('APP_URL') . '/api/v1/id/rajaongkir/get-city']));
         } else {
             $response = response()->json([
                 'data' => $collection

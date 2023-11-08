@@ -22,6 +22,10 @@ Route::middleware(['xssclean'])->group(function () {
                 Route::get('/users', '\App\Http\Controllers\API\v1\UserController@index');
                 Route::post('/users', '\App\Http\Controllers\API\v1\UserController@store');
                 Route::delete('/users/{id}', '\App\Http\Controllers\API\v1\UserController@delete');
+                // Slider
+                Route::post('/slider', '\App\Http\Controllers\API\v1\SliderController@store');
+                Route::post('/slider/{id}', '\App\Http\Controllers\API\v1\SliderController@update');
+                Route::delete('/slider/{id}', '\App\Http\Controllers\API\v1\SliderController@delete');
                 // Category
                 Route::post('/category', '\App\Http\Controllers\API\v1\CategoryController@store');
                 Route::post('/category/{id}', '\App\Http\Controllers\API\v1\CategoryController@update');
@@ -118,6 +122,10 @@ Route::middleware(['xssclean'])->group(function () {
             Route::post('/logout', '\App\Http\Controllers\API\v1\Auth\AuthController@logout');
         });
         // Route::middleware(['client','auth:api'])->group(function () {
+            // Slider
+            Route::get('/slider/active', '\App\Http\Controllers\API\v1\SliderController@showByActive');
+            Route::get('/slider', '\App\Http\Controllers\API\v1\SliderController@index');
+            Route::get('/slider/{id}', '\App\Http\Controllers\API\v1\SliderController@show');
             // Province
             Route::get('/province', '\App\Http\Controllers\API\v1\ProvinceController@index');
             Route::get('/province/{id}', '\App\Http\Controllers\API\v1\ProvinceController@show');
