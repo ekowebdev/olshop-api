@@ -3,6 +3,7 @@
 namespace App\Http\Services;
 
 use App\Http\Models\Redeem;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use App\Http\Models\Variant;
 use App\Http\Models\ItemGift;
@@ -296,6 +297,52 @@ class RedeemService extends BaseService
         }        
     }
 
+    public function cancel($locale, $id, $data)
+    {
+        $check_data = $this->repository->getSingleData($locale, $id);
+
+        $data = array_merge([
+            'redeem_status' => $check_data->redeem_status,
+        ], $data);
+
+        $data_request = Arr::only($data, [
+            'redeem_status',
+        ]);
+
+        $this->repository->validate($data_request, [
+                'redeem_status' => [
+                    'required',
+                    'in:canceled'
+                ],
+            ]
+        );
+
+        DB::beginTransaction();
+        if($check_data->redeem_status != 'success'){
+            $redeem_item_gifts = $check_data->redeem_item_gifts()->get();
+            foreach ($redeem_item_gifts as $redeem_item) {
+                $item_gift = ItemGift::find($redeem_item->item_gift_id);
+                $variant = Variant::find($redeem_item->variant_id);
+                if ($item_gift) {
+                    $item_gift->item_gift_quantity += $redeem_item->redeem_quantity;
+                    $item_gift->save();
+                }
+                if ($variant) {
+                    $variant->variant_quantity += $redeem_item->redeem_quantity;
+                    $variant->save();
+                }
+            }
+        }
+        $check_data->update($data_request);
+        DB::commit();
+
+        return response()->json([
+            'message' => trans('all.success_cancel_redeem'),
+            'status' => 200,
+            'error' => 0,
+        ]);
+    }
+
     public function delete($locale, $id)
     {
         $check_data = $this->repository->getSingleData($locale, $id);
@@ -316,7 +363,7 @@ class RedeemService extends BaseService
                 }
             }
         }
-        $result = $check_data->delete();
+        $result = $check_data->update(['deleted_at' => now()->format('Y-m-d H:i:s')]);
         DB::commit();
 
         return $result;

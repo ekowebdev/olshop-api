@@ -15,7 +15,8 @@ class Redeem extends BaseModel
     use HasFactory;
 
     protected $table = 'redeems';
-    protected $fillable = ['user_id', 'address_id', 'redeem_code', 'total_point', 'shipping_fee', 'total_amount', 'note', 'redeem_date', 'snap_url', 'metadata', 'redeem_status'];
+    protected $fillable = ['user_id', 'address_id', 'redeem_code', 'total_point', 'shipping_fee', 'total_amount', 'note', 'redeem_date', 'snap_url', 'metadata', 'redeem_status', 'deleted_at'];
+    protected $dates = ['deleted_at'];
 
     public function users()
     {
@@ -46,6 +47,26 @@ class Redeem extends BaseModel
     {      
         return $query->select([
                     'id', 
+                    'user_id', 
+                    'address_id', 
+                    'redeem_code', 
+                    'total_point', 
+                    'shipping_fee', 
+                    'total_amount',
+                    'redeem_date',
+                    'note',
+                    'snap_url', 
+                    'metadata', 
+                    'redeem_status',
+                    'created_at',
+                ])
+                ->whereNull('deleted_at');
+    }
+
+    public function scopeGetAllWithTrashed($query)
+    {      
+        return $query->select([
+                    'id',
                     'user_id', 
                     'address_id', 
                     'redeem_code', 

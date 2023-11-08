@@ -38,6 +38,11 @@ class RedeemController extends BaseController
         return $this->service->checkout($locale, Request::all());
     }
 
+    public function cancel($locale, $id)
+    {
+        return $this->service->cancel($locale, $id, Request::all());
+    }
+
     public function delete($locale, $id)
     {
         $data = $this->service->delete($locale, $id, Request::all());
