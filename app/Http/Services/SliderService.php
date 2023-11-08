@@ -194,7 +194,7 @@ class SliderService extends BaseService
         $check_data->link = $data_request['link'] ?? $check_data->link;
         $check_data->sort = $data_request['sort'] ?? $check_data->sort;
         $check_data->start_date = $data_request['start_date'] ?? $check_data->start_date;
-        $check_data->end_date = $data_request['end_date'] ?? $check_data->start_date;
+        $check_data->end_date = $data_request['end_date'] ?? $check_data->end_date;
         $check_data->save();
         DB::commit();
 
