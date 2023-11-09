@@ -57,6 +57,14 @@ class ShippingResource extends JsonResource
                                 'variant_quantity' => $redeem_item_gift->variants->variant_quantity,
                                 'variant_point' => $redeem_item_gift->variants->variant_point,
                                 'fvariant_point' => format_money(strval($redeem_item_gift->variants->variant_point)),
+                                'variant_weight' => $redeem_item_gift->variants->variant_weight,
+                                'fvariant_weight' => $redeem_item_gift->variants->variant_weight . ' Gram',
+                                'variant_image' => ($redeem_item_gift->variants->item_gift_images) ? [
+                                    'id' => $redeem_item_gift->variants->item_gift_images->id,
+                                    'image' => $redeem_item_gift->variants->item_gift_images->item_gift_image,
+                                    'image_url' => $redeem_item_gift->variants->item_gift_images->item_gift_image_url,
+                                    'image_thumb_url' => $redeem_item_gift->variants->item_gift_images->item_gift_image_thumb_url,
+                                ] : null,
                             ] : null,
                     ];
                 })

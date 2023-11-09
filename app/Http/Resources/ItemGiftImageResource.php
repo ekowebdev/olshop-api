@@ -34,6 +34,8 @@ class ItemGiftImageResource extends JsonResource
                     'variant_quantity' => $this->variants->variant_quantity,
                     'variant_point' => $this->variants->variant_point,
                     'fvariant_point' => format_money(strval($this->variants->variant_point)),
+                    'variant_weight' => $this->variants->variant_weight,
+                    'fvariant_weight' => $this->variants->variant_weight . ' Gram',
                 ] : null,
             'item_gift_image' => $this->item_gift_image,
             'item_gift_image_url' => $this->item_gift_image_url,

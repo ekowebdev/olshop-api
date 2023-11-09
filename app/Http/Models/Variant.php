@@ -5,6 +5,7 @@ namespace App\Http\Models;
 use App\Http\Models\Cart;
 use App\Http\Models\ItemGift;
 use App\Http\Models\BaseModel;
+use App\Http\Models\ItemGiftImage;
 use App\Http\Models\RedeemItemGift;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -28,6 +29,11 @@ class Variant extends BaseModel
     public function carts()
     {
         return $this->hasMany(Cart::class);
+    }
+
+    public function item_gift_images()
+    {
+        return $this->hasOne(ItemGiftImage::class);
     }
 
     public function getVariantWeightAttribute($value)

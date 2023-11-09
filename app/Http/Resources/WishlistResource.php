@@ -42,6 +42,12 @@ class WishlistResource extends JsonResource
                         'fvariant_point' => format_money(strval($variant->variant_point)),
                         'variant_weight' => $variant->variant_weight,
                         'fvariant_weight' => $variant->variant_weight . ' Gram',
+                        'variant_image' => ($variant->item_gift_images) ? [
+                            'id' => $variant->item_gift_images->id,
+                            'image' => $variant->item_gift_images->item_gift_image,
+                            'image_url' => $variant->item_gift_images->item_gift_image_url,
+                            'image_thumb_url' => $variant->item_gift_images->item_gift_image_thumb_url,
+                        ] : null,
                     ];
                 }),
             ],

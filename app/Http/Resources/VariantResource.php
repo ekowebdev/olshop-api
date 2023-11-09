@@ -40,6 +40,12 @@ class VariantResource extends JsonResource
             'fvariant_point' => format_money(strval($this->variant_point)),
             'variant_weight' => $this->variant_weight,
             'fvariant_weight' => $this->variant_weight . ' Gram',
+            'variant_image' => ($this->item_gift_images) ? [
+                'id' => $this->item_gift_images->id,
+                'image' => $this->item_gift_images->item_gift_image,
+                'image_url' => $this->item_gift_images->item_gift_image_url,
+                'image_thumb_url' => $this->item_gift_images->item_gift_image_thumb_url,
+            ] : null,
         ];
     }
 

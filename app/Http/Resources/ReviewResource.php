@@ -40,9 +40,9 @@ class ReviewResource extends JsonResource
                             'item_gift_description' => $redeem_item_gift->item_gifts->item_gift_description,
                             'item_gift_spesification' => json_decode($redeem_item_gift->item_gifts->item_gift_spesification) ?? [],
                             'item_gift_point' => $redeem_item_gift->item_gifts->item_gift_point ?? 0,
-                            'fitem_gift_point' => $this->format_item_gift_point($redeem_item_gift),
+                            'fitem_gift_point' => $this->format_item_gift_point($redeem_item_gift->item_gifts),
                             'item_gift_weight' => $redeem_item_gift->item_gifts->item_gift_weight ?? 0,
-                            'fitem_gift_weight' => $this->format_item_gift_weight($redeem_item_gift),
+                            'fitem_gift_weight' => $this->format_item_gift_weight($redeem_item_gift->item_gifts),
                             'item_gift_status' => $redeem_item_gift->item_gifts->item_gift_status,
                             'item_gift_images' => $redeem_item_gift->item_gifts->item_gift_images->map(function ($image) {
                                 return [
@@ -61,6 +61,12 @@ class ReviewResource extends JsonResource
                                 'variant_quantity' => $redeem_item_gift->variants->variant_quantity,
                                 'variant_point' => $redeem_item_gift->variants->variant_point,
                                 'fvariant_point' => format_money(strval($redeem_item_gift->variants->variant_point)),
+                                'variant_image' => ($redeem_item_gift->variants->item_gift_images) ? [
+                                    'id' => $redeem_item_gift->variants->item_gift_images->id,
+                                    'image' => $redeem_item_gift->variants->item_gift_images->item_gift_image,
+                                    'image_url' => $redeem_item_gift->variants->item_gift_images->item_gift_image_url,
+                                    'image_thumb_url' => $redeem_item_gift->variants->item_gift_images->item_gift_image_thumb_url,
+                                ] : null,
                             ] : null,
                     ];
                 })
@@ -97,6 +103,12 @@ class ReviewResource extends JsonResource
                         'fvariant_point' => format_money(strval($variant->variant_point)),
                         'variant_weight' => $variant->variant_weight,
                         'fvariant_weight' => $variant->variant_weight . ' Gram',
+                        'variant_image' => ($variant->item_gift_images) ? [
+                            'id' => $variant->item_gift_images->id,
+                            'image' => $variant->item_gift_images->item_gift_image,
+                            'image_url' => $variant->item_gift_images->item_gift_image_url,
+                            'image_thumb_url' => $variant->item_gift_images->item_gift_image_thumb_url,
+                        ] : null,
                     ];
                 }),
             ],

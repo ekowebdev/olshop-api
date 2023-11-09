@@ -31,16 +31,6 @@ class ItemGiftImage extends BaseModel
         return $url ?? null;
     }
 
-    public function scopeGetAll($query)
-    {      
-        return $query->select([
-                    'id',
-                    'item_gift_id', 
-                    'variant_id', 
-                    'item_gift_image',
-                ]);
-    }
-
     public function item_gifts()
     {
         return $this->belongsTo(ItemGift::class, 'item_gift_id');
@@ -49,5 +39,15 @@ class ItemGiftImage extends BaseModel
     public function variants()
     {
         return $this->belongsTo(Variant::class, 'variant_id');
+    }
+
+    public function scopeGetAll($query)
+    {      
+        return $query->select([
+                    'id',
+                    'item_gift_id', 
+                    'variant_id', 
+                    'item_gift_image',
+                ]);
     }
 }
