@@ -11,6 +11,7 @@ class VariantResource extends JsonResource
         return [
             'id' => $this->id,
             'variant_name' => $this->variant_name,
+            'variant_slug' => $this->variant_slug,
             'item_gifts' => [
                 'id' => $this->item_gifts->id,
                 'item_gift_code' => $this->item_gifts->item_gift_code,

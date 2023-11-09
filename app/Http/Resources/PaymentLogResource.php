@@ -54,6 +54,7 @@ class PaymentLogResource extends JsonResource
                             ? [
                                 'id' => $redeem_item_gift->variants->id,
                                 'variant_name' => $redeem_item_gift->variants->variant_name,
+                                'variant_slug' => $redeem_item_gift->variants->variant_slug,
                                 'variant_quantity' => $redeem_item_gift->variants->variant_quantity,
                                 'variant_point' => $redeem_item_gift->variants->variant_point,
                                 'fvariant_point' => format_money(strval($redeem_item_gift->variants->variant_point)),

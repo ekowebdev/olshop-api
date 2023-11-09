@@ -135,7 +135,7 @@ class SliderService extends BaseService
         $result = $this->model->create([
             'title' => $data_request['title'],
             'description' => $data_request['description'],
-            'link' => $data_request['link'],
+            'link' => env('FRONT_URL') . '/' . $data_request['link'],
             'sort' => $data_request['sort'],
             'start_date' => $data_request['start_date'],
             'end_date' => $data_request['end_date'],
@@ -191,7 +191,7 @@ class SliderService extends BaseService
         }
         $check_data->title = $data_request['title'] ?? $check_data->title;
         $check_data->description = $data_request['description'] ?? $check_data->description;
-        $check_data->link = $data_request['link'] ?? $check_data->link;
+        $check_data->link = isset($data_request['link']) ? env('FRONT_URL') . '/' . $data_request['link'] : $check_data->link;
         $check_data->sort = $data_request['sort'] ?? $check_data->sort;
         $check_data->start_date = $data_request['start_date'] ?? $check_data->start_date;
         $check_data->end_date = $data_request['end_date'] ?? $check_data->end_date;

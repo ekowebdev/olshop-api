@@ -3,6 +3,7 @@
 namespace App\Http\Services;
 
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use App\Http\Models\Variant;
 use App\Http\Models\ItemGift;
 use Illuminate\Support\Facades\DB;
@@ -58,6 +59,7 @@ class VariantService extends BaseService
         $data_request = Arr::only($data, [
             'item_gift_id',
             'variant_name',
+            'variant_slug',
             'variant_point',
             'variant_weight',
             'variant_quantity',
@@ -71,6 +73,7 @@ class VariantService extends BaseService
                 'variant_name' => [
                     'required',
                     'string',
+                    'unique:variants,variant_name',
                 ],
                 'variant_point' => [
                     'required',
@@ -90,6 +93,7 @@ class VariantService extends BaseService
         try {
             DB::beginTransaction();
             $item_gift = ItemGift::find($data_request['item_gift_id']);
+            $data_request['variant_slug'] = $item_gift->item_gift_slug . '-' . Str::slug($data_request['variant_name']);
             if($item_gift->variants->count() > 0){
                 $quantity = $item_gift->item_gift_quantity + $data_request['variant_quantity'];
                 $point = (min($item_gift->variants->pluck('variant_point')->toArray()) > (int) $data_request['variant_point']) ? (int) $data_request['variant_point'] : min($item_gift->variants->pluck('variant_point')->toArray());
@@ -121,6 +125,7 @@ class VariantService extends BaseService
         $data = array_merge([
             'item_gift_id' => $check_data->item_gift_id,
             'variant_name' => $check_data->variant_name,
+            'variant_slug' => $check_data->variant_slug,
             'variant_point' => $check_data->variant_point,
             'variant_weight' => $check_data->variant_weight,
             'variant_quantity' => $check_data->variant_quantity,
@@ -129,6 +134,7 @@ class VariantService extends BaseService
         $data_request = Arr::only($data, [
             'item_gift_id',
             'variant_name',
+            'variant_slug',
             'variant_point',
             'variant_weight',
             'variant_quantity',
@@ -140,6 +146,7 @@ class VariantService extends BaseService
                 ],
                 'variant_name' => [
                     'string',
+                    'unique:variants,variant_name,' . $id,
                 ],
                 'variant_point' => [
                     'numeric',
@@ -156,6 +163,7 @@ class VariantService extends BaseService
         try {
             DB::beginTransaction();
             $item_gift = ItemGift::find($check_data->item_gift_id);
+            $data_request['variant_slug'] = $item_gift->item_gift_slug . '-' . Str::slug($data_request['variant_name']);
             $check_data->update($data_request);
             $weight = min($check_data->where('item_gift_id', $data_request['item_gift_id'])->pluck('variant_weight')->toArray());
             $point = min($check_data->where('item_gift_id', $data_request['item_gift_id'])->pluck('variant_point')->toArray());

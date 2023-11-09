@@ -37,6 +37,7 @@ class CartResource extends JsonResource
                 ? [
                     'id' => $this->variants->id,
                     'variant_name' => $this->variants->variant_name,
+                    'variant_slug' => $this->variants->variant_slug,
                     'variant_quantity' => $this->variants->variant_quantity,
                     'variant_point' => $this->variants->variant_point,
                     'fvariant_point' => format_money(strval($this->variants->variant_point)),

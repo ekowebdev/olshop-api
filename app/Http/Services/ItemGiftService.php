@@ -293,6 +293,7 @@ class ItemGiftService extends BaseService
 
         $this->repository->validate($data_request, [
                 'item_gift_name' => [
+                    'string',
                     'unique:item_gifts,item_gift_name,' . $id,
                 ],
                 'category_id' => [
