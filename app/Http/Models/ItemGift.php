@@ -21,7 +21,7 @@ class ItemGift extends BaseModel
     protected $primaryKey = 'id';
     protected $table = 'item_gifts';
     protected $fillable = ['id', 'item_gift_code', 'item_gift_name', 'category_id', 'brand_id', 'item_gift_slug', 'item_gift_description', 'item_gift_spesification', 'item_gift_point', 'item_gift_weight', 'item_gift_quantity', 'item_gift_status'];
-    protected $appends = ['is_wishlist'];
+    protected $appends = ['total_reviews', 'total_rating', 'total_redeem', 'is_wishlist'];
 
     public function item_gift_images()
     {
@@ -82,6 +82,25 @@ class ItemGift extends BaseModel
             ->get();
 
         return (count($wishlists) > 0) ? 1 : 0;
+    }
+
+    public function getTotalReviewsAttribute()
+    {
+        $total_review = Review::where('item_gift_id', $this->getKey())->count();
+
+        return $total_review;
+    }
+
+    public function getTotalRatingAttribute()
+    {
+        $total_rating = Review::selectRaw('COALESCE(AVG(review_rating), 0) AS total_rating')->where('item_gift_id', $this->getKey())->first()->total_rating;
+        return $total_rating;
+    }
+
+    public function getTotalRedeemAttribute()
+    {
+        $total_redeem = RedeemItemGift::selectRaw('SUM(redeem_quantity) AS total_redeem')->where('item_gift_id', $this->getKey())->first()->total_redeem;
+        return $total_redeem;
     }
 
     public function scopeGetAll($query)

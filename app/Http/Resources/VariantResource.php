@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use Carbon\Carbon;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class VariantResource extends JsonResource
@@ -34,6 +35,47 @@ class VariantResource extends JsonResource
                         'item_gift_image_thumbnail_url' => $image->item_gift_image_thumb_url,
                     ];
                 }),
+                'variants' => $this->item_gifts->variants->map(function ($variant) {
+                    return [
+                        'id' => $variant->id,
+                        'variant_name' => $variant->variant_name,
+                        'variant_slug' => $variant->variant_slug,
+                        'variant_quantity' => $variant->variant_quantity,
+                        'variant_point' => $variant->variant_point,
+                        'fvariant_point' => format_money(strval($variant->variant_point)),
+                        'variant_weight' => $variant->variant_weight,
+                        'fvariant_weight' => $variant->variant_weight . ' Gram',
+                        'variant_image' => ($variant->item_gift_images) ? [
+                            'id' => $variant->item_gift_images->id,
+                            'image' => $variant->item_gift_images->item_gift_image,
+                            'image_url' => $variant->item_gift_images->item_gift_image_url,
+                            'image_thumb_url' => $variant->item_gift_images->item_gift_image_thumb_url,
+                        ] : null,
+                    ];
+                }),
+                'reviews' => $this->item_gifts->reviews->map(function ($review) {
+                    return [
+                        'id' => $review->id,
+                        'users' => [
+                            'id' => $review->users->id,
+                            'name' => $review->users->name,
+                            'username' => $review->users->username,
+                            'email' => $review->users->email,
+                            'email_verified_at' => $review->users->email_verified_at,
+                            'avatar_url' => ($review->users->profile) ? $review->users->profile->avatar_url : null,
+                        ],
+                        'redeem_id' => $review->redeem_id,
+                        'item_gift_id' => $review->item_gift_id,
+                        'review_text' => $review->review_text,
+                        'review_rating' => (float) $review->review_rating,
+                        'review_date' => $review->review_date,
+                        'freview_date' => Carbon::parse($review->created_at)->diffForHumans(),
+                    ];
+                }),
+                'total_reviews' => $this->item_gifts->total_reviews,
+                'total_rating' => floatval(rtrim($this->item_gifts->total_rating, '0')),
+                'total_redeem' => (int) $this->item_gifts->total_redeem,
+                'is_wishlist' => $this->item_gifts->is_wishlist
             ],
             'variant_quantity' => $this->variant_quantity,
             'variant_point' => $this->variant_point,
