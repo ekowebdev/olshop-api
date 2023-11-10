@@ -21,6 +21,7 @@ class RedeemResource extends JsonResource
                         'id' => $redeem_item_gift->item_gifts->id,
                         'item_gift_code' => $redeem_item_gift->item_gifts->item_gift_code,
                         'item_gift_name' => $redeem_item_gift->item_gifts->item_gift_name,
+                        'item_gift_slug' => $redeem_item_gift->item_gifts->item_gift_slug,
                         'category' => ($redeem_item_gift->item_gifts->category_id != null) ? $redeem_item_gift->item_gifts->category->makeHidden(['created_at', 'updated_at']) : null,
                         'brand' => ($redeem_item_gift->item_gifts->brand_id != null) ? $redeem_item_gift->item_gifts->brand->makeHidden(['created_at', 'updated_at']) : null,
                         'item_gift_description' => $redeem_item_gift->item_gifts->item_gift_description,
