@@ -60,8 +60,11 @@ class RedeemResource extends JsonResource
                 ];
             }),
             'total_point' => $this->total_point,
+            'ftotal_point' => format_money(strval($this->total_point ?? 0)),
             'shipping_fee' => $this->shipping_fee,
+            'fshipping_fee' => format_money(strval($this->shipping_fee ?? 0)),
             'total_amount' => $this->total_amount,
+            'ftotal_amount' => format_money(strval($this->total_amount ?? 0)),
             'redeem_date' => $this->redeem_date,
             'note' => $this->note,
             'redeem_date' => Carbon::parse($this->created_at)->format('Y-m-d H:i:s'),
