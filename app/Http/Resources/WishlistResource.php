@@ -74,7 +74,6 @@ class WishlistResource extends JsonResource
                 'total_reviews' => $this->item_gifts->total_reviews,
                 'total_rating' => floatval(rtrim($this->item_gifts->total_rating, '0')),
                 'total_redeem' => (int) $this->item_gifts->total_redeem,
-                // 'is_wishlist' => $this->item_gifts->is_wishlist
             ],
             'users' => [
                 'id' => $this->users->id,

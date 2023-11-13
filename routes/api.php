@@ -57,7 +57,7 @@ Route::middleware(['xssclean'])->group(function () {
                 // Shipping
                 Route::get('/shippings', '\App\Http\Controllers\API\v1\ShippingController@index');
                 Route::get('/shippings/{id}', '\App\Http\Controllers\API\v1\ShippingController@show');
-                Route::put('/shippings/resi/{id}', '\App\Http\Controllers\API\v1\ShippingController@set_resi');
+                Route::put('/shippings/{id}', '\App\Http\Controllers\API\v1\ShippingController@update');
                 // RajaOngkir
                 Route::get('/rajaongkir/province', '\App\Http\Controllers\API\v1\RajaOngkirController@getProvince');
                 Route::get('/rajaongkir/city', '\App\Http\Controllers\API\v1\RajaOngkirController@getCity');

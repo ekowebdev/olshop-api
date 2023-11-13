@@ -53,21 +53,27 @@ class ShippingService extends BaseService
         return $this->repository->getSingleData($locale, $id);
     }
 
-    public function set_resi($locale, $id, $data)
+    public function update($locale, $id, $data)
     {
         $check_data = $this->repository->getSingleData($locale, $id);
 
         $data = array_merge([
             'resi' => $check_data->resi,
+            'status' => $check_data->status,
         ], $data);
 
         $data_request = Arr::only($data, [
             'resi',
+            'status',
         ]);
 
         $this->repository->validate($data_request, [
             'resi' => [
                 'string',
+            ],
+            'status' => [
+                'string',
+                'in:on progress,delivered',
             ],
         ]);
 
