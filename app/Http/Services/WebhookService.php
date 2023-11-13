@@ -123,7 +123,10 @@ class WebhookService extends BaseService
             }
 
             $payment_logs = PaymentLog::where('redeem_id', $redeem->id);
-            $payment_logs->update(['payment_status' => 'success']);
+            $payment_logs->update([
+                'payment_status' => $transaction_status, 
+                'raw_response' => json_encode($data)
+            ]);
 
             SendEmailRedeemConfirmationJob::dispatch($redeem->users->email, $header_data, $detail_data);
         }
