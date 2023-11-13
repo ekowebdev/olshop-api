@@ -17,6 +17,7 @@ class RedeemResource extends JsonResource
                     'redeem_id' => $redeem_item_gift->redeem_id,
                     'redeem_quantity' => $redeem_item_gift->redeem_quantity,
                     'redeem_point' => $redeem_item_gift->redeem_point,
+                    'fredeem_point' => format_money(strval($redeem_item_gift->redeem_point ?? 0)),
                     'item_gifts' => [
                         'id' => $redeem_item_gift->item_gifts->id,
                         'item_gift_code' => $redeem_item_gift->item_gifts->item_gift_code,
