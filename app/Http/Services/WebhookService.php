@@ -43,7 +43,7 @@ class WebhookService extends BaseService
 
         if ($redeem->redeem_status === 'shipped') {
             return response()->json([
-                'message' => 'Operation not permitted',
+                'message' => trans('error.operation_not_permitted'),
                 'status' => 405,
             ], 405);   
         }

@@ -19,4 +19,5 @@ return [
 	"invalid_signature_midtrans"                  => "Invalid signature Midtrans",
 	"main_address_exists"                         => "User ID: :id already has a main address",
 	"redeem_not_completed"                        => "You cannot do this action because the ID: :id order payment status is not yet complete",
+	"operation_not_permitted"					  => "Operation not permitted",
 ];

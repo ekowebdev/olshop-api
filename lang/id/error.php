@@ -19,4 +19,5 @@ return [
 	"invalid_signature_midtrans"                  => "Tanda tangan Midtrans tidak valid",
 	"main_address_exists"                         => "User ID: :id sudah memiliki alamat utama",
 	"redeem_not_completed"                        => "Anda tidak dapat melakukan aksi ini karena status pembayaran order ID: :id belum selesai",
+	"operation_not_permitted"					  => "Operasi tidak diizinkan",
 ];
