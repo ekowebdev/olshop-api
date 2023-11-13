@@ -30,7 +30,7 @@ class Redeem extends BaseModel
 
     public function payment_logs()
     {
-        return $this->hasMany(PaymentLog::class);
+        return $this->hasOne(PaymentLog::class);
     }
 
     public function shippings()

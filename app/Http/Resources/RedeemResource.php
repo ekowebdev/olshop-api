@@ -69,6 +69,12 @@ class RedeemResource extends JsonResource
             'snap_url' => $this->snap_url,
             'metadata' => json_decode($this->metadata),
             'redeem_status' => $this->redeem_status,
+            'payments' => ($this->payment_logs) ? [
+                'id' => $this->payment_logs->id,
+                'payment_type' => $this->payment_logs->payment_type,
+                'raw_response' => json_decode($this->payment_logs->raw_response),
+                'payment_status' => $this->payment_logs->payment_status,
+            ] : null,
             'shippings' => [
                 'id' => $this->shippings->id,
                 'shipping_origin' => [
