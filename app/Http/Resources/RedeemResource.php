@@ -96,6 +96,7 @@ class RedeemResource extends JsonResource
                 'shipping_cost' => $this->shippings->cost,
                 'shipping_etd' => $this->shippings->etd,
                 'shipping_resi' => $this->shippings->resi,
+                'shipping_status' => $this->shippings->status,
             ],
             'users' => [
                 'id' => $this->users->id,

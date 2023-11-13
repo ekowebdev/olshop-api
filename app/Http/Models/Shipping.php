@@ -12,7 +12,7 @@ class Shipping extends BaseModel
     use HasFactory;
 
     protected $table = 'shippings';
-    protected $fillable = ['redeem_id', 'origin', 'destination', 'weight', 'courier', 'service', 'description', 'cost', 'etd', 'resi'];
+    protected $fillable = ['redeem_id', 'origin', 'destination', 'weight', 'courier', 'service', 'description', 'cost', 'etd', 'resi', 'status'];
 
     public function redeems()
     {
@@ -48,6 +48,7 @@ class Shipping extends BaseModel
                     'cost', 
                     'etd',
                     'resi',
+                    'status',
                 ]);
     }
 }

@@ -88,7 +88,7 @@ class ReviewService extends BaseService
         $user = auth()->user();
         $redeem = $this->redeem_repository->getSingleData($locale, $data_request['redeem_id']);
 
-        if ($redeem->redeem_status != 'success') {
+        if ($redeem->redeem_status != 'success' && $redeem->payment_logs->payment_status != 'settlement') {
             return response()->json([
                 'message' => trans('error.redeem_not_completed', ['id' => $data_request['redeem_id']]),
                 'status' => 400,

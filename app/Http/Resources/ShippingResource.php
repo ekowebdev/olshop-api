@@ -70,22 +70,23 @@ class ShippingResource extends JsonResource
                     ];
                 })
             ],
-            'origin' => [
+            'shipping_origin' => [
                 'id' => $this->city_origin->city_id,
                 'city_name' => $this->city_origin->city_name
             ],
-            'destination' => [
+            'shipping_destination' => [
                 'id' => $this->city_destination->city_id,
                 'city_name' => $this->city_destination->city_name
             ],
-            'weight' => $this->weight,
-            'fweight' => $this->weight . ' Gram',
-            'courier' => $this->courier,
-            'service' => $this->service,
-            'description' => $this->description,
-            'cost' => $this->cost,
-            'etd' => $this->etd,
-            'resi' => $this->resi,
+            'shipping_weight' => $this->weight,
+            'shipping_fweight' => $this->weight . ' Gram',
+            'shipping_courier' => $this->courier,
+            'shipping_service' => $this->service,
+            'shipping_description' => $this->description,
+            'shipping_cost' => $this->cost,
+            'shipping_etd' => $this->etd,
+            'shipping_resi' => $this->resi,
+            'shipping_status' => $this->status,
         ];
     }
 

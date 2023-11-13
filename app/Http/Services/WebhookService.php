@@ -3,6 +3,7 @@
 namespace App\Http\Services;
 
 use App\Http\Models\Cart;
+use App\Http\Models\Shipping;
 use App\Http\Models\PaymentLog;
 use App\Http\Models\RedeemItemGift;
 use App\Http\Repositories\RedeemRepository;
@@ -121,6 +122,11 @@ class WebhookService extends BaseService
                         ->delete();
                 }
             }
+
+            $shiipings = Shipping::where('redeem_id', $redeem->id);
+            $shiipings->update([
+                'status' => 'on progress'
+            ]);
 
             $payment_logs = PaymentLog::where('redeem_id', $redeem->id);
             $payment_logs->update([
