@@ -41,7 +41,7 @@ class WebhookService extends BaseService
         $real_order_id = explode('-', $order_id);
         $redeem = $this->repository->getSingleData($locale, $real_order_id[0]);
 
-        if ($redeem->redeem_status === 'success') {
+        if ($redeem->payment_logs->payment_status === 'settlement') {
             return response()->json([
                 'message' => 'Operation not permitted',
                 'status' => 405,
@@ -52,10 +52,10 @@ class WebhookService extends BaseService
             if ($fraud_status == 'challenge'){
                 $redeem->redeem_status = 'challenge';
             } else if ($fraud_status == 'accept'){
-                $redeem->redeem_status = 'success';
+                $redeem->redeem_status = 'shipped';
             }
         } else if ($transaction_status == 'settlement'){
-            $redeem->redeem_status = 'success';
+            $redeem->redeem_status = 'shipped';
         } else if ($transaction_status == 'cancel' ||
           $transaction_status == 'deny' ||
           $transaction_status == 'expire'){
@@ -74,7 +74,7 @@ class WebhookService extends BaseService
 
         $redeem->save();
 
-        if ($redeem->redeem_status === 'success') {
+        if ($redeem->payment_logs->payment_status === 'settlement') {
             $header_data = [
                 'redeem_code' => $redeem->redeem_code,
                 'total_price' => $redeem->total_point,
