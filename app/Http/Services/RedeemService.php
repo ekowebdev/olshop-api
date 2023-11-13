@@ -312,7 +312,7 @@ class RedeemService extends BaseService
         $this->repository->validate($data_request, [
                 'redeem_status' => [
                     'required',
-                    'in:canceled'
+                    'in:cancelled'
                 ],
             ]
         );
@@ -338,6 +338,40 @@ class RedeemService extends BaseService
 
         return response()->json([
             'message' => trans('all.success_cancel_redeem'),
+            'status' => 200,
+            'error' => 0,
+        ]);
+    }
+
+    public function receive($locale, $id, $data)
+    {
+        $check_data = $this->repository->getSingleData($locale, $id);
+
+        $data = array_merge([
+            'redeem_status' => $check_data->redeem_status,
+        ], $data);
+
+        $data_request = Arr::only($data, [
+            'redeem_status',
+        ]);
+
+        $this->repository->validate($data_request, [
+                'redeem_status' => [
+                    'required',
+                    'in:received'
+                ],
+            ]
+        );
+
+        DB::beginTransaction();
+        if($check_data->redeem_status != 'cancelled'){
+            $data_request['redeem_status'] = 'success';
+            $check_data->update($data_request);
+        }
+        DB::commit();
+
+        return response()->json([
+            'message' => trans('all.success_receive_redeem'),
             'status' => 200,
             'error' => 0,
         ]);

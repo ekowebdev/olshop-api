@@ -16,6 +16,7 @@ return [
 	"pre_order"                          => 'Pesan terlebih dahulu',
 	"success_redeem"                     => "Pesanan berhasil disimpan, silahkan melakukan pembayaran untuk menyelesaikan pesanan",
 	"success_cancel_redeem"              => "Pesanan berhasil dibatalkan",
+	"success_receive_redeem"             => "Pesanan telah diterima",
 	"success_add_to_wishlists"           => "Berhasil ditambah ke favorit",
 	"success_delete_from_wishlists"      => "Berhasil dihapus dari favorit",
 	"success_reviews"                    => "Berhasil reviews gift",

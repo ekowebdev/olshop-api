@@ -91,6 +91,7 @@ Route::middleware(['xssclean'])->group(function () {
                 Route::get('/gifts/redeem/{id}', '\App\Http\Controllers\API\v1\RedeemController@show');
                 Route::post('/gifts/redeem/checkout', '\App\Http\Controllers\API\v1\RedeemController@checkout')->middleware('verified');
                 Route::post('/gifts/redeem/cancel/{id}', '\App\Http\Controllers\API\v1\RedeemController@cancel')->middleware('verified');
+                Route::post('/gifts/redeem/receive/{id}', '\App\Http\Controllers\API\v1\RedeemController@receive')->middleware('verified');
                 Route::delete('/gifts/redeem/{id}', '\App\Http\Controllers\API\v1\RedeemController@delete');
                 // Wishlist Item Gift
                 Route::get('/gifts/wishlist', '\App\Http\Controllers\API\v1\WishlistController@index');

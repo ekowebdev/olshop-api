@@ -16,6 +16,7 @@ return [
 	"pre_order" 		                 => 'Pre order',
 	"success_redeem"                     => "Order successfully saved, please make payment to complete the order",
 	"success_cancel_redeem"              => "Order successfully canceled",
+	"success_receive_redeem"             => "Order has been received",
 	"success_add_to_wishlists"           => "Succes add to wishlists",
 	"success_delete_from_wishlists"      => "Succes delete from wishlists",
 	"success_reviews"                    => "Succes reviews gift",
