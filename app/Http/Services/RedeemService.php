@@ -19,13 +19,14 @@ use App\Http\Repositories\ItemGiftRepository;
 
 class RedeemService extends BaseService
 {
-    private $model, $repository, $item_gift_repository, $origin;
+    private $model, $repository, $item_gift_repository;
     
     public function __construct(Redeem $model, RedeemRepository $repository, ItemGiftRepository $item_gift_repository)
     {
         $this->model = $model;
         $this->repository = $repository;
         $this->item_gift_repository = $item_gift_repository;
+        // $this->origin = env('SHIPPING_ORIGIN_ID');
         $this->origin = 133;
     }
 
