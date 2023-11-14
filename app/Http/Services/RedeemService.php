@@ -373,7 +373,7 @@ class RedeemService extends BaseService
 
         DB::beginTransaction();
         if($check_data->redeem_status == 'shipped' && $check_data->shippings->resi != null){
-            $shippings = Shipping::where('redeem_id', $check_data->redeem_id);
+            $shippings = Shipping::where('redeem_id', $id);
             $shippings->update(['status' => 'delivered']);
             $data_request['redeem_status'] = 'success';
             $check_data->update($data_request);
