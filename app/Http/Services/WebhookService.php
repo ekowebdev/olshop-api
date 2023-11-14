@@ -41,12 +41,12 @@ class WebhookService extends BaseService
         $real_order_id = explode('-', $order_id);
         $redeem = $this->repository->getSingleData($locale, $real_order_id[0]);
 
-        // if ($redeem->redeem_status === 'shipped') {
-        //     return response()->json([
-        //         'message' => trans('error.operation_not_permitted'),
-        //         'status' => 405,
-        //     ], 405);   
-        // }
+        if ($redeem->redeem_status === 'shipped') {
+            return response()->json([
+                'message' => trans('error.operation_not_permitted'),
+                'status' => 405,
+            ], 405);   
+        }
 
         if ($transaction_status == 'capture'){
             if ($fraud_status == 'challenge'){
@@ -119,10 +119,8 @@ class WebhookService extends BaseService
                         ->where('variant_id', '=', $variant_id)
                         ->where('cart_quantity', '=', $redeem_quantity)
                         ->first();
-
-                    dd($carts);
                     
-                    if(count($carts) > 0) {
+                    if(!is_null($carts)) {
                         $carts->delete();
                     }
                 }
