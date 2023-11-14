@@ -334,7 +334,7 @@ class RedeemService extends BaseService
                 }
             }    
         }
-        if($check_data->redeem_status == 'pending' && $check_data->shippings->resi != null){
+        if($check_data->redeem_status == 'pending' && $check_data->shippings->resi == null){
             $check_data->update($data_request);
             $message = trans('all.success_cancel_redeem');
             $code = 200;
@@ -372,7 +372,7 @@ class RedeemService extends BaseService
         );
 
         DB::beginTransaction();
-        if($check_data->redeem_status == 'shipped'){
+        if($check_data->redeem_status == 'shipped' && $check_data->shippings->resi != null){
             $shippings = Shipping::where('redeem_id', $check_data->redeem_id);
             $shippings->update(['status' => 'delivered']);
             $data_request['redeem_status'] = 'success';
