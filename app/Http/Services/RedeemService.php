@@ -334,7 +334,7 @@ class RedeemService extends BaseService
                 }
             }    
         }
-        if($check_data->redeem_status == 'pending'){
+        if($check_data->redeem_status == 'pending' && $check_data->shippings->resi != null){
             $check_data->update($data_request);
             $message = trans('all.success_cancel_redeem');
             $code = 200;
