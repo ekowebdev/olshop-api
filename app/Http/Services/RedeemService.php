@@ -332,7 +332,9 @@ class RedeemService extends BaseService
                     $variant->variant_quantity += $redeem_item->redeem_quantity;
                     $variant->save();
                 }
-            }
+            }    
+        }
+        if($check_data->redeem_status == 'pending'){
             $check_data->update($data_request);
         }
         DB::commit();
@@ -369,6 +371,9 @@ class RedeemService extends BaseService
             $shippings = Shipping::where('redeem_id', $check_data->redeem_id);
             $shippings->update(['status' => 'delivered']);
             $data_request['redeem_status'] = 'success';
+            
+        }
+        if($check_data->redeem_status == 'shipped'){
             $check_data->update($data_request);
         }
         DB::commit();
