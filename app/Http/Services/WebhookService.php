@@ -126,9 +126,11 @@ class WebhookService extends BaseService
                 }
             }
 
-            $shiipings = Shipping::where('redeem_id', $redeem->id);
-            $shiipings->update([
-                'status' => 'on delivery'
+            $shippings = Shipping::where('redeem_id', $redeem->id);
+            if($shippings->first()->resi == null) $shipping_status = 'on progress';
+            else $shipping_status = 'on delivery';
+            $shippings->update([
+                'status' => $shipping_status
             ]);
 
             $payment_logs = PaymentLog::where('redeem_id', $redeem->id);

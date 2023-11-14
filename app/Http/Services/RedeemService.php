@@ -318,7 +318,7 @@ class RedeemService extends BaseService
         );
 
         DB::beginTransaction();
-        if($check_data->redeem_status != 'success' && $check_data->redeem_status != 'shipped'){
+        if($check_data->redeem_status != 'success' || $check_data->redeem_status != 'shipped'){
             $redeem_item_gifts = $check_data->redeem_item_gifts()->get();
             foreach ($redeem_item_gifts as $redeem_item) {
                 $item_gift = ItemGift::find($redeem_item->item_gift_id);
@@ -364,7 +364,7 @@ class RedeemService extends BaseService
         );
 
         DB::beginTransaction();
-        if($check_data->redeem_status != 'cancelled' && $check_data->redeem_status != 'pending' && $check_data->redeem_status != 'failure'){
+        if($check_data->redeem_status != 'cancelled' || $check_data->redeem_status != 'pending' || $check_data->redeem_status != 'failure'){
             $data_request['redeem_status'] = 'success';
             $check_data->update($data_request);
         }
@@ -382,7 +382,7 @@ class RedeemService extends BaseService
         $check_data = $this->repository->getSingleDataStatusNotSuccess($locale, $id);
         
         DB::beginTransaction();
-        if($check_data->redeem_status != 'success' && $check_data->redeem_status != 'shipped'){
+        if($check_data->redeem_status != 'success' || $check_data->redeem_status != 'shipped'){
             $redeem_item_gifts = $check_data->redeem_item_gifts()->get();
             foreach ($redeem_item_gifts as $redeem_item) {
                 $item_gift = ItemGift::find($redeem_item->item_gift_id);
