@@ -335,18 +335,20 @@ class RedeemService extends BaseService
             }    
         }
         if($check_data->redeem_status == 'pending'){
-            $message = trans('all.success_cancel_redeem');
             $check_data->update($data_request);
+            $message = trans('all.success_cancel_redeem');
+            $code = 200;
         } else {
             $message = trans('error.failed_cancel_redeem');
+            $code = 400;
         }
         DB::commit();
 
         return response()->json([
             'message' => $message,
-            'status' => 200,
+            'status' => $code,
             'error' => 0,
-        ]);
+        ], $code);
     }
 
     public function receive($locale, $id, $data)
