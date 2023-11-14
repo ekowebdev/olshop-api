@@ -389,7 +389,7 @@ class RedeemService extends BaseService
 
     public function delete($locale, $id)
     {
-        $check_data = $this->repository->getSingleDataStatusNotSuccess($locale, $id);
+        $check_data = $this->repository->getSingleData($locale, $id);
         
         DB::beginTransaction();
         if($check_data->redeem_status != 'success' || $check_data->redeem_status != 'shipped'){
