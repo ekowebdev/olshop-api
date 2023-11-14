@@ -333,8 +333,8 @@ class RedeemService extends BaseService
                     $variant->save();
                 }
             }
+            $check_data->update($data_request);
         }
-        $check_data->update($data_request);
         DB::commit();
 
         return response()->json([
@@ -366,6 +366,8 @@ class RedeemService extends BaseService
 
         DB::beginTransaction();
         if($check_data->redeem_status != 'cancelled' || $check_data->redeem_status != 'pending' || $check_data->redeem_status != 'failure'){
+            $shippings = Shipping::where('redeem_id', $check_data->redeem_id);
+            $shippings->update(['status' => 'delivered']);
             $data_request['redeem_status'] = 'success';
             $check_data->update($data_request);
         }
