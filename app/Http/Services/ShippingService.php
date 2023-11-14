@@ -72,7 +72,7 @@ class ShippingService extends BaseService
                 'string',
             ],
             'status' => [
-                'nullable',
+                'string',
                 'in:on delivery,delivered',
             ],
         ]);
@@ -81,9 +81,8 @@ class ShippingService extends BaseService
         if($check_data->redeems->redeem_status != 'shipped' || $check_data->redeems->payment_logs->payment_status != 'settlement'){
             throw new ValidationException(json_encode(['redeem_status' => [trans('error.redeem_not_completed', ['id' => $check_data->redeem_id])]]));
         }
-        if(isset($data_request['resi'])){
-            $data_request['status'] = 'on delivery';
-        }
+        $data_request['resi'] = $data_request['resi'] ?? $check_data->resi;
+        $data_request['status'] = $data_request['status'] ?? $check_data->status;
         $check_data->update($data_request);
         DB::commit();
 
