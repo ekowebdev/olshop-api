@@ -270,6 +270,7 @@ class RedeemService extends BaseService
                 'description' => $shipping_details['shipping_description'],
                 'cost' => $shipping_cost,
                 'etd' => $shipping_details['shipping_etd'],
+                'status' => 'on progress',
             ]);
             $shipping->save();
         
