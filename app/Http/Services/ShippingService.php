@@ -73,7 +73,7 @@ class ShippingService extends BaseService
             ],
             'status' => [
                 'string',
-                'in:on progress,delivered',
+                'in:on delivery,delivered',
             ],
         ]);
 
