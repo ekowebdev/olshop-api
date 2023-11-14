@@ -57,11 +57,6 @@ class ShippingService extends BaseService
     {
         $check_data = $this->repository->getSingleData($locale, $id);
 
-        $data = array_merge([
-            'resi' => $check_data->resi,
-            'status' => $check_data->status,
-        ], $data);
-
         $data_request = Arr::only($data, [
             'resi',
             'status',
