@@ -43,6 +43,8 @@ Route::middleware(['xssclean'])->group(function () {
                 Route::post('/gifts/images', '\App\Http\Controllers\API\v1\ItemGiftImageController@store');
                 Route::post('/gifts/images/{id}', '\App\Http\Controllers\API\v1\ItemGiftImageController@update');
                 Route::delete('/gifts/images/{id}', '\App\Http\Controllers\API\v1\ItemGiftImageController@delete');
+                // Cart
+                Route::get('/carts', '\App\Http\Controllers\API\v1\CartController@index');
                 // Search Log
                 Route::get('/search-logs', '\App\Http\Controllers\API\v1\SearchLogController@index');
                 Route::get('/search-logs/{id}', '\App\Http\Controllers\API\v1\SearchLogController@show');
@@ -58,6 +60,8 @@ Route::middleware(['xssclean'])->group(function () {
                 Route::get('/shippings', '\App\Http\Controllers\API\v1\ShippingController@index');
                 Route::get('/shippings/{id}', '\App\Http\Controllers\API\v1\ShippingController@show');
                 Route::put('/shippings/{id}', '\App\Http\Controllers\API\v1\ShippingController@update');
+                // Notification
+                Route::put('/notifications/{id}', '\App\Http\Controllers\API\v1\NotificationController@update');
                 // RajaOngkir
                 Route::get('/rajaongkir/province', '\App\Http\Controllers\API\v1\RajaOngkirController@getProvince');
                 Route::get('/rajaongkir/city', '\App\Http\Controllers\API\v1\RajaOngkirController@getCity');
@@ -99,7 +103,6 @@ Route::middleware(['xssclean'])->group(function () {
                 Route::get('/gifts/wishlist/user/{userId}', '\App\Http\Controllers\API\v1\WishlistController@showByUser');
                 Route::post('/gifts/{itemGiftId}/wishlist', '\App\Http\Controllers\API\v1\WishlistController@wishlist');
                 // Cart
-                Route::get('/carts', '\App\Http\Controllers\API\v1\CartController@index');
                 Route::post('/carts', '\App\Http\Controllers\API\v1\CartController@store');
                 Route::get('/carts/{id}', '\App\Http\Controllers\API\v1\CartController@show');
                 Route::get('/carts/user/{userId}', '\App\Http\Controllers\API\v1\CartController@showByUser');
@@ -113,7 +116,6 @@ Route::middleware(['xssclean'])->group(function () {
                 Route::get('/notifications', '\App\Http\Controllers\API\v1\NotificationController@index');
                 Route::get('/notifications/{id}', '\App\Http\Controllers\API\v1\NotificationController@show');
                 Route::get('/notifications/user/{userId}', '\App\Http\Controllers\API\v1\NotificationController@showByUser');
-                Route::put('/notifications/{id}', '\App\Http\Controllers\API\v1\NotificationController@update');
                 Route::delete('/notifications/{id}', '\App\Http\Controllers\API\v1\NotificationController@delete');
                 // RajaOngkir
                 Route::post('/rajaongkir/cost', '\App\Http\Controllers\API\v1\RajaOngkirController@getCost');
