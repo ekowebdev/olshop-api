@@ -332,7 +332,9 @@ class RedeemService extends BaseService
                     $variant->variant_quantity += $redeem_item->redeem_quantity;
                     $variant->save();
                 }
-            } 
+            }
+            $shippings = Shipping::where('redeem_id', $id)->first();
+            $shippings->update(['status' => null]);
             $check_data->update($data_request);
             $message = trans('all.success_cancel_redeem');
             $code = 200;  
