@@ -66,10 +66,7 @@ class ShippingService extends BaseService
         $this->repository->validate($data_request, [
             'resi' => [
                 'string',
-            ],
-            'status' => [
-                'string',
-                'in:on delivery,delivered',
+                'unique:shippings,resi,'.$id
             ],
         ]);
 
