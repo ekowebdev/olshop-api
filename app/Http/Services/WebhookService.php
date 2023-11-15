@@ -41,7 +41,7 @@ class WebhookService extends BaseService
         $real_order_id = explode('-', $order_id);
         $redeem = $this->repository->getSingleData($locale, $real_order_id[0]);
 
-        if ($redeem->redeem_status == 'shipped') {
+        if ($redeem->redeem_status == 'shipped' && $redeem->redeem_status == 'success') {
             return response()->json([
                 'message' => trans('error.operation_not_permitted'),
                 'status' => 405,
