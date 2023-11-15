@@ -407,6 +407,8 @@ class RedeemService extends BaseService
                 }
             }
         }
+        $shippings = Shipping::where('redeem_id', $id)->first();
+        $shippings->update(['status' => null]);
         $result = $check_data->update(['deleted_at' => now()->format('Y-m-d H:i:s')]);
         DB::commit();
 
