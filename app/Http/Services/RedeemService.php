@@ -319,7 +319,7 @@ class RedeemService extends BaseService
         );
 
         DB::beginTransaction();
-        if($check_data->redeem_status != 'success' || $check_data->redeem_status != 'shipped'){
+        if($check_data->redeem_status != 'shipped' && $check_data->redeem_status != 'success'){
             $redeem_item_gifts = $check_data->redeem_item_gifts()->get();
             foreach ($redeem_item_gifts as $redeem_item) {
                 $item_gift = ItemGift::find($redeem_item->item_gift_id);
@@ -332,12 +332,10 @@ class RedeemService extends BaseService
                     $variant->variant_quantity += $redeem_item->redeem_quantity;
                     $variant->save();
                 }
-            }    
-        }
-        if($check_data->redeem_status == 'pending' && $check_data->shippings->resi == null){
+            } 
             $check_data->update($data_request);
             $message = trans('all.success_cancel_redeem');
-            $code = 200;
+            $code = 200;  
         } else {
             $message = trans('error.failed_cancel_redeem');
             $code = 400;
@@ -373,7 +371,7 @@ class RedeemService extends BaseService
 
         DB::beginTransaction();
         if($check_data->redeem_status == 'shipped' && $check_data->shippings->resi != null){
-            $shippings = Shipping::where('redeem_id', $id);
+            $shippings = Shipping::where('redeem_id', $id)->first();
             $shippings->update(['status' => 'delivered']);
             $data_request['redeem_status'] = 'success';
             $check_data->update($data_request);
@@ -392,7 +390,7 @@ class RedeemService extends BaseService
         $check_data = $this->repository->getSingleData($locale, $id);
         
         DB::beginTransaction();
-        if($check_data->redeem_status === 'pending' || $check_data->redeem_status === 'cancelled'){
+        if($check_data->redeem_status != 'shipped' && $check_data->redeem_status != 'success'){
             $redeem_item_gifts = $check_data->redeem_item_gifts()->get();
             foreach ($redeem_item_gifts as $redeem_item) {
                 $item_gift = ItemGift::find($redeem_item->item_gift_id);
