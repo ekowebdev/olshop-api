@@ -300,7 +300,7 @@ class RedeemService extends BaseService
 
     public function cancel($locale, $id, $data)
     {
-        $check_data = $this->repository->getSingleDataStatusNotSuccess($locale, $id);
+        $check_data = $this->repository->getSingleData($locale, $id);
 
         $data = array_merge([
             'redeem_status' => $check_data->redeem_status,
