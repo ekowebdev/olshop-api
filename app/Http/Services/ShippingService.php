@@ -77,14 +77,8 @@ class ShippingService extends BaseService
         if($check_data->redeems->redeem_status != 'shipped' || $check_data->redeems->payment_logs->payment_status != 'settlement'){
             throw new ValidationException(json_encode(['redeem_status' => [trans('error.redeem_not_completed', ['id' => $check_data->redeem_id])]]));
         }
-        if(isset($data_request['status'])){
-            if($data_request['status'] == 'delivered'){
-                $redeems = Redeem::find($check_data->redeem_id);
-                $redeems->update(['redeem_status' => 'success']);
-            }
-        }
-        $data_request['resi'] = $data_request['resi'] ?? $check_data->resi;
-        $data_request['status'] = $data_request['status'] ?? $check_data->status;
+        $data_request['resi'] = isset($data_request['resi']) ? $data_request['resi'] : $check_data->resi;
+        $data_request['status'] = isset($data_request['resi']) ? 'on delivery' : $check_data->status;
         $check_data->update($data_request);
         DB::commit();
 

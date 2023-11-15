@@ -26,8 +26,7 @@ class RedeemService extends BaseService
         $this->model = $model;
         $this->repository = $repository;
         $this->item_gift_repository = $item_gift_repository;
-        // $this->origin = env('SHIPPING_ORIGIN_ID');
-        $this->origin = 133;
+        $this->origin = env('SHIPPING_ORIGIN_ID');
     }
 
     public function getIndexData($locale, $data)
