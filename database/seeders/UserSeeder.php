@@ -32,12 +32,12 @@ class UserSeeder extends Seeder
         $role_customer = Role::create(['name' => 'customer', 'guard_name' => 'api']);
         $role_customer->givePermissionTo(['view item gifts']);
         $user_admin = User::create([
-            'name' => 'Administrator',
             'username' => 'admin',
             'email' => 'admin@bakti.shop',
             'email_verified_at' => now(),
             'password' => Hash::make('123456'),
         ]);
         $user_admin->assignRole('admin');
+        $user_admin->profile()->create(['name' => 'Administrator', 'birthdate' => '1990-01-01']);
     }
 }

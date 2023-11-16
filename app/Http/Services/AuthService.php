@@ -47,7 +47,6 @@ class AuthService extends BaseService
         ]);
         $user->assignRole('customer');
         $user->profile()->create(['name' => $request['name'], 'birthdate' => $request['birthdate'] ?? null]);
-        // $user->sendEmailVerificationNotification();
         SendEmailVerificationJob::dispatch($user);
         DB::commit();
 
@@ -68,10 +67,6 @@ class AuthService extends BaseService
         ]);
 
         $user = $this->repository->getDataByMultipleParam(['email' => $request['email']]);
-
-        // if($user->email_verified_at == null){
-        //     throw new AuthenticationException(trans('auth.not_verified_account'));
-        // }
 
         if(empty($user)){
             throw new AuthenticationException(trans('auth.wrong_email_or_password'));
@@ -166,8 +161,7 @@ class AuthService extends BaseService
     {
         if(!$request->hasValidSignature()){
             return response()->json([
-                'message' => 'Gagal verifikasi email', 
-                // 'message' => trans('error.failed_verifcation_email'), 
+                'message' => 'Gagal verifikasi email',
                 'status' => 400,
                 'error' => 0,
             ], 400);
@@ -200,7 +194,6 @@ class AuthService extends BaseService
             ], 409);
         }
 
-        // auth()->user()->sendEmailVerificationNotification();
         SendEmailVerificationJob::dispatch($user);
 
         return response()->json([
@@ -219,8 +212,6 @@ class AuthService extends BaseService
         $status = Password::sendResetLink(
             $request->only('email')
         );
-
-        // SendEmailResetPasswordLinkJob::dispatch($request->email);
 
         if($status != Password::RESET_LINK_SENT) {
             return response()->json([

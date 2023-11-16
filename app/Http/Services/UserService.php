@@ -23,7 +23,6 @@ class UserService extends BaseService
     {
         $search = [
             'username' => 'username',
-            'birthdate' => 'birthdate',
             'email' => 'email',
         ];
 
@@ -31,7 +30,6 @@ class UserService extends BaseService
             'id' => 'id',
             'username' => 'username',
             'email' => 'email',
-            'birthdate' => 'birthdate',
         ];
 
         $sortable_and_searchable_column = [
