@@ -11,7 +11,7 @@ class Profile extends BaseModel
     use HasFactory;
 
     protected $table = 'profiles';
-    protected $fillable = ['user_id', 'birthdate', 'phone_number', 'avatar'];
+    protected $fillable = ['user_id', 'name', 'birthdate', 'phone_number', 'avatar'];
     protected $appends = ['avatar_url'];
 
     public function getAvatarUrlAttribute()
@@ -32,6 +32,7 @@ class Profile extends BaseModel
         return $query->select([
                     'id', 
                     'user_id', 
+                    'name',
                     'birthdate', 
                     'phone_number', 
                     'avatar',

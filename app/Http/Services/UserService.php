@@ -22,7 +22,6 @@ class UserService extends BaseService
     public function getIndexData($locale, $data)
     {
         $search = [
-            'name' => 'name',
             'username' => 'username',
             'birthdate' => 'birthdate',
             'email' => 'email',
@@ -30,7 +29,6 @@ class UserService extends BaseService
 
         $search_column = [
             'id' => 'id',
-            'name' => 'name',
             'username' => 'username',
             'email' => 'email',
             'birthdate' => 'birthdate',
@@ -53,18 +51,13 @@ class UserService extends BaseService
     public function store($locale, $data)
     {
         $data_request = Arr::only($data, [
-            'name',
             'username',
             'email',
-            'birthdate',
             'password',
             'role',
         ]);
 
         $this->repository->validate($data_request, [
-                'name' => [
-                    'required'
-                ],
                 'username' => [
                     'required',
                     'min:5',
@@ -76,16 +69,12 @@ class UserService extends BaseService
                     'email:rfc,dns',
                     'unique:users,email'
                 ],
-                'birthdate' => [
-                    'nullable',
-                    'date',
-                ],
                 'password' => [
                     'required',
                     'min:6',
                     'max:20',
                 ],
-                'role.*' => [
+                'role' => [
                     'in:admin,customer',
                 ],
             ]
@@ -106,17 +95,13 @@ class UserService extends BaseService
         $check_data = $this->repository->getSingleData($locale, $id);
 
         $data = array_merge([
-            'name' => $check_data->name,
             'username' => $check_data->username,
             'email' => $check_data->email,
-            'birthdate' => $check_data->birthdate,
         ], $data);
 
         $data_request = Arr::only($data, [
-            'name',
             'username',
             'email',
-            'birthdate',
             'password',
             'role',
         ]);
@@ -131,16 +116,12 @@ class UserService extends BaseService
                 'email',
                 'unique:users,email,'.$check_data->id,
             ],
-            'birthdate' => [
-                'nullable',
-                'date',
-            ],
             'password' => [
                 'sometimes',
                 'min:6',
                 'max:20',
             ],
-            'role.*' => [
+            'role' => [
                 'in:admin,customer',
             ],
         ]);
@@ -171,6 +152,7 @@ class UserService extends BaseService
     {
         $check_data = $this->repository->getSingleData($locale, $id);
         DB::beginTransaction();
+        $check_data->roles()->detach();
         $result = $check_data->delete();
         DB::commit();
 

@@ -22,6 +22,7 @@ class ProfileService extends BaseService
     {
         $search = [
             'user_id' => 'user_id',
+            'name' => 'name',
             'birthdate' => 'birthdate',
             'phone_number' => 'phone_number',
         ];
@@ -29,6 +30,7 @@ class ProfileService extends BaseService
         $search_column = [
             'id' => 'id',
             'user_id' => 'user_id',
+            'name' => 'name',
             'birthdate' => 'birthdate',
             'phone_number' => 'phone_number',
         ];
@@ -51,6 +53,7 @@ class ProfileService extends BaseService
     {
         $data_request = Arr::only($data, [
             'user_id',
+            'name',
             'birthdate',
             'phone_number',
             'avatar',
@@ -62,13 +65,17 @@ class ProfileService extends BaseService
                     'exists:users,id',
                     'unique:profiles,user_id',
                 ],
+                
                 'birthdate' => [
                     'required',
                     'date',
                 ],
                 'phone_number' => [
                     'required',
-                    'numeric',
+                    'numeric','name' => [
+                    'required',
+                    'string',
+                ],
                 ],
                 'avatar' => [
                     'required',
@@ -85,6 +92,7 @@ class ProfileService extends BaseService
         Storage::disk('s3')->put('images/avatar/' . $image_name, file_get_contents($image));
         $result = $this->model->create([
             'user_id' => $data_request['user_id'],
+            'name' => $data_request['name'],
             'birthdate' => $data_request['birthdate'],
             'phone_number' => $data_request['phone_number'],
             'avatar' => $image_name,
@@ -100,6 +108,7 @@ class ProfileService extends BaseService
 
         $data_request = Arr::only($data, [
             'user_id',
+            'name',
             'birthdate',
             'phone_number',
             'avatar',
@@ -109,6 +118,9 @@ class ProfileService extends BaseService
             'user_id' => [
                 'exists:users,id',
                 'unique:profiles,user_id,'.$id,
+            ],
+            'name' => [
+                'string',
             ],
             'birthdate' => [
                 'date',
@@ -134,6 +146,7 @@ class ProfileService extends BaseService
             $check_data->avatar = $image_name;
         }
         $check_data->user_id = $data_request['user_id'] ?? $check_data->user_id;
+        $check_data->name = $data_request['name'] ?? $check_data->name;
         $check_data->birthdate = $data_request['birthdate'] ?? $check_data->birthdate;
         $check_data->phone_number = $data_request['phone_number'] ?? $check_data->phone_number;
         $check_data->save();

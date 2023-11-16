@@ -29,7 +29,6 @@ class User extends Authenticable implements MustVerifyEmail
     public $sortableAndSearchableColumn = [];
 
     protected $fillable = [
-        'name',
         'username',
         'email',
         'password',
@@ -93,8 +92,7 @@ class User extends Authenticable implements MustVerifyEmail
     public function scopeGetAll($query)
     {      
         return $query->select([
-                    'id', 
-                    'name', 
+                    'id',
                     'username', 
                     'email',
                     'password',

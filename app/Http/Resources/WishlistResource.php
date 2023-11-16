@@ -57,7 +57,7 @@ class WishlistResource extends JsonResource
                         'id' => $review->id,
                         'users' => [
                             'id' => $review->users->id,
-                            'name' => $review->users->name,
+                            'name' => $review->users->profile->name,
                             'username' => $review->users->username,
                             'email' => $review->users->email,
                             'email_verified_at' => $review->users->email_verified_at,
@@ -78,12 +78,12 @@ class WishlistResource extends JsonResource
             ],
             'users' => [
                 'id' => $this->users->id,
-                'name' => $this->users->name,
                 'username' => $this->users->username,
                 'email' => $this->users->email,
                 'email_verified_at' => $this->users->email_verified_at,
                 'profile' => ($this->users->profile) ? [
                     'id' => $this->users->profile->id,
+                    'name' => $this->users->profile->name,
                     'birthdate' => $this->users->profile->birthdate,
                     'phone_number' => $this->users->profile->phone_number,
                     'avatar' => $this->users->profile->avatar,

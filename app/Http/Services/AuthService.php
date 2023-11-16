@@ -33,20 +33,20 @@ class AuthService extends BaseService
     {
         $this->validate($request, [
             'name' => 'required|string|max:255',
+            'birthdate' => 'date',
             'username' => 'required|string|unique:users|max:255',
             'email' => 'required|string|email:rfc,dns|unique:users|max:255',
             'password' => 'required|string|min:6|confirmed',
         ]);
 
         DB::beginTransaction();
-        $request['role'] = isset($request['role']) ? $request['role'] : 'customer';
         $user = $this->model->create([
-            'name' => $request['name'],
             'username' => $request['username'],
             'email' => $request['email'],
             'password' => Hash::make($request['password']),
         ]);
-        $user->assignRole($request['role']);
+        $user->assignRole('customer');
+        $user->profile()->create(['name' => $request['name'], 'birthdate' => $request['birthdate'] ?? null]);
         // $user->sendEmailVerificationNotification();
         SendEmailVerificationJob::dispatch($user);
         DB::commit();

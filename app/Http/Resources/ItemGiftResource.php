@@ -48,7 +48,7 @@ class ItemGiftResource extends JsonResource
                     'id' => $review->id,
                     'users' => [
                         'id' => $review->users->id,
-                        'name' => $review->users->name,
+                        'name' => $review->users->profile->name,
                         'username' => $review->users->username,
                         'email' => $review->users->email,
                         'email_verified_at' => $review->users->email_verified_at,

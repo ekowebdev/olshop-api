@@ -115,12 +115,12 @@ class ReviewResource extends JsonResource
             ],
             'users' => [
                 'id' => $this->users->id,
-                'name' => $this->users->name,
                 'username' => $this->users->username,
                 'email' => $this->users->email,
                 'email_verified_at' => $this->users->email_verified_at,
                 'profile' => ($this->users->profile) ? [
                     'id' => $this->users->profile->id,
+                    'name' => $this->users->profile->name,
                     'birthdate' => $this->users->profile->birthdate,
                     'phone_number' => $this->users->profile->phone_number,
                     'avatar' => $this->users->profile->avatar,

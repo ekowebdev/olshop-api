@@ -10,13 +10,13 @@ class UserResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'name' => $this->name,
             'roles' => $this->getRoleNames(),
             'username' => $this->username,
             'email' => $this->email,
             'email_verified_at' => $this->email_verified_at,
             'profile' => ($this->profile) ? [
                 'id' => $this->profile->id,
+                'name' => $this->profile->name,
                 'birthdate' => $this->profile->birthdate,
                 'phone_number' => $this->profile->phone_number,
                 'avatar' => $this->profile->avatar,
