@@ -11,6 +11,7 @@ class Cart extends DynamoDbModel
 {
     protected $primaryKey = 'id';
     protected $fillable = ['user_id', 'item_gift_id', 'variant_id', 'cart_quantity'];
+    protected $dates = ['created_at', 'updated_at'];
 
     public function getTable()
     {

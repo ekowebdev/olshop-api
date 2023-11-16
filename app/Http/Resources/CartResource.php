@@ -72,34 +72,37 @@ class CartResource extends JsonResource
 
     private function format_item_gift_weight($item)
     {
-        $variant_weight = $item->variants->pluck('variant_weight')->toArray();
-        if (count($variant_weight) == 1) {
-            return strval($variant_weight[0]) . ' Gram';
-        } elseif (count($variant_weight) > 1) {
-            $variant_weight = min($variant_weight);
-            return strval($variant_weight) . ' Gram';
+        if(count($item->variants) == 0){
+            return strval($item->item_gift_weight ?? 0) . ' Gram';
         } else {
-            return strval($this->item_gift_weight ?? 0) . ' Gram';
+            $variant_weight = $item->variants->pluck('variant_weight')->toArray();
+            if (count($variant_weight) > 1) {
+                $variant_weight = min($variant_weight);
+                return strval($variant_weight) . ' Gram';
+            } else {
+                return strval($variant_weight[0]) . ' Gram';
+            }
         }
     }
 
     private function format_item_gift_point($item)
     {
-        $variant_points = $item->variants->pluck('variant_point')->toArray();
-        
-        if (count($variant_points) == 1) {
-            return strval($variant_points[0]);
-        } elseif (count($variant_points) > 1) {
-            $min_value = min($variant_points);
-            $max_value = max($variant_points);
-
-            if ($min_value === $max_value) {
-                return strval($min_value);
-            }
-
-            return format_money($min_value) . " ~ " . format_money($max_value);
+        if(count($item->variants) == 0){
+            return format_money(strval($item->item_gift_point ?? 0));
         } else {
-            return format_money(strval($this->item_gift_point ?? 0));
+            $variant_points = $item->variants->pluck('variant_point')->toArray();
+            if (count($variant_points) > 1) {
+                $min_value = min($variant_points);
+                $max_value = max($variant_points);
+    
+                if ($min_value === $max_value) {
+                    return strval($min_value);
+                }
+    
+                return format_money($min_value) . " ~ " . format_money($max_value);
+            } else {
+                return strval($variant_points[0]);
+            }
         }
     }
 }

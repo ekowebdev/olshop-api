@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Bakti Shop - Email</title>
+    <title>Bakti Shop - Birthday Notification</title>
 </head>
 <body>
     <h2>{{ trans('all.notification_birthday_title', ['name' => $user->name]) }}</h2>
