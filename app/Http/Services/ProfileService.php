@@ -65,20 +65,19 @@ class ProfileService extends BaseService
                     'exists:users,id',
                     'unique:profiles,user_id',
                 ],
-                
+                'name' => [
+                    'required',
+                    'string',
+                ],
                 'birthdate' => [
                     'required',
                     'date',
                 ],
                 'phone_number' => [
                     'required',
-                    'numeric','name' => [
-                    'required',
-                    'string',
-                ],
+                    'numeric',
                 ],
                 'avatar' => [
-                    'required',
                     'max:1000',
                     'image',
                     'mimes:jpg,png',
@@ -87,15 +86,18 @@ class ProfileService extends BaseService
         );
 
         DB::beginTransaction();
-        $image = $data_request['avatar'];
-        $image_name = time() . '.' . $image->getClientOriginalExtension();
-        Storage::disk('s3')->put('images/avatar/' . $image_name, file_get_contents($image));
+        if (isset($data_request['avatar'])) {
+            $image = $data_request['avatar'];
+            $image_name = time() . '.' . $image->getClientOriginalExtension();
+            Storage::disk('s3')->put('images/avatar/' . $image_name, file_get_contents($image));
+            $data_request['avatar'] = $image_name;
+        }
         $result = $this->model->create([
             'user_id' => $data_request['user_id'],
             'name' => $data_request['name'],
             'birthdate' => $data_request['birthdate'],
             'phone_number' => $data_request['phone_number'],
-            'avatar' => $image_name,
+            'avatar' => $data_request['avatar'] ?? null,
         ]);
         DB::commit();
 
