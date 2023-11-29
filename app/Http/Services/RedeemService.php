@@ -2,6 +2,7 @@
 
 namespace App\Http\Services;
 
+use App\Http\Models\City;
 use App\Http\Models\Redeem;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
@@ -130,6 +131,7 @@ class RedeemService extends BaseService
             $address_details = $data_request['address_details'];
             $shipping_details = $data_request['shipping_details'];
             $shipping_cost = (int) $shipping_details['shipping_cost'];
+            $city = City::where('city_id', $address_details['city_id'])->first();
         
             // Create Redeem entry
             $redeem = Redeem::create([
@@ -216,6 +218,9 @@ class RedeemService extends BaseService
                     'price' => ($variant_id) ? $variant->variant_point : $item_gift->item_gift_point,
                     'quantity' => $redeem_quantity,
                     'name' => ($item_gift->variants->count() > 0) ? mb_strimwidth($item_gift->item_gift_name . ' - ' . $variant->variant_name, 0, 50, '..') : mb_strimwidth($item_gift->item_gift_name, 0, 50, '..'),
+                    "brand" => ($item_gift->brand) ? $item_gift->brand->brand_name : null,
+                    "category" => ($item_gift->category) ? $item_gift->category->category_name : null,
+                    "merchant_name" => env('APP_NAME'),
                 ];
 
                 $redeem->redeem_item_gifts()->save($redeem_item_gift);
@@ -231,9 +236,17 @@ class RedeemService extends BaseService
             ];
         
             $customer_details = [
-                'first_name' => $address_details['person_name'],
-                'phone' => $address_details['person_phone'],
+                'first_name' => $user->profile->name,
                 'email' => $user->email,
+                'phone' => $user->profile->phone_number,
+                "shipping_address" => [
+                    "first_name" => $address_details['person_name'],
+                    "phone" => $address_details['person_phone'],
+                    "address" => $address_details['address'],
+                    "city" => $city->city_name,
+                    "postal_code" => $address_details['postal_code'],
+                    "country_code" => "IDN"
+                ]
             ];
         
             $item_details[] = [
@@ -245,7 +258,7 @@ class RedeemService extends BaseService
             $midtrans_params = [
                 'transaction_details' => $transaction_details,
                 'item_details' => $item_details,
-                'customer_details' => $customer_details,
+                'customer_details' => $customer_details
             ];
         
             // Update Redeem and related data
