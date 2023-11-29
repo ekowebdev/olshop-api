@@ -15,18 +15,20 @@ use App\Http\Services\RedeemService;
 use Illuminate\Database\QueryException;
 use App\Exceptions\ApplicationException;
 use App\Events\RealTimeNotificationEvent;
+use App\Http\Repositories\CityRepository;
 use App\Http\Repositories\RedeemRepository;
 use App\Http\Repositories\ItemGiftRepository;
 
 class RedeemService extends BaseService
 {
-    private $model, $repository, $item_gift_repository;
+    private $model, $repository, $item_gift_repository, $city_repository;
     
-    public function __construct(Redeem $model, RedeemRepository $repository, ItemGiftRepository $item_gift_repository)
+    public function __construct(Redeem $model, RedeemRepository $repository, ItemGiftRepository $item_gift_repository, CityRepository $city_repository)
     {
         $this->model = $model;
         $this->repository = $repository;
         $this->item_gift_repository = $item_gift_repository;
+        $this->city_repository = $city_repository;
         $this->origin = env('SHIPPING_ORIGIN_ID');
     }
 
@@ -131,7 +133,7 @@ class RedeemService extends BaseService
             $address_details = $data_request['address_details'];
             $shipping_details = $data_request['shipping_details'];
             $shipping_cost = (int) $shipping_details['shipping_cost'];
-            $city = City::where('city_id', $address_details['city_id'])->first();
+            $city = $this->city_repository->getSingleData($locale, $address_details['city_id']);
         
             // Create Redeem entry
             $redeem = Redeem::create([

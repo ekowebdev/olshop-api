@@ -95,6 +95,13 @@ class CartService extends BaseService
             if (!is_null($variant_id)) {
                 $variant = $item_gift->variants()->lockForUpdate()->find($variant_id);
 
+                if (is_null($variant)) {
+                    return response()->json([
+                        'message' => trans('error.variant_not_available_in_item_gifts', ['id' => $item_gift->id, 'variant_id' => $variant_id]),
+                        'status' => 400,
+                    ], 400);
+                }
+
                 if ($variant->variant_quantity == 0 || $data_request['cart_quantity'] > $variant->variant_quantity) {
                     return response()->json([
                         'message' => trans('error.out_of_stock'),
