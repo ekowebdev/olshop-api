@@ -13,7 +13,7 @@ return [
 	"failed_send_reset_password_link"             => "Gagal kirim link reset password",
 	"failed_reset_password"                       => "Gagal reset password",
 	"variant_not_found_in_item_gifts"             => "Varian tidak tersedia pada item gift ID: :id",
-	"variant_not_found_in_multiple_item_gifts"    => "Varian tidak tersedia pada item gift ID: :id dan varian ID: :variant_id",
+	"variant_not_available_in_item_gifts"         => "Varian ID: :variant_id tidak tersedia pada item gift ID: :id",
 	"variant_required"                            => "Item gift ID: :id memiliki varian",
 	"exists_image_variant_item_gifts"             => "Item gift ID: :id dan varian ID: :variant_id sudah memiliki gambar",
 	"invalid_signature_midtrans"                  => "Tanda tangan Midtrans tidak valid",

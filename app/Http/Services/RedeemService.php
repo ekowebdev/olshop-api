@@ -146,7 +146,7 @@ class RedeemService extends BaseService
             // Process Redeem Item Gifts
             foreach ($redeem_item_gifts_details as $redeem_item_gifts) {
                 $redeem_quantity = $redeem_item_gifts['redeem_quantity'];
-                $variant_id = isset($redeem_item_gifts['variant_id']) ? (int) $redeem_item_gifts['variant_id'] : null;
+                $variant_id = ($redeem_item_gifts['variant_id'] == '') ? null : $redeem_item_gifts['variant_id'];
         
                 $item_gift = ItemGift::lockForUpdate()->find($redeem_item_gifts['item_gift_id']);
         
@@ -176,6 +176,13 @@ class RedeemService extends BaseService
                 if (!is_null($variant_id)) {
                     $variant = $item_gift->variants()->lockForUpdate()->find($variant_id);
 
+                    if (is_null($variant)) {
+                        return response()->json([
+                            'message' => trans('error.variant_not_available_in_item_gifts', ['id' => $item_gift->id, 'variant_id' => $variant_id]),
+                            'status' => 400,
+                        ], 400);
+                    }
+
                     if ($variant->variant_quantity == 0 || $redeem_quantity > $variant->variant_quantity) {
                         return response()->json([
                             'message' => trans('error.out_of_stock'),
@@ -198,7 +205,7 @@ class RedeemService extends BaseService
                 // Create RedeemItemGift entry
                 $redeem_item_gift = new RedeemItemGift([
                     'item_gift_id' => $item_gift->id,
-                    'variant_id' => $variant_id,
+                    'variant_id' => $variant_id == 0 ? null : $variant_id,
                     'redeem_quantity' => (int) $redeem_quantity,
                     'redeem_point' => $subtotal,
                 ]);

@@ -13,7 +13,7 @@ use App\Http\Repositories\SubdistrictRepository;
 
 class RajaOngkirService extends BaseService
 {
-    private $api_key, $province_repository, $city_repository, $subdistrict_repository;
+    private $api_key, $province_repository, $city_repository, $subdistrict_repository, $origin;
 
     public function __construct(ProvinceRepository $province_repository, CityRepository $city_repository, SubdistrictRepository $subdistrict_repository)
     {
@@ -21,6 +21,7 @@ class RajaOngkirService extends BaseService
         $this->province_repository = $province_repository;
         $this->city_repository = $city_repository;
         $this->subdistrict_repository = $subdistrict_repository;
+        $this->origin = env('SHIPPING_ORIGIN_ID');
     }
 
     public function getProvince($locale, $id, $page, $per_page)
@@ -154,14 +155,14 @@ class RajaOngkirService extends BaseService
     public function getCost($locale, $data)
     {
         $data_request = Arr::only($data, [
-            'origin_city',
+            // 'origin_city',
             'destination_city',
             'weight',
             'courier',
         ]);
 
         $this->validate($data_request, [
-                'origin_city' => 'required',
+                // 'origin_city' => 'required',
                 'destination_city' => 'required',
                 'weight' => 'required|integer',
                 'courier' => 'required|in:jne,pos,tiki',
@@ -169,7 +170,7 @@ class RajaOngkirService extends BaseService
         );
 
         $body = http_build_query([
-            'origin' => $data_request['origin_city'],
+            'origin' => $this->origin,
             'destination' => $data_request['destination_city'],
             'weight' => $data_request['weight'],
             'courier' => $data_request['courier'],
