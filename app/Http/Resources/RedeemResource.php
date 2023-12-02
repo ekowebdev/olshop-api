@@ -70,6 +70,7 @@ class RedeemResource extends JsonResource
             'note' => $this->note,
             'redeem_date' => Carbon::parse($this->created_at)->format('Y-m-d H:i:s'),
             'fredeem_date' => Carbon::parse($this->created_at)->diffForHumans(),
+            'snap_token' => $this->snap_token,
             'snap_url' => $this->snap_url,
             'metadata' => json_decode($this->metadata),
             'redeem_status' => $this->redeem_status,

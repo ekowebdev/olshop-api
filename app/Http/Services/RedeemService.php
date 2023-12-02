@@ -264,7 +264,9 @@ class RedeemService extends BaseService
             ];
         
             // Update Redeem and related data
-            $redeem->snap_url = $this->get_snap_url_midtrans($midtrans_params);
+            $midtrans_data = $this->create_transaction_midtrans($midtrans_params);
+	    $redeem->snap_token = $midtrans_data->token;
+            $redeem->snap_url = $midtrans_data->redirect_url;
             $redeem->metadata = [
                 'user_id' => $user->id,
                 'address_id' => (int) $address_details['id'],
@@ -311,6 +313,10 @@ class RedeemService extends BaseService
         
             return response()->json([
                 'message' => trans('all.success_redeem'),
+		'data' => [
+			'snap_token' => $redeem->snap_token,
+			'snap_url' => $redeem->snap_url
+		],
                 'status' => 200,
                 'error' => 0,
             ]);
@@ -437,13 +443,13 @@ class RedeemService extends BaseService
         return $result;
     }
 
-    private function get_snap_url_midtrans($params)
+    private function create_transaction_midtrans($params)
     {
         \Midtrans\Config::$serverKey = env('MIDTRANS_SERVER_KEY');
         \Midtrans\Config::$isProduction = (bool) env('MIDTRANS_PRODUCTION');
         \Midtrans\Config::$is3ds = (bool) env('MIDTRANS_3DS');
 
-        $snap_url = \Midtrans\Snap::createTransaction($params)->redirect_url;
-        return $snap_url;
+        $result = \Midtrans\Snap::createTransaction($params);
+        return $result;
     }
 }

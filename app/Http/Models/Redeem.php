@@ -15,7 +15,7 @@ class Redeem extends BaseModel
     use HasFactory;
 
     protected $table = 'redeems';
-    protected $fillable = ['user_id', 'address_id', 'redeem_code', 'total_point', 'shipping_fee', 'total_amount', 'note', 'redeem_date', 'snap_url', 'metadata', 'redeem_status', 'deleted_at'];
+    protected $fillable = ['user_id', 'address_id', 'redeem_code', 'total_point', 'shipping_fee', 'total_amount', 'note', 'redeem_date', 'snap_token', 'snap_url', 'metadata', 'redeem_status', 'deleted_at'];
     protected $dates = ['deleted_at'];
 
     public function users()
@@ -55,6 +55,7 @@ class Redeem extends BaseModel
                     'total_amount',
                     'redeem_date',
                     'note',
+		    'snap_token',
                     'snap_url', 
                     'metadata', 
                     'redeem_status',
@@ -75,6 +76,7 @@ class Redeem extends BaseModel
                     'total_amount',
                     'redeem_date',
                     'note',
+		    'snap_token',
                     'snap_url', 
                     'metadata', 
                     'redeem_status',
