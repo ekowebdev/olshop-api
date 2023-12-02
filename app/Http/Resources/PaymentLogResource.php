@@ -20,6 +20,7 @@ class PaymentLogResource extends JsonResource
                 'redeem_date' => Carbon::parse($this->redeems->created_at)->format('Y-m-d H:i:s'),
                 'fredeem_date' => Carbon::parse($this->redeems->created_at)->diffForHumans(),
                 'note' => $this->redeems->note,
+                'snap_token' => $this->redeems->snap_token,
                 'snap_url' => $this->redeems->snap_url,
                 'metadata' => json_decode($this->redeems->metadata),
                 'redeem_status' => $this->redeems->redeem_status,
