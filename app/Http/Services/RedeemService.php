@@ -265,7 +265,7 @@ class RedeemService extends BaseService
         
             // Update Redeem and related data
             $midtrans_data = $this->create_transaction_midtrans($midtrans_params);
-	    $redeem->snap_token = $midtrans_data->token;
+	        $redeem->snap_token = $midtrans_data->token;
             $redeem->snap_url = $midtrans_data->redirect_url;
             $redeem->metadata = [
                 'user_id' => $user->id,
@@ -313,10 +313,10 @@ class RedeemService extends BaseService
         
             return response()->json([
                 'message' => trans('all.success_redeem'),
-		'data' => [
-			'snap_token' => $redeem->snap_token,
-			'snap_url' => $redeem->snap_url
-		],
+                'data' => [
+                    'snap_token' => $redeem->snap_token,
+                    'snap_url' => $redeem->snap_url
+                ],
                 'status' => 200,
                 'error' => 0,
             ]);

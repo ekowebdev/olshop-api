@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::table('redeems', function (Blueprint $table) {
-            $table->string('snap_token', 50)->nullable()->after('redeem_date');
+            $table->string('snap_token', 50)->nullable()->after('note');
         });
     }
 
