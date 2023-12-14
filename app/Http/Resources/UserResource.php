@@ -13,6 +13,7 @@ class UserResource extends JsonResource
             'roles' => $this->getRoleNames(),
             'username' => $this->username,
             'email' => $this->email,
+            'email_status' => $this->email_verified_at != null ? 'verified' : 'unverified',
             'email_verified_at' => $this->email_verified_at,
             'profile' => ($this->profile) ? [
                 'id' => $this->profile->id,
