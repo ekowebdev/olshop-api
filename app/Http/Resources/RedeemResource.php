@@ -100,7 +100,7 @@ class RedeemResource extends JsonResource
                 'shipping_resi' => $this->shippings->resi,
                 'shipping_status' => $this->shippings->status,
             ],
-            'users' => [
+            'users' => ($this->users) ? [
                 'id' => $this->users->id,
                 'roles' => $this->users->getRoleNames(),
                 'username' => $this->users->username,
@@ -135,7 +135,7 @@ class RedeemResource extends JsonResource
                     'address' => $this->address->address,
                     'is_main' => ($this->users->main_address_id == $this->address->id) ? 1 : 0,
                 ] : null,
-            ]
+            ] : null
         ];
     }
 

@@ -52,23 +52,22 @@ class PaymentLogResource extends JsonResource
                                 ];
                             }),
                         ],
-                        'variants' => ($redeem_item_gift->variants) 
-                            ? [
-                                'id' => $redeem_item_gift->variants->id,
-                                'variant_name' => $redeem_item_gift->variants->variant_name,
-                                'variant_slug' => $redeem_item_gift->variants->variant_slug,
-                                'variant_quantity' => $redeem_item_gift->variants->variant_quantity,
-                                'variant_point' => $redeem_item_gift->variants->variant_point,
-                                'fvariant_point' => format_money(strval($redeem_item_gift->variants->variant_point)),
-                                'variant_weight' => $redeem_item_gift->variants->variant_weight,
-                                'fvariant_weight' => $redeem_item_gift->variants->variant_weight . ' Gram',
-                                'variant_image' => ($redeem_item_gift->variants->item_gift_images) ? [
-                                    'id' => $redeem_item_gift->variants->item_gift_images->id,
-                                    'image' => $redeem_item_gift->variants->item_gift_images->item_gift_image,
-                                    'image_url' => $redeem_item_gift->variants->item_gift_images->item_gift_image_url,
-                                    'image_thumb_url' => $redeem_item_gift->variants->item_gift_images->item_gift_image_thumb_url,
-                                ] : null,
+                        'variants' => ($redeem_item_gift->variants) ? [
+                            'id' => $redeem_item_gift->variants->id,
+                            'variant_name' => $redeem_item_gift->variants->variant_name,
+                            'variant_slug' => $redeem_item_gift->variants->variant_slug,
+                            'variant_quantity' => $redeem_item_gift->variants->variant_quantity,
+                            'variant_point' => $redeem_item_gift->variants->variant_point,
+                            'fvariant_point' => format_money(strval($redeem_item_gift->variants->variant_point)),
+                            'variant_weight' => $redeem_item_gift->variants->variant_weight,
+                            'fvariant_weight' => $redeem_item_gift->variants->variant_weight . ' Gram',
+                            'variant_image' => ($redeem_item_gift->variants->item_gift_images) ? [
+                                'id' => $redeem_item_gift->variants->item_gift_images->id,
+                                'image' => $redeem_item_gift->variants->item_gift_images->item_gift_image,
+                                'image_url' => $redeem_item_gift->variants->item_gift_images->item_gift_image_url,
+                                'image_thumb_url' => $redeem_item_gift->variants->item_gift_images->item_gift_image_thumb_url,
                             ] : null,
+                        ] : null,
                     ];
                 })
             ],

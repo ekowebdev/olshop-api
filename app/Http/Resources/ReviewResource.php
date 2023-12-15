@@ -114,7 +114,7 @@ class ReviewResource extends JsonResource
                     ];
                 }),
             ],
-            'users' => [
+            'users' => ($this->users) ? [
                 'id' => $this->users->id,
                 'username' => $this->users->username,
                 'email' => $this->users->email,
@@ -128,7 +128,7 @@ class ReviewResource extends JsonResource
                     'avatar' => $this->users->profile->avatar,
                     'avatar_url' => $this->users->profile->avatar_url,
                 ] : null,
-            ]
+            ] : null
         ];
     }
 

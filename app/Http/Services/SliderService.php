@@ -124,6 +124,7 @@ class SliderService extends BaseService
                     'max:1000',
                     'image',
                     'mimes:jpg,png',
+                    'dimensions:width=100,height=100'
                 ],
             ]
         );

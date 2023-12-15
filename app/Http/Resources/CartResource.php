@@ -52,7 +52,7 @@ class CartResource extends JsonResource
                     ] : null,
                 ] : null,
             'cart_quantity' => $this->cart_quantity,
-            'users' => [
+            'users' => ($this->users) ? [
                 'id' => $this->users->id,
                 'username' => $this->users->username,
                 'email' => $this->users->email,
@@ -66,7 +66,7 @@ class CartResource extends JsonResource
                     'avatar' => $this->users->profile->avatar,
                     'avatar_url' => $this->users->profile->avatar_url,
                 ] : null,
-            ],
+            ] : null,
             'created_at' => Carbon::parse($this->created_at)->format('Y-m-d H:i:s'),
         ];
     }

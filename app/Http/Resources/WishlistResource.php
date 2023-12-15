@@ -77,7 +77,7 @@ class WishlistResource extends JsonResource
                 'total_redeem' => (int) $this->item_gifts->total_redeem,
                 'is_wishlist' => $this->item_gifts->is_wishlist
             ],
-            'users' => [
+            'users' => ($this->users) ? [
                 'id' => $this->users->id,
                 'username' => $this->users->username,
                 'email' => $this->users->email,
@@ -91,7 +91,7 @@ class WishlistResource extends JsonResource
                     'avatar' => $this->users->profile->avatar,
                     'avatar_url' => $this->users->profile->avatar_url,
                 ] : null,
-            ]
+            ] : null
         ];
     }
 

@@ -46,7 +46,7 @@ class ItemGiftResource extends JsonResource
             'reviews' => $this->reviews->map(function ($review) {
                 return [
                     'id' => $review->id,
-                    'users' => [
+                    'users' => ($review->users) ? [
                         'id' => $review->users->id,
                         'name' => $review->users->profile->name,
                         'username' => $review->users->username,
@@ -54,7 +54,7 @@ class ItemGiftResource extends JsonResource
                         'email_status' => $review->users->email_verified_at != null ? 'verified' : 'unverified',
                         'email_verified_at' => $review->users->email_verified_at,
                         'avatar_url' => ($review->users->profile) ? $review->users->profile->avatar_url : null,
-                    ],
+                    ] : null,
                     'redeem_id' => $review->redeem_id,
                     'item_gift_id' => $review->item_gift_id,
                     'review_text' => $review->review_text,
