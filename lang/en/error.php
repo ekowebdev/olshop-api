@@ -21,4 +21,5 @@ return [
 	"redeem_not_completed"                        => "You cannot do this action because the order ID: :id order payment status is not yet complete",
 	"operation_not_permitted"					  => "Operation not permitted",
 	"failed_cancel_redeem"						  => "Failed cancel order",
+	"cannot_delete_primary_address"				  => "You cannot delete data, because the address you chose is the main address",
 ];

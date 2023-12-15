@@ -5,16 +5,19 @@ namespace App\Http\Services;
 use Illuminate\Support\Arr;
 use App\Http\Models\Address;
 use Illuminate\Support\Facades\DB;
+use App\Exceptions\ValidationException;
+use App\Http\Repositories\UserRepository;
 use App\Http\Repositories\AddressRepository;
 
 class AddressService extends BaseService
 {
-    private $model, $repository;
+    private $model, $repository, $userRepository;
 
-    public function __construct(Address $model, AddressRepository $repository)
+    public function __construct(Address $model, AddressRepository $repository, UserRepository $userRepository)
     {
         $this->model = $model;
         $this->repository = $repository;
+        $this->userRepository = $userRepository;
     }
 
     public function getIndexData($locale, $data)
@@ -104,6 +107,11 @@ class AddressService extends BaseService
 
         DB::beginTransaction();
         $result = $this->model->create($data_request);
+        if($this->repository->countDataByUser($data_request['user_id']) == 1) {
+            $user = $this->userRepository->getSingleData($locale, $data_request['user_id']);
+            $user->main_address_id = $result->id;
+            $user->save();
+        }
         DB::commit();
 
         return $this->repository->getSingleData($locale, $result->id);
@@ -171,6 +179,9 @@ class AddressService extends BaseService
     {
         $check_data = $this->repository->getSingleData($locale, $id);
         DB::beginTransaction();
+        if($this->repository->countDataByUser($check_data->user_id) == 1 || $check_data->is_main == 1) {
+            throw new ValidationException(json_encode(['address' => [trans('error.cannot_delete_primary_address')]]));
+        }
         $result = $check_data->delete();
         DB::commit();
 

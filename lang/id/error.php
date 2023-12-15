@@ -21,4 +21,5 @@ return [
 	"redeem_not_completed"                        => "Anda tidak dapat melakukan aksi ini karena status pembayaran order ID: :id belum selesai",
 	"operation_not_permitted"					  => "Operasi tidak diizinkan",
 	"failed_cancel_redeem"						  => "Pesanan tidak dapat dibatalkan",
+	"cannot_delete_primary_address"				  => "Tidak bisa hapus data, karena alamat yang anda pilih adalah alamat utama",
 ];
