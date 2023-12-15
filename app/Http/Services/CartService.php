@@ -127,22 +127,18 @@ class CartService extends BaseService
                         'status' => 400,
                     ], 400);
                 }
-            }
-        
-            $cart = $this->repository->getByItemAndVariant(intval($item_gift->id), $variant_id)->first();
-        
-            if (!empty($cart)) {
-                $cart->update([
-                    'cart_quantity' => $cart->cart_quantity + $data_request['cart_quantity'],
+
+                $exists_cart->update([
+                    'cart_quantity' => $exists_cart->cart_quantity + $data_request['cart_quantity'],
                 ]);
             } else {
-                $cart_model = $this->model;
-                $cart_model->id = strval(Str::uuid());
-                $cart_model->user_id = intval($user->id);
-                $cart_model->item_gift_id = intval($data_request['item_gift_id']);
-                $cart_model->variant_id = $variant_id ?? '';
-                $cart_model->cart_quantity = intval($data_request['cart_quantity']);
-                $cart_model->save();
+                $cart = $this->model;
+                $cart->id = strval(Str::uuid());
+                $cart->user_id = intval($user->id);
+                $cart->item_gift_id = intval($data_request['item_gift_id']);
+                $cart->variant_id = $variant_id ?? '';
+                $cart->cart_quantity = intval($data_request['cart_quantity']);
+                $cart->save();
             }
         
             DB::commit();
