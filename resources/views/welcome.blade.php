@@ -16,7 +16,7 @@
                         <div class="bg-white border rounded shadow p-2">
                             <div class="flex flex-row items-center">
                                 <div class="flex-1 text-right md:text-center">
-                                    <h5 class="font-bold uppercase text-gray-800">Total Notification</h5>
+                                    <h5 class="font-bold uppercase text-gray-800">Total Notifications</h5>
                                     <h3 class="font-bold text-2xl">
                                         <p>
                                             <span id="count">-</span>
