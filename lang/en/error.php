@@ -22,4 +22,5 @@ return [
 	"operation_not_permitted"					  => "Operation not permitted",
 	"failed_cancel_redeem"						  => "Failed cancel order",
 	"cannot_delete_primary_address"				  => "You cannot delete data, because the address you chose is the main address",
+	"token_reset_password_is_expire"			  => "This password reset token is invalid",
 ];

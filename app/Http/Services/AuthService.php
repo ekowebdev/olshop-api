@@ -3,6 +3,7 @@ namespace App\Http\Services;
 
 use App\Http\Models\User;
 use Illuminate\Support\Str;
+use App\Http\Models\PasswordReset;
 use App\Http\Traits\PassportToken;
 use Illuminate\Support\Facades\DB;
 use App\Http\Resources\UserResource;
@@ -11,9 +12,9 @@ use Illuminate\Support\Facades\Mail;
 use App\Jobs\SendEmailVerificationJob;
 use Illuminate\Support\Facades\Password;
 use App\Http\Repositories\UserRepository;
-use Illuminate\Auth\Events\PasswordReset;
 use App\Http\Repositories\OauthRepository;
 use App\Exceptions\AuthenticationException;
+use App\Jobs\SendEmailTokenResetPasswordJob;
 
 class AuthService extends BaseService
 {  
@@ -209,17 +210,15 @@ class AuthService extends BaseService
             'email' => 'required|email|exists:users',
         ]);
 
-        $status = Password::sendResetLink(
-            $request->only('email')
-        );
+        PasswordReset::where('email', $request->email)->delete();
 
-        if($status != Password::RESET_LINK_SENT) {
-            return response()->json([
-                'message' => trans('error.failed_send_reset_password_link'), 
-                'status' => 200,
-                'error' => 0,
-            ]);
-        }
+        $data['token'] = md5(mt_rand(100000, 999999));
+        $data['email'] = $request->email;
+        $data['created_at'] = date('Y-m-d H:i:s');
+
+        PasswordReset::create($data);
+
+        SendEmailTokenResetPasswordJob::dispatch($request->email, $data);
 
         return response()->json([
             'message' => trans('all.success_send_reset_password_link'), 
@@ -228,40 +227,29 @@ class AuthService extends BaseService
         ]);
     }
 
-    public function reset_password($token) 
-    {
-        $url = env('FRONT_URL') . '/reset-password?token=' . $token; 
-        return redirect()->to($url);
-    }
-
     public function reset_password_update($locale, $request) 
     {
         $request->validate([
             'token' => 'required',
-            'email' => 'required|email|exists:users',
             'password' => 'required|min:6|confirmed',
         ]);
-     
-        $status = Password::reset(
-            $request->only('email', 'password', 'password_confirmation', 'token'),
-            function (User $user, string $password) {
-                $user->forceFill([
-                    'password' => Hash::make($password)
-                ])->setRememberToken(Str::random(60));
-     
-                $user->save();
-     
-                event(new PasswordReset($user));
-            }
-        );
 
-        if($status !== Password::PASSWORD_RESET) {
+        $password_reset = PasswordReset::where('token', $request->token)->first();
+
+        if ($password_reset->created_at > now()->addHour()) {
+            $password_reset->delete();
             return response()->json([
-                'message' => trans('error.failed_reset_password'), 
-                'status' => 200,
+                'message' => trans('error.token_reset_password_is_expire'),
+                'status' => 422,
                 'error' => 0,
-            ]);
+            ], 422);
         }
+
+        $user = User::firstWhere('email', $password_reset->email);
+
+        $user->update(['password' => Hash::make($request->password)]);
+
+        $password_reset->delete();
 
         return response()->json([
             'message' => trans('all.success_reset_password'), 
