@@ -22,15 +22,15 @@
 <body style="background-color: #FAFAFA; text-align: center; font-family: 'Nunito', Arial, Helvetica, sans-serif; padding: 0; margin: 0;">
   <table border="0" cellpadding="0" cellspacing="0" style="width:100%">
     <tr>
-      <td bgcolor="#007D6E" height="120px"></td>
-      <td bgcolor="#007D6E" height="120px" align="center" valign="center">
+      <td bgcolor="#2B00C8" height="120px"></td>
+      <td bgcolor="#2B00C8" height="120px" align="center" valign="center">
         {{-- <img src="{{ asset('images/mail/logo_horizontal.png') }}" style="height: 60px;" /> --}}
       </td>
-      <td bgcolor="#007D6E" height="120px"></td>
+      <td bgcolor="#2B00C8" height="120px"></td>
     </tr>
     <tr>
-      <td bgcolor="#007D6E" height="10px"></td>
-      <td bgcolor="#007D6E" width="680px" height="0px">
+      <td bgcolor="#2B00C8" height="10px"></td>
+      <td bgcolor="#2B00C8" width="680px" height="0px">
         <div
           style="width: auto; height: 100%; background: #ffffff; border-top-left-radius: 10px; border-top-right-radius: 10px; text-align: left; padding-top: 24px; padding-left: 24px; padding-right: 24px;">
           <div style="font-size: 18px; font-weight: 700; color: #272727;">
@@ -41,7 +41,7 @@
           </div>
         </div>
       </td>
-      <td bgcolor="#007D6E" height="0px"></td>
+      <td bgcolor="#2B00C8" height="0px"></td>
     </tr>
     <tr>
       <td height="60px"></td>
@@ -55,7 +55,7 @@
                 </td>
                 <td style="text-align: right; padding-top: 18px; padding-bottom: 24px;">
                   <span style="font-size: 16px; color: #333333; font-weight: 600;">&copy; {{ date('Y') }} </span>
-                  <span style="font-size: 16px; color: #007D6E; font-weight: 600;">{{ env('APP_NAME') }}</span>
+                  <span style="font-size: 16px; color: #2B00C8; font-weight: 600;">{{ env('APP_NAME') }}</span>
                 </td>
               </tr>
             </tbody>
