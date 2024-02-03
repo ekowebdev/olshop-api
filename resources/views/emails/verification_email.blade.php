@@ -58,6 +58,9 @@
               <tr>
                 <td>
                   <p style="font-size: 14px; color: #272727; text-align: left; margin-bottom: 34px;">
+                    Link ini berlaku selama 1 jam. Hubungi kami jika Anda mengalami kesulitan.
+                  </p>
+                  <p style="font-size: 14px; color: #272727; text-align: left; margin-bottom: 34px;">
                     Jika Anda tidak membuat akun, abaikan email ini.
                   </p>
                   <p style="text-align: left; font-size: 14px; color: #272727; margin-bottom: 24px;">
