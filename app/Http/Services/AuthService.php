@@ -3,7 +3,6 @@ namespace App\Http\Services;
 
 use App\Http\Models\User;
 use Illuminate\Support\Str;
-use App\Http\Models\PasswordReset;
 use App\Http\Traits\PassportToken;
 use Illuminate\Support\Facades\DB;
 use App\Http\Resources\UserResource;
@@ -210,15 +209,19 @@ class AuthService extends BaseService
             'email' => 'required|email|exists:users',
         ]);
 
-        PasswordReset::where('email', $request->email)->delete();
+        DB::beginTransaction();
+
+        DB::table('password_resets')->where('email', $request->email)->delete();
 
         $data['token'] = md5(mt_rand(100000, 999999));
         $data['email'] = $request->email;
         $data['created_at'] = date('Y-m-d H:i:s');
 
-        PasswordReset::create($data);
+        DB::table('password_resets')->insert($data);
 
         SendEmailTokenResetPasswordJob::dispatch($request->email, $data);
+
+        DB::commit();
 
         return response()->json([
             'message' => trans('all.success_send_reset_password_link'), 
@@ -234,7 +237,15 @@ class AuthService extends BaseService
             'password' => 'required|min:8|confirmed',
         ]);
 
-        $password_reset = PasswordReset::where('token', $request->token)->first();
+        $password_reset = DB::table('password_resets')->where('token', $request->token)->first();
+
+        if($password_reset == null){
+            return response()->json([
+                'message' => trans('error.token_reset_password_is_invalid'),
+                'status' => 422,
+                'error' => 0,
+            ], 422);
+        }
 
         if ($password_reset->created_at > now()->addHour()) {
             $password_reset->delete();
@@ -245,11 +256,15 @@ class AuthService extends BaseService
             ], 422);
         }
 
+        DB::beginTransaction();
+
         $user = User::where('email', $password_reset->email)->first();
 
         $user->update(['password' => Hash::make($request->password)]);
 
-        $password_reset->delete();
+        DB::table('password_resets')->where('email', $password_reset->email)->delete();
+
+        DB::commit();
 
         return response()->json([
             'message' => trans('all.success_reset_password'), 
