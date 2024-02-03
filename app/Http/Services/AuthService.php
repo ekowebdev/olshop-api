@@ -231,7 +231,7 @@ class AuthService extends BaseService
     {
         $request->validate([
             'token' => 'required',
-            'password' => 'required|min:6|confirmed',
+            'password' => 'required|min:8|confirmed',
         ]);
 
         $password_reset = PasswordReset::where('token', $request->token)->first();
@@ -245,7 +245,7 @@ class AuthService extends BaseService
             ], 422);
         }
 
-        $user = User::firstWhere('email', $password_reset->email);
+        $user = User::where('email', $password_reset->email)->first();
 
         $user->update(['password' => Hash::make($request->password)]);
 
