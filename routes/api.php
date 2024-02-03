@@ -11,8 +11,8 @@ Route::middleware(['xssclean'])->group(function () {
         Route::post('/login/system', '\App\Http\Controllers\API\v1\Auth\SystemAccessTokenController@tokenSystem');
         Route::post('/refresh-token', '\App\Http\Controllers\API\v1\Auth\AuthController@refresh_token');
         Route::post('/email/resend', '\App\Http\Controllers\API\v1\Auth\AuthController@resend')->name('verification.resend');
-        Route::post('/forget/password', '\App\Http\Controllers\API\v1\Auth\AuthController@forget_password')->name('forget.password'); 
-        Route::post('/reset/password', '\App\Http\Controllers\API\v1\Auth\AuthController@reset_password_update')->name('password.update');
+        Route::post('/forget/password', '\App\Http\Controllers\API\v1\Auth\AuthController@forget_password'); 
+        Route::post('/reset/password', '\App\Http\Controllers\API\v1\Auth\AuthController@reset_password');
         // Webhook
         Route::post('/webhook/midtrans', '\App\Http\Controllers\API\v1\WebhookController@midtrans_handler');
         Route::group(['middleware' => ['auth:api']], function () {

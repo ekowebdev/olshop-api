@@ -24,7 +24,7 @@
     <tr>
       <td bgcolor="#007D6E" height="120px"></td>
       <td bgcolor="#007D6E" height="120px" align="center" valign="center">
-        <img src="http://13.229.99.87/images/mail/logo_horizontal.png" style="height: 60px;" />
+        {{-- <img src="{{ asset('images/mail/logo_horizontal.png') }}" style="height: 60px;" /> --}}
       </td>
       <td bgcolor="#007D6E" height="120px"></td>
     </tr>
@@ -51,8 +51,7 @@
             <tbody>
               <tr>
                 <td style="padding-top: 34px; padding-bottom: 24px;">
-                  <a href="https://bakti-shop.vercel.app/reset-password?email={{ $data['email']
-                  }}&token={{ $data['token'] }}" target="_blank"
+                  <a href="{{ env('FRONT_URL') }}/reset-password?token={{ $data['token'] }}" target="_blank"
                     style="border-radius: 5px; cursor: pointer; font-size: 16px; font-weight: normal; margin: 0; padding: 16px 16px; text-decoration: none; background-color: #007D6E; color: #ffffff;">Buat
                     kata sandi baru</a>
                 </td>
@@ -60,8 +59,7 @@
               <tr>
                 <td align="center" valign="center" style="padding-top: 16px; padding-bottom: 40px;">
                   <div class="redirect-link" style="width:640px; text-align: center; color: #272727; font-size: 14px; font-weight: 400; line-height: 19px; word-wrap: break-word;">
-                    atau tempel alamat ini ke browser Anda: <a href="" style="font-size: 14px; color: blue;">http://13.229.99.87/reset-password?email={{ $data['email']
-                      }}&token={{ $data['token'] }}</a>
+                    atau tempel alamat ini ke browser Anda: <a href="" style="font-size: 14px; color: blue;">{{ env('FRONT_URL') }}/reset-password?token={{ $data['token'] }}</a>
                   </div>
                 </td>
               </tr>
@@ -74,7 +72,7 @@
                     Salam,
                   </p>
                   <p style="text-align: left; font-size: 14px; color: #272727">
-                    Tim Bakti Shop
+                    Tim {{ env('APP_NAME') }}
                   </p>
                 </td>
               </tr>
@@ -92,11 +90,11 @@
             <tbody>
               <tr>
                 <td style="text-align: left; padding-top: 18px; padding-bottom: 24px;">
-                  <img src="http://13.229.99.87/images/mail/logo_footer_horizontal.png" style="height: 24px;" />
+                  {{-- <img src="{{ asset('images/mail/logo_footer_horizontal.png') }}" style="height: 24px;" /> --}}
                 </td>
                 <td style="text-align: right; padding-top: 18px; padding-bottom: 24px;">
                   <span style="font-size: 16px; color: #333333; font-weight: 600;">&copy; {{ date('Y') }} </span>
-                  <span style="font-size: 16px; color: #007D6E; font-weight: 600;">Bakti Shop</span>
+                  <span style="font-size: 16px; color: #007D6E; font-weight: 600;">{{ env('APP_NAME') }}</span>
                 </td>
               </tr>
             </tbody>

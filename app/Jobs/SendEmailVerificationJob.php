@@ -3,11 +3,13 @@
 namespace App\Jobs;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
+use App\Mail\VerificationEmail;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
+use Illuminate\Contracts\Queue\ShouldBeUnique;
 
 class SendEmailVerificationJob implements ShouldQueue
 {
@@ -32,6 +34,6 @@ class SendEmailVerificationJob implements ShouldQueue
      */
     public function handle()
     {
-        $this->user->sendEmailVerificationNotification();
+        Mail::to($this->user->email)->send(new VerificationEmail($this->user));
     }
 }

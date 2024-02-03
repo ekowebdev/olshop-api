@@ -4,18 +4,18 @@
     table,
     th,
     td {
-        border: 0px !important;
+      border: 0px !important;
     }
 
     @media only screen and (max-width: 600px) {
-        .redirect-link {
+      .redirect-link {
         width: 370px !important;
         overflow: hidden;
-        }
-        .footer-email {
+      }
+      .footer-email {
         padding-left: 2%;
         padding-right: 2%;
-        }
+      }
     }
 </style>
 
@@ -34,10 +34,10 @@
         <div
           style="width: auto; height: 100%; background: #ffffff; border-top-left-radius: 10px; border-top-right-radius: 10px; text-align: left; padding-top: 24px; padding-left: 24px; padding-right: 24px;">
           <div style="font-size: 18px; font-weight: 700; color: #272727;">
-            {{ trans('all.greeting_email_transaction_succes') }}
+            Halo!
           </div>
           <div style="padding-top: 18px; padding-bottom: 0px; font-size: 14px; color: #272727; font-weight: 400; line-height: 19px;">
-            #{{ $header_data['redeem_code'] }}
+            Silahkan klik tombol di bawah ini untuk melakukan verifikasi email:
           </div>
         </div>
       </td>
@@ -48,36 +48,27 @@
       <td width="680px" height="360px">
         <div class="content" style="width: auto; height: 100%; background: #ffffff; border-bottom-left-radius: 10px; border-bottom-right-radius: 10px; box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.12)">
           <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="btn btn-primary" style="width: 100%; padding-left: 24px; padding-right: 24px;" width="100%">
-            <thead>
-                <tr>
-                    <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Item</th>
-                    <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Quantity</th>
-                    <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Price</th>
-                </tr>
-            </thead>
             <tbody>
-                @foreach($detail_data as $item)
-                <tr>
-                    <td style="border: 1px solid #ddd; padding: 8px;">{{ $item['name'] }}</td>
-                    <td style="border: 1px solid #ddd; padding: 8px;">{{ $item['quantity'] }}</td>
-                    <td style="border: 1px solid #ddd; padding: 8px;">{{ $item['price'] }}</td>
-                </tr>
-                @endforeach
+              <tr>
+                <td style="padding-top: 34px; padding-bottom: 24px;">
+                  <a href="{{ $verification_url }}" target="_blank"
+                    style="border-radius: 5px; cursor: pointer; font-size: 16px; font-weight: normal; margin: 0; padding: 16px 16px; text-decoration: none; background-color: #007D6E; color: #ffffff;">Verifikasi Email</a>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <p style="font-size: 14px; color: #272727; text-align: left; margin-bottom: 34px;">
+                    Jika Anda tidak membuat akun, abaikan email ini.
+                  </p>
+                  <p style="text-align: left; font-size: 14px; color: #272727; margin-bottom: 24px;">
+                    Salam,
+                  </p>
+                  <p style="text-align: left; font-size: 14px; color: #272727">
+                    Tim {{ env('APP_NAME') }}
+                  </p>
+                </td>
+              </tr>
             </tbody>
-            <tfoot>
-                <tr>
-                    <th colspan="2" style="border: 1px solid #ddd; padding: 8px; text-align: right;">Total Price</th>
-                    <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">{{ $header_data['total_price'] }}</th>
-                </tr>
-                <tr>
-                    <th colspan="2" style="border: 1px solid #ddd; padding: 8px; text-align: right;">Shipping Fee</th>
-                    <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">{{ $header_data['shipping_fee'] }}</th>
-                </tr>
-                <tr>
-                    <th colspan="2" style="border: 1px solid #ddd; padding: 8px; text-align: right;">Grand Total</th>
-                    <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">{{ $header_data['total_amount'] }}</th>
-                </tr>
-            </tfoot>
           </table>
         </div>
       </td>

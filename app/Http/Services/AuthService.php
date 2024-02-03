@@ -227,7 +227,7 @@ class AuthService extends BaseService
         ]);
     }
 
-    public function reset_password_update($locale, $request) 
+    public function reset_password($locale, $request) 
     {
         $request->validate([
             'token' => 'required',
