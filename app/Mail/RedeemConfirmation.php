@@ -34,7 +34,7 @@ class RedeemConfirmation extends Mailable
     public function envelope()
     {
         return new Envelope(
-            subject: 'Order Confirmation',
+            subject: trans('all.order_confirmation_title'),
         );
     }
 

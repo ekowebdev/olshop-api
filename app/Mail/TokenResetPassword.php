@@ -34,7 +34,7 @@ class TokenResetPassword extends Mailable
     public function envelope()
     {
         return new Envelope(
-            subject: 'Reset Password',
+            subject: trans('all.reset_password'),
         );
     }
 

@@ -41,4 +41,7 @@ return [
 	"paste_link_text"			         => "atau tempel alamat ini ke browser Anda:",
 	"greeting_reset_password"			 => "Kami telah menerima permintaan untuk mengatur ulang kata sandi Anda. Silahkan klik tombol di bawah ini untuk melanjutkan:",
 	"hello_text"			 			 => "Halo!",
+	"birthday_wish_title"			 	 => "Ucapan Selamat Ulang Tahun",
+	"order_confirmation_title"			 => "Konfirmasi Pesanan",
+	"reset_password_title"			     => "Ubah Kata Sandi",
 ];

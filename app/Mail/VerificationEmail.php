@@ -35,7 +35,7 @@ class VerificationEmail extends Mailable
     public function envelope()
     {
         return new Envelope(
-            subject: 'Verification Email',
+            subject: trans('all.verification_email_text'),
         );
     }
 

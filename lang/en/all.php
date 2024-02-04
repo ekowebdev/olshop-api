@@ -41,4 +41,7 @@ return [
 	"paste_link_text"			         => "or paste this address into your browser:",
 	"greeting_reset_password"			 => "We have received a request to reset your password. Please click the button below to continue:",
 	"hello_text"			 			 => "Hello!",
+	"birthday_wish_title"			 	 => "Birthday Wish",
+	"order_confirmation_title"			 => "Order Confirmation",
+	"reset_password_title"			     => "Reset Password",
 ];
