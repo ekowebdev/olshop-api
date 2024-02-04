@@ -24,7 +24,7 @@
     <tr>
       <td bgcolor="#2B00C8" height="120px"></td>
       <td bgcolor="#2B00C8" height="120px" align="center" valign="center">
-        <img src="{{ env('APP_URL') }}/images/mail/logo.png" style="height: 60px; filter:invert(0); filter:brightness(0);" /> <span style="font-size: 16px; color:#FAFAFA">Shop</span>
+        <img src="{{ env('APP_URL') }}/images/mail/logo.png" style="height: 60px; filter:brightness(0); filter:invert(0);" /> <span style="font-size: 16px; color:#FAFAFA">Shop</span>
       </td>
       <td bgcolor="#2B00C8" height="120px"></td>
     </tr>
