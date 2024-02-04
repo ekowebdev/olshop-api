@@ -20,11 +20,11 @@
 </style>
 
 <body style="background-color: #FAFAFA; text-align: center; font-family: 'Nunito', Arial, Helvetica, sans-serif; padding: 0; margin: 0;">
-  <table border="0" cellpadding="0" cellspacing="0" style="width:100%">
+  <table border="0" cellpadding="0" cellspacing="0" style="width:100%;">
     <tr>
       <td bgcolor="#2B00C8" height="120px"></td>
       <td bgcolor="#2B00C8" height="120px" align="center" valign="center">
-        <img src="{{ env('APP_URL') }}/images/mail/logo.png" style="height: 60px; filter:brightness(0); filter:invert(0)" />
+        <img src="{{ env('APP_URL') }}/images/mail/logo.png" style="height: 60px; filter:brightness(0); filter:invert(0);" /> <span style="font-size: 16px; color:#FAFAFA">Shop</span>
       </td>
       <td bgcolor="#2B00C8" height="120px"></td>
     </tr>
@@ -34,28 +34,28 @@
         <div
           style="width: auto; height: 100%; background: #ffffff; border-top-left-radius: 10px; border-top-right-radius: 10px; text-align: left; padding-top: 24px; padding-left: 24px; padding-right: 24px;">
           <div style="font-size: 18px; font-weight: 700; color: #272727;">
-            {{ trans('all.notification_birthday_title', ['name' => $user['name']]) }}
+            {{ trans('all.notification_birthday_title', ['name' => $profile['name']]) }}
+          </div>
+          <div style="padding-top: 18px; padding-bottom: 30px; font-size: 14px; color: #272727; font-weight: 400; line-height: 19px;">
+            {{ trans('all.notification_birthday_text') }}
           </div>
         </div>
       </td>
       <td bgcolor="#2B00C8" height="0px"></td>
     </tr>
     <tr>
-      <td height="360px"></td>
-      <td width="680px" height="360px">
+      <td height="20px"></td>
+      <td width="680px">
         <div class="content" style="width: auto; height: 100%; background: #ffffff; border-bottom-left-radius: 10px; border-bottom-right-radius: 10px; box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.12)">
           <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="btn btn-primary" style="width: 100%; padding-left: 24px; padding-right: 24px;" width="100%">
             <tbody>
               <tr>
                 <td>
-                  <p style="font-size: 14px; color: #272727; text-align: left; margin-bottom: 34px;">
-                    {{ trans('all.notification_birthday_text') }}.
-                  </p>
-                  <p style="text-align: left; font-size: 14px; color: #272727; margin-bottom: 24px;">
-                    Salam,
+                  <p style="text-align: left; font-size: 14px; color: #272727; margin-bottom: 30px;">
+                    {{ trans('all.regards') }},
                   </p>
                   <p style="text-align: left; font-size: 14px; color: #272727">
-                    Tim {{ env('APP_NAME') }}
+                    {{ trans('all.team') }} {{ env('APP_NAME') }}
                   </p>
                 </td>
               </tr>
@@ -63,16 +63,15 @@
           </table>
         </div>
       </td>
-      <td height="360px"></td>
     </tr>
     <tr>
-      <td height="60px"></td>
-      <td height="60px">
-        <div class="footer-email" style="margin-top: 10px;">
-          <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="btn btn-primary" style=" width: 100%;" width="100%">
+      <td height="100px"></td>
+      <td>
+        <div class="footer-email">
+          <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="btn btn-primary" width="100%">
             <tbody>
               <tr>
-                <td style="text-align: left; padding-top: 18px; padding-bottom: 24px;">
+                <td style="text-align: left; padding-bottom: 24px;">
                   <img src="{{ env('APP_URL') }}/images/mail/logo.png" style="height: 24px;" />
                 </td>
                 <td style="text-align: right; padding-top: 18px; padding-bottom: 24px;">

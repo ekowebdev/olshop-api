@@ -4,18 +4,18 @@
     table,
     th,
     td {
-        border: 0px !important;
+      border: 0px !important;
     }
 
     @media only screen and (max-width: 600px) {
-        .redirect-link {
+      .redirect-link {
         width: 370px !important;
         overflow: hidden;
-        }
-        .footer-email {
+      }
+      .footer-email {
         padding-left: 2%;
         padding-right: 2%;
-        }
+      }
     }
 </style>
 
@@ -37,7 +37,7 @@
             Halo!
           </div>
           <div style="padding-top: 18px; padding-bottom: 0px; font-size: 14px; color: #272727; font-weight: 400; line-height: 19px;">
-            Kami telah menerima permintaan untuk mengatur ulang kata sandi Anda. Silahkan klik tombol di bawah ini untuk melanjutkan:
+            {{ trans('all.greeting_reset_password') }}
           </div>
         </div>
       </td>
@@ -52,27 +52,26 @@
               <tr>
                 <td style="padding-top: 34px; padding-bottom: 24px;">
                   <a href="{{ env('FRONT_URL') }}/reset-password?token={{ $data['token'] }}" target="_blank"
-                    style="border-radius: 5px; cursor: pointer; font-size: 16px; font-weight: normal; margin: 0; padding: 16px 16px; text-decoration: none; background-color: #2B00C8; color: #ffffff;">Buat
-                    kata sandi baru</a>
+                    style="border-radius: 5px; cursor: pointer; font-size: 16px; font-weight: normal; margin: 0; padding: 16px 16px; text-decoration: none; background-color: #2B00C8; color: #ffffff;">{{ trans('all.create_new_password_text') }}</a>
                 </td>
               </tr>
               <tr>
                 <td align="center" valign="center" style="padding-top: 16px; padding-bottom: 40px;">
                   <div class="redirect-link" style="width:640px; text-align: center; color: #272727; font-size: 14px; font-weight: 400; line-height: 19px; word-wrap: break-word;">
-                    atau tempel alamat ini ke browser Anda: <a href="" style="font-size: 14px; color: blue;">{{ env('FRONT_URL') }}/reset-password?token={{ $data['token'] }}</a>
+                    {{ trans('all.paste_link_text') }} <a href="" style="font-size: 14px; color: blue;">{{ env('FRONT_URL') }}/reset-password?token={{ $data['token'] }}</a>
                   </div>
                 </td>
               </tr>
               <tr>
                 <td>
                   <p style="font-size: 14px; color: #272727; text-align: left; margin-bottom: 34px;">
-                    Link ini berlaku selama 1 jam. Hubungi kami jika Anda mengalami kesulitan mengatur ulang kata Sandi Anda.
+                    {{ trans('all.duration_link_text') }}
                   </p>
                   <p style="text-align: left; font-size: 14px; color: #272727; margin-bottom: 24px;">
-                    Salam,
+                    {{ trans('all.regards') }},
                   </p>
                   <p style="text-align: left; font-size: 14px; color: #272727">
-                    Tim {{ env('APP_NAME') }}
+                    {{ trans('all.team') }} {{ env('APP_NAME') }}
                   </p>
                 </td>
               </tr>

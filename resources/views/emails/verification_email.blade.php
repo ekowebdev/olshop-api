@@ -37,7 +37,7 @@
             Halo!
           </div>
           <div style="padding-top: 18px; padding-bottom: 0px; font-size: 14px; color: #272727; font-weight: 400; line-height: 19px;">
-            Silahkan klik tombol di bawah ini untuk melakukan verifikasi email:
+            {{ trans('all.click_button_text') }}
           </div>
         </div>
       </td>
@@ -52,22 +52,22 @@
               <tr>
                 <td style="padding-top: 34px; padding-bottom: 24px;">
                   <a href="{{ $verification_url }}" target="_blank"
-                    style="border-radius: 5px; cursor: pointer; font-size: 16px; font-weight: normal; margin: 0; padding: 16px 16px; text-decoration: none; background-color: #2B00C8; color: #ffffff;">Verifikasi Email</a>
+                    style="border-radius: 5px; cursor: pointer; font-size: 16px; font-weight: normal; margin: 0; padding: 16px 16px; text-decoration: none; background-color: #2B00C8; color: #ffffff;">{{ trans('all.verification_email_text') }}</a>
                 </td>
               </tr>
               <tr>
                 <td>
                   <p style="font-size: 14px; color: #272727; text-align: left; margin-bottom: 34px;">
-                    Link ini berlaku selama 1 jam. Hubungi kami jika Anda mengalami kesulitan.
+                    {{ trans('all.duration_link_text') }}
                   </p>
                   <p style="font-size: 14px; color: #272727; text-align: left; margin-bottom: 34px;">
-                    Jika Anda tidak membuat akun, abaikan email ini.
+                    {{ trans('all.ignore_text') }}
                   </p>
                   <p style="text-align: left; font-size: 14px; color: #272727; margin-bottom: 24px;">
-                    Salam,
+                    {{ trans('all.regards') }},
                   </p>
                   <p style="text-align: left; font-size: 14px; color: #272727">
-                    Tim {{ env('APP_NAME') }}
+                    {{ trans('all.team') }} {{ env('APP_NAME') }}
                   </p>
                 </td>
               </tr>

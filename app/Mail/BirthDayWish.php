@@ -48,6 +48,7 @@ class BirthDayWish extends Mailable
             view: 'emails.birthday_wish',
             with : [
                 'user' => $this->user,
+                'profile' => $this->user->profile,
             ]
         );
     }

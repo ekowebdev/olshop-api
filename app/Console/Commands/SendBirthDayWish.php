@@ -42,7 +42,7 @@ class SendBirthDayWish extends Command
             Mail::to($user->email)->send(new BirthDayWish($user));
             $data_notification = [
                 'user_id' => $user->id,
-                'title' => trans('all.notification_birthday_title', ['name' => $user->name]),
+                'title' => trans('all.notification_birthday_title', ['name' => $user->profile->name]),
                 'text' => trans('all.notification_birthday_text'),
                 'type' => 1,
                 'status_read' => 0,

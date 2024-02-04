@@ -4,18 +4,18 @@
     table,
     th,
     td {
-        border: 0px !important;
+      border: 0px !important;
     }
 
     @media only screen and (max-width: 600px) {
-        .redirect-link {
+      .redirect-link {
         width: 370px !important;
         overflow: hidden;
-        }
-        .footer-email {
+      }
+      .footer-email {
         padding-left: 2%;
         padding-right: 2%;
-        }
+      }
     }
 </style>
 
@@ -31,12 +31,11 @@
     <tr>
       <td bgcolor="#2B00C8" height="10px"></td>
       <td bgcolor="#2B00C8" width="680px" height="0px">
-        <div
-          style="width: auto; height: 100%; background: #ffffff; border-top-left-radius: 10px; border-top-right-radius: 10px; text-align: left; padding-top: 24px; padding-left: 24px; padding-right: 24px;">
+        <div style="width: auto; height: 100%; background: #ffffff; border-top-left-radius: 10px; border-top-right-radius: 10px; text-align: left; padding-top: 24px; padding-left: 24px; padding-right: 24px;">
           <div style="font-size: 18px; font-weight: 700; color: #272727;">
             {{ trans('all.greeting_email_transaction_succes') }}
           </div>
-          <div style="padding-top: 18px; padding-bottom: 0px; font-size: 14px; color: #272727; font-weight: 400; line-height: 19px;">
+          <div style="padding-top: 18px; padding-bottom: 5px; font-size: 12px; color: #272727; font-weight: 600; line-height: 19px;">
             #{{ $header_data['redeem_code'] }}
           </div>
         </div>
@@ -60,22 +59,22 @@
                 <tr>
                     <td style="border: 1px solid #ddd; padding: 8px;">{{ $item['name'] }}</td>
                     <td style="border: 1px solid #ddd; padding: 8px;">{{ $item['quantity'] }}</td>
-                    <td style="border: 1px solid #ddd; padding: 8px;">{{ $item['price'] }}</td>
+                    <td style="border: 1px solid #ddd; padding: 8px;">{{ format_money($item['price']) }}</td>
                 </tr>
                 @endforeach
             </tbody>
             <tfoot>
                 <tr>
                     <th colspan="2" style="border: 1px solid #ddd; padding: 8px; text-align: right;">Total Price</th>
-                    <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">{{ $header_data['total_price'] }}</th>
+                    <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">{{ format_money($header_data['total_price']) }}</th>
                 </tr>
                 <tr>
                     <th colspan="2" style="border: 1px solid #ddd; padding: 8px; text-align: right;">Shipping Fee</th>
-                    <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">{{ $header_data['shipping_fee'] }}</th>
+                    <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">{{ format_money($header_data['shipping_fee']) }}</th>
                 </tr>
                 <tr>
                     <th colspan="2" style="border: 1px solid #ddd; padding: 8px; text-align: right;">Grand Total</th>
-                    <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">{{ $header_data['total_amount'] }}</th>
+                    <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">{{ format_money($header_data['total_amount']) }}</th>
                 </tr>
             </tfoot>
           </table>
