@@ -40,4 +40,5 @@ return [
 	"create_new_password_text"			 => "Create a new password",
 	"paste_link_text"			         => "or paste this address into your browser:",
 	"greeting_reset_password"			 => "We have received a request to reset your password. Please click the button below to continue:",
+	"hello_text"			 			 => "Hello!",
 ];

@@ -40,4 +40,5 @@ return [
 	"create_new_password_text"			 => "Buat kata sandi baru",
 	"paste_link_text"			         => "atau tempel alamat ini ke browser Anda:",
 	"greeting_reset_password"			 => "Kami telah menerima permintaan untuk mengatur ulang kata sandi Anda. Silahkan klik tombol di bawah ini untuk melanjutkan:",
+	"hello_text"			 			 => "Halo!",
 ];

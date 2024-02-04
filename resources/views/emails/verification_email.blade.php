@@ -34,7 +34,7 @@
         <div
           style="width: auto; height: 100%; background: #ffffff; border-top-left-radius: 10px; border-top-right-radius: 10px; text-align: left; padding-top: 24px; padding-left: 24px; padding-right: 24px;">
           <div style="font-size: 18px; font-weight: 700; color: #272727;">
-            Halo!
+            {{ trans('all.hello_text') }}
           </div>
           <div style="padding-top: 18px; padding-bottom: 0px; font-size: 14px; color: #272727; font-weight: 400; line-height: 19px;">
             {{ trans('all.click_button_text') }}
