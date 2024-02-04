@@ -4,18 +4,18 @@
     table,
     th,
     td {
-        border: 0px !important;
+      border: 0px !important;
     }
 
     @media only screen and (max-width: 600px) {
-        .redirect-link {
+      .redirect-link {
         width: 370px !important;
         overflow: hidden;
-        }
-        .footer-email {
+      }
+      .footer-email {
         padding-left: 2%;
         padding-right: 2%;
-        }
+      }
     }
 </style>
 
@@ -24,7 +24,7 @@
     <tr>
       <td bgcolor="#2B00C8" height="120px"></td>
       <td bgcolor="#2B00C8" height="120px" align="center" valign="center">
-        {{-- <img src="{{ asset('images/mail/logo_horizontal.png') }}" style="height: 60px;" /> --}}
+        <img src="{{ env('APP_URL') }}/images/mail/logo.png" style="height: 60px; filter:brightness(0); filter:invert(0)" />
       </td>
       <td bgcolor="#2B00C8" height="120px"></td>
     </tr>
@@ -36,12 +36,34 @@
           <div style="font-size: 18px; font-weight: 700; color: #272727;">
             {{ trans('all.notification_birthday_title', ['name' => $user['name']]) }}
           </div>
-          <div style="padding-top: 18px; padding-bottom: 0px; font-size: 14px; color: #272727; font-weight: 400; line-height: 19px;">
-            {{ trans('all.notification_birthday_text') }}
-          </div>
         </div>
       </td>
       <td bgcolor="#2B00C8" height="0px"></td>
+    </tr>
+    <tr>
+      <td height="360px"></td>
+      <td width="680px" height="360px">
+        <div class="content" style="width: auto; height: 100%; background: #ffffff; border-bottom-left-radius: 10px; border-bottom-right-radius: 10px; box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.12)">
+          <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="btn btn-primary" style="width: 100%; padding-left: 24px; padding-right: 24px;" width="100%">
+            <tbody>
+              <tr>
+                <td>
+                  <p style="font-size: 14px; color: #272727; text-align: left; margin-bottom: 34px;">
+                    {{ trans('all.notification_birthday_text') }}.
+                  </p>
+                  <p style="text-align: left; font-size: 14px; color: #272727; margin-bottom: 24px;">
+                    Salam,
+                  </p>
+                  <p style="text-align: left; font-size: 14px; color: #272727">
+                    Tim {{ env('APP_NAME') }}
+                  </p>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </td>
+      <td height="360px"></td>
     </tr>
     <tr>
       <td height="60px"></td>
@@ -51,7 +73,7 @@
             <tbody>
               <tr>
                 <td style="text-align: left; padding-top: 18px; padding-bottom: 24px;">
-                  {{-- <img src="{{ asset('images/mail/logo_footer_horizontal.png') }}" style="height: 24px;" /> --}}
+                  <img src="{{ env('APP_URL') }}/images/mail/logo.png" style="height: 24px;" />
                 </td>
                 <td style="text-align: right; padding-top: 18px; padding-bottom: 24px;">
                   <span style="font-size: 16px; color: #333333; font-weight: 600;">&copy; {{ date('Y') }} </span>

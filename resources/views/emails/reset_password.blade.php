@@ -24,7 +24,7 @@
     <tr>
       <td bgcolor="#2B00C8" height="120px"></td>
       <td bgcolor="#2B00C8" height="120px" align="center" valign="center">
-        {{-- <img src="{{ asset('images/mail/logo_horizontal.png') }}" style="height: 60px;" /> --}}
+        <img src="{{ env('APP_URL') }}/images/mail/logo.png" style="height: 60px; filter:invert(0); filter:brightness(0);" /> <span style="font-size: 16px; color:#FAFAFA">Shop</span>
       </td>
       <td bgcolor="#2B00C8" height="120px"></td>
     </tr>
@@ -90,7 +90,7 @@
             <tbody>
               <tr>
                 <td style="text-align: left; padding-top: 18px; padding-bottom: 24px;">
-                  {{-- <img src="{{ asset('images/mail/logo_footer_horizontal.png') }}" style="height: 24px;" /> --}}
+                  <img src="{{ env('APP_URL') }}/images/mail/logo.png" style="height: 24px;" />
                 </td>
                 <td style="text-align: right; padding-top: 18px; padding-bottom: 24px;">
                   <span style="font-size: 16px; color: #333333; font-weight: 600;">&copy; {{ date('Y') }} </span>

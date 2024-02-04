@@ -48,7 +48,7 @@ class TokenResetPassword extends Mailable
         return new Content(
             view: 'emails.reset_password',
             with : [
-                'data' => $this->data,
+                'data' => $this->data
             ]
         );
     }

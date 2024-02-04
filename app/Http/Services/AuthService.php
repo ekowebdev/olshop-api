@@ -213,7 +213,9 @@ class AuthService extends BaseService
 
         DB::table('password_resets')->where('email', $request->email)->delete();
 
-        $data['token'] = md5(mt_rand(100000, 999999));
+        $token = Str::random(16);
+
+        $data['token'] = Hash::make($token);
         $data['email'] = $request->email;
         $data['created_at'] = date('Y-m-d H:i:s');
 
