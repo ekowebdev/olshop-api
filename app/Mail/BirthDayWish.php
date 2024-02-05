@@ -3,26 +3,28 @@
 namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
+use Illuminate\Support\Facades\App;
 use Illuminate\Mail\Mailables\Content;
-use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Mail\Mailables\Envelope;
+use Illuminate\Contracts\Queue\ShouldQueue;
 
 class BirthDayWish extends Mailable
 {
     use Queueable, SerializesModels;
 
-    protected $user;
+    public $user, $locale;
 
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct($user)
+    public function __construct($user, $locale = null)
     {
         $this->user = $user;
+        $this->locale = $locale ?? App::getLocale();
     }
 
     /**
@@ -33,7 +35,7 @@ class BirthDayWish extends Mailable
     public function envelope()
     {
         return new Envelope(
-            subject: trans('all.birthday_wish_title'),
+            subject: trans('all.birthday_wish_title', $this->locale),
         );
     }
 

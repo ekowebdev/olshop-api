@@ -13,17 +13,18 @@ class TokenResetPassword extends Mailable
 {
     use Queueable, SerializesModels;
 
-    protected $data;
+    protected $data, $locale;
 
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct($data)
+    public function __construct($data, $locale)
     {
 
         $this->data = $data;
+        $this->locale = $locale;
     }
 
     /**
@@ -34,7 +35,7 @@ class TokenResetPassword extends Mailable
     public function envelope()
     {
         return new Envelope(
-            subject: trans('all.reset_password'),
+            subject: trans('all.reset_password_title', $this->locale),
         );
     }
 

@@ -25,11 +25,11 @@
     <table border="0" cellpadding="0" cellspacing="0" style="width:100%">
         <tr>
             <td bgcolor="#2B00C8" height="120px"></td>
-            <td bgcolor="#2B00C8" height="120px" align="center" valign="center">
-                <span style="font-size: 16px; color:#FAFAFA; display: inline-block;">
-                  Shop
-                </span>
-                <img src="{{ $message->embed(public_path('images/mail/logo.png')) }}" style="height: 60px; filter: invert(100%); margin-bottom: -20px;" />
+            <td bgcolor="#2B00C8" height="120px" align="center" style="display: flex; align-items: center; justify-content: center;">
+              <img src="{{ $message->embed(public_path('images/mail/logo.png')) }}" style="height: 60px; filter: brightness(0) invert(1); padding-right: 5px" />
+              <span style="font-size: 18px; color:#FAFAFA;">
+                Shop
+              </span>
             </td>
             <td bgcolor="#2B00C8" height="120px"></td>
         </tr>
@@ -60,16 +60,14 @@
                             <tr>
                                 <td style="padding-top: 34px; padding-bottom: 24px;">
                                     <a href="{{ env('FRONT_URL') }}/reset-password?token={{ $data['token'] }}"
-                                        target="_blank"
-                                        style="border-radius: 5px; cursor: pointer; font-size: 16px; font-weight: normal; margin: 0; padding: 16px 16px; text-decoration: none; background-color: #2B00C8; color: #ffffff;">{{ trans('all.create_new_password_text') }}</a>
+                                        target="_blank" style="border-radius: 5px; cursor: pointer; font-size: 16px; font-weight: normal; margin: 0; padding: 16px 16px; text-decoration: none; background-color: #2B00C8; color: #ffffff;">{{ trans('all.create_new_password_text') }}</a>
                                 </td>
                             </tr>
                             <tr>
                                 <td align="center" valign="center" style="padding-top: 16px; padding-bottom: 40px;">
                                     <div class="redirect-link"
                                         style="width:640px; text-align: center; color: #272727; font-size: 14px; font-weight: 400; line-height: 19px; word-wrap: break-word;">
-                                        {{ trans('all.paste_link_text') }} <a href=""
-                                            style="font-size: 14px; color: blue;">{{ env('FRONT_URL') }}/reset-password?token={{ $data['token'] }}</a>
+                                        {{ trans('all.paste_link_text') }} <a href="" style="font-size: 14px; color: blue;">{{ env('FRONT_URL') }}/reset-password?token={{ $data['token'] }}</a>
                                     </div>
                                 </td>
                             </tr>
@@ -100,16 +98,11 @@
                         style=" width: 100%;" width="100%">
                         <tbody>
                             <tr>
-                                <td style="text-align: left; padding-top: 18px; padding-bottom: 24px;">
-                                    <img src="{{ $message->embed(public_path('images/mail/logo.png')) }}"
-                                        style="height: 24px;" />
-                                </td>
-                                <td style="text-align: right; padding-top: 18px; padding-bottom: 24px;">
-                                    <span style="font-size: 16px; color: #333333; font-weight: 600;">&copy;
-                                        {{ date('Y') }} </span>
-                                    <span
-                                        style="font-size: 16px; color: #2B00C8; font-weight: 600;">{{ env('APP_NAME') }}</span>
-                                </td>
+                              <td style="text-align: right; padding-top: 18px; padding-bottom: 24px;">
+                                <span style="font-size: 16px; color: #333333; font-weight: 600;">&copy;
+                                  {{ date('Y') }} </span>
+                                <span style="font-size: 16px; color: #2B00C8; font-weight: 600;">{{ env('APP_NAME') }}</span>
+                              </td>
                             </tr>
                         </tbody>
                     </table>

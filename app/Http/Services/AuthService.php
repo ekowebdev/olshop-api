@@ -5,6 +5,7 @@ use App\Http\Models\User;
 use Illuminate\Support\Str;
 use App\Http\Traits\PassportToken;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\App;
 use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
@@ -194,7 +195,7 @@ class AuthService extends BaseService
             ], 409);
         }
 
-        SendEmailVerificationJob::dispatch($user);
+        SendEmailVerificationJob::dispatch($user, $locale);
 
         return response()->json([
             'message' => trans('all.success_resend_verification'), 
@@ -221,7 +222,7 @@ class AuthService extends BaseService
 
         DB::table('password_resets')->insert($data);
 
-        SendEmailTokenResetPasswordJob::dispatch($request->email, $data);
+        SendEmailTokenResetPasswordJob::dispatch($request->email, $data, $locale);
 
         DB::commit();
 

@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use Illuminate\Bus\Queueable;
 use App\Mail\TokenResetPassword;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
@@ -15,17 +16,18 @@ class SendEmailTokenResetPasswordJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    protected $email, $data;
+    protected $email, $data, $locale;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct($email, $data)
+    public function __construct($email, $data, $locale)
     {
         $this->email = $email;
         $this->data = $data;
+        $this->locale = $locale;
     }
 
     /**
@@ -35,6 +37,6 @@ class SendEmailTokenResetPasswordJob implements ShouldQueue
      */
     public function handle()
     {
-        Mail::to($this->email)->send(new TokenResetPassword($this->data));
+        Mail::to($this->email)->send(new TokenResetPassword($this->data, $this->locale));
     }
 }

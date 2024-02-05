@@ -25,11 +25,11 @@
     <table border="0" cellpadding="0" cellspacing="0" style="width:100%">
         <tr>
             <td bgcolor="#2B00C8" height="120px"></td>
-            <td bgcolor="#2B00C8" height="120px" align="center" valign="center">
-              <span style="font-size: 16px; color:#FAFAFA; display: inline-block;">
+            <td bgcolor="#2B00C8" height="120px" align="center" style="display: flex; align-items: center; justify-content: center;">
+              <img src="{{ $message->embed(public_path('images/mail/logo.png')) }}" style="height: 60px; filter: brightness(0) invert(1); padding-right: 5px" />
+              <span style="font-size: 18px; color:#FAFAFA;">
                 Shop
               </span>
-              <img src="{{ $message->embed(public_path('images/mail/logo.png')) }}" style="height: 60px; filter: invert(100%); margin-bottom: -20px;" />
             </td>
             <td bgcolor="#2B00C8" height="120px"></td>
         </tr>
@@ -101,25 +101,18 @@
         <tr>
             <td height="60px"></td>
             <td height="60px">
-                <div class="footer-email" style="margin-top: 10px;">
-                    <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="btn btn-primary"
-                        style=" width: 100%;" width="100%">
-                        <tbody>
-                            <tr>
-                                <td style="text-align: left; padding-top: 18px; padding-bottom: 24px;">
-                                    <img src="{{ $message->embed(public_path('images/mail/logo.png')) }}"
-                                        style="height: 24px;" />
-                                </td>
-                                <td style="text-align: right; padding-top: 18px; padding-bottom: 24px;">
-                                    <span style="font-size: 16px; color: #333333; font-weight: 600;">&copy;
-                                        {{ date('Y') }} </span>
-                                    <span
-                                        style="font-size: 16px; color: #2B00C8; font-weight: 600;">{{ env('APP_NAME') }}</span>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+              <div class="footer-email" style="margin-top: 10px;">
+                <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="btn btn-primary" style=" width: 100%;" width="100%">
+                  <tbody>
+                    <tr>
+                      <td style="text-align: right; padding-top: 18px; padding-bottom: 24px;">
+                        <span style="font-size: 16px; color: #333333; font-weight: 600;">&copy; {{ date('Y') }} </span>
+                        <span style="font-size: 16px; color: #2B00C8; font-weight: 600;">{{ env('APP_NAME') }}</span>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
             </td>
             <td height="60px"></td>
         </tr>

@@ -13,17 +13,18 @@ class RedeemConfirmation extends Mailable
 {
     use Queueable, SerializesModels;
 
-    protected $header_data, $detail_data;
+    protected $header_data, $detail_data, $locale;
 
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct($header_data, $detail_data)
+    public function __construct($header_data, $detail_data, $locale)
     {
         $this->header_data = $header_data;
         $this->detail_data = $detail_data;
+        $this->locale = $locale;
     }
 
     /**
@@ -34,7 +35,7 @@ class RedeemConfirmation extends Mailable
     public function envelope()
     {
         return new Envelope(
-            subject: trans('all.order_confirmation_title'),
+            subject: trans('all.order_confirmation_title', $this->locale),
         );
     }
 

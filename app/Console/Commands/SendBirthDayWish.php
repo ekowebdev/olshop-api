@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Http\Models\User;
 use App\Mail\BirthDayWish;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Mail;
 use App\Events\RealTimeNotificationEvent;
 

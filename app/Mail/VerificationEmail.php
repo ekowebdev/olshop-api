@@ -14,17 +14,17 @@ class VerificationEmail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $user;
+    protected $user, $locale;
 
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct($user)
+    public function __construct($user, $locale)
     {
-
         $this->user = $user;
+        $this->locale = $locale;
     }
 
     /**
@@ -35,7 +35,7 @@ class VerificationEmail extends Mailable
     public function envelope()
     {
         return new Envelope(
-            subject: trans('all.verification_email_text'),
+            subject: trans('all.verification_email_text', $this->locale),
         );
     }
 

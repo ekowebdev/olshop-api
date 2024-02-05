@@ -14,16 +14,17 @@ class SendEmailResetPasswordLinkJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    protected $email;
+    protected $email, $locale;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct($email)
+    public function __construct($email, $locale)
     {
         $this->email = $email;
+        $this->locale = $locale;
     }
 
     /**
@@ -33,6 +34,6 @@ class SendEmailResetPasswordLinkJob implements ShouldQueue
      */
     public function handle()
     {
-        Password::sendResetLink($this->email);
+        Password::sendResetLink($this->email, $this->locale);
     }
 }
