@@ -13,7 +13,7 @@ class RedeemConfirmation extends Mailable
 {
     use Queueable, SerializesModels;
 
-    protected $header_data, $detail_data, $locale;
+    public $header_data, $detail_data, $locale;
 
     /**
      * Create a new message instance.

@@ -13,7 +13,7 @@ class TokenResetPassword extends Mailable
 {
     use Queueable, SerializesModels;
 
-    protected $data, $locale;
+    public $data, $locale;
 
     /**
      * Create a new message instance.
