@@ -35,7 +35,7 @@ class BirthDayWish extends Mailable
     public function envelope()
     {
         return new Envelope(
-            subject: trans('all.birthday_wish_title', $this->locale),
+            subject: trans('all.birthday_wish_title', [], $this->locale),
         );
     }
 

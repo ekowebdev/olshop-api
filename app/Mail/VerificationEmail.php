@@ -35,7 +35,7 @@ class VerificationEmail extends Mailable
     public function envelope()
     {
         return new Envelope(
-            subject: trans('all.verification_email_text', $this->locale),
+            subject: trans('all.verification_email_text', [], $this->locale),
         );
     }
 

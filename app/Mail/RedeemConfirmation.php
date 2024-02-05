@@ -35,7 +35,7 @@ class RedeemConfirmation extends Mailable
     public function envelope()
     {
         return new Envelope(
-            subject: trans('all.order_confirmation_title', $this->locale),
+            subject: trans('all.order_confirmation_title', [], $this->locale),
         );
     }
 

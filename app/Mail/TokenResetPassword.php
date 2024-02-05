@@ -35,7 +35,7 @@ class TokenResetPassword extends Mailable
     public function envelope()
     {
         return new Envelope(
-            subject: trans('all.reset_password_title', $this->locale),
+            subject: trans('all.reset_password_title', [], $this->locale),
         );
     }
 
