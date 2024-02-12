@@ -4,28 +4,35 @@ namespace App\Http\Services;
 
 use Illuminate\Support\Arr;
 use App\Exceptions\DataEmptyException;
+use App\Http\Repositories\RedeemRepository;
 
 class TrackResiService extends BaseService
 {
-    private $api_key;
+    private $api_key, $repository;
 
-    public function __construct()
+    public function __construct(RedeemRepository $repository)
     {
         $this->api_key = env('BINDERBYTE_API_KEY');
+        $this->repository = $repository;
     }
 
     public function track($locale, $data)
     {
         $data_request = Arr::only($data, [
+            'user_id',
             'resi',
             'courier',
         ]);
 
         $this->validate($data_request, [
-                'resi' => 'required',
-                'courier' => 'required|in:jne,jnt,pos,tiki,spx',
-            ]
-        );
+            'user_id' => 'required|exists:users,id',
+            'resi' => 'required',
+            'courier' => 'required|in:jne,jnt,pos,tiki,spx',
+        ]);
+
+        $check = $this->repository->getDataByIdAndResi($data_request['user_id'], $data_request['resi']);
+
+        if(!$check) throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => 'Resi'], $locale));
         
         $body = http_build_query([
             'api_key' => $this->api_key,

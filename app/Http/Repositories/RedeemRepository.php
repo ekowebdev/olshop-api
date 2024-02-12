@@ -54,4 +54,17 @@ class RedeemRepository extends BaseRepository
 		if($result === null) throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => $this->repository_name], $locale));
         return $result;	
 	}
+
+    public function getDataByIdAndResi($user_id, $resi)
+	{
+		$result = $this->model
+                  ->getAll()
+                  ->with('shippings')
+                  ->where('user_id', $user_id)
+                  ->whereHas('shippings', function ($query) use ($resi) {
+                    $query->where('resi', $resi);
+                  })
+                  ->first();
+		return $result;	
+	}
 }

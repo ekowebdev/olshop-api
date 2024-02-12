@@ -63,7 +63,7 @@ class AuthService extends BaseService
     public function login($locale, $request)
     {
         $this->validate($request, [
-            'email' => 'required|string|email:rfc,dns|exists:users',
+            'email' => 'required|string|email:rfc,dns|,email',
             'password' => 'required|string|min:6|max:12'
         ]);
 
@@ -182,7 +182,7 @@ class AuthService extends BaseService
     public function resend($locale, $request)
     {
         $this->validate($request, [
-            'email' => 'required|string|email:rfc,dns|exists:users',
+            'email' => 'required|string|email:rfc,dns|exists:users,email',
         ]);
 
         $user = $this->repository->getDataByMultipleParam(['email' => $request['email']]);
@@ -207,7 +207,7 @@ class AuthService extends BaseService
     public function forget_password($locale, $request)
     {
         $request->validate([
-            'email' => 'required|email|exists:users',
+            'email' => 'required|email|exists:users,email',
         ]);
 
         DB::beginTransaction();
