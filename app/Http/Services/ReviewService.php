@@ -54,7 +54,7 @@ class ReviewService extends BaseService
         return $this->repository->getSingleData($locale, $id);
     }
 
-    public function review($locale, $data)
+    public function store($locale, $data)
     {
         $data_request = Arr::only($data, [
             'redeem_id',

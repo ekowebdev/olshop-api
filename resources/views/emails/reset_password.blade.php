@@ -26,10 +26,12 @@
         <tr>
             <td bgcolor="#2B00C8" height="120px"></td>
             <td bgcolor="#2B00C8" height="120px">
-                <img src="{{ $message->embed(public_path('images/mail/logo.png')) }}" style="width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; filter: invert(100) brightness(100%);" />
-                <span style="font-size: 18px; color:#FAFAFA;">
+                <div style="display: flex; align-items: center; justify-content: center;">
+                  <img src="{{ $message->embed(public_path('images/mail/logo.png')) }}" style="width: 60px; height: 60px; filter: invert(100%) brightness(100%); padding-right: 5px;" />
+                  <span style="font-size: 24px; color:#FAFAFA; font-family: poppines;">
                     Shop
-                </span>
+                  </span>
+                </div>
             </td>
             <td bgcolor="#2B00C8" height="120px"></td>
         </tr>
