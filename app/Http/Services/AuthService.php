@@ -250,8 +250,8 @@ class AuthService extends BaseService
             ], 422);
         }
 
-        if ($password_reset->created_at > now()->addHour()) {
-            $password_reset->delete();
+        if (strtotime($password_reset->created_at) < strtotime('-60 minutes')) {
+            DB::table('password_resets')->where('token', $request->token)->delete();
             return response()->json([
                 'message' => trans('error.token_reset_password_is_expire'),
                 'status' => 422,
