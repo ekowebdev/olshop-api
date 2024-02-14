@@ -7,7 +7,7 @@ return [
 	"failed_refresh_token" 					      => "Refresh token gagal",
 	"out_of_stock"								  => "Stok tidak tersedia",
 	"variant_out_of_stock"						  => "Stok tidak tersedia, item gift ID: :id dengan varian ID: :variant_id",
-	"already_reviews"							  => "Anda sudah memberi review pada item gift ID: :id",
+	"already_reviews"							  => "Anda sudah memberi review pada redeem ID: :redeem_id & item gift ID: :item_gift_id",
 	"already_verification"						  => "Email sudah diverifikasi",
 	"failed_verifcation_email"					  => "Gagal verifikasi email",
 	"failed_send_reset_password_link"             => "Gagal kirim link reset password",

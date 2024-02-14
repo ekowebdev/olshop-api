@@ -44,21 +44,21 @@ class ReviewRepository extends BaseRepository
         return $result;	
 	}
 
-    public function getDataByUserRedeem($locale, $redeem_id)
+    public function getDataByUserRedeem($locale, $user_id, $redeem_id)
 	{
 		$result = $this->model
                   ->getAll()
-                  ->where('user_id', auth()->user()->id)	
+                  ->where('user_id', $user_id)	
                   ->where('redeem_id', $redeem_id)	
                   ->first();
 		return $result;	
 	}
 
-    public function getDataByUserRedeemAndItem($locale, $redeem_id, $item_gift_id)
+    public function getDataByUserRedeemAndItem($locale, $user_id, $redeem_id, $item_gift_id)
 	{
 		$result = $this->model
                   ->getAll()
-                  ->where('user_id', auth()->user()->id)	
+                  ->where('user_id', $user_id)	
                   ->where('redeem_id', $redeem_id)	
                   ->where('item_gift_id', $item_gift_id)	
                   ->first();

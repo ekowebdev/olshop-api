@@ -95,11 +95,11 @@ class ReviewService extends BaseService
             ], 400);
         }
 
-        $check_rating = $this->repository->getDataByUserRedeemAndItem($locale, $data_request['redeem_id'], $data_request['item_gift_id']);
+        $check_rating = $this->repository->getDataByUserRedeemAndItem($locale, $user->id, $data_request['redeem_id'], $data_request['item_gift_id']);
 
         if (isset($check_rating)) {
             return response()->json([
-                'message' => trans('error.already_reviews', ['id' => $data_request['item_gift_id']]),
+                'message' => trans('error.already_reviews', ['redeem_id' => $data_request['redeem_id'], 'item_gift_id' => $data_request['item_gift_id']]),
                 'status' => 409,
             ], 409);
         }
@@ -109,7 +109,7 @@ class ReviewService extends BaseService
             'redeem_id' => $data_request['redeem_id'],
             'item_gift_id' => $data_request['item_gift_id'],
             'review_text' => $data_request['review_text'],
-            'review_rating' => calculate_rating($data_request['review_rating']),
+            'review_rating' => rounded_rating($data_request['review_rating']),
             'review_date' => date('Y-m-d'),
         ]);
 
@@ -174,11 +174,11 @@ class ReviewService extends BaseService
                 ], 400);
             }
 
-            $check_rating = $this->repository->getDataByUserRedeemAndItem($locale, $data_request['redeem_id'][$i], $data_request['item_gift_id'][$i]);
+            $check_rating = $this->repository->getDataByUserRedeemAndItem($locale, $user->id, $data_request['redeem_id'][$i], $data_request['item_gift_id'][$i]);
 
             if (isset($check_rating)) {
                 return response()->json([
-                    'message' => trans('error.already_reviews', ['id' => $data_request['item_gift_id'][$i]]),
+                    'message' => trans('error.already_reviews', ['redeem_id' => $data_request['redeem_id'][$i], 'item_gift_id' => $data_request['item_gift_id'][$i]]),
                     'status' => 409,
                 ], 409);
             }
@@ -188,7 +188,7 @@ class ReviewService extends BaseService
                 'redeem_id' => $data_request['redeem_id'][$i],
                 'item_gift_id' => $data_request['item_gift_id'][$i],
                 'review_text' => $data_request['review_text'][$i],
-                'review_rating' => calculate_rating($data_request['review_rating'][$i]),
+                'review_rating' => rounded_rating($data_request['review_rating'][$i]),
                 'review_date' => date('Y-m-d'),
             ]);
         }
@@ -231,7 +231,7 @@ class ReviewService extends BaseService
         );
 
         DB::beginTransaction();
-        $data_request['review_rating'] = calculate_rating($data_request['review_rating']);
+        $data_request['review_rating'] = rounded_rating($data_request['review_rating']);
         $check_data->update($data_request);
         DB::commit();
 
