@@ -7,7 +7,7 @@ return [
 	"failed_refresh_token" 					      => "Failed Refresh token",
 	"out_of_stock"								  => "Out of stock",
 	"variant_out_of_stock"						  => "Out of stock, item gift ID: :id with variant ID: :variant_id",
-	"already_reviews"							  => "You have already given a review on the redeem ID: :id",
+	"already_reviews"							  => "You have already given a review on the item gift ID: :id",
 	"already_verification"						  => "Email alraedy verified",
 	"failed_verifcation_email"					  => "Failed verification email",
 	"failed_send_reset_password_link"             => "Failed send reset password link",

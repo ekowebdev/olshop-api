@@ -95,11 +95,11 @@ class ReviewService extends BaseService
             ], 400);
         }
 
-        $check_rating = $this->repository->getDataByUserRedeem($locale, $data_request['redeem_id'], $data_request['item_gift_id']);
+        $check_rating = $this->repository->getDataByUserRedeemAndItem($locale, $data_request['redeem_id'], $data_request['item_gift_id']);
 
         if (isset($check_rating)) {
             return response()->json([
-                'message' => trans('error.already_reviews', ['id' => $data_request['redeem_id']]),
+                'message' => trans('error.already_reviews', ['id' => $data_request['item_gift_id']]),
                 'status' => 409,
             ], 409);
         }
@@ -174,11 +174,11 @@ class ReviewService extends BaseService
                 ], 400);
             }
 
-            $check_rating = $this->repository->getDataByUserRedeem($locale, $data_request['redeem_id'][$i]);
+            $check_rating = $this->repository->getDataByUserRedeemAndItem($locale, $data_request['redeem_id'][$i], $data_request['item_gift_id'][$i]);
 
             if (isset($check_rating)) {
                 return response()->json([
-                    'message' => trans('error.already_reviews', ['id' => $data_request['redeem_id'][$i]]),
+                    'message' => trans('error.already_reviews', ['id' => $data_request['item_gift_id'][$i]]),
                     'status' => 409,
                 ], 409);
             }
