@@ -7,7 +7,7 @@ return [
 	"failed_refresh_token" 					      => "Refresh token gagal",
 	"out_of_stock"								  => "Stok tidak tersedia",
 	"variant_out_of_stock"						  => "Stok tidak tersedia, item gift ID: :id dengan varian ID: :variant_id",
-	"already_reviews"							  => "Anda sudah memberi review pada item gift ID: :id",
+	"already_reviews"							  => "Anda sudah memberi review pada redeem ID: :id",
 	"already_verification"						  => "Email sudah diverifikasi",
 	"failed_verifcation_email"					  => "Gagal verifikasi email",
 	"failed_send_reset_password_link"             => "Gagal kirim link reset password",
@@ -22,6 +22,6 @@ return [
 	"operation_not_permitted"					  => "Operasi tidak diizinkan",
 	"failed_cancel_redeem"						  => "Pesanan tidak dapat dibatalkan",
 	"cannot_delete_primary_address"				  => "Tidak bisa hapus data, karena alamat yang anda pilih adalah alamat utama",
-	"token_reset_password_is_expire"			  => "Token reset password ini telah kadaluarsa",
+	"token_reset_password_is_expired"			  => "Token reset password ini telah kadaluarsa",
 	"token_reset_password_is_invalid"			  => "Token reset password ini tidak valid",
 ];

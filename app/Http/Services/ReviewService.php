@@ -95,11 +95,11 @@ class ReviewService extends BaseService
             ], 400);
         }
 
-        $check_rating = $this->repository->getDataByUserRedeemAndItem($locale, $data_request['redeem_id'], $data_request['item_gift_id']);
+        $check_rating = $this->repository->getDataByUserRedeem($locale, $data_request['redeem_id'], $data_request['item_gift_id']);
 
         if (isset($check_rating)) {
             return response()->json([
-                'message' => trans('error.already_reviews', ['id' => $data_request['item_gift_id']]),
+                'message' => trans('error.already_reviews', ['id' => $data_request['redeem_id']]),
                 'status' => 409,
             ], 409);
         }
@@ -112,6 +112,86 @@ class ReviewService extends BaseService
             'review_rating' => calculate_rating($data_request['review_rating']),
             'review_date' => date('Y-m-d'),
         ]);
+
+        DB::commit();
+
+        return response()->json([
+            'message' => trans('all.success_reviews'),
+            'status' => 200,
+            'error' => 0,
+        ]);
+    }
+
+    public function storeBulk($locale, $data)
+    {
+        $data_request = $data;
+
+        $this->repository->validate($data_request, [
+                'redeem_id' => [
+                    'required',
+                ],
+                'redeem_id.*' => [
+                    'required',
+                    'exists:redeems,id',
+                ],
+                'item_gift_id' => [
+                    'required',
+                ],
+                'item_gift_id.*' => [
+                    'required',
+                    'exists:item_gifts,id',
+                ],
+                'review_text' => [
+                    'required'
+                ],
+                'review_text.*' => [
+                    'required'
+                ],
+                'review_rating' => [
+                    'required',
+                ],
+                'review_rating.*' => [
+                    'required',
+                    'numeric',
+                    'between:0.5,5'
+                ],
+            ]
+        );
+
+        DB::beginTransaction();
+
+        $reviews = count($data_request['item_gift_id']);
+
+        for ($i = 0; $i < $reviews; $i++) {
+
+            $user = auth()->user();
+            $redeem = $this->redeem_repository->getSingleData($locale, $data_request['redeem_id'][$i]);
+
+            if ($redeem->redeem_status != 'shipped' && $redeem->redeem_status != 'success' && $redeem->payment_logs == null) {
+                return response()->json([
+                    'message' => trans('error.redeem_not_completed', ['id' => $data_request['redeem_id'][$i]]),
+                    'status' => 400,
+                ], 400);
+            }
+
+            $check_rating = $this->repository->getDataByUserRedeem($locale, $data_request['redeem_id'][$i]);
+
+            if (isset($check_rating)) {
+                return response()->json([
+                    'message' => trans('error.already_reviews', ['id' => $data_request['redeem_id'][$i]]),
+                    'status' => 409,
+                ], 409);
+            }
+
+            Review::create([
+                'user_id' => $user->id,
+                'redeem_id' => $data_request['redeem_id'][$i],
+                'item_gift_id' => $data_request['item_gift_id'][$i],
+                'review_text' => $data_request['review_text'][$i],
+                'review_rating' => calculate_rating($data_request['review_rating'][$i]),
+                'review_date' => date('Y-m-d'),
+            ]);
+        }
 
         DB::commit();
 

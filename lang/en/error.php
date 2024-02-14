@@ -7,7 +7,7 @@ return [
 	"failed_refresh_token" 					      => "Failed Refresh token",
 	"out_of_stock"								  => "Out of stock",
 	"variant_out_of_stock"						  => "Out of stock, item gift ID: :id with variant ID: :variant_id",
-	"already_reviews"							  => "You have already given a review on the item gift ID: :id",
+	"already_reviews"							  => "You have already given a review on the redeem ID: :id",
 	"already_verification"						  => "Email alraedy verified",
 	"failed_verifcation_email"					  => "Failed verification email",
 	"failed_send_reset_password_link"             => "Failed send reset password link",
@@ -22,6 +22,6 @@ return [
 	"operation_not_permitted"					  => "Operation not permitted",
 	"failed_cancel_redeem"						  => "Failed cancel order",
 	"cannot_delete_primary_address"				  => "You cannot delete data, because the address you chose is the main address",
-	"token_reset_password_is_expire"			  => "This password reset token is expire",
+	"token_reset_password_is_expired"			  => "This password reset token is expired",
 	"token_reset_password_is_invalid"			  => "This password reset token is invalid",
 ];

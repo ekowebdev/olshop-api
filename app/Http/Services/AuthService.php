@@ -63,7 +63,7 @@ class AuthService extends BaseService
     public function login($locale, $request)
     {
         $this->validate($request, [
-            'email' => 'required|string|email:rfc,dns|,email',
+            'email' => 'required|string|email:rfc,dns|exists:users,email',
             'password' => 'required|string|min:6|max:12'
         ]);
 
@@ -253,7 +253,7 @@ class AuthService extends BaseService
         if (strtotime($password_reset->created_at) < strtotime('-60 minutes')) {
             DB::table('password_resets')->where('token', $request->token)->delete();
             return response()->json([
-                'message' => trans('error.token_reset_password_is_expire'),
+                'message' => trans('error.token_reset_password_is_expired'),
                 'status' => 422,
                 'error' => 0,
             ], 422);

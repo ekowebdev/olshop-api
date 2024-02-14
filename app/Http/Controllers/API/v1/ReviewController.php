@@ -38,6 +38,11 @@ class ReviewController extends BaseController
         return $this->service->store($locale, Request::all());
     }
 
+    public function storeBulk($locale)
+    {
+        return $this->service->storeBulk($locale, Request::all());
+    }
+
     public function update($locale, $id)
     {
         $data = $this->service->update($locale, $id, Request::all());

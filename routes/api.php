@@ -87,6 +87,7 @@ Route::middleware(['xssclean'])->group(function () {
                 Route::get('/gifts/recomendation', '\App\Http\Controllers\API\v1\ItemGiftController@showByUserRecomendation');
                 // Review Item Gift
                 Route::post('/gifts/review', '\App\Http\Controllers\API\v1\ReviewController@store');
+                Route::post('/gifts/review/bulk', '\App\Http\Controllers\API\v1\ReviewController@storeBulk');
                 Route::put('/gifts/review/{id}', '\App\Http\Controllers\API\v1\ReviewController@update');
                 Route::delete('/gifts/review/{id}', '\App\Http\Controllers\API\v1\ReviewController@delete');
                 // Redeem Item Gift
