@@ -5,8 +5,8 @@ namespace App\Http\Services;
 use App\Http\Models\Review;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
-use App\Http\Repositories\ReviewRepository;
 use App\Http\Repositories\RedeemRepository;
+use App\Http\Repositories\ReviewRepository;
 
 class ReviewService extends BaseService
 {

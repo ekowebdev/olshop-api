@@ -87,14 +87,17 @@ class ItemGift extends BaseModel
     public function getTotalReviewsAttribute()
     {
         $total_review = Review::where('item_gift_id', $this->getKey())->count();
-
         return $total_review;
     }
 
     public function getTotalRatingAttribute()
     {
-        $total_rating = Review::selectRaw('COALESCE(AVG(review_rating), 0) AS total_rating')->where('item_gift_id', $this->getKey())->first()->total_rating;
-        return $total_rating;
+        $user_item_avg_ratings = Review::select('user_id', 'item_gift_id', DB::raw('AVG(review_rating) as avg_rating'))
+            ->where('item_gift_id', $this->getKey())
+            ->groupBy('user_id', 'item_gift_id')
+            ->get();
+        $total_avg_rating = $user_item_avg_ratings->pluck('avg_rating')->avg();
+        return round($total_avg_rating, 1);
     }
 
     public function getTotalRedeemAttribute()
@@ -118,9 +121,6 @@ class ItemGift extends BaseModel
                     'item_gift_weight',
                     'item_gift_quantity',
                     'item_gift_status',
-                    DB::raw('(SELECT COUNT(*) FROM reviews WHERE reviews.item_gift_id = item_gifts.id) AS total_reviews'),
-                    DB::raw('(SELECT COALESCE(AVG(review_rating), 0) FROM reviews WHERE reviews.item_gift_id = item_gifts.id) AS total_rating'),
-                    DB::raw('(SELECT SUM(redeem_item_gifts.redeem_quantity) FROM redeem_item_gifts WHERE redeem_item_gifts.item_gift_id = item_gifts.id) AS total_redeem'),
                 ])
                 ->where('item_gift_status', 'A')
                 ->from(DB::raw('item_gifts FORCE INDEX (index_item_gifts)'));
