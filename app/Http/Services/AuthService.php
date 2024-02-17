@@ -286,7 +286,7 @@ class AuthService extends BaseService
             if ($existing_user) {
                 $token_response = $this->getBearerTokenByUser($existing_user, $this->oauth_client_id, false);
                 return response()->json([
-                    'message' => trans('all.success_login'),
+                    'message' => 'Login success',
                     'data' => [
                         'users' => new UserResource($existing_user),
                         'token_type' => 'Bearer',
@@ -310,7 +310,7 @@ class AuthService extends BaseService
                 $created_user->profile()->create(['name' => $user->name, 'avatar' => $user->avatar]);
                 DB::commit();
                 return response()->json([
-                    'message' => trans('all.success_register_without_verification'),
+                    'message' => 'Registration successful, please login to enter',
                     'status' => 200,
                     'error' => 0,
                 ]);
