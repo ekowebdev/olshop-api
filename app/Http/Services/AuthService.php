@@ -310,7 +310,7 @@ class AuthService extends BaseService
                 $created_user->profile()->create(['name' => $user->name, 'avatar' => $user->avatar]);
                 DB::commit();
                 return response()->json([
-                    'message' => trans('all.success_register'),
+                    'message' => trans('all.success_register_without_verification'),
                     'status' => 200,
                     'error' => 0,
                 ]);
@@ -318,7 +318,7 @@ class AuthService extends BaseService
         } catch (\Exception $e) {
             DB::rollback();
             return response()->json([
-                'message' => trans('error.failed_login'),
+                'message' => $e->getMessage(),
                 'status' => 500,
             ], 500);
         }
