@@ -48,8 +48,8 @@ class ReviewRepository extends BaseRepository
 	{
 		$result = $this->model
                   ->getAll()
-                  ->where('user_id', $user_id)	
-                  ->where('redeem_id', $redeem_id)	
+                  ->where('reviews.user_id', $user_id)	
+                  ->where('reviews.redeem_id', $redeem_id)	
                   ->first();
 		return $result;	
 	}
@@ -58,9 +58,9 @@ class ReviewRepository extends BaseRepository
 	{
 		$result = $this->model
                   ->getAll()
-                  ->where('user_id', $user_id)	
-                  ->where('redeem_id', $redeem_id)	
-                  ->where('item_gift_id', $item_gift_id)	
+                  ->where('reviews.user_id', $user_id)	
+                  ->where('reviews.redeem_id', $redeem_id)	
+                  ->where('reviews.item_gift_id', $item_gift_id)	
                   ->first();
 		return $result;	
 	}

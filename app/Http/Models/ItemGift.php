@@ -86,7 +86,7 @@ class ItemGift extends BaseModel
 
     public function getTotalReviewsAttribute()
     {
-        $total_review = Review::where('item_gift_id', $this->getKey())->count();
+        $total_review = Review::where('item_gift_id', $this->getKey())->groupBy('user_id', 'item_gift_id')->count();
         return $total_review;
     }
 

@@ -70,6 +70,7 @@ class VariantResource extends JsonResource
                         'item_gift_id' => $review->item_gift_id,
                         'review_text' => $review->review_text,
                         'review_rating' => (float) $review->review_rating,
+                        'review_files' => $review->review_files->makeHidden(['created_at', 'updated_at']),
                         'review_date' => $review->review_date,
                         'freview_date' => Carbon::parse($review->created_at)->diffForHumans(),
                     ];

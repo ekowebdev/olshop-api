@@ -227,10 +227,11 @@ class ItemGiftService extends BaseService
                 ],
                 'item_gift_quantity' => [
                     'nullable',
-                    'numeric',
+                    'numeric'
                 ],
                 'item_gift_images' => [
                     'required',
+                    'array'
                 ],
                 'item_gift_images.*' => [
                     'required',

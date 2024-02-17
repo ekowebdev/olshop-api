@@ -2,9 +2,12 @@
 
 namespace App\Http\Services;
 
+use Image;
 use App\Http\Models\Review;
 use Illuminate\Support\Arr;
+use App\Http\Models\ReviewFile;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use App\Http\Repositories\RedeemRepository;
 use App\Http\Repositories\ReviewRepository;
 
@@ -80,6 +83,15 @@ class ReviewService extends BaseService
                     'numeric',
                     'between:0.5,5'
                 ],
+                'review_file' => [
+                    'nullable',
+                    'array',
+                ],
+                'review_file.*' => [
+                    'nullable',
+                    'max:10000',
+                    'mimes:jpg,png,mp4,mov',
+                ],
             ]
         );
 
@@ -104,7 +116,7 @@ class ReviewService extends BaseService
             ], 409);
         }
 
-        Review::create([
+        $result = Review::create([
             'user_id' => $user->id,
             'redeem_id' => $data_request['redeem_id'],
             'item_gift_id' => $data_request['item_gift_id'],
@@ -112,6 +124,15 @@ class ReviewService extends BaseService
             'review_rating' => rounded_rating($data_request['review_rating']),
             'review_date' => date('Y-m-d'),
         ]);
+
+        foreach ($data_request['review_file'] as $file) {
+            $file_name = time() . '.' . $file->getClientOriginalExtension();
+            Storage::disk('s3')->put('files/reviews/' . $file_name, file_get_contents($file));
+            ReviewFile::create([
+                'review_id' => $result->id,
+                'review_file' => $file_name,
+            ]);
+        }
 
         DB::commit();
 
@@ -127,36 +148,49 @@ class ReviewService extends BaseService
         $data_request = $data;
 
         $this->repository->validate($data_request, [
-                'redeem_id' => [
-                    'required',
-                ],
-                'redeem_id.*' => [
-                    'required',
-                    'exists:redeems,id',
-                ],
-                'item_gift_id' => [
-                    'required',
-                ],
-                'item_gift_id.*' => [
-                    'required',
-                    'exists:item_gifts,id',
-                ],
-                'review_text' => [
-                    'required'
-                ],
-                'review_text.*' => [
-                    'required'
-                ],
-                'review_rating' => [
-                    'required',
-                ],
-                'review_rating.*' => [
-                    'required',
-                    'numeric',
-                    'between:0.5,5'
-                ],
-            ]
-        );
+            'redeem_id' => [
+                'required',
+                'array',
+            ],
+            'redeem_id.*' => [
+                'required',
+                'exists:redeems,id'
+            ],
+            'item_gift_id' => [
+                'required',
+                'array',
+            ],
+            'item_gift_id.*' => [
+                'required',
+                'exists:item_gifts,id',
+            ],
+            'review_text' => [
+                'required',
+                'array',
+            ],
+            'review_text.*' => [
+                'required'
+            ],
+            'review_rating' => [
+                'required',
+                'array',
+            ],
+            'review_rating.*' => [
+                'required',
+                'numeric',
+                'between:0.5,5'
+            ],
+            'review_file.*' => [
+                'nullable',
+                'array',
+            ],
+            'review_file.*.*' => [
+                'nullable',
+                'file',
+                'mimes:jpg,png,mp4,mov',
+                'max:10000',
+            ],
+        ]);
 
         DB::beginTransaction();
 
@@ -183,7 +217,7 @@ class ReviewService extends BaseService
                 ], 409);
             }
 
-            Review::create([
+            $result = Review::create([
                 'user_id' => $user->id,
                 'redeem_id' => $data_request['redeem_id'][$i],
                 'item_gift_id' => $data_request['item_gift_id'][$i],
@@ -191,6 +225,15 @@ class ReviewService extends BaseService
                 'review_rating' => rounded_rating($data_request['review_rating'][$i]),
                 'review_date' => date('Y-m-d'),
             ]);
+
+            foreach ($data_request['review_file'][$i] as $file) {
+                $file_name = time() . '.' . $file->getClientOriginalExtension();
+                Storage::disk('s3')->put('files/reviews/' . $file_name, file_get_contents($file));
+                ReviewFile::create([
+                    'review_id' => $result->id,
+                    'review_file' => $file_name,
+                ]);
+            }
         }
 
         DB::commit();
@@ -242,6 +285,14 @@ class ReviewService extends BaseService
     {
         $check_data = $this->repository->getSingleData($locale, $id);
         DB::beginTransaction();
+        foreach($check_data->review_files as $file) {
+            if(Storage::disk('s3')->exists('files/reviews/' . $file->review_file)) {
+                Storage::disk('s3')->delete('files/reviews/' . $file->review_file);
+            }
+            if(Storage::disk('s3')->exists('files/reviews/' . 'thumbnails/' . $file->review_file)) {
+                Storage::disk('s3')->delete('files/reviews/' . 'thumbnails/' . $file->review_file);
+            }
+        }
         $result = $check_data->delete();
         DB::commit();
 

@@ -14,6 +14,7 @@ class ReviewResource extends JsonResource
             'review_text' => $this->review_text,
             'review_rating' => (float) $this->review_rating,
             'review_date' => $this->review_date,
+            'review_files' => $this->review_files->makeHidden(['created_at', 'updated_at']),
             'freview_date' => Carbon::parse($this->created_at)->diffForHumans(),
             'redeems' => ($this->redeems) ? [
                 'redeem_id' => $this->redeems->id,

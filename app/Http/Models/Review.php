@@ -6,8 +6,9 @@ use App\Http\Models\User;
 use App\Http\Models\Redeem;
 use App\Http\Models\ItemGift;
 use App\Http\Models\BaseModel;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Http\Models\ReviewFile;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Review extends BaseModel
 {
@@ -31,6 +32,11 @@ class Review extends BaseModel
         return $this->belongsTo(Redeem::class, 'redeem_id');
     }
 
+    public function review_files()
+    {
+        return $this->hasMany(ReviewFile::class);
+    }
+
     public function scopeGetAll($query)
     {
         return $query->select('reviews.id', 'reviews.user_id', 'reviews.redeem_id', 'reviews.item_gift_id', 'reviews.review_text', 'reviews.review_rating', 'reviews.review_date', 'reviews.created_at')
@@ -38,7 +44,8 @@ class Review extends BaseModel
                 $join->on('reviews.user_id', '=', 'last_reviews.user_id')
                     ->on('reviews.item_gift_id', '=', 'last_reviews.item_gift_id')
                     ->on('reviews.created_at', '=', 'last_reviews.last_created_at');
-            });
+            })
+            ->where('reviews.user_id', '=', DB::raw('last_reviews.user_id'));
     }
 
     private function lastReviews()
