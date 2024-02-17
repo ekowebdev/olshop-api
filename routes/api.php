@@ -3,6 +3,8 @@
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['xssclean'])->group(function () {
+    Route::get('/auth/google', '\App\Http\Controllers\API\v1\Auth\AuthController@redirect_to_google');
+    Route::get('/auth/google/callback', '\App\Http\Controllers\API\v1\Auth\AuthController@handle_google_callback');
     Route::get('/email/verify/{id}', '\App\Http\Controllers\API\v1\Auth\AuthController@verify')->name('verification.verify');
     Route::group(['prefix' => '/v1/{locale}'], function(){
         // Auth

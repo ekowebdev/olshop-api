@@ -55,4 +55,14 @@ class AuthController extends BaseController
     {
         return $this->service->reset_password($locale, $request);
     }
+
+    public function redirect_to_google()
+    {
+        return $this->service->redirect_to_google();
+    }
+
+    public function handle_google_callback()
+    {
+        return $this->service->handle_google_callback();
+    }
 }

@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use App\Jobs\SendEmailVerificationJob;
 use Illuminate\Support\Facades\Password;
+use Laravel\Socialite\Facades\Socialite;
 use App\Http\Repositories\UserRepository;
 use App\Http\Repositories\OauthRepository;
 use App\Exceptions\AuthenticationException;
@@ -51,13 +52,11 @@ class AuthService extends BaseService
         SendEmailVerificationJob::dispatch($user);
         DB::commit();
 
-        $data = [
+        return response()->json([
             'message' => trans('all.success_register'),
             'status' => 200,
             'error' => 0,
-        ];
-
-        return response()->json($data);
+        ]);
     }
 
     public function login($locale, $request)
@@ -78,8 +77,8 @@ class AuthService extends BaseService
         }
 
         $token_response = $this->getBearerTokenByUser($user, $this->oauth_client_id, false);
-        
-        $data = [
+
+        return response()->json([
             'message' => trans('all.success_login'),
             'data' => [
                 'users' => new UserResource($user),
@@ -90,9 +89,7 @@ class AuthService extends BaseService
             ],
             'status' => 200,
             'error' => 0
-        ];
-
-        return response()->json($data);
+        ]);
     }
 
     public function refresh_token($locale, $request)
@@ -274,5 +271,56 @@ class AuthService extends BaseService
             'status' => 200,
             'error' => 0,
         ]);
+    }
+
+    public function redirect_to_google()
+    {
+        return Socialite::driver('google')->stateless()->redirect();
+    }
+
+    public function handle_google_callback()
+    {
+        try {
+            $user = Socialite::driver('google')->stateless()->user();
+            $existing_user = $this->model->where('email', $user->email)->first();
+            if ($existing_user) {
+                $token_response = $this->getBearerTokenByUser($existing_user, $this->oauth_client_id, false);
+                return response()->json([
+                    'message' => trans('all.success_login'),
+                    'data' => [
+                        'users' => new UserResource($existing_user),
+                        'token_type' => 'Bearer',
+                        'expires_in' => $token_response['expires_in'],
+                        'access_token' => $token_response['access_token'],
+                        'refresh_token' => $token_response['refresh_token'],
+                    ],
+                    'status' => 200,
+                    'error' => 0
+                ]);
+            } else {
+                DB::beginTransaction();
+                $username = strstr($user->email, '@', true);
+                $created_user = $this->model->create([
+                    'username' => $username,
+                    'email' => $user->email,
+                    'password' => Hash::make('password'),
+                    'email_verified_at' => date('Y-m-d H:i:s')
+                ]);
+                $created_user->assignRole('customer');
+                $created_user->profile()->create(['name' => $user->name, 'avatar' => $user->avatar]);
+                DB::commit();
+                return response()->json([
+                    'message' => trans('all.success_register'),
+                    'status' => 200,
+                    'error' => 0,
+                ]);
+            }
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json([
+                'message' => trans('error.failed_login'),
+                'status' => 500,
+            ], 500);
+        }
     }
 }

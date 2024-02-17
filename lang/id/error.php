@@ -3,7 +3,7 @@
 return [
 	"password_wrong" 							  => 'Kata sandi salah.',
 	'failed_delete_data'						  => "Gagal hapus data",
-	"failed_login" 					              => "Login gagal",
+	"failed_login" 					              => "Login gagal, silahkan coba lagi",
 	"failed_refresh_token" 					      => "Refresh token gagal",
 	"out_of_stock"								  => "Stok tidak tersedia",
 	"variant_out_of_stock"						  => "Stok tidak tersedia, item gift ID: :id dengan varian ID: :variant_id",

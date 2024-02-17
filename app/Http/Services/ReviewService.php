@@ -64,6 +64,7 @@ class ReviewService extends BaseService
             'item_gift_id',
             'review_text',
             'review_rating',
+            'review_file',
         ]);
 
         $this->repository->validate($data_request, [
@@ -194,9 +195,9 @@ class ReviewService extends BaseService
 
         DB::beginTransaction();
 
-        $reviews = count($data_request['item_gift_id']);
+        $count_item_gifts = count($data_request['item_gift_id']);
 
-        for ($i = 0; $i < $reviews; $i++) {
+        for ($i = 0; $i < $count_item_gifts; $i++) {
 
             $user = auth()->user();
             $redeem = $this->redeem_repository->getSingleData($locale, $data_request['redeem_id'][$i]);
@@ -259,7 +260,7 @@ class ReviewService extends BaseService
 
         $data_request = Arr::only($data, [
             'review_text',
-            'review_rating',
+            'review_rating'
         ]);
 
         $this->repository->validate($data_request, [
@@ -269,7 +270,7 @@ class ReviewService extends BaseService
                 'review_rating' => [
                     'numeric',
                     'between:0.5,5'
-                ],
+                ]
             ]
         );
 
@@ -288,9 +289,6 @@ class ReviewService extends BaseService
         foreach($check_data->review_files as $file) {
             if(Storage::disk('s3')->exists('files/reviews/' . $file->review_file)) {
                 Storage::disk('s3')->delete('files/reviews/' . $file->review_file);
-            }
-            if(Storage::disk('s3')->exists('files/reviews/' . 'thumbnails/' . $file->review_file)) {
-                Storage::disk('s3')->delete('files/reviews/' . 'thumbnails/' . $file->review_file);
             }
         }
         $result = $check_data->delete();
