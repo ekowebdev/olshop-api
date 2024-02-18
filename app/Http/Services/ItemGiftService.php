@@ -30,6 +30,7 @@ class ItemGiftService extends BaseService
             'item_gift_weight' => 'item_gift_weight',
             'item_gift_quantity' => 'item_gift_quantity',
             'item_gift_point' => 'item_gift_point',
+            'total_reviews' => 'total_reviews',
             'total_rating' => 'total_rating',
             'total_redeem' => 'total_redeem',
         ];
@@ -43,6 +44,7 @@ class ItemGiftService extends BaseService
             'item_gift_quantity' => 'item_gift_quantity',
             'item_gift_point' => 'item_gift_point',
             'item_gift_weight' => 'item_gift_weight',
+            'total_reviews' => 'total_reviews',
             'total_rating' => 'total_rating',
             'total_redeem' => 'total_redeem',
         ];
@@ -76,6 +78,7 @@ class ItemGiftService extends BaseService
             'item_gift_weight' => 'item_gift_weight',
             'item_gift_quantity' => 'item_gift_quantity',
             'item_gift_point' => 'item_gift_point',
+            'total_reviews' => 'total_reviews',
             'total_rating' => 'total_rating',
             'total_redeem' => 'total_redeem',
         ];
@@ -89,6 +92,7 @@ class ItemGiftService extends BaseService
             'item_gift_quantity' => 'item_gift_quantity',
             'item_gift_point' => 'item_gift_point',
             'item_gift_weight' => 'item_gift_weight',
+            'total_reviews' => 'total_reviews',
             'total_rating' => 'total_rating',
             'total_redeem' => 'total_redeem',
         ];
@@ -112,6 +116,7 @@ class ItemGiftService extends BaseService
             'item_gift_weight' => 'item_gift_weight',
             'item_gift_quantity' => 'item_gift_quantity',
             'item_gift_point' => 'item_gift_point',
+            'total_reviews' => 'total_reviews',
             'total_rating' => 'total_rating',
             'total_redeem' => 'total_redeem',
         ];
@@ -125,6 +130,7 @@ class ItemGiftService extends BaseService
             'item_gift_quantity' => 'item_gift_quantity',
             'item_gift_point' => 'item_gift_point',
             'item_gift_weight' => 'item_gift_weight',
+            'total_reviews' => 'total_reviews',
             'total_rating' => 'total_rating',
             'total_redeem' => 'total_redeem',
         ];
@@ -148,6 +154,7 @@ class ItemGiftService extends BaseService
             'item_gift_weight' => 'item_gift_weight',
             'item_gift_quantity' => 'item_gift_quantity',
             'item_gift_point' => 'item_gift_point',
+            'total_reviews' => 'total_reviews',
             'total_rating' => 'total_rating',
             'total_redeem' => 'total_redeem',
         ];
@@ -161,6 +168,7 @@ class ItemGiftService extends BaseService
             'item_gift_quantity' => 'item_gift_quantity',
             'item_gift_point' => 'item_gift_point',
             'item_gift_weight' => 'item_gift_weight',
+            'total_reviews' => 'total_reviews',
             'total_rating' => 'total_rating',
             'total_redeem' => 'total_redeem',
         ];

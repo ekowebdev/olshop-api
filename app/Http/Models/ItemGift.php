@@ -121,6 +121,9 @@ class ItemGift extends BaseModel
                     'item_gift_weight',
                     'item_gift_quantity',
                     'item_gift_status',
+                    DB::raw('(SELECT COUNT(*) FROM reviews WHERE reviews.item_gift_id = item_gifts.id LIMIT 1) AS total_reviews'),
+                    DB::raw('(SELECT ROUND(AVG(review_rating), 1) FROM reviews WHERE reviews.item_gift_id = item_gifts.id LIMIT 1) AS total_rating'),
+                    DB::raw('(SELECT SUM(redeem_item_gifts.redeem_quantity) FROM redeem_item_gifts WHERE redeem_item_gifts.item_gift_id = item_gifts.id) AS total_redeem'),
                 ])
                 ->where('item_gift_status', 'A')
                 ->from(DB::raw('item_gifts FORCE INDEX (index_item_gifts)'));
