@@ -273,12 +273,18 @@ class AuthService extends BaseService
         ]);
     }
 
-    public function redirect_to_google()
+    public function redirect_to_auth_google($locale)
     {
-        return Socialite::driver('google')->stateless()->redirect();
+        return response()->json([
+            'data' => [
+                'auth_url' => Socialite::driver('google')->stateless()->redirect()->getTargetUrl(),
+            ],
+            'status' => 200,
+            'error' => 0,
+        ]);
     }
 
-    public function handle_google_callback()
+    public function handle_auth_google_callback($locale)
     {
         try {
             $user = Socialite::driver('google')->stateless()->user();
@@ -286,7 +292,7 @@ class AuthService extends BaseService
             if ($existing_user) {
                 $token_response = $this->getBearerTokenByUser($existing_user, $this->oauth_client_id, false);
                 return response()->json([
-                    'message' => 'Login success',
+                    'message' => trans('all.success_login'),
                     'data' => [
                         'users' => new UserResource($existing_user),
                         'token_type' => 'Bearer',
@@ -304,13 +310,14 @@ class AuthService extends BaseService
                     'username' => $username,
                     'email' => $user->email,
                     'password' => Hash::make('password'),
+                    'google_id' => $user->id,
                     'email_verified_at' => date('Y-m-d H:i:s')
                 ]);
                 $created_user->assignRole('customer');
                 $created_user->profile()->create(['name' => $user->name, 'avatar' => $user->avatar]);
                 DB::commit();
                 return response()->json([
-                    'message' => 'Registration successful, please login to enter',
+                    'message' => trans('all.success_register_without_verification'),
                     'status' => 200,
                     'error' => 0,
                 ]);

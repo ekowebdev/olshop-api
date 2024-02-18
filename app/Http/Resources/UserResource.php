@@ -12,6 +12,7 @@ class UserResource extends JsonResource
             'id' => $this->id,
             'roles' => $this->getRoleNames(),
             'username' => $this->username,
+            'google_id' => $this->google_id,
             'email' => $this->email,
             'email_status' => $this->email_verified_at != null ? 'verified' : 'unverified',
             'email_verified_at' => $this->email_verified_at,

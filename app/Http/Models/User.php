@@ -32,6 +32,7 @@ class User extends Authenticable implements MustVerifyEmail
         'username',
         'email',
         'password',
+        'google_id',
 		'main_address_id',
 		'email_verified_at',
     ];
@@ -97,6 +98,7 @@ class User extends Authenticable implements MustVerifyEmail
                     'username', 
                     'email',
                     'password',
+					'google_id',
                     'main_address_id',
 					'email_verified_at',
                 ]);

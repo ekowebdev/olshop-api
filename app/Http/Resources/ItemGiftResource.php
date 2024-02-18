@@ -50,6 +50,7 @@ class ItemGiftResource extends JsonResource
                         'id' => $review->users->id,
                         'name' => $review->users->profile->name,
                         'username' => $review->users->username,
+                        'google_id' => $review->users->google_id,
                         'email' => $review->users->email,
                         'email_status' => $review->users->email_verified_at != null ? 'verified' : 'unverified',
                         'email_verified_at' => $review->users->email_verified_at,

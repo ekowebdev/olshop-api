@@ -3,8 +3,6 @@
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['xssclean'])->group(function () {
-    Route::get('/auth/google', '\App\Http\Controllers\API\v1\Auth\AuthController@redirect_to_google');
-    Route::get('/auth/google/callback', '\App\Http\Controllers\API\v1\Auth\AuthController@handle_google_callback');
     Route::get('/email/verify/{id}', '\App\Http\Controllers\API\v1\Auth\AuthController@verify')->name('verification.verify');
     Route::group(['prefix' => '/v1/{locale}'], function(){
         // Auth
@@ -15,6 +13,8 @@ Route::middleware(['xssclean'])->group(function () {
         Route::post('/email/resend', '\App\Http\Controllers\API\v1\Auth\AuthController@resend')->name('verification.resend');
         Route::post('/forget/password', '\App\Http\Controllers\API\v1\Auth\AuthController@forget_password'); 
         Route::post('/reset/password', '\App\Http\Controllers\API\v1\Auth\AuthController@reset_password');
+        Route::get('/auth/google', '\App\Http\Controllers\API\v1\Auth\AuthController@redirect_to_auth_google');
+        Route::get('/auth/google/callback', '\App\Http\Controllers\API\v1\Auth\AuthController@handle_auth_google_callback');
         // Webhook
         Route::post('/webhook/midtrans', '\App\Http\Controllers\API\v1\WebhookController@midtrans_handler');
         Route::group(['middleware' => ['auth:api']], function () {

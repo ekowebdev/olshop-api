@@ -118,6 +118,7 @@ class ReviewResource extends JsonResource
             'users' => ($this->users) ? [
                 'id' => $this->users->id,
                 'username' => $this->users->username,
+                'google_id' => $this->users->google_id,
                 'email' => $this->users->email,
                 'email_status' => $this->users->email_verified_at != null ? 'verified' : 'unverified',
                 'email_verified_at' => $this->users->email_verified_at,
