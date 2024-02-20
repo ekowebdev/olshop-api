@@ -147,12 +147,21 @@ class AuthService extends BaseService
 
     public function logout($locale)
 	{
-        auth()->user()->get_access_token()->delete();
-        return response()->json([
+        if (auth()->check()) {
+            auth()->user()->get_access_token()->delete();
+            return response()->json([
                 'message' => trans('all.success_logout'), 
                 'status' => 200,
                 'error' => 0,
             ]);
+        }
+
+        return response()->json([
+                'message' => trans('error.failed_logout'),  
+                'status' => 401,
+                'error' => 0,
+            ], 401
+        );
     }
 
     public function verify($id, $request)

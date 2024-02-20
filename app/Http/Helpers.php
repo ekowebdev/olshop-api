@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Str;
 use App\Http\Models\Notification;
+use App\Http\Models\Review;
 
 function rounded_rating($rating)
 {
@@ -64,4 +65,16 @@ function store_notification($data = [])
 
     $notification = $model->query()->where('user_id', $data['user_id'])->get()->toArray();
     return $notification;
+}
+
+function is_reviewed($item_gift_id, $redeem_id)
+{
+    $user_id = (auth()->user()) ? auth()->user()->id : 0;
+
+    $reviews = Review::where('user_id', $user_id)
+        ->where('item_gift_id', $item_gift_id)
+        ->where('redeem_id', $redeem_id)
+        ->get();
+
+    return (count($reviews) > 0) ? 1 : 0;
 }

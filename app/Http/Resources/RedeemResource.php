@@ -65,6 +65,7 @@ class RedeemResource extends JsonResource
                         'total_reviews' => $redeem_item_gift->item_gifts->total_reviews,
                         'total_rating' => floatval(rtrim($redeem_item_gift->item_gifts->total_rating, '0')),
                         'total_redeem' => (int) $redeem_item_gift->item_gifts->total_redeem,
+                        'is_reviewed' => is_reviewed($redeem_item_gift->item_gifts->id, $this->id)
                     ],
                     'variants' => ($redeem_item_gift->variants) 
                         ? [
