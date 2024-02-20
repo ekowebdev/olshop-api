@@ -227,13 +227,15 @@ class ReviewService extends BaseService
                 'review_date' => date('Y-m-d'),
             ]);
 
-            foreach ($data_request['review_file'][$i] as $file) {
-                $file_name = time() . '.' . $file->getClientOriginalExtension();
-                Storage::disk('s3')->put('files/reviews/' . $file_name, file_get_contents($file));
-                ReviewFile::create([
-                    'review_id' => $result->id,
-                    'review_file' => $file_name,
-                ]);
+            if(isset($data_request['review_file'])){
+                foreach ($data_request['review_file'][$i] as $file) {
+                    $file_name = time() . '.' . $file->getClientOriginalExtension();
+                    Storage::disk('s3')->put('files/reviews/' . $file_name, file_get_contents($file));
+                    ReviewFile::create([
+                        'review_id' => $result->id,
+                        'review_file' => $file_name,
+                    ]);
+                }
             }
         }
 
