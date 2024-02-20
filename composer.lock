@@ -4,8 +4,69 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "65acf66414478fc835ea35b04c2d9496",
+    "content-hash": "cd0df7bf46f003cc71e0d6b2a5f2c16f",
     "packages": [
+        {
+            "name": "adaojunior/passport-social-grant",
+            "version": "v4.3.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/adaojunior/passport-social-grant.git",
+                "reference": "332c115016e77d6f30ac677acb17ae943fbddbb2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/adaojunior/passport-social-grant/zipball/332c115016e77d6f30ac677acb17ae943fbddbb2",
+                "reference": "332c115016e77d6f30ac677acb17ae943fbddbb2",
+                "shasum": ""
+            },
+            "require": {
+                "laravel/passport": "^8.0|^9.0|^10.0|^11.0",
+                "php": "^7.2|^8.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^8.5|^9.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Adaojunior\\PassportSocialGrant\\SocialGrantServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Adaojunior\\PassportSocialGrant\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Adão Júnior",
+                    "email": "dev@pardim.com",
+                    "homepage": "https://github.com/adaojunior",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Social grant for Laravel Passport",
+            "homepage": "https://github.com/adaojunior/passport-social-grant",
+            "keywords": [
+                "guard",
+                "laravel",
+                "oauth",
+                "passport",
+                "social"
+            ],
+            "support": {
+                "issues": "https://github.com/adaojunior/passport-social-grant/issues",
+                "source": "https://github.com/adaojunior/passport-social-grant/tree/v4.3.0"
+            },
+            "time": "2023-08-10T02:42:04+00:00"
+        },
         {
             "name": "aws/aws-crt-php",
             "version": "v1.2.4",
