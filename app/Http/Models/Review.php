@@ -16,6 +16,7 @@ class Review extends BaseModel
 
     protected $table = 'reviews';
     protected $fillable = ['user_id', 'redeem_id', 'item_gift_id', 'review_text', 'review_rating', 'review_date'];
+    protected $appends = ['has_files'];
 
     public function users()
     {
@@ -37,9 +38,32 @@ class Review extends BaseModel
         return $this->hasMany(ReviewFile::class);
     }
 
+    public function getHasFilesAttribute()
+    {
+        $has_files = Review::review_files()->where('review_id', $this->getKey())->count();
+        return $has_files > 0 ? 'yes' : 'no';
+    }
+
     public function scopeGetAll($query)
     {
-        return $query->select('reviews.id', 'reviews.user_id', 'reviews.redeem_id', 'reviews.item_gift_id', 'reviews.review_text', 'reviews.review_rating', 'reviews.review_date', 'reviews.created_at')
+        return $query->select(
+                'reviews.id', 
+                'reviews.user_id', 
+                'reviews.redeem_id', 
+                'reviews.item_gift_id', 
+                'reviews.review_text', 
+                'reviews.review_rating', 
+                'reviews.review_date', 
+                'reviews.created_at',
+                DB::raw('
+                    (
+                        CASE 
+                            WHEN EXISTS (SELECT 1 FROM review_files WHERE review_files.review_id = reviews.id) THEN "yes"
+                            ELSE "no"
+                        END
+                    ) AS has_files
+                '),   
+            )
             ->joinSub($this->lastReviews(), 'last_reviews', function ($join) {
                 $join->on('reviews.user_id', '=', 'last_reviews.user_id')
                     ->on('reviews.item_gift_id', '=', 'last_reviews.item_gift_id')

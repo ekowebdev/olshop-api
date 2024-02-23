@@ -33,6 +33,7 @@ class User extends Authenticable implements MustVerifyEmail
         'email',
         'password',
         'google_id',
+        'google_access_token',
 		'main_address_id',
 		'email_verified_at',
     ];
@@ -99,6 +100,7 @@ class User extends Authenticable implements MustVerifyEmail
                     'email',
                     'password',
 					'google_id',
+					'google_access_token',
                     'main_address_id',
 					'email_verified_at',
                 ]);

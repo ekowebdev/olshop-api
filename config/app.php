@@ -187,6 +187,7 @@ return [
          */
         Spatie\Permission\PermissionServiceProvider::class,
         Laravel\Passport\PassportServiceProvider::class,
+        Adaojunior\PassportSocialGrant\SocialGrantServiceProvider::class,
 
         /*
          * Application Service Providers...

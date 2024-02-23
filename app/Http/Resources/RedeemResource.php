@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use Carbon\Carbon;
+use App\Http\Models\Review;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class RedeemResource extends JsonResource
@@ -65,7 +66,7 @@ class RedeemResource extends JsonResource
                         'total_reviews' => $redeem_item_gift->item_gifts->total_reviews,
                         'total_rating' => floatval(rtrim($redeem_item_gift->item_gifts->total_rating, '0')),
                         'total_redeem' => (int) $redeem_item_gift->item_gifts->total_redeem,
-                        'is_reviewed' => is_reviewed($redeem_item_gift->item_gifts->id, $this->id)
+                        'is_reviewed' => $this->is_reviewed($redeem_item_gift->item_gifts->id, $this->id)
                     ],
                     'variants' => ($redeem_item_gift->variants) 
                         ? [
@@ -197,5 +198,17 @@ class RedeemResource extends JsonResource
         } else {
             return format_money(strval($item->item_gifts->item_gift_point ?? 0));
         }
+    }
+
+    private function is_reviewed($item_gift_id, $redeem_id)
+    {
+        $user_id = (auth()->user()) ? auth()->user()->id : 0;
+
+        $reviews = Review::where('user_id', $user_id)
+            ->where('item_gift_id', $item_gift_id)
+            ->where('redeem_id', $redeem_id)
+            ->get();
+
+        return (count($reviews) > 0) ? 1 : 0;
     }
 }

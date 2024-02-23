@@ -9,7 +9,7 @@ use Laravel\Passport\Http\Controllers\AccessTokenController;
 
 class SystemAccessTokenController extends AccessTokenController
 {
-    public function tokenSystem(ServerRequestInterface $request)
+    public function token_system(ServerRequestInterface $request)
     {
         $validator = \Illuminate\Support\Facades\Validator::make(Request::all(),[
             'client_id'     => 'required',

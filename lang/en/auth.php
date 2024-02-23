@@ -20,4 +20,5 @@ return [
     'not_authorize_access'           => 'Not authorized to access',
     'not_verified_account'           => 'You need to verify account',
     'verification_failed'            => 'You code verify failed',
+    'password_not_been_set'          => 'Password has not been set, please log in using Gmail',
 ];

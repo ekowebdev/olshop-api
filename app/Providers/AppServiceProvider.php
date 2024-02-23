@@ -16,7 +16,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        date_default_timezone_set('Asia/Jakarta');
+        date_default_timezone_set('Asia/Jakarta');         
+        // $this->app->singleton(\Adaojunior\Passport\SocialUserResolverInterface::class, \App\Providers\SocialUserResolver::class);
     }
 
     /**

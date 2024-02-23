@@ -33,7 +33,8 @@ class Slider extends BaseModel
                     'start_date', 
                     'end_date', 
                     'status',
-                ]);
+                ])
+                ->where('status', '=', 'A');
     }
 
     public function scopeGetAllActive($query)

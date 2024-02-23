@@ -35,10 +35,10 @@ class AuthService extends BaseService
     {
         $this->validate($request, [
             'name' => 'required|string|max:255',
-            'birthdate' => 'date',
+            'birthdate' => 'required|date',
             'username' => 'required|string|unique:users|max:255',
             'email' => 'required|string|email:rfc,dns|unique:users|max:255',
-            'password' => 'required|string|min:6|confirmed',
+            'password' => 'required|string|min:6|confirmed|max:32',
         ]);
 
         DB::beginTransaction();
@@ -48,7 +48,7 @@ class AuthService extends BaseService
             'password' => Hash::make($request['password']),
         ]);
         $user->assignRole('customer');
-        $user->profile()->create(['name' => $request['name'], 'birthdate' => $request['birthdate'] ?? null]);
+        $user->profile()->create(['name' => $request['name'], 'birthdate' => $request['birthdate']]);
         SendEmailVerificationJob::dispatch($user);
         DB::commit();
 
@@ -70,6 +70,10 @@ class AuthService extends BaseService
 
         if(empty($user)){
             throw new AuthenticationException(trans('auth.wrong_email_or_password'));
+        }
+
+        if ($user->password == null) {
+            throw new AuthenticationException(trans('auth.password_not_been_set'));
         }
 
         if (empty($user) OR !Hash::check($request['password'], $user->password, [])) {
@@ -282,7 +286,7 @@ class AuthService extends BaseService
         ]);
     }
 
-    public function redirect_to_auth_google($locale)
+    public function auth_google($locale)
     {
         return response()->json([
             'data' => [
@@ -293,50 +297,39 @@ class AuthService extends BaseService
         ]);
     }
 
-    public function handle_auth_google_callback($locale)
+    public function auth_google_callback($locale)
     {
         try {
             $user = Socialite::driver('google')->stateless()->user();
-            $existing_user = $this->model->where('email', $user->email)->first();
+            $existing_user = $this->model->where('email', $user->email)->where('google_id', $user->id)->first();
             if ($existing_user) {
+                $existing_user->update(['google_access_token' => $user->token]);
                 $token_response = $this->getBearerTokenByUser($existing_user, $this->oauth_client_id, false);
-                return response()->json([
-                    'message' => trans('all.success_login'),
-                    'data' => [
-                        'users' => new UserResource($existing_user),
-                        'token_type' => 'Bearer',
-                        'expires_in' => $token_response['expires_in'],
-                        'access_token' => $token_response['access_token'],
-                        'refresh_token' => $token_response['refresh_token'],
-                    ],
-                    'status' => 200,
-                    'error' => 0
-                ]);
+                $url = env('FRONT_URL') . '/auth-success?user_id='.$existing_user->id.'&access_token='.$token_response['access_token'].'&refresh_token='.$token_response['refresh_token'].'&expires_in='.$token_response['expires_in'];
+                return redirect()->to($url);
             } else {
                 DB::beginTransaction();
+                $this->model->where('email', $user->email)->first()->delete();
                 $username = strstr($user->email, '@', true);
                 $created_user = $this->model->create([
                     'username' => $username,
                     'email' => $user->email,
-                    'password' => Hash::make('password'),
+                    'password' => null,
                     'google_id' => $user->id,
+                    'google_access_token' => $user->token,
                     'email_verified_at' => date('Y-m-d H:i:s')
                 ]);
                 $created_user->assignRole('customer');
                 $created_user->profile()->create(['name' => $user->name, 'avatar' => $user->avatar]);
+                $token_response = $this->getBearerTokenByUser($created_user, $this->oauth_client_id, false);
+                $url = env('FRONT_URL') . '/auth-success?user_id='.$created_user->id.'&access_token='.$token_response['access_token'].'&refresh_token='.$token_response['refresh_token'].'&expires_in='.$token_response['expires_in'];
                 DB::commit();
-                return response()->json([
-                    'message' => trans('all.success_register_without_verification'),
-                    'status' => 200,
-                    'error' => 0,
-                ]);
+                return redirect()->to($url);
             }
         } catch (\Exception $e) {
             DB::rollback();
-            return response()->json([
-                'message' => $e->getMessage(),
-                'status' => 500,
-            ], 500);
+            $url = env('FRONT_URL') . '/login';
+            return redirect()->to($url);
         }
     }
 }

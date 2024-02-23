@@ -31,6 +31,7 @@ class ReviewService extends BaseService
             'review_text' => 'review_text',
             'review_rating' => 'review_rating',
             'review_date' => 'review_date',
+            'has_files' => 'has_files',
         ];
 
         $search_column = [
@@ -41,6 +42,7 @@ class ReviewService extends BaseService
             'review_text' => 'review_text',
             'review_rating' => 'review_rating',
             'review_date' => 'review_date',
+            'has_files' => 'has_files',
         ];
 
         $sortable_and_searchable_column = [
@@ -264,7 +266,7 @@ class ReviewService extends BaseService
 
         $data_request = Arr::only($data, [
             'review_text',
-            'review_rating'
+            'review_rating',
         ]);
 
         $this->repository->validate($data_request, [
@@ -274,7 +276,11 @@ class ReviewService extends BaseService
                 'review_rating' => [
                     'numeric',
                     'between:0.5,5'
-                ]
+                ],
+                'review_file' => [
+                    'nullable',
+                    'array',
+                ],
             ]
         );
 

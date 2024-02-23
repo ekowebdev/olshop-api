@@ -3,167 +3,235 @@
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['xssclean'])->group(function () {
+    // Email Verification
     Route::get('/email/verify/{id}', '\App\Http\Controllers\API\v1\Auth\AuthController@verify')->name('verification.verify');
     Route::group(['prefix' => '/v1/{locale}'], function(){
         // Auth
         Route::post('/register', '\App\Http\Controllers\API\v1\Auth\AuthController@register');
         Route::post('/login', '\App\Http\Controllers\API\v1\Auth\AuthController@login');
-        Route::post('/login/system', '\App\Http\Controllers\API\v1\Auth\SystemAccessTokenController@tokenSystem');
+        Route::post('/login/system', '\App\Http\Controllers\API\v1\Auth\SystemAccessTokenController@token_system');
         Route::post('/refresh-token', '\App\Http\Controllers\API\v1\Auth\AuthController@refresh_token');
+        // Auth With Google
+        Route::get('/auth/google', '\App\Http\Controllers\API\v1\Auth\AuthController@auth_google');
+        Route::get('/auth/google/callback', '\App\Http\Controllers\API\v1\Auth\AuthController@auth_google_callback');
+        // Email Verification
         Route::post('/email/resend', '\App\Http\Controllers\API\v1\Auth\AuthController@resend')->name('verification.resend');
+        // Forgot Password
         Route::post('/forget/password', '\App\Http\Controllers\API\v1\Auth\AuthController@forget_password'); 
         Route::post('/reset/password', '\App\Http\Controllers\API\v1\Auth\AuthController@reset_password');
-        Route::post('/auth/google', '\App\Http\Controllers\API\v1\Auth\AuthController@redirect_to_auth_google');
-        Route::get('/auth/google/callback', '\App\Http\Controllers\API\v1\Auth\AuthController@handle_auth_google_callback');
         // Webhook
         Route::post('/webhook/midtrans', '\App\Http\Controllers\API\v1\WebhookController@midtrans_handler');
+        // Only User Authenticated
         Route::group(['middleware' => ['auth:api']], function () {
+            // Only User Role Admin
             Route::group(['middleware' => ['role:admin']], function () {
                 // User
-                Route::get('/users', '\App\Http\Controllers\API\v1\UserController@index');
-                Route::post('/users', '\App\Http\Controllers\API\v1\UserController@store');
-                Route::delete('/users/{id}', '\App\Http\Controllers\API\v1\UserController@delete');
+                Route::group(['prefix' => '/users'], function(){
+                    Route::get('/', '\App\Http\Controllers\API\v1\UserController@index');
+                    Route::post('/', '\App\Http\Controllers\API\v1\UserController@store');
+                    Route::delete('/{id}', '\App\Http\Controllers\API\v1\UserController@delete');
+                });
                 // Slider
-                Route::post('/slider', '\App\Http\Controllers\API\v1\SliderController@store');
-                Route::post('/slider/{id}', '\App\Http\Controllers\API\v1\SliderController@update');
-                Route::delete('/slider/{id}', '\App\Http\Controllers\API\v1\SliderController@delete');
+                Route::group(['prefix' => '/sliders'], function(){
+                    Route::post('/', '\App\Http\Controllers\API\v1\SliderController@store');
+                    Route::post('/{id}', '\App\Http\Controllers\API\v1\SliderController@update');
+                    Route::delete('/{id}', '\App\Http\Controllers\API\v1\SliderController@delete');
+                });
                 // Category
-                Route::post('/category', '\App\Http\Controllers\API\v1\CategoryController@store');
-                Route::post('/category/{id}', '\App\Http\Controllers\API\v1\CategoryController@update');
-                Route::delete('/category/{id}', '\App\Http\Controllers\API\v1\CategoryController@delete');
+                Route::group(['prefix' => '/categories'], function(){
+                    Route::post('/', '\App\Http\Controllers\API\v1\CategoryController@store');
+                    Route::post('/{id}', '\App\Http\Controllers\API\v1\CategoryController@update');
+                    Route::delete('/{id}', '\App\Http\Controllers\API\v1\CategoryController@delete');
+                });
                 // Brand
-                Route::post('/brand', '\App\Http\Controllers\API\v1\BrandController@store');
-                Route::post('/brand/{id}', '\App\Http\Controllers\API\v1\BrandController@update');
-                Route::delete('/brand/{id}', '\App\Http\Controllers\API\v1\BrandController@delete');
-                // Item Gift
-                Route::post('/gifts', '\App\Http\Controllers\API\v1\ItemGiftController@store');
-                Route::put('/gifts/{id}', '\App\Http\Controllers\API\v1\ItemGiftController@update');
-                Route::patch('/gifts/{id}', '\App\Http\Controllers\API\v1\ItemGiftController@update');
-                Route::delete('/gifts/{id}', '\App\Http\Controllers\API\v1\ItemGiftController@delete');
-                // Item Gift Image
-                Route::post('/gifts/images', '\App\Http\Controllers\API\v1\ItemGiftImageController@store');
-                Route::post('/gifts/images/{id}', '\App\Http\Controllers\API\v1\ItemGiftImageController@update');
-                Route::delete('/gifts/images/{id}', '\App\Http\Controllers\API\v1\ItemGiftImageController@delete');
+                Route::group(['prefix' => '/brands'], function(){
+                    Route::post('/', '\App\Http\Controllers\API\v1\BrandController@store');
+                    Route::post('/{id}', '\App\Http\Controllers\API\v1\BrandController@update');
+                    Route::delete('/{id}', '\App\Http\Controllers\API\v1\BrandController@delete');
+                });
+                // Product
+                Route::group(['prefix' => '/products'], function(){
+                    // Product Image
+                    Route::post('/images', '\App\Http\Controllers\API\v1\ItemGiftImageController@store');
+                    Route::post('/images/{id}', '\App\Http\Controllers\API\v1\ItemGiftImageController@update');
+                    Route::delete('/images/{id}', '\App\Http\Controllers\API\v1\ItemGiftImageController@delete');
+                    // Product
+                    Route::post('/', '\App\Http\Controllers\API\v1\ItemGiftController@store');
+                    Route::put('/{id}', '\App\Http\Controllers\API\v1\ItemGiftController@update');
+                    Route::patch('/{id}', '\App\Http\Controllers\API\v1\ItemGiftController@update');
+                    Route::delete('/{id}', '\App\Http\Controllers\API\v1\ItemGiftController@delete');
+                });
                 // Cart
                 Route::get('/carts', '\App\Http\Controllers\API\v1\CartController@index');
                 // Search Log
-                Route::get('/search-logs', '\App\Http\Controllers\API\v1\SearchLogController@index');
-                Route::get('/search-logs/{id}', '\App\Http\Controllers\API\v1\SearchLogController@show');
-                Route::put('/search-logs/{id}', '\App\Http\Controllers\API\v1\SearchLogController@update');
+                Route::group(['prefix' => '/search-logs'], function(){
+                    Route::get('/', '\App\Http\Controllers\API\v1\SearchLogController@index');
+                    Route::get('/{id}', '\App\Http\Controllers\API\v1\SearchLogController@show');
+                    Route::put('/{id}', '\App\Http\Controllers\API\v1\SearchLogController@update');
+                });
                 // Variant
-                Route::post('/variants', '\App\Http\Controllers\API\v1\VariantController@store');
-                Route::put('/variants/{id}', '\App\Http\Controllers\API\v1\VariantController@update');
-                Route::delete('/variants/{id}', '\App\Http\Controllers\API\v1\VariantController@delete');
+                Route::group(['prefix' => '/variants'], function(){
+                    Route::post('/', '\App\Http\Controllers\API\v1\VariantController@store');
+                    Route::put('/{id}', '\App\Http\Controllers\API\v1\VariantController@update');
+                    Route::delete('/{id}', '\App\Http\Controllers\API\v1\VariantController@delete');
+                });
                 // Payment Log
-                Route::get('/payment-logs', '\App\Http\Controllers\API\v1\PaymentLogController@index');
-                Route::get('/payment-logs/{id}', '\App\Http\Controllers\API\v1\PaymentLogController@show');
+                Route::group(['prefix' => '/payment-logs'], function(){
+                    Route::get('/', '\App\Http\Controllers\API\v1\PaymentLogController@index');
+                    Route::get('/{id}', '\App\Http\Controllers\API\v1\PaymentLogController@show');
+                });
                 // Shipping
-                Route::get('/shippings', '\App\Http\Controllers\API\v1\ShippingController@index');
-                Route::get('/shippings/{id}', '\App\Http\Controllers\API\v1\ShippingController@show');
-                Route::put('/shippings/{id}', '\App\Http\Controllers\API\v1\ShippingController@update');
+                Route::group(['prefix' => '/shippings'], function(){
+                    Route::get('/', '\App\Http\Controllers\API\v1\ShippingController@index');
+                    Route::get('/{id}', '\App\Http\Controllers\API\v1\ShippingController@show');
+                    Route::put('/{id}', '\App\Http\Controllers\API\v1\ShippingController@update');
+                });
                 // Notification
                 Route::put('/notifications/{id}', '\App\Http\Controllers\API\v1\NotificationController@update');
                 // RajaOngkir
-                Route::get('/rajaongkir/province', '\App\Http\Controllers\API\v1\RajaOngkirController@getProvince');
-                Route::get('/rajaongkir/city', '\App\Http\Controllers\API\v1\RajaOngkirController@getCity');
+                Route::group(['prefix' => '/rajaongkir'], function(){
+                    Route::get('/provinces', '\App\Http\Controllers\API\v1\Controller@getProvince');
+                    Route::get('/cities', '\App\Http\Controllers\API\v1\RajaOngkirController@getCity');
+                });
             });
+            // Only User Role Admin/Customer
             Route::group(['middleware' => ['role:admin|customer']], function () {
                 // User
-                Route::get('/users/{id}', '\App\Http\Controllers\API\v1\UserController@show');
-                Route::put('/users/{id}', '\App\Http\Controllers\API\v1\UserController@update');
-                Route::patch('/users/{id}', '\App\Http\Controllers\API\v1\UserController@update');
-                Route::post('/users/set-main-address', '\App\Http\Controllers\API\v1\UserController@set_main_address');
-                // Profile
-                Route::get('/profile', '\App\Http\Controllers\API\v1\ProfileController@index');
-                Route::get('/profile/{id}', '\App\Http\Controllers\API\v1\ProfileController@show');
-                Route::post('/profile', '\App\Http\Controllers\API\v1\ProfileController@store');
-                Route::post('/profile/{id}', '\App\Http\Controllers\API\v1\ProfileController@update');
-                Route::delete('/profile/{id}', '\App\Http\Controllers\API\v1\ProfileController@delete');
-                // Address
-                Route::get('/address', '\App\Http\Controllers\API\v1\AddressController@index');
-                Route::get('/address/{id}', '\App\Http\Controllers\API\v1\AddressController@show');
-                Route::post('/address', '\App\Http\Controllers\API\v1\AddressController@store');
-                Route::put('/address/{id}', '\App\Http\Controllers\API\v1\AddressController@update');
-                Route::delete('/address/{id}', '\App\Http\Controllers\API\v1\AddressController@delete');
-                // Item Gift
-                Route::get('/gifts/recomendation', '\App\Http\Controllers\API\v1\ItemGiftController@showByUserRecomendation');
-                // Review Item Gift
-                Route::post('/gifts/review', '\App\Http\Controllers\API\v1\ReviewController@store');
-                Route::post('/gifts/review/bulk', '\App\Http\Controllers\API\v1\ReviewController@storeBulk');
-                Route::put('/gifts/review/{id}', '\App\Http\Controllers\API\v1\ReviewController@update');
-                Route::delete('/gifts/review/{id}', '\App\Http\Controllers\API\v1\ReviewController@delete');
-                // Redeem Item Gift
-                Route::get('/gifts/redeem', '\App\Http\Controllers\API\v1\RedeemController@index');
-                Route::get('/gifts/redeem/{id}', '\App\Http\Controllers\API\v1\RedeemController@show');
-                Route::post('/gifts/redeem/checkout', '\App\Http\Controllers\API\v1\RedeemController@checkout')->middleware('verified');
-                Route::post('/gifts/redeem/cancel/{id}', '\App\Http\Controllers\API\v1\RedeemController@cancel')->middleware('verified');
-                Route::post('/gifts/redeem/receive/{id}', '\App\Http\Controllers\API\v1\RedeemController@receive')->middleware('verified');
-                Route::delete('/gifts/redeem/{id}', '\App\Http\Controllers\API\v1\RedeemController@delete');
-                // Wishlist Item Gift
-                Route::get('/gifts/wishlist', '\App\Http\Controllers\API\v1\WishlistController@index');
-                Route::get('/gifts/wishlist/{id}', '\App\Http\Controllers\API\v1\WishlistController@show');
-                Route::get('/gifts/wishlist/user/{userId}', '\App\Http\Controllers\API\v1\WishlistController@showByUser');
-                Route::post('/gifts/{itemGiftId}/wishlist', '\App\Http\Controllers\API\v1\WishlistController@wishlist');
+                Route::group(['prefix' => '/users'], function(){
+                    // Profile
+                    Route::group(['prefix' => '/profiles'], function(){
+                        Route::get('/', '\App\Http\Controllers\API\v1\ProfileController@index');
+                        Route::get('/{id}', '\App\Http\Controllers\API\v1\ProfileController@show');
+                        Route::post('/', '\App\Http\Controllers\API\v1\ProfileController@store');
+                        Route::post('/{id}', '\App\Http\Controllers\API\v1\ProfileController@update');
+                        Route::delete('/{id}', '\App\Http\Controllers\API\v1\ProfileController@delete');
+                    });
+                    // Address
+                    Route::group(['prefix' => '/address'], function(){
+                        Route::get('/', '\App\Http\Controllers\API\v1\AddressController@index');
+                        Route::get('/{id}', '\App\Http\Controllers\API\v1\AddressController@show');
+                        Route::post('/', '\App\Http\Controllers\API\v1\AddressController@store');
+                        Route::put('/{id}', '\App\Http\Controllers\API\v1\AddressController@update');
+                        Route::delete('/{id}', '\App\Http\Controllers\API\v1\AddressController@delete');
+                    });
+                    // User
+                    Route::post('/main-address', '\App\Http\Controllers\API\v1\UserController@set_main_address');
+                    Route::get('/{id}', '\App\Http\Controllers\API\v1\UserController@show');
+                    Route::patch('/{id}', '\App\Http\Controllers\API\v1\UserController@update');
+                });
+                Route::group(['prefix' => '/products'], function(){
+                    // Product
+                    Route::get('/recomendations', '\App\Http\Controllers\API\v1\ItemGiftController@showByUserRecomendation');
+                    // Wishlist Product
+                    Route::post('/{itemGiftId}/wishlists', '\App\Http\Controllers\API\v1\WishlistController@wishlist');
+                });
+                // Review 
+                Route::group(['prefix' => '/reviews'], function(){
+                    Route::post('/', '\App\Http\Controllers\API\v1\ReviewController@store');
+                    Route::post('/bulk', '\App\Http\Controllers\API\v1\ReviewController@storeBulk');
+                    Route::put('/{id}', '\App\Http\Controllers\API\v1\ReviewController@update');
+                    Route::delete('/{id}', '\App\Http\Controllers\API\v1\ReviewController@delete');
+                });
+                // Order
+                Route::group(['prefix' => '/orders'], function(){
+                    Route::get('/', '\App\Http\Controllers\API\v1\RedeemController@index');
+                    Route::get('/{id}', '\App\Http\Controllers\API\v1\RedeemController@show');
+                    Route::post('/', '\App\Http\Controllers\API\v1\RedeemController@store')->middleware('verified');
+                    Route::post('/{id}/cancel', '\App\Http\Controllers\API\v1\RedeemController@cancele')->middleware('verified');
+                    Route::post('/{id}/receive', '\App\Http\Controllers\API\v1\RedeemController@receive')->middleware('verified');
+                    Route::delete('/{id}', '\App\Http\Controllers\API\v1\RedeemController@delete');
+                });
+                // Wishlist
+                Route::group(['prefix' => '/wishlists'], function(){
+                    Route::get('/', '\App\Http\Controllers\API\v1\WishlistController@index');
+                    Route::get('/users/{userId}', '\App\Http\Controllers\API\v1\WishlistController@showByUser');
+                    Route::get('/{id}', '\App\Http\Controllers\API\v1\WishlistController@show');
+                });
                 // Cart
-                Route::post('/carts', '\App\Http\Controllers\API\v1\CartController@store');
-                Route::get('/carts/{id}', '\App\Http\Controllers\API\v1\CartController@show');
-                Route::get('/carts/user/{userId}', '\App\Http\Controllers\API\v1\CartController@showByUser');
-                Route::put('/carts/{id}', '\App\Http\Controllers\API\v1\CartController@update');
-                Route::delete('/carts/{id}', '\App\Http\Controllers\API\v1\CartController@delete');
+                Route::group(['prefix' => '/carts'], function(){
+                    Route::post('/', '\App\Http\Controllers\API\v1\CartController@store');
+                    Route::get('/users/{userId}', '\App\Http\Controllers\API\v1\CartController@showByUser');
+                    Route::get('/{id}', '\App\Http\Controllers\API\v1\CartController@show');
+                    Route::put('/{id}', '\App\Http\Controllers\API\v1\CartController@update');
+                    Route::delete('/{id}', '\App\Http\Controllers\API\v1\CartController@delete');
+                });
                 // Search Log
-                Route::post('/search-logs', '\App\Http\Controllers\API\v1\SearchLogController@store');
-                Route::get('/search-logs/user/{userId}', '\App\Http\Controllers\API\v1\SearchLogController@showByUser');
-                Route::delete('/search-logs/{id}', '\App\Http\Controllers\API\v1\SearchLogController@delete');
+                Route::group(['prefix' => '/search-logs'], function(){
+                    Route::post('/', '\App\Http\Controllers\API\v1\SearchLogController@store');
+                    Route::get('/users/{userId}', '\App\Http\Controllers\API\v1\SearchLogController@showByUser');
+                    Route::delete('/{id}', '\App\Http\Controllers\API\v1\SearchLogController@delete');
+                });
                 // Notification
-                Route::get('/notifications', '\App\Http\Controllers\API\v1\NotificationController@index');
-                Route::get('/notifications/{id}', '\App\Http\Controllers\API\v1\NotificationController@show');
-                Route::get('/notifications/user/{userId}', '\App\Http\Controllers\API\v1\NotificationController@showByUser');
-                Route::delete('/notifications/{id}', '\App\Http\Controllers\API\v1\NotificationController@delete');
-                // RajaOngkir
-                Route::post('/rajaongkir/cost', '\App\Http\Controllers\API\v1\RajaOngkirController@getCost');
-                // Track Resi
-                Route::post('/track/resi', '\App\Http\Controllers\API\v1\TrackResiController@track');
+                Route::group(['prefix' => '/notifications'], function(){
+                    Route::get('/', '\App\Http\Controllers\API\v1\NotificationController@index');
+                    Route::get('/users/{userId}', '\App\Http\Controllers\API\v1\NotificationController@showByUser');
+                    Route::get('/{id}', '\App\Http\Controllers\API\v1\NotificationController@show');
+                    Route::delete('/{id}', '\App\Http\Controllers\API\v1\NotificationController@delete');
+                });
+                // RajaOngkir Cek Ongkir
+                Route::post('/rajaongkir/checking-costs', '\App\Http\Controllers\API\v1\RajaOngkirController@getCost');
+                // Binderbyte Lacak Resi
+                Route::post('/binderbyte/tracking-receipts', '\App\Http\Controllers\API\v1\TrackResiController@track');
             });
+            // Logout
             Route::post('/logout', '\App\Http\Controllers\API\v1\Auth\AuthController@logout');
         });
-        // Route::middleware(['client','auth:api'])->group(function () {
-            // Slider
-            Route::get('/slider/active', '\App\Http\Controllers\API\v1\SliderController@showByActive');
-            Route::get('/slider', '\App\Http\Controllers\API\v1\SliderController@index');
-            Route::get('/slider/{id}', '\App\Http\Controllers\API\v1\SliderController@show');
-            // Province
-            Route::get('/province', '\App\Http\Controllers\API\v1\ProvinceController@index');
-            Route::get('/province/{id}', '\App\Http\Controllers\API\v1\ProvinceController@show');
-            // City
-            Route::get('/city', '\App\Http\Controllers\API\v1\CityController@index');
-            Route::get('/city/{id}', '\App\Http\Controllers\API\v1\CityController@show');
-            // Subdistrict
-            Route::get('/subdistrict', '\App\Http\Controllers\API\v1\SubdistrictController@index');
-            Route::get('/subdistrict/{id}', '\App\Http\Controllers\API\v1\SubdistrictController@show');
-            // Category
-            Route::get('/category', '\App\Http\Controllers\API\v1\CategoryController@index');
-            Route::get('/category/{id}', '\App\Http\Controllers\API\v1\CategoryController@show');
-            Route::get('/category/slug/{slug}', '\App\Http\Controllers\API\v1\CategoryController@showBySlug');
-            // Brand
-            Route::get('/brand', '\App\Http\Controllers\API\v1\BrandController@index');
-            Route::get('/brand/{id}', '\App\Http\Controllers\API\v1\BrandController@show');
-            Route::get('/brand/slug/{slug}', '\App\Http\Controllers\API\v1\BrandController@showBySlug');
-            // Review Item Gift
-            Route::get('/gifts/review', '\App\Http\Controllers\API\v1\ReviewController@index');
-            Route::get('/gifts/review/{id}', '\App\Http\Controllers\API\v1\ReviewController@show');
-            // Item Gift Image
-            Route::get('/gifts/images', '\App\Http\Controllers\API\v1\ItemGiftImageController@index');
-            Route::get('/gifts/images/{id}', '\App\Http\Controllers\API\v1\ItemGiftImageController@show');
-            // Item Gift
-            Route::get('/gifts', '\App\Http\Controllers\API\v1\ItemGiftController@index');
-            Route::get('/gifts/{id}', '\App\Http\Controllers\API\v1\ItemGiftController@show');
-            Route::get('/gifts/slug/{slug}', '\App\Http\Controllers\API\v1\ItemGiftController@showBySlug');
-            Route::get('/gifts/category/{slug}', '\App\Http\Controllers\API\v1\ItemGiftController@showByCategory');
-            Route::get('/gifts/brand/{slug}', '\App\Http\Controllers\API\v1\ItemGiftController@showByBrand');
-            // Variant
-            Route::get('/variants', '\App\Http\Controllers\API\v1\VariantController@index');
-            Route::get('/variants/{id}', '\App\Http\Controllers\API\v1\VariantController@show');
-            Route::get('/variants/slug/{slug}', '\App\Http\Controllers\API\v1\VariantController@showBySlug');
-        // });
+        // All User
+        // Slider
+        Route::group(['prefix' => '/sliders'], function(){
+            Route::get('/', '\App\Http\Controllers\API\v1\SliderController@index');
+            Route::get('/active', '\App\Http\Controllers\API\v1\SliderController@showByActive');
+            Route::get('/{id}', '\App\Http\Controllers\API\v1\SliderController@show');
+        });
+        // Province
+        Route::group(['prefix' => '/provinces'], function(){
+            Route::get('/', '\App\Http\Controllers\API\v1\ProvinceController@index');
+            Route::get('/{id}', '\App\Http\Controllers\API\v1\ProvinceController@show');
+        });
+        // City
+        Route::group(['prefix' => '/cities'], function(){
+            Route::get('/', '\App\Http\Controllers\API\v1\CityController@index');
+            Route::get('/{id}', '\App\Http\Controllers\API\v1\CityController@show');
+        });
+        // Subdistrict
+        Route::group(['prefix' => '/subdistricts'], function(){
+            Route::get('/', '\App\Http\Controllers\API\v1\SubdistrictController@index');
+            Route::get('/{id}', '\App\Http\Controllers\API\v1\SubdistrictController@show');
+        });
+        // Category
+        Route::group(['prefix' => '/categories'], function(){
+            Route::get('/', '\App\Http\Controllers\API\v1\CategoryController@index');
+            Route::get('/slugs/{slug}', '\App\Http\Controllers\API\v1\CategoryController@showBySlug');
+            Route::get('/{id}', '\App\Http\Controllers\API\v1\CategoryController@show');
+        });
+        // Brand
+        Route::group(['prefix' => '/brands'], function(){
+            Route::get('/', '\App\Http\Controllers\API\v1\BrandController@index');
+            Route::get('/slugs/{slug}', '\App\Http\Controllers\API\v1\BrandController@showBySlug');
+            Route::get('/{id}', '\App\Http\Controllers\API\v1\BrandController@show');
+        });
+        // Product
+        Route::group(['prefix' => '/products'], function(){
+            // Product Image
+            Route::get('/images', '\App\Http\Controllers\API\v1\ItemGiftImageController@index');
+            Route::get('/images/{id}', '\App\Http\Controllers\API\v1\ItemGiftImageController@show');
+            // Product
+            Route::get('/', '\App\Http\Controllers\API\v1\ItemGiftController@index');
+            Route::get('/slugs/{slug}', '\App\Http\Controllers\API\v1\ItemGiftController@showBySlug');
+            Route::get('/categories/{categorySlug}', '\App\Http\Controllers\API\v1\ItemGiftController@showByCategory');
+            Route::get('/brands/{brandSlug}', '\App\Http\Controllers\API\v1\ItemGiftController@showByBrand');
+            Route::get('/{id}', '\App\Http\Controllers\API\v1\ItemGiftController@show');
+        });
+        // Review
+        Route::group(['prefix' => '/reviews'], function(){
+            Route::get('/', '\App\Http\Controllers\API\v1\ReviewController@index');
+            Route::get('/{id}', '\App\Http\Controllers\API\v1\ReviewController@show');
+        });
+        // Variant
+        Route::group(['prefix' => '/variants'], function(){
+            Route::get('/', '\App\Http\Controllers\API\v1\VariantController@index');
+            Route::get('/slugs/{slug}', '\App\Http\Controllers\API\v1\VariantController@showBySlug');
+            Route::get('/{id}', '\App\Http\Controllers\API\v1\VariantController@show');
+        });
     });
 });
