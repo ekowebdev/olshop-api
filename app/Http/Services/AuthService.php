@@ -309,26 +309,32 @@ class AuthService extends BaseService
                 return redirect()->to($url);
             } else {
                 DB::beginTransaction();
-                $this->model->where('email', $user->email)->first()->delete();
                 $username = strstr($user->email, '@', true);
-                $created_user = $this->model->create([
-                    'username' => $username,
-                    'email' => $user->email,
-                    'password' => null,
-                    'google_id' => $user->id,
-                    'google_access_token' => $user->token,
-                    'email_verified_at' => date('Y-m-d H:i:s')
-                ]);
-                $created_user->assignRole('customer');
-                $created_user->profile()->create(['name' => $user->name, 'avatar' => $user->avatar]);
-                $token_response = $this->getBearerTokenByUser($created_user, $this->oauth_client_id, false);
-                $url = env('FRONT_URL') . '/auth-success?user_id='.$created_user->id.'&access_token='.$token_response['access_token'].'&refresh_token='.$token_response['refresh_token'].'&expires_in='.$token_response['expires_in'];
+                $old_user = $this->model->where('email', $user->email)->first();
+                if(!$old_user){
+                    $new_user = $this->model->create([
+                        'username' => $username,
+                        'email' => $user->email,
+                        'password' => null,
+                        'google_id' => $user->id,
+                        'google_access_token' => $user->token,
+                        'email_verified_at' => date('Y-m-d H:i:s')
+                    ]);
+                    $new_user->assignRole('customer');
+                    $new_user->profile()->create(['name' => $user->name, 'avatar' => $user->avatar]);
+                    $token_response = $this->getBearerTokenByUser($new_user, $this->oauth_client_id, false);
+                    $url = env('FRONT_URL') . '/auth-success?user_id='.$new_user->id.'&access_token='.$token_response['access_token'].'&refresh_token='.$token_response['refresh_token'].'&expires_in='.$token_response['expires_in'];
+                } else {
+                    $old_user->update(['google_id' => $user->id, 'google_access_token' => $user->token]);
+                    $token_response = $this->getBearerTokenByUser($old_user, $this->oauth_client_id, false);
+                    $url = env('FRONT_URL') . '/auth-success?user_id='.$old_user->id.'&access_token='.$token_response['access_token'].'&refresh_token='.$token_response['refresh_token'].'&expires_in='.$token_response['expires_in'];
+                }
                 DB::commit();
                 return redirect()->to($url);
             }
         } catch (\Exception $e) {
             DB::rollback();
-            $url = env('FRONT_URL') . '/login';
+            $url = env('FRONT_URL') . '/login?error='.$e->getMessage();
             return redirect()->to($url);
         }
     }
