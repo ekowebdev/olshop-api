@@ -1,7 +1,9 @@
 <?php
 namespace App\Http\Services;
 
+use Request;
 use App\Http\Models\User;
+use App\Rules\ReCaptchaV3;
 use Illuminate\Support\Str;
 use App\Http\Traits\PassportToken;
 use Illuminate\Support\Facades\DB;
@@ -16,7 +18,6 @@ use App\Http\Repositories\UserRepository;
 use App\Http\Repositories\OauthRepository;
 use App\Exceptions\AuthenticationException;
 use App\Jobs\SendEmailTokenResetPasswordJob;
-use Request;
 
 class AuthService extends BaseService
 {  
@@ -40,6 +41,7 @@ class AuthService extends BaseService
             'username' => 'required|string|unique:users|max:255',
             'email' => 'required|string|email:rfc,dns|unique:users|max:255',
             'password' => 'required|string|min:6|confirmed|max:32',
+            'g-recaptcha-response' => ['required', new ReCaptchaV3('submitRegister', 0.5)]
         ]);
 
         DB::beginTransaction();
@@ -65,6 +67,7 @@ class AuthService extends BaseService
         $this->validate($request, [
             'email' => 'required|string|email:rfc,dns|exists:users,email',
             'password' => 'required|string|min:6|max:12',
+            'g-recaptcha-response' => ['required', new ReCaptchaV3('submitLogin', 0.5)]
         ]);
 
         $user = $this->repository->getDataByMultipleParam(['email' => $request['email']]);

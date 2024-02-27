@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API\v1\Auth;
 use Request;
 use Carbon\Carbon;
 use App\Http\Models\User;
+use App\Rules\ReCaptchaV3;
 use Illuminate\Support\Facades\App;
 use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Hash;
@@ -37,6 +38,7 @@ class AccessTokenController extends ApiAuthController
 	        'provider' => 'nullable|required_if:grant_type,social|in:google',
 			'google_id' => 'required_if:provider,google',
 			'google_access_token' => 'required_if:provider,google',
+            'g-recaptcha-response' => ['required_if:grant_type,password', new ReCaptchaV3('submitRegister', 0.5)]
         ]);
 
         \DB::beginTransaction();
@@ -94,6 +96,7 @@ class AccessTokenController extends ApiAuthController
 	        'password' => 'required_if:grant_type,password|string|min:6|max:32',
 	        'provider' => 'nullable|required_if:grant_type,social|in:google',
 			'access_token' => 'required_if:grant_type,social',
+            'g-recaptcha-response' => ['required_if:grant_type,password', new ReCaptchaV3('submitLogin', 0.5)]
         ]);
 
         $parsedBody = array_merge($serverRequest->getParsedBody(), [
