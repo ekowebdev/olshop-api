@@ -87,15 +87,20 @@ class AccessTokenController extends ApiAuthController
         $locale = App::getLocale();
         $request = Request::all();
 
-    	User::validate($request, [
-    		'client_id'	=> 'required',
-    		'client_secret'	=> 'required',	        
+    	User::validate($request, [        
 	        'username'	=> 'required|string|max:255',	        
 	        'grant_type' =>	'required|in:password,social',
 	        'password' => 'required_if:grant_type,password|string|min:6|max:32',
 	        'provider' => 'nullable|required_if:grant_type,social|in:google',
 			'access_token' => 'required_if:grant_type,social',
         ]);
+
+        $parsedBody = array_merge($serverRequest->getParsedBody(), [
+            'client_id' => env('OAUTH_CLIENT_ID'),
+            'client_secret' => env('OAUTH_CLIENT_SECRET'),
+        ]);
+
+        $modifiedServerRequest = $serverRequest->withParsedBody($parsedBody);
 
         $user = User::where('email', $request['username'])->first();
 
@@ -119,9 +124,9 @@ class AccessTokenController extends ApiAuthController
             }
         }
 
-        $response = $this->withErrorHandling(function () use ($serverRequest) {
+        $response = $this->withErrorHandling(function () use ($modifiedServerRequest) {
             return $this->convertResponse(
-                $this->server->respondToAccessTokenRequest($serverRequest, new Psr7Response)
+                $this->server->respondToAccessTokenRequest($modifiedServerRequest, new Psr7Response)
             );
         });
 
@@ -156,12 +161,17 @@ class AccessTokenController extends ApiAuthController
         $locale = App::getLocale();
         $request = Request::all();
 
-        User::validate($request, [
-    		'client_id'	=> 'required',
-    		'client_secret'	=> 'required',	        
+        User::validate($request, [	        
 	        'grant_type' => 'required|in:client_credentials,refresh_token',
             'refresh_token' => 'nullable|required_if:grant_type,refresh_token',
         ]);
+
+        $parsedBody = array_merge($serverRequest->getParsedBody(), [
+            'client_id' => env('OAUTH_CLIENT_ID'),
+            'client_secret' => env('OAUTH_CLIENT_SECRET'),
+        ]);
+
+        $modifiedServerRequest = $serverRequest->withParsedBody($parsedBody);
 
         if($request['grant_type'] == 'refresh_token') {
             $appKey = env('APP_KEY');
@@ -197,9 +207,9 @@ class AccessTokenController extends ApiAuthController
             // $refreshToken->update(['revoked' => 1]);
             $accessToken->update(['revoked' => 1]);
 
-            $response = $this->withErrorHandling(function () use ($serverRequest) {
+            $response = $this->withErrorHandling(function () use ($modifiedServerRequest) {
                 return $this->convertResponse(
-                    $this->server->respondToAccessTokenRequest($serverRequest, new Psr7Response)
+                    $this->server->respondToAccessTokenRequest($modifiedServerRequest, new Psr7Response)
                 );
             });
 
