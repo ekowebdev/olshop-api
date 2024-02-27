@@ -21,5 +21,6 @@ return [
     'not_verified_account'           => 'Anda harus memverifikasi akun terlebih dahulu',
     'verification_failed'            => 'Verifikasi kode Anda gagal',
     'password_not_been_set'          => 'Sandi belum diatur, silahkan login menggunakan Gmail',
+    'account_not_registered'         => 'Akun belum terdaftar, silahkan melakukan pendaftaran terlebih dahulu',
 ];
 

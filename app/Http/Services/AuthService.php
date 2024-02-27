@@ -308,7 +308,7 @@ class AuthService extends BaseService
             if(!empty($user)){
                 $user->update(['google_id' => $socialite->id, 'google_access_token' => $socialite->token]);
             }
-            $url = env('FRONT_URL') . '/auth-success?id='.$socialite->id.'&token='.$socialite->token.'&email='.$socialite->email;
+            $url = env('FRONT_URL') . '/auth-success?google_id='.$socialite->id.'&google_access_token='.$socialite->token.'&email='.$socialite->email;
             return redirect()->to($url);
         } catch (\Exception $e) {
             $url = env('FRONT_URL') . '/login?error='.$e->getMessage();

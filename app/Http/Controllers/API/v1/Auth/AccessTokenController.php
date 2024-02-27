@@ -12,7 +12,6 @@ use App\Http\Models\OauthAccessToken;
 use App\Exceptions\DataEmptyException;
 use App\Http\Models\OauthRefreshToken;
 use App\Jobs\SendEmailVerificationJob;
-use Laravel\Socialite\Facades\Socialite;
 use Nyholm\Psr7\Response as Psr7Response;
 use App\Exceptions\AuthenticationException;
 use Psr\Http\Message\ServerRequestInterface;
@@ -107,7 +106,7 @@ class AccessTokenController extends ApiAuthController
         $user = User::where('email', $request['username'])->first();
 
         if(empty($user)){
-            throw new AuthenticationException(trans('auth.failed'));
+            throw new AuthenticationException(trans('auth.account_not_registered'));
         }
 
         if($request['grant_type'] == 'social'){
@@ -215,9 +214,6 @@ class AccessTokenController extends ApiAuthController
             $user = User::where('id', $accessToken['user_id'])->first();
 
             if (empty($user)) throw new DataEmptyException(trans('validation.attributes.data_not_exist', $locale));
-
-            // $refreshToken->update(['revoked' => 1]);
-            $accessToken->update(['revoked' => 1]);
 
             $response = $this->withErrorHandling(function () use ($modifiedServerRequest) {
                 return $this->convertResponse(
