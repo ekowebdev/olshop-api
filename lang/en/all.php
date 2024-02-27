@@ -4,7 +4,7 @@ return [
 	"yes" 				                    => "Yes",
 	"success_delete_data"                   => "Success, :attribute data deleted",
 	"success_register"                      => "Registration successfully, check your email for verification",
-	"success_register_without_verification" => "Registration successfully, please login to enter",
+	"success_register_without_verification" => "Registration successfully",
 	"success_login"                         => "Login successfully",
 	"success_login_with_verification"       => "Login successfully, check your email for verification",
 	"success_refresh_token"                 => "Refresh token successfully",

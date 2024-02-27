@@ -138,8 +138,18 @@ class AccessTokenController extends ApiAuthController
         
         $data = json_decode($response->getContent(), true);
 
+        if(!empty($request['is_register'])){
+            if($request['grant_type'] == 'password') {
+                $message = trans('all.success_register');
+            } else {
+                $message = trans('all.success_register_without_verification');
+            }
+        } else {
+            $message = trans('all.success_login');
+        }
+
         return response()->json([
-            'message' => ($request['grant_type'] == 'password' && !empty($request['is_register'])) ? trans('all.success_login_with_verification') : trans('all.success_login'),
+            'message' => $message,
             'data' => [
                 'users' => new UserResource($user),
                 'token_type' => 'Bearer',

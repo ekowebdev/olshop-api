@@ -4,7 +4,7 @@ return [
 	"yes" 				                    => "Ya",
 	"success_delete_data"                   => "Berhasil, menghapus :attribute data",
 	"success_register"                      => "Registrasi berhasil, silahkan cek email untuk verifikasi",
-	"success_register_without_verification" => "Registrasi berhasil, silahkan login untuk masuk",
+	"success_register_without_verification" => "Registrasi berhasil",
 	"success_login"                         => "Login berhasil",
 	"success_login_with_verification"       => "Login berhasil, silahkan cek email untuk verifikasi",
 	"success_refresh_token"                 => "Refresh token berhasil",
