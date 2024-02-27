@@ -19,30 +19,22 @@ class OauthRepository extends BaseRepository {
    
     public function checkRefreshToken($refreshToken, $accessToken)
     {
-        $date_now = Carbon::now();
-        $today = strtotime($date_now->format('Y-m-d H:i:s'));
-
         $data = $this->model_refresh_token
-                ->where('id', $refreshToken)
-                ->where('access_token_id', $accessToken)    
-                ->where('revoked', 0)
-                ->where('expires_at', '>', Carbon::now())                    
-                ->first();
-
+                    ->where('id', $refreshToken)
+                    ->where('access_token_id', $accessToken)    
+                    ->where('revoked', 0)
+                    ->where('expires_at', '>', Carbon::now())                    
+                    ->first();
         return $data;
     }
 
     public function checkAccessToken($accessToken)
     {
-        $date_now = Carbon::now();
-        $today = strtotime($date_now->format('Y-m-d H:i:s'));
-
         $data = $this->model_access_token
-                ->where('id', $accessToken)
-                ->where('revoked', 0)
-                ->where('expires_at', '<' , Carbon::now())                    
-                ->first();
-
+                    ->where('id', $accessToken)
+                    ->where('revoked', 0)
+                    ->where('expires_at', '<' , Carbon::now())                    
+                    ->first();
         return $data;
     }
 }

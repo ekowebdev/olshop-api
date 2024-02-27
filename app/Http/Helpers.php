@@ -55,3 +55,9 @@ function store_notification($data = [])
     $notification = $model->query()->where('user_id', $data['user_id'])->get()->toArray();
     return $notification;
 }
+
+function isJson($string) {	
+    if(!is_string($string) || empty($string) || $string == "[]") return false;
+    $res = json_decode($string);
+    return (json_last_error() == JSON_ERROR_NONE && $res != $string);
+}

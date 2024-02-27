@@ -16,6 +16,7 @@ use App\Http\Repositories\UserRepository;
 use App\Http\Repositories\OauthRepository;
 use App\Exceptions\AuthenticationException;
 use App\Jobs\SendEmailTokenResetPasswordJob;
+use Request;
 
 class AuthService extends BaseService
 {  
@@ -63,21 +64,23 @@ class AuthService extends BaseService
     {
         $this->validate($request, [
             'email' => 'required|string|email:rfc,dns|exists:users,email',
-            'password' => 'required|string|min:6|max:12'
+            'password' => 'required|string|min:6|max:12',
         ]);
 
         $user = $this->repository->getDataByMultipleParam(['email' => $request['email']]);
 
-        if(empty($user)){
-            throw new AuthenticationException(trans('auth.wrong_email_or_password'));
-        }
+        if($request['password']){
+            if(empty($user)){
+                throw new AuthenticationException(trans('auth.wrong_email_or_password'));
+            }
 
-        if ($user->password == null) {
-            throw new AuthenticationException(trans('auth.password_not_been_set'));
-        }
+            if ($user->password == null) {
+                throw new AuthenticationException(trans('auth.password_not_been_set'));
+            }
 
-        if (empty($user) OR !Hash::check($request['password'], $user->password, [])) {
-            throw new AuthenticationException(trans('auth.wrong_email_or_password'));
+            if (empty($user) OR !Hash::check($request['password'], $user->password, [])) {
+                throw new AuthenticationException(trans('auth.wrong_email_or_password'));
+            }
         }
 
         $token_response = $this->getBearerTokenByUser($user, $this->oauth_client_id, false);
@@ -300,10 +303,28 @@ class AuthService extends BaseService
     public function auth_google_callback($locale)
     {
         try {
+            $socialite = Socialite::driver('google')->stateless()->user();
+            $user = $this->model->where('email', $socialite->email)->where('google_id', $socialite->id)->first();
+            $user->update(['google_access_token' => $socialite->token]);
+            $url = env('FRONT_URL') . '/auth-success?id='.$socialite->id.'&token='.$socialite->token.'&email='.$socialite->email;
+            return redirect()->to($url);
+        } catch (\Exception $e) {
+            $url = env('FRONT_URL') . '/login?error='.$e->getMessage();
+            return redirect()->to($url);
+        }
+    }
+
+    /*
+    public function auth_google_callback_bc($locale)
+    {
+        try {
             $user = Socialite::driver('google')->stateless()->user();
+            dd($user);
             $existing_user = $this->model->where('email', $user->email)->where('google_id', $user->id)->first();
             if ($existing_user) {
-                $existing_user->update(['google_access_token' => $user->token]);
+                if($existing_user->google_access_token == null) {
+                    $existing_user->update(['google_access_token' => $user->token]);
+                }
                 $token_response = $this->getBearerTokenByUser($existing_user, $this->oauth_client_id, false);
                 $url = env('FRONT_URL') . '/auth-success?user_id='.$existing_user->id.'&access_token='.$token_response['access_token'].'&refresh_token='.$token_response['refresh_token'].'&expires_in='.$token_response['expires_in'];
                 return redirect()->to($url);
@@ -338,4 +359,5 @@ class AuthService extends BaseService
             return redirect()->to($url);
         }
     }
+    */
 }

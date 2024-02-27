@@ -11,6 +11,10 @@ Route::middleware(['xssclean'])->group(function () {
         Route::post('/login', '\App\Http\Controllers\API\v1\Auth\AuthController@login');
         Route::post('/login/system', '\App\Http\Controllers\API\v1\Auth\SystemAccessTokenController@token_system');
         Route::post('/refresh-token', '\App\Http\Controllers\API\v1\Auth\AuthController@refresh_token');
+        // OAuth
+        Route::post('/oauth/token', '\App\Http\Controllers\API\v1\Auth\AccessTokenController@issueToken');
+        Route::post('/oauth/token/register', '\App\Http\Controllers\API\v1\Auth\AccessTokenController@issueTokenRegister');
+        Route::post('/oauth/token/client', '\App\Http\Controllers\API\v1\Auth\AccessTokenController@issueTokenSystem');
         // Auth With Google
         Route::get('/auth/google', '\App\Http\Controllers\API\v1\Auth\AuthController@auth_google');
         Route::get('/auth/google/callback', '\App\Http\Controllers\API\v1\Auth\AuthController@auth_google_callback');
@@ -135,9 +139,10 @@ Route::middleware(['xssclean'])->group(function () {
                 // Order
                 Route::group(['prefix' => '/orders'], function(){
                     Route::get('/', '\App\Http\Controllers\API\v1\RedeemController@index');
+                    Route::get('/checkout', '\App\Http\Controllers\API\v1\RedeemController@checkout')->middleware('verified');
                     Route::get('/{id}', '\App\Http\Controllers\API\v1\RedeemController@show');
                     Route::post('/', '\App\Http\Controllers\API\v1\RedeemController@store')->middleware('verified');
-                    Route::post('/{id}/cancel', '\App\Http\Controllers\API\v1\RedeemController@cancele')->middleware('verified');
+                    Route::post('/{id}/cancel', '\App\Http\Controllers\API\v1\RedeemController@cancel')->middleware('verified');
                     Route::post('/{id}/receive', '\App\Http\Controllers\API\v1\RedeemController@receive')->middleware('verified');
                     Route::delete('/{id}', '\App\Http\Controllers\API\v1\RedeemController@delete');
                 });

@@ -6,6 +6,7 @@ return [
 	"success_register"                      => "Registrasi berhasil, silahkan cek email untuk verifikasi",
 	"success_register_without_verification" => "Registrasi berhasil, silahkan login untuk masuk",
 	"success_login"                         => "Login berhasil",
+	"success_login_with_verification"       => "Login berhasil, silahkan cek email untuk verifikasi",
 	"success_refresh_token"                 => "Refresh token berhasil",
 	"success_logout"         		        => "Logout berhasil",
 	"fix_phone_number" 	                    => 'Cantumkan nomor telpon dengan benar',

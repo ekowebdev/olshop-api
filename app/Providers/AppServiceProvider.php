@@ -4,11 +4,17 @@ namespace App\Providers;
 
 use App\Http\Models\ItemGift;
 use App\Observers\ItemObserver;
+use App\Resolvers\SocialUserResolver;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
+use Coderello\SocialGrant\Resolvers\SocialUserResolverInterface;
 
 class AppServiceProvider extends ServiceProvider
 {
+    public $bindings = [
+        SocialUserResolverInterface::class => SocialUserResolver::class,
+    ];
+       
     /**
      * Register any application services.
      *
@@ -17,7 +23,6 @@ class AppServiceProvider extends ServiceProvider
     public function register()
     {
         date_default_timezone_set('Asia/Jakarta');         
-        // $this->app->singleton(\Adaojunior\Passport\SocialUserResolverInterface::class, \App\Providers\SocialUserResolver::class);
     }
 
     /**
