@@ -88,7 +88,6 @@ class AccessTokenController extends ApiAuthController
     {
         $locale = App::getLocale();
         $request = Request::all();
-        $request['is_register'] = false;
 
     	User::validate($request, [        
 	        'username'	=> 'required|string|max:255',	        
@@ -140,7 +139,7 @@ class AccessTokenController extends ApiAuthController
         $data = json_decode($response->getContent(), true);
 
         return response()->json([
-            'message' => ($request['grant_type'] == 'password' && $request['is_register'] == true) ? trans('all.success_login_with_verification') : trans('all.success_login'),
+            'message' => ($request['grant_type'] == 'password' && !empty($request['is_register'])) ? trans('all.success_login_with_verification') : trans('all.success_login'),
             'data' => [
                 'users' => new UserResource($user),
                 'token_type' => 'Bearer',
