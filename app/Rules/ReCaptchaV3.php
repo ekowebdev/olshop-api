@@ -68,6 +68,6 @@ class ReCaptchaV3 implements Rule
      */
     public function message()
     {
-        return 'Validation reCAPTCHA failed.';
+        return trans('validation.g_recaptcha_failed');
     }
 }

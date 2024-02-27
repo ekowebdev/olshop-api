@@ -149,4 +149,5 @@ return [
 
 	'too_many_requests'	     => "Terlalu Banyak Permintaan",
 	'too_many_requests_wait' => "Terlalu Banyak Permintaan, Tunggu hingga :wait",
+    'g_recaptcha_failed'     => 'Validasi reCAPTCHA tidak memenuhi syarat',
 ];

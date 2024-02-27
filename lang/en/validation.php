@@ -121,6 +121,7 @@ return [
         'phone_is_E164'                 =>  ':attribute must be in E.164 phone format',
     ],
 
-	'too_many_requests'	     => "Too Many Requests",
-	'too_many_requests_wait' => "Too Many Requests, Wait for :wait",
+	'too_many_requests'	     => 'Too Many Requests',
+	'too_many_requests_wait' => 'Too Many Requests, Wait for :wait',
+    'g_recaptcha_failed'     => 'reCAPTCHA validation is not eligible',
 ];
