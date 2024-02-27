@@ -232,9 +232,9 @@ class AccessTokenController extends ApiAuthController
                 'error' => 0
             ]);
         } else {
-            return $this->withErrorHandling(function () use ($serverRequest) {
+            return $this->withErrorHandling(function () use ($modifiedServerRequest) {
                 return $this->convertResponse(
-                    $this->server->respondToAccessTokenRequest($serverRequest, new Psr7Response)
+                    $this->server->respondToAccessTokenRequest($modifiedServerRequest, new Psr7Response)
                 );
             });
         }
