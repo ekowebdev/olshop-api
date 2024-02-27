@@ -67,6 +67,8 @@ class AccessTokenController extends ApiAuthController
             $request['access_token'] = $request['google_access_token'];
         }
 
+        $request['is_register'] = true;
+
         $serverRequest = $serverRequest->withParsedBody($serverRequest->getParsedBody() + $request);
         
         request()->merge($request);
@@ -86,6 +88,7 @@ class AccessTokenController extends ApiAuthController
     {
         $locale = App::getLocale();
         $request = Request::all();
+        $request['is_register'] = false;
 
     	User::validate($request, [        
 	        'username'	=> 'required|string|max:255',	        
@@ -137,7 +140,7 @@ class AccessTokenController extends ApiAuthController
         $data = json_decode($response->getContent(), true);
 
         return response()->json([
-            'message' => ($request['grant_type'] == 'password') ? trans('all.success_login_with_verification') : trans('all.success_login'),
+            'message' => ($request['grant_type'] == 'password' && $request['is_register'] == true) ? trans('all.success_login_with_verification') : trans('all.success_login'),
             'data' => [
                 'users' => new UserResource($user),
                 'token_type' => 'Bearer',
