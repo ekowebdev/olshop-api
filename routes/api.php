@@ -139,7 +139,7 @@ Route::middleware(['xssclean'])->group(function () {
                 // Order
                 Route::group(['prefix' => '/orders'], function(){
                     Route::get('/', '\App\Http\Controllers\API\v1\RedeemController@index');
-                    Route::get('/checkout', '\App\Http\Controllers\API\v1\RedeemController@checkout')->middleware('verified');
+                    Route::post('/checkout', '\App\Http\Controllers\API\v1\RedeemController@checkout')->middleware('verified');
                     Route::get('/{id}', '\App\Http\Controllers\API\v1\RedeemController@show');
                     Route::post('/', '\App\Http\Controllers\API\v1\RedeemController@store')->middleware('verified');
                     Route::post('/{id}/cancel', '\App\Http\Controllers\API\v1\RedeemController@cancel')->middleware('verified');
