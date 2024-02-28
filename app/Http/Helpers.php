@@ -39,14 +39,14 @@ function store_notification($data = [])
     $model->type = intval($data['type']);
     $model->status_read = intval($data['status_read']);
     if($data['type'] == 0){
-        $model->url = env('FRONT_URL') . '/users';
+        $model->url = config('setting.frontend.url') . '/users';
         $model->icon = '';
         $model->background_color = "#E9FBE9";
         $model->save();
     } else if($data['type'] == 1){
         $type_info = $check->where('type', 1)->get()->toArray();
         if(count($type_info) == 0) {
-            $model->url = env('FRONT_URL') . '/users/account';
+            $model->url = config('setting.frontend.url') . '/users/account';
             $model->icon = '';
             $model->background_color = "#E0E7EC";
             $model->save();

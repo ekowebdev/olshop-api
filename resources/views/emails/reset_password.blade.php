@@ -61,7 +61,7 @@
                         <tbody>
                             <tr>
                                 <td style="padding-top: 34px; padding-bottom: 24px;">
-                                    <a href="{{ env('FRONT_URL') }}/reset-password?token={{ $data['token'] }}"
+                                    <a href="{{ config('setting.frontend.url') }}/reset-password?token={{ $data['token'] }}"
                                         target="_blank" style="border-radius: 5px; cursor: pointer; font-size: 16px; font-weight: normal; margin: 0; padding: 16px 16px; text-decoration: none; background-color: #2B00C8; color: #ffffff;">{{ trans('all.create_new_password_text') }}</a>
                                 </td>
                             </tr>
@@ -69,7 +69,7 @@
                                 <td align="center" valign="center" style="padding-top: 16px; padding-bottom: 40px;">
                                     <div class="redirect-link"
                                         style="width:640px; text-align: center; color: #272727; font-size: 14px; font-weight: 400; line-height: 19px; word-wrap: break-word;">
-                                        {{ trans('all.paste_link_text') }} <a href="" style="font-size: 14px; color: blue;">{{ env('FRONT_URL') }}/reset-password?token={{ $data['token'] }}</a>
+                                        {{ trans('all.paste_link_text') }} <a href="" style="font-size: 14px; color: blue;">{{ config('setting.frontend.url') }}/reset-password?token={{ $data['token'] }}</a>
                                     </div>
                                 </td>
                             </tr>
@@ -82,7 +82,7 @@
                                         {{ trans('all.regards') }},
                                     </p>
                                     <p style="text-align: left; font-size: 14px; color: #272727">
-                                        {{ trans('all.team') }} {{ env('APP_NAME') }}
+                                        {{ trans('all.team') }} {{ config('app.name') }}
                                     </p>
                                 </td>
                             </tr>
@@ -103,7 +103,7 @@
                               <td style="text-align: right; padding-top: 18px; padding-bottom: 24px;">
                                 <span style="font-size: 16px; color: #333333; font-weight: 600;">&copy;
                                   {{ date('Y') }} </span>
-                                <span style="font-size: 16px; color: #2B00C8; font-weight: 600;">{{ env('APP_NAME') }}</span>
+                                <span style="font-size: 16px; color: #2B00C8; font-weight: 600;">{{ config('app.name') }}</span>
                               </td>
                             </tr>
                         </tbody>

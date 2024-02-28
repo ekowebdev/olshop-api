@@ -13,7 +13,7 @@ class Wishlist extends DynamoDbModel
 
     public function getTable()
     {
-        $table = env('APP_ENV') === 'local' ? 'local_wishlists' : 'wishlists';
+        $table = config('app.env') === 'local' ? 'local_wishlists' : 'wishlists';
         return $table;
     }
 

@@ -17,7 +17,7 @@ class Category extends BaseModel
     public function getCategoryImageUrlAttribute()
     {
         if ($this->category_image != null) {
-            $url = 'https://'. env('AWS_BUCKET') .'.s3-'. env('AWS_DEFAULT_REGION') .'.amazonaws.com/images/category/' . $this->category_image;
+            $url = 'https://'. config('filesystems.disks.s3.bucket') .'.s3-'. config('filesystems.disks.s3.region') .'.amazonaws.com/images/category/' . $this->category_image;
         }
         return $url ?? null;
     }

@@ -42,4 +42,17 @@ return [
         'secret_key' => env('GOOGLE_RECAPTCHA_V3_SECRET_KEY'),
     ],
 
+    'rajaongkir' => [
+        'key' => env('RAJAONGKIR_API_KEY')
+    ],
+
+    'midtrans' => [
+        'server_key' => env('MIDTRANS_SERVER_KEY'),
+        'production' => env('MIDTRANS_PRODUCTION'),
+        '3ds' => env('MIDTRANS_3DS'),
+    ],
+
+    'binderbyte' => [
+        'key' => env('BINDERBYTE_API_KEY')
+    ]
 ];

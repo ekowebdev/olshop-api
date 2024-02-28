@@ -12,7 +12,7 @@ class TrackResiService extends BaseService
 
     public function __construct(RedeemRepository $repository)
     {
-        $this->api_key = env('BINDERBYTE_API_KEY');
+        $this->api_key = config('services.binderbyte.key');
         $this->repository = $repository;
     }
 

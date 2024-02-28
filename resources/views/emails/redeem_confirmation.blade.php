@@ -109,7 +109,7 @@
                     <tr>
                       <td style="text-align: right; padding-top: 18px; padding-bottom: 24px;">
                         <span style="font-size: 16px; color: #333333; font-weight: 600;">&copy; {{ date('Y') }} </span>
-                        <span style="font-size: 16px; color: #2B00C8; font-weight: 600;">{{ env('APP_NAME') }}</span>
+                        <span style="font-size: 16px; color: #2B00C8; font-weight: 600;">{{ config('app.name') }}</span>
                       </td>
                     </tr>
                   </tbody>

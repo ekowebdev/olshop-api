@@ -38,7 +38,7 @@ class AccessTokenController extends ApiAuthController
 	        'provider' => 'nullable|required_if:grant_type,social|in:google',
 			'google_id' => 'required_if:provider,google',
 			'google_access_token' => 'required_if:provider,google',
-            'g-recaptcha-response' => ['required_if:grant_type,password', new ReCaptchaV3('submitRegister', 0.5)]
+            'g-recaptcha-response' => ['nullable', 'required_if:grant_type,password', new ReCaptchaV3('submitRegister', 0.5)]
         ]);
 
         \DB::beginTransaction();
@@ -96,12 +96,12 @@ class AccessTokenController extends ApiAuthController
 	        'password' => 'required_if:grant_type,password|string|min:6|max:32',
 	        'provider' => 'nullable|required_if:grant_type,social|in:google',
 			'access_token' => 'required_if:grant_type,social',
-            'g-recaptcha-response' => ['required_if:grant_type,password', new ReCaptchaV3('submitLogin', 0.5)]
+            'g-recaptcha-response' => ['nullable', 'required_if:grant_type,password', new ReCaptchaV3('submitLogin', 0.5)]
         ]);
 
         $parsedBody = array_merge($serverRequest->getParsedBody(), [
-            'client_id' => env('OAUTH_CLIENT_ID'),
-            'client_secret' => env('OAUTH_CLIENT_SECRET'),
+            'client_id' => config('setting.oauth.client_id'),
+            'client_secret' => config('setting.oauth.client_secret'),
         ]);
 
         $modifiedServerRequest = $serverRequest->withParsedBody($parsedBody);
@@ -181,14 +181,14 @@ class AccessTokenController extends ApiAuthController
         ]);
 
         $parsedBody = array_merge($serverRequest->getParsedBody(), [
-            'client_id' => env('OAUTH_CLIENT_ID'),
-            'client_secret' => env('OAUTH_CLIENT_SECRET'),
+            'client_id' => config('setting.oauth.client_id'),
+            'client_secret' => config('setting.oauth.client_secret'),
         ]);
 
         $modifiedServerRequest = $serverRequest->withParsedBody($parsedBody);
 
         if($request['grant_type'] == 'refresh_token') {
-            $appKey = env('APP_KEY');
+            $appKey = config('app.key');
             $encriptionKey = base64_decode(substr($appKey, 7));
 
             try {

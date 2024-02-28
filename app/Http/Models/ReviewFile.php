@@ -17,7 +17,7 @@ class ReviewFile extends BaseModel
     public function getReviewFileUrlAttribute()
     {
         if ($this->review_file != null) {
-            $url = 'https://'. env('AWS_BUCKET') .'.s3-'. env('AWS_DEFAULT_REGION') .'.amazonaws.com/files/reviews/' . $this->review_file;
+            $url = 'https://'. config('filesystems.disks.s3.bucket') .'.s3-'. config('filesystems.disks.s3.region') .'.amazonaws.com/files/reviews/' . $this->review_file;
         }
         return $url ?? null;
     }

@@ -17,7 +17,7 @@ class Profile extends BaseModel
     public function getAvatarUrlAttribute()
     {
         if ($this->avatar != null) {
-            $url = 'https://'. env('AWS_BUCKET') .'.s3-'. env('AWS_DEFAULT_REGION') .'.amazonaws.com/images/avatar/' . $this->avatar;
+            $url = 'https://'. config('filesystems.disks.s3.bucket') .'.s3-'. config('filesystems.disks.s3.region') .'.amazonaws.com/images/avatar/' . $this->avatar;
         }
         return $url ?? null;
     }

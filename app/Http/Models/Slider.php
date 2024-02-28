@@ -16,7 +16,7 @@ class Slider extends BaseModel
     public function getImageUrlAttribute()
     {
         if ($this->image != null) {
-            $url = 'https://'. env('AWS_BUCKET') .'.s3-'. env('AWS_DEFAULT_REGION') .'.amazonaws.com/images/slider/' . $this->image;
+            $url = 'https://'. config('filesystems.disks.s3.bucket') .'.s3-'. config('filesystems.disks.s3.region') .'.amazonaws.com/images/slider/' . $this->image;
         }
         return $url ?? null;
     }

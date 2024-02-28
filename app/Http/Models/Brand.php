@@ -17,7 +17,7 @@ class Brand extends BaseModel
     public function getBrandLogoUrlAttribute()
     {
         if ($this->brand_logo != null) {
-            $url = 'https://'. env('AWS_BUCKET') .'.s3-'. env('AWS_DEFAULT_REGION') .'.amazonaws.com/images/brand/' . $this->brand_logo;
+            $url = 'https://'. config('filesystems.disks.s3.bucket') .'.s3-'. config('filesystems.disks.s3.region') .'.amazonaws.com/images/brand/' . $this->brand_logo;
         }
         return $url ?? null;
     }

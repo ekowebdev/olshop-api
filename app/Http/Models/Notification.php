@@ -22,7 +22,7 @@ class Notification extends DynamoDbModel
 
     public function getTable()
     {
-        $table = env('APP_ENV') === 'local' ? 'local_notifications' : 'notifications';
+        $table = config('app.env') === 'local' ? 'local_notifications' : 'notifications';
         return $table;
     }
 

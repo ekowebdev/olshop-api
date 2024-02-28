@@ -18,7 +18,7 @@ class ItemGiftImage extends BaseModel
     public function getItemGiftImageUrlAttribute()
     {
         if ($this->item_gift_image != null) {
-            $url = 'https://'. env('AWS_BUCKET') .'.s3-'. env('AWS_DEFAULT_REGION') .'.amazonaws.com/images/' . $this->item_gift_image;
+            $url = 'https://'. config('filesystems.disks.s3.bucket') .'.s3-'. config('filesystems.disks.s3.region') .'.amazonaws.com/images/' . $this->item_gift_image;
         }
         return $url ?? null;
     }
@@ -26,7 +26,7 @@ class ItemGiftImage extends BaseModel
     public function getItemGiftImageThumbUrlAttribute()
     {
         if ($this->item_gift_image != null) {
-            $url = 'https://'. env('AWS_BUCKET') .'.s3-'. env('AWS_DEFAULT_REGION') .'.amazonaws.com/images/thumbnails/' . $this->item_gift_image;
+            $url = 'https://'. config('filesystems.disks.s3.bucket') .'.s3-'. config('filesystems.disks.s3.region') .'.amazonaws.com/images/thumbnails/' . $this->item_gift_image;
         }
         return $url ?? null;
     }

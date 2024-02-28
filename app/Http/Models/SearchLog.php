@@ -12,7 +12,7 @@ class SearchLog extends DynamoDbModel
 
     public function getTable()
     {
-        $table = env('APP_ENV') === 'local' ? 'local_search_logs' : 'search_logs';
+        $table = config('app.env') === 'local' ? 'local_search_logs' : 'search_logs';
         return $table;
     }
 

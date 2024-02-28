@@ -15,7 +15,7 @@ class Cart extends DynamoDbModel
 
     public function getTable()
     {
-        $table = env('APP_ENV') === 'local' ? 'local_carts' : 'carts';
+        $table = config('app.env') === 'local' ? 'local_carts' : 'carts';
         return $table;
     }
 

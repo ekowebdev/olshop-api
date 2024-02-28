@@ -30,7 +30,7 @@ class AuthService extends BaseService
         $this->model = $model;
         $this->repository = $repository;
         $this->oauth_repository = $oauth_repository;
-        $this->oauth_client_id = env('OAUTH_CLIENT_ID');
+        $this->oauth_client_id = config('setting.oauth.client_id');
     }
 
     public function register($locale, $request)
@@ -108,7 +108,7 @@ class AuthService extends BaseService
             'refresh_token' => 'required|string',
         ]);
 
-        $app_key = env('APP_KEY');
+        $app_key = config('app.key');
         $enc_key = base64_decode(substr($app_key, 7));
 
         try {
@@ -190,7 +190,7 @@ class AuthService extends BaseService
             $user->markEmailAsVerified();
         }
 
-        $url = env('FRONT_URL') . '/email-verification-success';
+        $url = config('setting.frontend.url') . '/email-verification-success';
 
         return redirect()->to($url);
     }
@@ -311,10 +311,10 @@ class AuthService extends BaseService
             if(!empty($user)){
                 $user->update(['google_id' => $socialite->id, 'google_access_token' => $socialite->token]);
             }
-            $url = env('FRONT_URL') . '/auth-success?google_id='.$socialite->id.'&google_access_token='.$socialite->token.'&email='.$socialite->email;
+            $url = config('setting.frontend.url') . '/auth-success?google_id='.$socialite->id.'&google_access_token='.$socialite->token.'&email='.$socialite->email;
             return redirect()->to($url);
         } catch (\Exception $e) {
-            $url = env('FRONT_URL') . '/login?error='.$e->getMessage();
+            $url = config('setting.frontend.url') . '/login?error='.$e->getMessage();
             return redirect()->to($url);
         }
     }
@@ -331,7 +331,7 @@ class AuthService extends BaseService
                     $existing_user->update(['google_access_token' => $user->token]);
                 }
                 $token_response = $this->getBearerTokenByUser($existing_user, $this->oauth_client_id, false);
-                $url = env('FRONT_URL') . '/auth-success?user_id='.$existing_user->id.'&access_token='.$token_response['access_token'].'&refresh_token='.$token_response['refresh_token'].'&expires_in='.$token_response['expires_in'];
+                $url = config('setting.frontend.url') . '/auth-success?user_id='.$existing_user->id.'&access_token='.$token_response['access_token'].'&refresh_token='.$token_response['refresh_token'].'&expires_in='.$token_response['expires_in'];
                 return redirect()->to($url);
             } else {
                 DB::beginTransaction();
@@ -349,18 +349,18 @@ class AuthService extends BaseService
                     $new_user->assignRole('customer');
                     $new_user->profile()->create(['name' => $user->name, 'avatar' => $user->avatar]);
                     $token_response = $this->getBearerTokenByUser($new_user, $this->oauth_client_id, false);
-                    $url = env('FRONT_URL') . '/auth-success?user_id='.$new_user->id.'&access_token='.$token_response['access_token'].'&refresh_token='.$token_response['refresh_token'].'&expires_in='.$token_response['expires_in'];
+                    $url = config('setting.frontend.url') . '/auth-success?user_id='.$new_user->id.'&access_token='.$token_response['access_token'].'&refresh_token='.$token_response['refresh_token'].'&expires_in='.$token_response['expires_in'];
                 } else {
                     $old_user->update(['google_id' => $user->id, 'google_access_token' => $user->token]);
                     $token_response = $this->getBearerTokenByUser($old_user, $this->oauth_client_id, false);
-                    $url = env('FRONT_URL') . '/auth-success?user_id='.$old_user->id.'&access_token='.$token_response['access_token'].'&refresh_token='.$token_response['refresh_token'].'&expires_in='.$token_response['expires_in'];
+                    $url = config('setting.frontend.url') . '/auth-success?user_id='.$old_user->id.'&access_token='.$token_response['access_token'].'&refresh_token='.$token_response['refresh_token'].'&expires_in='.$token_response['expires_in'];
                 }
                 DB::commit();
                 return redirect()->to($url);
             }
         } catch (\Exception $e) {
             DB::rollback();
-            $url = env('FRONT_URL') . '/login?error='.$e->getMessage();
+            $url = config('setting.frontend.url') . '/login?error='.$e->getMessage();
             return redirect()->to($url);
         }
     }

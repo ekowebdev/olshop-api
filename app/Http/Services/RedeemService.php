@@ -31,7 +31,7 @@ class RedeemService extends BaseService
         $this->item_gift_repository = $item_gift_repository;
         $this->city_repository = $city_repository;
         $this->address_repository = $address_repository;
-        $this->origin = env('SHIPPING_ORIGIN_ID');
+        $this->origin = config('setting.shipping.origin_id');
     }
 
     public function getIndexData($locale, $data)
@@ -226,7 +226,7 @@ class RedeemService extends BaseService
                     'name' => ($item_gift->variants->count() > 0) ? mb_strimwidth($item_gift->item_gift_name . ' - ' . $variant->variant_name, 0, 50, '..') : mb_strimwidth($item_gift->item_gift_name, 0, 50, '..'),
                     "brand" => ($item_gift->brand) ? $item_gift->brand->brand_name : null,
                     "category" => ($item_gift->category) ? $item_gift->category->category_name : null,
-                    "merchant_name" => env('APP_NAME'),
+                    "merchant_name" => config('app.name'),
                 ];
 
                 $redeem->redeem_item_gifts()->save($redeem_item_gift);
@@ -449,9 +449,9 @@ class RedeemService extends BaseService
 
     private function create_transaction_midtrans($params)
     {
-        \Midtrans\Config::$serverKey = env('MIDTRANS_SERVER_KEY');
-        \Midtrans\Config::$isProduction = (bool) env('MIDTRANS_PRODUCTION');
-        \Midtrans\Config::$is3ds = (bool) env('MIDTRANS_3DS');
+        \Midtrans\Config::$serverKey = config('services.midtrans.server_key');
+        \Midtrans\Config::$isProduction = (bool) config('services.midtrans.production');
+        \Midtrans\Config::$is3ds = (bool) config('services.midtrans.3ds');
 
         $result = \Midtrans\Snap::createTransaction($params);
         return $result;

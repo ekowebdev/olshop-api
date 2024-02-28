@@ -28,7 +28,7 @@ class WebhookService extends BaseService
         $type = $data['payment_type'];
         $fraud_status = $data['fraud_status'];
 
-        $server_key = env('MIDTRANS_SERVER_KEY');
+        $server_key = config('services.midtrans.server_key');
         $my_signature_key = hash('sha512', $order_id.$status_code.$gross_amount.$server_key);
 
         if ($signature_key !== $my_signature_key) {

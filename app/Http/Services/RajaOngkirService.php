@@ -17,11 +17,11 @@ class RajaOngkirService extends BaseService
 
     public function __construct(ProvinceRepository $province_repository, CityRepository $city_repository, SubdistrictRepository $subdistrict_repository)
     {
-        $this->api_key = env('RAJAONGKIR_API_KEY');
+        $this->api_key = config('services.rajaongkir.key');
         $this->province_repository = $province_repository;
         $this->city_repository = $city_repository;
         $this->subdistrict_repository = $subdistrict_repository;
-        $this->origin = env('SHIPPING_ORIGIN_ID');
+        $this->origin = config('setting.shipping.origin_id');
     }
 
     public function getProvince($locale, $id, $page, $per_page)
@@ -76,7 +76,7 @@ class RajaOngkirService extends BaseService
         if($collection->isEmpty()) throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => 'Province'], $locale));
 
         if(is_multidimensional_array($collection->toArray())) {
-            $response = response()->json($this->format_json($collection, $page, $per_page, ['path' => env('APP_URL') . '/api/v1/id/rajaongkir/get-province']));
+            $response = response()->json($this->format_json($collection, $page, $per_page, ['path' => config('app.url') . '/api/v1/id/rajaongkir/get-province']));
         } else {
             $response = response()->json([
                 'data' => $collection
@@ -142,7 +142,7 @@ class RajaOngkirService extends BaseService
         if($collection->isEmpty()) throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => 'City'], $locale));
 
         if(is_multidimensional_array($collection->toArray())) {
-            $response = response()->json($this->format_json($collection, $page, $per_page, ['path' => env('APP_URL') . '/api/v1/id/rajaongkir/get-city']));
+            $response = response()->json($this->format_json($collection, $page, $per_page, ['path' => config('app.url') . '/api/v1/id/rajaongkir/get-city']));
         } else {
             $response = response()->json([
                 'data' => $collection
