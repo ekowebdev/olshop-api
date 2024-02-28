@@ -12,22 +12,23 @@ class SocialUserResolver implements SocialUserResolverInterface
 {
     /**
      * Resolve user by provider credentials.
+     * Return the user that corresponds to provided credentials.
+     * If the credentials are invalid, then return NULL.
      */
-    public function resolveUserByProviderCredentials(string $provider, string $accessToken): ?Authenticatable
+    public function resolveUserByProviderCredentials($provider, $accessToken): ?Authenticatable
     {
-        // Return the user that corresponds to provided credentials.
-        // If the credentials are invalid, then return NULL.
-         $providerUser = Socialite::driver($provider)->userFromToken($accessToken);
-         
-         return $this->findOrCreateUser($provider, $providerUser);;
+        $providerUser = Socialite::driver($provider)->userFromToken($accessToken);
+        return $this->findOrCreateUser($provider, $providerUser);;
     }
 
-    protected function findOrCreateUser(string $provider, ProviderUser $providerUser): ?Authenticatable
+    protected function findOrCreateUser($provider, ProviderUser $providerUser): ?Authenticatable
     {
-        // todo your logic here      
-        $id = $providerUser->getId();
-        $email = $providerUser->getEmail();
-        $user = User::where('email', $email)->where('google_id', $id)->first();
+        $user = User::where('email', $providerUser->email)->first();
+        if(!empty($user)){
+            if($user->google_id == null || $user->google_access_token == null) {
+                $user->update(['google_id' => $providerUser->id, 'google_access_token' => $providerUser->token]);
+            }
+        }
         return $user;
     }
 }

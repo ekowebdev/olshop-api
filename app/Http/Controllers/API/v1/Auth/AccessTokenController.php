@@ -113,8 +113,10 @@ class AccessTokenController extends ApiAuthController
         }
 
         if($request['grant_type'] == 'social'){
-            if($request['access_token'] != $user->google_access_token){
-                throw new AuthenticationException(trans('auth.failed'));
+            if($user->google_access_token != null){
+                if($request['access_token'] != $user->google_access_token){
+                    throw new AuthenticationException(trans('auth.failed'));
+                }
             }
         }
         

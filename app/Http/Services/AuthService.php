@@ -307,10 +307,6 @@ class AuthService extends BaseService
     {
         try {
             $socialite = Socialite::driver('google')->stateless()->user();
-            $user = $this->model->where('email', $socialite->email)->first();
-            if(!empty($user)){
-                $user->update(['google_id' => $socialite->id, 'google_access_token' => $socialite->token]);
-            }
             $url = config('setting.frontend.url') . '/auth-success?google_id='.$socialite->id.'&google_access_token='.$socialite->token.'&email='.$socialite->email;
             return redirect()->to($url);
         } catch (\Exception $e) {
@@ -318,51 +314,4 @@ class AuthService extends BaseService
             return redirect()->to($url);
         }
     }
-
-    /*
-    public function auth_google_callback_bc($locale)
-    {
-        try {
-            $user = Socialite::driver('google')->stateless()->user();
-            dd($user);
-            $existing_user = $this->model->where('email', $user->email)->where('google_id', $user->id)->first();
-            if ($existing_user) {
-                if($existing_user->google_access_token == null) {
-                    $existing_user->update(['google_access_token' => $user->token]);
-                }
-                $token_response = $this->getBearerTokenByUser($existing_user, $this->oauth_client_id, false);
-                $url = config('setting.frontend.url') . '/auth-success?user_id='.$existing_user->id.'&access_token='.$token_response['access_token'].'&refresh_token='.$token_response['refresh_token'].'&expires_in='.$token_response['expires_in'];
-                return redirect()->to($url);
-            } else {
-                DB::beginTransaction();
-                $username = strstr($user->email, '@', true);
-                $old_user = $this->model->where('email', $user->email)->first();
-                if(!$old_user){
-                    $new_user = $this->model->create([
-                        'username' => $username,
-                        'email' => $user->email,
-                        'password' => null,
-                        'google_id' => $user->id,
-                        'google_access_token' => $user->token,
-                        'email_verified_at' => date('Y-m-d H:i:s')
-                    ]);
-                    $new_user->assignRole('customer');
-                    $new_user->profile()->create(['name' => $user->name, 'avatar' => $user->avatar]);
-                    $token_response = $this->getBearerTokenByUser($new_user, $this->oauth_client_id, false);
-                    $url = config('setting.frontend.url') . '/auth-success?user_id='.$new_user->id.'&access_token='.$token_response['access_token'].'&refresh_token='.$token_response['refresh_token'].'&expires_in='.$token_response['expires_in'];
-                } else {
-                    $old_user->update(['google_id' => $user->id, 'google_access_token' => $user->token]);
-                    $token_response = $this->getBearerTokenByUser($old_user, $this->oauth_client_id, false);
-                    $url = config('setting.frontend.url') . '/auth-success?user_id='.$old_user->id.'&access_token='.$token_response['access_token'].'&refresh_token='.$token_response['refresh_token'].'&expires_in='.$token_response['expires_in'];
-                }
-                DB::commit();
-                return redirect()->to($url);
-            }
-        } catch (\Exception $e) {
-            DB::rollback();
-            $url = config('setting.frontend.url') . '/login?error='.$e->getMessage();
-            return redirect()->to($url);
-        }
-    }
-    */
 }
