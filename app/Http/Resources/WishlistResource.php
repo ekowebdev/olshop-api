@@ -74,9 +74,9 @@ class WishlistResource extends JsonResource
                         'freview_date' => Carbon::parse($review->created_at)->diffForHumans(),
                     ];
                 }),
-                'total_reviews' => $this->item_gifts->total_reviews,
+                'total_review' => $this->item_gifts->total_reviews,
                 'total_rating' => floatval(rtrim($this->item_gifts->total_rating, '0')),
-                'total_redeem' => (int) $this->item_gifts->total_redeem,
+                'total_order' => (int) $this->item_gifts->total_redeem,
                 'is_wishlist' => $this->item_gifts->is_wishlist
             ],
             'users' => ($this->users) ? [

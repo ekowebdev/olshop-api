@@ -63,9 +63,9 @@ class RedeemResource extends JsonResource
                                 'freview_date' => Carbon::parse($review->created_at)->diffForHumans(),
                             ];
                         }),
-                        'total_reviews' => $redeem_item_gift->item_gifts->total_reviews,
+                        'total_review' => $redeem_item_gift->item_gifts->total_reviews,
                         'total_rating' => floatval(rtrim($redeem_item_gift->item_gifts->total_rating, '0')),
-                        'total_redeem' => (int) $redeem_item_gift->item_gifts->total_redeem,
+                        'total_order' => (int) $redeem_item_gift->item_gifts->total_redeem,
                         'is_reviewed' => $this->is_reviewed($redeem_item_gift->item_gifts->id, $this->id)
                     ],
                     'variants' => ($redeem_item_gift->variants) 

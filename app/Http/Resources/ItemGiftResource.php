@@ -65,9 +65,9 @@ class ItemGiftResource extends JsonResource
                     'freview_date' => Carbon::parse($review->created_at)->diffForHumans(),
                 ];
             }),
-            'total_reviews' => $this->total_reviews,
+            'total_review' => $this->total_reviews,
             'total_rating' => floatval(rtrim($this->total_rating, '0')),
-            'total_redeem' => (int) $this->total_redeem,
+            'total_order' => (int) $this->total_redeem,
             'is_wishlist' => $this->is_wishlist
         ];
     }
