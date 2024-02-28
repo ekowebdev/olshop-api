@@ -13,32 +13,32 @@ class RedeemResource extends JsonResource
         return [
             'id' => $this->id,
             'redeem_code' => $this->redeem_code,
-            'redeem_item_gifts' => $this->redeem_item_gifts->map(function ($redeem_item_gift) {
+            'redeem_products' => $this->redeem_item_gifts->map(function ($redeem_item_gift) {
                 return [
                     'redeem_id' => $redeem_item_gift->redeem_id,
                     'redeem_quantity' => $redeem_item_gift->redeem_quantity,
                     'redeem_point' => $redeem_item_gift->redeem_point,
                     'fredeem_point' => format_money(strval($redeem_item_gift->redeem_point ?? 0)),
-                    'item_gifts' => [
+                    'products' => [
                         'id' => $redeem_item_gift->item_gifts->id,
-                        'item_gift_code' => $redeem_item_gift->item_gifts->item_gift_code,
-                        'item_gift_name' => $redeem_item_gift->item_gifts->item_gift_name,
-                        'item_gift_slug' => $redeem_item_gift->item_gifts->item_gift_slug,
+                        'product_code' => $redeem_item_gift->item_gifts->item_gift_code,
+                        'product_name' => $redeem_item_gift->item_gifts->item_gift_name,
+                        'product_slug' => $redeem_item_gift->item_gifts->item_gift_slug,
                         'category' => ($redeem_item_gift->item_gifts->category_id != null) ? $redeem_item_gift->item_gifts->category->makeHidden(['created_at', 'updated_at']) : null,
                         'brand' => ($redeem_item_gift->item_gifts->brand_id != null) ? $redeem_item_gift->item_gifts->brand->makeHidden(['created_at', 'updated_at']) : null,
-                        'item_gift_description' => $redeem_item_gift->item_gifts->item_gift_description,
-                        'item_gift_spesification' => json_decode($redeem_item_gift->item_gifts->item_gift_spesification) ?? [],
-                        'item_gift_point' => $redeem_item_gift->item_gifts->item_gift_point ?? 0,
-                        'fitem_gift_point' => $this->format_item_gift_point($redeem_item_gift),
-                        'item_gift_weight' => $redeem_item_gift->item_gifts->item_gift_weight ?? 0,
-                        'fitem_gift_weight' => $this->format_item_gift_weight($redeem_item_gift),
-                        'item_gift_status' => $redeem_item_gift->item_gifts->item_gift_status,
-                        'item_gift_images' => $redeem_item_gift->item_gifts->item_gift_images->map(function ($image) {
+                        'product_description' => $redeem_item_gift->item_gifts->item_gift_description,
+                        'product_spesification' => json_decode($redeem_item_gift->item_gifts->item_gift_spesification) ?? [],
+                        'product_point' => $redeem_item_gift->item_gifts->item_gift_point ?? 0,
+                        'fproduct_point' => $this->format_product_point($redeem_item_gift),
+                        'product_weight' => $redeem_item_gift->item_gifts->item_gift_weight ?? 0,
+                        'fproduct_weight' => $this->format_product_weight($redeem_item_gift),
+                        'product_status' => $redeem_item_gift->item_gifts->item_gift_status,
+                        'product_images' => $redeem_item_gift->item_gifts->item_gift_images->map(function ($image) {
                             return [
-                                'item_gift_id' => $image->item_gift_id,
+                                'product_id' => $image->item_gift_id,
                                 'variant_id' => $image->variant_id,
-                                'item_gift_image_url' => $image->item_gift_image_url,
-                                'item_gift_image_thumbnail_url' => $image->item_gift_image_thumb_url,
+                                'product_image_url' => $image->item_gift_image_url,
+                                'product_image_thumbnail_url' => $image->item_gift_image_thumb_url,
                             ];
                         }),
                         'reviews' => $redeem_item_gift->item_gifts->reviews->map(function ($review) {
@@ -55,7 +55,7 @@ class RedeemResource extends JsonResource
                                     'avatar_url' => ($review->users->profile) ? $review->users->profile->avatar_url : null,
                                 ] : null,
                                 'redeem_id' => $review->redeem_id,
-                                'item_gift_id' => $review->item_gift_id,
+                                'product_id' => $review->item_gift_id,
                                 'review_text' => $review->review_text,
                                 'review_rating' => (float) $review->review_rating,
                                 'review_files' => $review->review_files->makeHidden(['created_at', 'updated_at']),
@@ -167,7 +167,7 @@ class RedeemResource extends JsonResource
         ];
     }
 
-    private function format_item_gift_weight($item)
+    private function format_product_weight($item)
     {
         $variant_weight = $item->item_gifts->variants->pluck('variant_weight')->toArray();
         if (count($variant_weight) == 1) {
@@ -180,7 +180,7 @@ class RedeemResource extends JsonResource
         }
     }
 
-    private function format_item_gift_point($item)
+    private function format_product_point($item)
     {
         $variant_points = $item->item_gifts->variants->pluck('variant_point')->toArray();
         
@@ -205,7 +205,7 @@ class RedeemResource extends JsonResource
         $user_id = (auth()->user()) ? auth()->user()->id : 0;
 
         $reviews = Review::where('user_id', $user_id)
-            ->where('item_gift_id', $item_gift_id)
+            ->where('product_id', $item_gift_id)
             ->where('redeem_id', $redeem_id)
             ->get();
 

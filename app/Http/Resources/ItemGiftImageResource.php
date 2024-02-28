@@ -10,21 +10,21 @@ class ItemGiftImageResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'item_gifts' => [
+            'products' => [
                 'id' => $this->item_gifts->id,
-                'item_gift_code' => $this->item_gifts->item_gift_code,
-                'item_gift_name' => $this->item_gifts->item_gift_name,
-                'item_gift_slug' => $this->item_gifts->item_gift_slug,
+                'product_code' => $this->item_gifts->item_gift_code,
+                'product_name' => $this->item_gifts->item_gift_name,
+                'product_slug' => $this->item_gifts->item_gift_slug,
                 'category' => ($this->item_gifts->category_id != null) ? $this->item_gifts->category->makeHidden(['created_at', 'updated_at']) : null,
                 'brand' => ($this->item_gifts->brand_id != null) ? $this->item_gifts->brand->makeHidden(['created_at', 'updated_at']) : null,
-                'item_gift_description' => $this->item_gifts->item_gift_description,
-                'item_gift_spesification' => json_decode($this->item_gifts->item_gift_spesification) ?? [],
-                'item_gift_point' => $this->item_gifts->item_gift_point ?? 0,
-                'fitem_gift_point' => $this->format_item_gift_point($this->item_gifts),
-                'item_gift_weight' => $this->item_gifts->item_gift_weight ?? 0,
-                'fitem_gift_weight' => $this->format_item_gift_weight($this->item_gifts),
-                'item_gift_quantity' => $this->item_gifts->item_gift_quantity ?? 0,
-                'item_gift_status' => $this->item_gifts->item_gift_status,
+                'product_description' => $this->item_gifts->item_gift_description,
+                'product_spesification' => json_decode($this->item_gifts->item_gift_spesification) ?? [],
+                'product_point' => $this->item_gifts->item_gift_point ?? 0,
+                'fproduct_point' => $this->format_product_point($this->item_gifts),
+                'product_weight' => $this->item_gifts->item_gift_weight ?? 0,
+                'fproduct_weight' => $this->format_product_weight($this->item_gifts),
+                'product_quantity' => $this->item_gifts->item_gift_quantity ?? 0,
+                'product_status' => $this->item_gifts->item_gift_status,
             ],
             'variants' => ($this->variants) ? [
                 'id' => $this->variants->id,
@@ -36,13 +36,13 @@ class ItemGiftImageResource extends JsonResource
                 'variant_weight' => $this->variants->variant_weight,
                 'fvariant_weight' => $this->variants->variant_weight . ' Gram',
             ] : null,
-            'item_gift_image' => $this->item_gift_image,
-            'item_gift_image_url' => $this->item_gift_image_url,
-            'item_gift_image_thumbnail_url' => $this->item_gift_image_thumb_url,
+            'product_image' => $this->item_gift_image,
+            'product_image_url' => $this->item_gift_image_url,
+            'product_image_thumbnail_url' => $this->item_gift_image_thumb_url,
         ];
     }
 
-    private function format_item_gift_weight($item)
+    private function format_product_weight($item)
     {
         if(count($item->variants) == 0){
             return strval($item->item_gift_weight ?? 0) . ' Gram';
@@ -57,7 +57,7 @@ class ItemGiftImageResource extends JsonResource
         }
     }
 
-    private function format_item_gift_point($item)
+    private function format_product_point($item)
     {
         if(count($item->variants) == 0){
             return format_money(strval($item->item_gift_point ?? 0));

@@ -11,20 +11,20 @@ class ItemGiftResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'item_gift_code' => $this->item_gift_code,
-            'item_gift_name' => $this->item_gift_name,
-            'item_gift_slug' => $this->item_gift_slug,
+            'product_code' => $this->item_gift_code,
+            'product_name' => $this->item_gift_name,
+            'product_slug' => $this->item_gift_slug,
             'category' => ($this->category_id != null) ? $this->category->makeHidden(['created_at', 'updated_at']) : null,
             'brand' => ($this->brand_id != null) ? $this->brand->makeHidden(['created_at', 'updated_at']) : null,
-            'item_gift_description' => $this->item_gift_description,
-            'item_gift_spesification' => json_decode($this->item_gift_spesification) ?? [],
-            'item_gift_point' => $this->item_gift_point ?? 0,
-            'fitem_gift_point' => $this->format_item_gift_point(),
-            'item_gift_weight' => $this->item_gift_weight ?? 0,
-            'fitem_gift_weight' => $this->format_item_gift_weight(),
-            'item_gift_quantity' => $this->item_gift_quantity ?? 0,
-            'item_gift_status' => $this->item_gift_status,
-            'item_gift_images' => $this->item_gift_images->makeHidden(['created_at', 'updated_at']),
+            'product_description' => $this->item_gift_description,
+            'product_spesification' => json_decode($this->item_gift_spesification) ?? [],
+            'product_point' => $this->item_gift_point ?? 0,
+            'fproduct_point' => $this->format_product_point(),
+            'product_weight' => $this->item_gift_weight ?? 0,
+            'fproduct_weight' => $this->format_product_weight(),
+            'product_quantity' => $this->item_gift_quantity ?? 0,
+            'product_status' => $this->item_gift_status,
+            'product_images' => $this->item_gift_images->makeHidden(['created_at', 'updated_at']),
             'variants' => $this->variants->map(function ($variant) {
                 return [
                     'id' => $variant->id,
@@ -57,7 +57,7 @@ class ItemGiftResource extends JsonResource
                         'avatar_url' => ($review->users->profile) ? $review->users->profile->avatar_url : null,
                     ] : null,
                     'redeem_id' => $review->redeem_id,
-                    'item_gift_id' => $review->item_gift_id,
+                    'product_id' => $review->item_gift_id,
                     'review_text' => $review->review_text,
                     'review_rating' => (float) $review->review_rating,
                     'review_files' => $review->review_files->makeHidden(['created_at', 'updated_at']),
@@ -72,7 +72,7 @@ class ItemGiftResource extends JsonResource
         ];
     }
 
-    private function format_item_gift_weight()
+    private function format_product_weight()
     {
         $variant_weight = $this->variants->pluck('variant_weight')->toArray();
         if (count($variant_weight) == 1) {
@@ -85,7 +85,7 @@ class ItemGiftResource extends JsonResource
         }
     }
 
-    private function format_item_gift_point()
+    private function format_product_point()
     {
         $variant_points = $this->variants->pluck('variant_point')->toArray();
         

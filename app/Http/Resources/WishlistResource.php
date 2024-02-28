@@ -11,27 +11,27 @@ class WishlistResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'item_gifts' => [
+            'products' => [
                 'id' => $this->item_gifts->id,
-                'item_gift_code' => $this->item_gifts->item_gift_code,
-                'item_gift_name' => $this->item_gifts->item_gift_name,
-                'item_gift_slug' => $this->item_gifts->item_gift_slug,
+                'product_code' => $this->item_gifts->item_gift_code,
+                'product_name' => $this->item_gifts->item_gift_name,
+                'product_slug' => $this->item_gifts->item_gift_slug,
                 'category' => ($this->item_gifts->category_id != null) ? $this->item_gifts->category->makeHidden(['created_at', 'updated_at']) : null,
                 'brand' => ($this->item_gifts->brand_id != null) ? $this->item_gifts->brand->makeHidden(['created_at', 'updated_at']) : null,
-                'item_gift_description' => $this->item_gifts->item_gift_description,
-                'item_gift_spesification' => json_decode($this->item_gifts->item_gift_spesification) ?? [],
-                'item_gift_point' => $this->item_gifts->item_gift_point ?? 0,
-                'fitem_gift_point' => $this->format_item_gift_point($this->item_gifts),
-                'item_gift_weight' => $this->item_gifts->item_gift_weight ?? 0,
-                'fitem_gift_weight' => $this->item_gifts->item_gift_weight . ' Gram',
-                'item_gift_quantity' => $this->item_gifts->item_gift_quantity ?? 0,
-                'item_gift_status' => $this->item_gifts->item_gift_status,
-                'item_gift_images' => $this->item_gifts->item_gift_images->map(function ($image) {
+                'product_description' => $this->item_gifts->item_gift_description,
+                'product_spesification' => json_decode($this->item_gifts->item_gift_spesification) ?? [],
+                'product_point' => $this->item_gifts->item_gift_point ?? 0,
+                'fproduct_point' => $this->format_product_point($this->item_gifts),
+                'product_weight' => $this->item_gifts->item_gift_weight ?? 0,
+                'fproduct_weight' => $this->item_gifts->item_gift_weight . ' Gram',
+                'product_quantity' => $this->item_gifts->item_gift_quantity ?? 0,
+                'product_status' => $this->item_gifts->item_gift_status,
+                'product_images' => $this->item_gifts->item_gift_images->map(function ($image) {
                     return [
-                        'item_gift_id' => $image->item_gift_id,
+                        'product_id' => $image->item_gift_id,
                         'variant_id' => $image->variant_id,
-                        'item_gift_image_url' => $image->item_gift_image_url,
-                        'item_gift_image_thumbnail_url' => $image->item_gift_image_thumb_url,
+                        'product_image_url' => $image->item_gift_image_url,
+                        'product_image_thumbnail_url' => $image->item_gift_image_thumb_url,
                     ];
                 }),
                 'variants' => $this->item_gifts->variants->map(function ($variant) {
@@ -66,7 +66,7 @@ class WishlistResource extends JsonResource
                             'avatar_url' => ($review->users->profile) ? $review->users->profile->avatar_url : null,
                         ],
                         'redeem_id' => $review->redeem_id,
-                        'item_gift_id' => $review->item_gift_id,
+                        'product_id' => $review->item_gift_id,
                         'review_text' => $review->review_text,
                         'review_rating' => (float) $review->review_rating,
                         'review_files' => $review->review_files->makeHidden(['created_at', 'updated_at']),
@@ -98,7 +98,7 @@ class WishlistResource extends JsonResource
         ];
     }
 
-    private function format_item_gift_point($item)
+    private function format_product_point($item)
     {
         if(count($item->variants) == 0){
             return format_money(strval($item->item_gift_point ?? 0));
