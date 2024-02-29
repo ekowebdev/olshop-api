@@ -24,11 +24,6 @@ class SocialUserResolver implements SocialUserResolverInterface
     protected function findOrCreateUser($provider, ProviderUser $providerUser): ?Authenticatable
     {
         $user = User::where('email', $providerUser->email)->first();
-        if(!empty($user)){
-            if($user->google_id == null || $user->google_access_token == null) {
-                $user->update(['google_id' => $providerUser->id, 'google_access_token' => $providerUser->token]);
-            }
-        }
         return $user;
     }
 }
