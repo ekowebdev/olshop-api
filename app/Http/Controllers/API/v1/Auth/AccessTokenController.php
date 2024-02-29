@@ -52,7 +52,7 @@ class AccessTokenController extends ApiAuthController
                 'email_verified_at' => date('Y-m-d H:i:s')
             ]);
             $user->assignRole('customer');
-            $user->profile()->create(['name' => $request['name'], 'birthdate' => $request['birthdate']]);
+            $user->profile()->create(['name' => $request['name']]);
         } else {
             $user = User::create([
                 'username' => $username,
