@@ -41,7 +41,7 @@ class AuthService extends BaseService
             'username' => 'required|string|unique:users|max:255',
             'email' => 'required|string|email:rfc,dns|unique:users|max:255',
             'password' => 'required|string|min:6|confirmed|max:32',
-            'g-recaptcha-response' => ['required', new ReCaptcha('submitRegister', 0.5)]
+            'g-recaptcha-response' => ['required', new ReCaptcha]
         ]);
 
         DB::beginTransaction();

@@ -123,5 +123,5 @@ return [
 
 	'too_many_requests'	     => 'Too Many Requests',
 	'too_many_requests_wait' => 'Too Many Requests, Wait for :wait',
-    'g_recaptcha_failed'     => 'reCAPTCHA validation is not eligible',
+    'google_recaptcha'       => 'Google recaptcha is not suitable',
 ];
