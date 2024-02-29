@@ -307,6 +307,12 @@ class AuthService extends BaseService
     {
         try {
             $socialite = Socialite::driver('google')->stateless()->user();
+            $user = $this->model->where('email', $socialite->email)->first();
+            if(!empty($user)){
+            //if($user->google_id == null || $user->google_access_token == null) {
+                $user->update(['google_access_token' => $socialite->token]);
+            //}
+            }
             $url = config('setting.frontend.url') . '/auth-success?google_id='.$socialite->id.'&google_access_token='.$socialite->token.'&email='.$socialite->email;
             return redirect()->to($url);
         } catch (\Exception $e) {
