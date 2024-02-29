@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Request;
 
 class ItemGiftRepository extends BaseRepository 
 {
-    private $repository_name = 'Item Gift';
+    private $repository_name = 'Product';
     private $model;
 
 	public function __construct(ItemGift $model)

@@ -27,7 +27,7 @@ class ReCaptchaV3 implements Rule
         // Send a POST request to the google siteverify service to validate the reCAPTCHA token
         $siteVerify = Http::asForm()
             ->post('https://www.google.com/recaptcha/api/siteverify', [
-                'secret' => config('services.recaptcha_v3.secret_key'),
+                'secret' => config('services.recaptcha.secret_key'),
                 'response' => $value,
             ]);
 

@@ -3,7 +3,7 @@ namespace App\Http\Services;
 
 use Request;
 use App\Http\Models\User;
-use App\Rules\ReCaptchaV3;
+use App\Rules\ReCaptcha;
 use Illuminate\Support\Str;
 use App\Http\Traits\PassportToken;
 use Illuminate\Support\Facades\DB;
@@ -41,7 +41,7 @@ class AuthService extends BaseService
             'username' => 'required|string|unique:users|max:255',
             'email' => 'required|string|email:rfc,dns|unique:users|max:255',
             'password' => 'required|string|min:6|confirmed|max:32',
-            'g-recaptcha-response' => ['required', new ReCaptchaV3('submitRegister', 0.5)]
+            'g-recaptcha-response' => ['required', new ReCaptcha('submitRegister', 0.5)]
         ]);
 
         DB::beginTransaction();
@@ -67,7 +67,7 @@ class AuthService extends BaseService
         $this->validate($request, [
             'email' => 'required|string|email:rfc,dns|exists:users,email',
             'password' => 'required|string|min:6|max:12',
-            'g-recaptcha-response' => ['required', new ReCaptchaV3('submitLogin', 0.5)]
+            'g-recaptcha-response' => ['required', new ReCaptcha]
         ]);
 
         $user = $this->repository->getDataByMultipleParam(['email' => $request['email']]);
@@ -307,12 +307,6 @@ class AuthService extends BaseService
     {
         try {
             $socialite = Socialite::driver('google')->stateless()->user();
-            $user = $this->model->where('email', $socialite->email)->first();
-            if(!empty($user)){
-            //if($user->google_id == null || $user->google_access_token == null) {
-                $user->update(['google_access_token' => $socialite->token]);
-            //}
-            }
             $url = config('setting.frontend.url') . '/auth-success?google_id='.$socialite->id.'&google_access_token='.$socialite->token.'&email='.$socialite->email;
             return redirect()->to($url);
         } catch (\Exception $e) {

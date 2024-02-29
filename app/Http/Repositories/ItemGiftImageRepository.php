@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Request;
 
 class ItemGiftImageRepository extends BaseRepository 
 {
-    private $repository_name = 'Item Gift Image';
+    private $repository_name = 'Product Image';
     private $model;
 
 	public function __construct(ItemGiftImage $model)

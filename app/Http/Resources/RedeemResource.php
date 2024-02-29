@@ -205,7 +205,7 @@ class RedeemResource extends JsonResource
         $user_id = (auth()->user()) ? auth()->user()->id : 0;
 
         $reviews = Review::where('user_id', $user_id)
-            ->where('product_id', $item_gift_id)
+            ->where('item_gift_id', $item_gift_id)
             ->where('redeem_id', $redeem_id)
             ->get();
 

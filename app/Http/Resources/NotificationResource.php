@@ -17,7 +17,7 @@ class NotificationResource extends JsonResource
             'icon' => $this->icon,
             'background_color' => $this->background_color,
             'status_read' => $this->status_read,
-            'users' => $this->users->makeHidden(['email_verified_at', 'created_at', 'updated_at']),
+            'users' => $this->users->makeHidden(['email_verified_at', 'google_id', 'google_access_token', 'created_at', 'updated_at']),
         ];
     }
 }

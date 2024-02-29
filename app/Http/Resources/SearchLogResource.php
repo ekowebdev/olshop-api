@@ -11,7 +11,7 @@ class SearchLogResource extends JsonResource
         return [
             'id' => $this->id,
             'search_text' => $this->search_text,
-            'users' => $this->users->makeHidden(['email_verified_at', 'created_at', 'updated_at']),
+            'users' => $this->users->makeHidden(['email_verified_at', 'google_id', 'google_access_token', 'created_at', 'updated_at']),
         ];
     }
 }

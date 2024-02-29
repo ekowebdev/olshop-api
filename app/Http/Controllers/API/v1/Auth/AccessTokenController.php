@@ -5,7 +5,7 @@ namespace App\Http\Controllers\API\v1\Auth;
 use Request;
 use Carbon\Carbon;
 use App\Http\Models\User;
-use App\Rules\ReCaptchaV3;
+use App\Rules\ReCaptcha;
 use Illuminate\Support\Facades\App;
 use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Hash;
@@ -30,15 +30,15 @@ class AccessTokenController extends ApiAuthController
         $request = Request::all();
 
         User::validate($request, [
-            'name' => 'required|string|max:255',
-            'birthdate' => 'required|date',
+            'name' => 'nullable|required_if:grant_type,password|string|max:255',
+            'birthdate' => 'nullable|required_if:grant_type,password|date',
             'username' => 'required|string|email:rfc,dns|unique:users,email|max:255',
             'password' => 'nullable|required_if:grant_type,password|string|min:6|confirmed|max:32',	        
 	        'grant_type' =>	'required|in:password,social',
 	        'provider' => 'nullable|required_if:grant_type,social|in:google',
 			'google_id' => 'required_if:provider,google',
 			'google_access_token' => 'required_if:provider,google',
-            'g-recaptcha-response' => ['nullable', 'required_if:grant_type,password', new ReCaptchaV3('submitRegister', 0.5)]
+            'g-recaptcha-response' => ['nullable', 'required_if:grant_type,password', new ReCaptcha]
         ]);
 
         \DB::beginTransaction();
@@ -96,7 +96,7 @@ class AccessTokenController extends ApiAuthController
 	        'password' => 'required_if:grant_type,password|string|min:6|max:32',
 	        'provider' => 'nullable|required_if:grant_type,social|in:google',
 			'access_token' => 'required_if:grant_type,social',
-            'g-recaptcha-response' => ['nullable', 'required_if:grant_type,password', new ReCaptchaV3('submitLogin', 0.5)]
+            'g-recaptcha-response' => ['nullable', 'required_if:grant_type,password', new ReCaptcha]
         ]);
 
         $parsedBody = array_merge($serverRequest->getParsedBody(), [

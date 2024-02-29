@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Request;
 
 class RedeemRepository extends BaseRepository 
 {
-    private $repository_name = 'Redeem';
+    private $repository_name = 'Order';
     private $model;
 
 	public function __construct(Redeem $model)
