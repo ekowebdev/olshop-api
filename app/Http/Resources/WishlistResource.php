@@ -74,10 +74,10 @@ class WishlistResource extends JsonResource
                         'fdate' => Carbon::parse($review->created_at)->diffForHumans(),
                     ];
                 }),
-                'total_review' => $this->item_gifts->total_review,
-                'total_rating' => floatval(rtrim($this->item_gifts->total_rating, '0')),
-                'total_order' => (int) $this->item_gifts->total_order,
-                'is_wishlist' => $this->item_gifts->is_wishlist
+                'total_review' => $this->products->total_review,
+                'total_rating' => floatval(rtrim($this->products->total_rating, '0')),
+                'total_order' => (int) $this->products->total_order,
+                'is_wishlist' => $this->products->is_wishlist
             ],
             'users' => ($this->users) ? [
                 'id' => $this->users->id,

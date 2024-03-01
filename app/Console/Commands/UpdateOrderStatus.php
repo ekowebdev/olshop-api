@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 use Carbon\Carbon;
-use App\Http\Models\Redeem;
+use App\Http\Models\Order;
 use Illuminate\Console\Command;
 
 class UpdateOrderStatus extends Command
@@ -31,10 +31,10 @@ class UpdateOrderStatus extends Command
     {
         $i = 0;
         $expired = Carbon::now()->subHour(24);
-        $orders = Redeem::where('redeem_status', '=', 'pending')->where('created_at', '<=', $expired)->get();
+        $orders = Order::where('status', '=', 'pending')->where('created_at', '<=', $expired)->get();
 
         foreach($orders as $order) {
-            $order->redeem_status = 'failure';
+            $order->status = 'failure';
             $order->save();
             $i++;
         }

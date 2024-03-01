@@ -7,7 +7,7 @@ use App\Http\Models\User;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-class ItemGiftTest extends TestCase
+class ProductTest extends TestCase
 {
     use RefreshDatabase;
     
@@ -33,20 +33,20 @@ class ItemGiftTest extends TestCase
     public function test_create_data()
     {
         $data = [
-            'item_gift_name' => 'Testing Item',
-            'item_gift_description' => 'Testing Description',
-            'item_gift_point' => 25000,
-            'item_gift_quantity' => 2,
-            'item_gift_status' => 'A',
+            'name' => 'Testing Product',
+            'description' => 'Testing Description',
+            'point' => 25000,
+            'quantity' => 2,
+            'status' => 'A',
         ];
 
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $this->access_token,
-        ])->postJson('/api/id/gifts', $data);
+        ])->postJson('/api/id/products', $data);
 
         $response->assertStatus(201);
-        $this->assertDatabaseHas('item_gifts', [
-            'item_gift_name' => 'Testing Item',
+        $this->assertDatabaseHas('products', [
+            'name' => 'Testing Product',
         ]);
     }
 }

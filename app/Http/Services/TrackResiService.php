@@ -4,13 +4,13 @@ namespace App\Http\Services;
 
 use Illuminate\Support\Arr;
 use App\Exceptions\DataEmptyException;
-use App\Http\Repositories\RedeemRepository;
+use App\Http\Repositories\OrderRepository;
 
 class TrackResiService extends BaseService
 {
     private $api_key, $repository;
 
-    public function __construct(RedeemRepository $repository)
+    public function __construct(OrderRepository $repository)
     {
         $this->api_key = config('services.binderbyte.key');
         $this->repository = $repository;
