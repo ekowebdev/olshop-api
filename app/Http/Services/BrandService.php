@@ -22,16 +22,16 @@ class BrandService extends BaseService
     public function getIndexData($locale, $data)
     {
         $search = [
-            'brand_name' => 'brand_name',
-            'brand_slug' => 'brand_slug',
-            'brand_sort' => 'brand_sort',
+            'name' => 'name',
+            'slug' => 'slug',
+            'sort' => 'sort',
         ];
 
         $search_column = [
             'id' => 'id',
-            'brand_name' => 'brand_name',
-            'brand_slug' => 'brand_slug',
-            'brand_sort' => 'brand_sort',
+            'name' => 'name',
+            'slug' => 'slug',
+            'sort' => 'sort',
         ];
 
         $sortable_and_searchable_column = [
@@ -56,22 +56,22 @@ class BrandService extends BaseService
     public function store($locale, $data)
     {
         $data_request = Arr::only($data, [
-            'brand_name',
-            'brand_sort',
-            'brand_logo',
+            'name',
+            'sort',
+            'logo',
         ]);
 
         $this->repository->validate($data_request, [
-                'brand_name' => [
+                'name' => [
                     'required',
-                    'unique:brands,brand_name',
+                    'unique:brands,name',
                 ],
-                'brand_sort' => [
+                'sort' => [
                     'required',
                     'integer',
-                    'unique:brands,brand_sort',
+                    'unique:brands,sort',
                 ],
-                'brand_logo' => [
+                'logo' => [
                     'required',
                     'max:1000',
                     'image',
@@ -81,15 +81,15 @@ class BrandService extends BaseService
         );
 
         DB::beginTransaction();
-        $data_request['brand_slug'] = Str::slug($data_request['brand_name']);
-        $image = $data_request['brand_logo'];
+        $data_request['slug'] = Str::slug($data_request['name']);
+        $image = $data_request['logo'];
         $image_name = time() . '.' . $image->getClientOriginalExtension();
         Storage::disk('s3')->put('images/brand/' . $image_name, file_get_contents($image));
         $result = $this->model->create([
-            'brand_name' => $data_request['brand_name'],
-            'brand_slug' => $data_request['brand_slug'],
-            'brand_sort' => $data_request['brand_sort'],
-            'brand_logo' => $image_name,
+            'name' => $data_request['name'],
+            'slug' => $data_request['slug'],
+            'sort' => $data_request['sort'],
+            'logo' => $image_name,
         ]);
         DB::commit();
 
@@ -101,20 +101,20 @@ class BrandService extends BaseService
         $check_data = $this->repository->getSingleData($locale, $id);
 
         $data_request = Arr::only($data, [
-            'brand_name',
-            'brand_sort',
-            'brand_logo',
+            'name',
+            'sort',
+            'logo',
         ]);
 
         $this->repository->validate($data_request, [
-            'brand_name' => [
-                'unique:brands,brand_name,' . $id,
+            'name' => [
+                'unique:brands,name,' . $id,
             ],
-            'brand_sort' => [
+            'sort' => [
                 'integer',
-                'unique:brands,brand_sort,' . $id,
+                'unique:brands,sort,' . $id,
             ],
-            'brand_logo' => [
+            'logo' => [
                 'max:1000',
                 'image',
                 'mimes:jpg,png',
@@ -122,19 +122,19 @@ class BrandService extends BaseService
         ]);
 
         DB::beginTransaction();
-        if (isset($data_request['brand_logo'])) {
-            if(Storage::disk('s3')->exists('images/brand/' . $check_data->brand_logo)) {
-                Storage::disk('s3')->delete('images/brand/' . $check_data->brand_logo);
+        if (isset($data_request['logo'])) {
+            if(Storage::disk('s3')->exists('images/brand/' . $check_data->logo)) {
+                Storage::disk('s3')->delete('images/brand/' . $check_data->logo);
             }
-            $image = $data_request['brand_logo'];
+            $image = $data_request['logo'];
             $image_name = time() . '.' . $image->getClientOriginalExtension();
             Storage::disk('s3')->put('images/brand/' . $image_name, file_get_contents($image));
-            $check_data->brand_logo = $image_name;
+            $check_data->logo = $image_name;
         }
-        $data_request['brand_slug'] = Str::slug($data_request['brand_name'] ?? $check_data->brand_name);
-        $check_data->brand_name = $data_request['brand_name'] ?? $check_data->brand_name;
-        $check_data->brand_slug = $data_request['brand_slug'] ?? $check_data->brand_slug;
-        $check_data->brand_sort = $data_request['brand_sort'] ?? $check_data->brand_sort;
+        $data_request['slug'] = Str::slug($data_request['name'] ?? $check_data->name);
+        $check_data->name = $data_request['name'] ?? $check_data->name;
+        $check_data->slug = $data_request['slug'] ?? $check_data->slug;
+        $check_data->sort = $data_request['sort'] ?? $check_data->sort;
         $check_data->save();
         DB::commit();
 
@@ -145,8 +145,8 @@ class BrandService extends BaseService
     {
         $check_data = $this->repository->getSingleData($locale, $id);
         DB::beginTransaction();
-        if(Storage::disk('s3')->exists('images/brand/' . $check_data->brand_logo)) {
-            Storage::disk('s3')->delete('images/brand/' . $check_data->brand_logo);
+        if(Storage::disk('s3')->exists('images/brand/' . $check_data->logo)) {
+            Storage::disk('s3')->delete('images/brand/' . $check_data->logo);
         }
         $result = $check_data->delete();
         DB::commit();

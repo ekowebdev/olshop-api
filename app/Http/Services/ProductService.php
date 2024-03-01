@@ -5,16 +5,16 @@ namespace App\Http\Services;
 use Image;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
-use App\Http\Models\ItemGift;
+use App\Http\Models\Product;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
-use App\Http\Repositories\ItemGiftRepository;
+use App\Http\Repositories\ProductRepository;
 
-class ItemGiftService extends BaseService
+class ProductService extends BaseService
 {
     private $model, $repository;
     
-    public function __construct(ItemGift $model, ItemGiftRepository $repository)
+    public function __construct(Product $model, ProductRepository $repository)
     {
         $this->model = $model;
         $this->repository = $repository;
@@ -23,30 +23,30 @@ class ItemGiftService extends BaseService
     public function getIndexData($locale, $data)
     {
         $search = [
-            'item_gift_name' => 'item_gift_name',
+            'name' => 'name',
             'category_id' => 'category_id',
             'brand_id' => 'brand_id',
-            'item_gift_slug' => 'item_gift_slug',
-            'item_gift_weight' => 'item_gift_weight',
-            'item_gift_quantity' => 'item_gift_quantity',
-            'item_gift_point' => 'item_gift_point',
-            'total_reviews' => 'total_reviews',
+            'slug' => 'slug',
+            'weight' => 'weight',
+            'quantity' => 'quantity',
+            'point' => 'point',
+            'total_review' => 'total_review',
             'total_rating' => 'total_rating',
-            'total_redeem' => 'total_redeem',
+            'total_order' => 'total_order',
         ];
 
         $search_column = [
             'id' => 'id',
-            'item_gift_name' => 'item_gift_name',
+            'name' => 'name',
             'category_id' => 'category_id',
             'brand_id' => 'brand_id',
-            'item_gift_slug' => 'item_gift_slug',
-            'item_gift_quantity' => 'item_gift_quantity',
-            'item_gift_point' => 'item_gift_point',
-            'item_gift_weight' => 'item_gift_weight',
-            'total_reviews' => 'total_reviews',
+            'slug' => 'slug',
+            'quantity' => 'quantity',
+            'point' => 'point',
+            'weight' => 'weight',
+            'total_review' => 'total_review',
             'total_rating' => 'total_rating',
-            'total_redeem' => 'total_redeem',
+            'total_order' => 'total_order',
         ];
 
         $sortable_and_searchable_column = [
@@ -71,30 +71,30 @@ class ItemGiftService extends BaseService
     public function getDataByCategory($locale, $category)
     {
         $search = [
-            'item_gift_name' => 'item_gift_name',
+            'name' => 'name',
             'category_id' => 'category_id',
             'brand_id' => 'brand_id',
-            'item_gift_slug' => 'item_gift_slug',
-            'item_gift_weight' => 'item_gift_weight',
-            'item_gift_quantity' => 'item_gift_quantity',
-            'item_gift_point' => 'item_gift_point',
-            'total_reviews' => 'total_reviews',
+            'slug' => 'slug',
+            'weight' => 'weight',
+            'quantity' => 'quantity',
+            'point' => 'point',
+            'total_review' => 'total_review',
             'total_rating' => 'total_rating',
-            'total_redeem' => 'total_redeem',
+            'total_order' => 'total_order',
         ];
 
         $search_column = [
             'id' => 'id',
-            'item_gift_name' => 'item_gift_name',
+            'name' => 'name',
             'category_id' => 'category_id',
             'brand_id' => 'brand_id',
-            'item_gift_slug' => 'item_gift_slug',
-            'item_gift_quantity' => 'item_gift_quantity',
-            'item_gift_point' => 'item_gift_point',
-            'item_gift_weight' => 'item_gift_weight',
-            'total_reviews' => 'total_reviews',
+            'slug' => 'slug',
+            'quantity' => 'quantity',
+            'point' => 'point',
+            'weight' => 'weight',
+            'total_review' => 'total_review',
             'total_rating' => 'total_rating',
-            'total_redeem' => 'total_redeem',
+            'total_order' => 'total_order',
         ];
 
         $sortable_and_searchable_column = [
@@ -109,30 +109,30 @@ class ItemGiftService extends BaseService
     public function getDataByBrand($locale, $brand)
     {
         $search = [
-            'item_gift_name' => 'item_gift_name',
+            'name' => 'name',
             'category_id' => 'category_id',
             'brand_id' => 'brand_id',
-            'item_gift_slug' => 'item_gift_slug',
-            'item_gift_weight' => 'item_gift_weight',
-            'item_gift_quantity' => 'item_gift_quantity',
-            'item_gift_point' => 'item_gift_point',
-            'total_reviews' => 'total_reviews',
+            'slug' => 'slug',
+            'weight' => 'weight',
+            'quantity' => 'quantity',
+            'point' => 'point',
+            'total_review' => 'total_review',
             'total_rating' => 'total_rating',
-            'total_redeem' => 'total_redeem',
+            'total_order' => 'total_order',
         ];
 
         $search_column = [
             'id' => 'id',
-            'item_gift_name' => 'item_gift_name',
+            'name' => 'name',
             'category_id' => 'category_id',
             'brand_id' => 'brand_id',
-            'item_gift_slug' => 'item_gift_slug',
-            'item_gift_quantity' => 'item_gift_quantity',
-            'item_gift_point' => 'item_gift_point',
-            'item_gift_weight' => 'item_gift_weight',
-            'total_reviews' => 'total_reviews',
+            'slug' => 'slug',
+            'quantity' => 'quantity',
+            'point' => 'point',
+            'weight' => 'weight',
+            'total_review' => 'total_review',
             'total_rating' => 'total_rating',
-            'total_redeem' => 'total_redeem',
+            'total_order' => 'total_order',
         ];
 
         $sortable_and_searchable_column = [
@@ -147,30 +147,30 @@ class ItemGiftService extends BaseService
     public function getDataByUserRecomendation($locale)
     {
         $search = [
-            'item_gift_name' => 'item_gift_name',
+            'name' => 'name',
             'category_id' => 'category_id',
             'brand_id' => 'brand_id',
-            'item_gift_slug' => 'item_gift_slug',
-            'item_gift_weight' => 'item_gift_weight',
-            'item_gift_quantity' => 'item_gift_quantity',
-            'item_gift_point' => 'item_gift_point',
-            'total_reviews' => 'total_reviews',
+            'slug' => 'slug',
+            'weight' => 'weight',
+            'quantity' => 'quantity',
+            'point' => 'point',
+            'total_review' => 'total_review',
             'total_rating' => 'total_rating',
-            'total_redeem' => 'total_redeem',
+            'total_order' => 'total_order',
         ];
 
         $search_column = [
             'id' => 'id',
-            'item_gift_name' => 'item_gift_name',
+            'name' => 'name',
             'category_id' => 'category_id',
             'brand_id' => 'brand_id',
-            'item_gift_slug' => 'item_gift_slug',
-            'item_gift_quantity' => 'item_gift_quantity',
-            'item_gift_point' => 'item_gift_point',
-            'item_gift_weight' => 'item_gift_weight',
-            'total_reviews' => 'total_reviews',
+            'slug' => 'slug',
+            'quantity' => 'quantity',
+            'point' => 'point',
+            'weight' => 'weight',
+            'total_review' => 'total_review',
             'total_rating' => 'total_rating',
-            'total_redeem' => 'total_redeem',
+            'total_order' => 'total_order',
         ];
 
         $sortable_and_searchable_column = [
@@ -185,21 +185,21 @@ class ItemGiftService extends BaseService
     public function store($locale, $data)
     {
         $data_request = Arr::only($data, [
-            'item_gift_name',
+            'name',
             'category_id',
             'brand_id',
-            'item_gift_description',
-            'item_gift_point',
-            'item_gift_weight',
-            'item_gift_quantity',
-            'item_gift_images',
-            'item_gift_spesification',
+            'description',
+            'point',
+            'weight',
+            'quantity',
+            'images',
+            'spesification',
         ]);
 
         $this->repository->validate($data_request, [
-                'item_gift_name' => [
+                'name' => [
                     'required',
-                    'unique:item_gifts,item_gift_name',
+                    'unique:products,name',
                 ],
                 'category_id' => [
                     'nullable',
@@ -209,39 +209,39 @@ class ItemGiftService extends BaseService
                     'nullable',
                     'exists:brands,id',
                 ],
-                'item_gift_description' => [
+                'description' => [
                     'required',
                     'string',
                 ],
-                'item_gift_spesification' => [
+                'spesification' => [
                     'nullable',
                     'array',
                 ],
-                'item_gift_spesification.*.key' => [
+                'spesification.*.key' => [
                     'string',
-                    'required_with:item_gift_spesification.*.value',
+                    'required_with:spesification.*.value',
                 ],
-                'item_gift_spesification.*.value' => [
+                'spesification.*.value' => [
                     'string',
-                    'required_with:item_gift_spesification.*.key',
+                    'required_with:spesification.*.key',
                 ],
-                'item_gift_point' => [
+                'point' => [
                     'nullable',
                     'numeric',
                 ],
-                'item_gift_weight' => [
+                'weight' => [
                     'nullable',
                     'numeric',
                 ],
-                'item_gift_quantity' => [
+                'quantity' => [
                     'nullable',
                     'numeric'
                 ],
-                'item_gift_images' => [
+                'images' => [
                     'required',
                     'array'
                 ],
-                'item_gift_images.*' => [
+                'images.*' => [
                     'required',
                     'max:1000',
                     'mimes:jpg,png',
@@ -249,22 +249,22 @@ class ItemGiftService extends BaseService
             ]
         );
         DB::beginTransaction();
-        $data_request['item_gift_code'] = Str::random(15);
-        $data_request['item_gift_slug'] = Str::slug($data_request['item_gift_name']);
-        $data_request['item_gift_point'] = $data_request['item_gift_point'] ?? null;
-        $data_request['item_gift_weight'] = $data_request['item_gift_weight'] ?? null;
-        $data_request['item_gift_quantity'] = $data_request['item_gift_quantity'] ?? null;
-        $data_request['item_gift_spesification'] = (isset($data_request['item_gift_spesification'])) ? json_encode($data_request['item_gift_spesification']) : null;
+        $data_request['code'] = Str::random(15);
+        $data_request['slug'] = Str::slug($data_request['name']);
+        $data_request['point'] = $data_request['point'] ?? null;
+        $data_request['weight'] = $data_request['weight'] ?? null;
+        $data_request['quantity'] = $data_request['quantity'] ?? null;
+        $data_request['spesification'] = (isset($data_request['spesification'])) ? json_encode($data_request['spesification']) : null;
         $result = $this->model->create($data_request);
-        foreach ($data_request['item_gift_images'] as $image) {
+        foreach ($data_request['images'] as $image) {
             $image_name = time() . '.' . $image->getClientOriginalExtension();
             Storage::disk('s3')->put('images/' . $image_name, file_get_contents($image));
             $img = Image::make($image);
             $img_thumb = $img->crop(5, 5);
             $img_thumb = $img_thumb->stream()->detach();
             Storage::disk('s3')->put('images/thumbnails/' . $image_name, $img_thumb);
-            $result->item_gift_images()->create([
-                'item_gift_image' => $image_name,
+            $result->images()->create([
+                'image' => $image_name,
             ]);
         }
         DB::commit();
@@ -277,33 +277,33 @@ class ItemGiftService extends BaseService
         $check_data = $this->repository->getSingleData($locale, $id);
 
         $data = array_merge([
-            'item_gift_name' => $check_data->item_gift_name,
+            'name' => $check_data->name,
             'category_id' => $check_data->category_id,
             'brand_id' => $check_data->brand_id,
-            'item_gift_slug' => $check_data->item_gift_slug,
-            'item_gift_description' => $check_data->item_gift_description,
-            'item_gift_point' => $check_data->item_gift_point,
-            'item_gift_weight' => $check_data->item_gift_weight,
-            'item_gift_quantity' => $check_data->item_gift_quantity,
-            'item_gift_spesification' => json_decode($check_data->item_gift_spesification),
+            'slug' => $check_data->slug,
+            'description' => $check_data->description,
+            'point' => $check_data->point,
+            'weight' => $check_data->weight,
+            'quantity' => $check_data->quantity,
+            'spesification' => json_decode($check_data->spesification),
         ], $data);
 
         $data_request = Arr::only($data, [
-            'item_gift_name',
+            'name',
             'category_id',
             'brand_id',
-            'item_gift_slug',
-            'item_gift_description',
-            'item_gift_point',
-            'item_gift_weight',
-            'item_gift_quantity',
-            'item_gift_spesification',
+            'slug',
+            'description',
+            'point',
+            'weight',
+            'quantity',
+            'spesification',
         ]);
 
         $this->repository->validate($data_request, [
-                'item_gift_name' => [
+                'name' => [
                     'string',
-                    'unique:item_gifts,item_gift_name,' . $id,
+                    'unique:products,name,' . $id,
                 ],
                 'category_id' => [
                     'nullable',
@@ -313,38 +313,38 @@ class ItemGiftService extends BaseService
                     'nullable',
                     'exists:brands,id',
                 ],
-                'item_gift_description' => [
+                'description' => [
                     'string',
                 ],
-                'item_gift_spesification' => [
+                'spesification' => [
                     'nullable',
                     'array',
                 ],
-                'item_gift_spesification.*.key' => [
+                'spesification.*.key' => [
                     'string',
-                    'required_with:item_gift_spesification.*.value',
+                    'required_with:spesification.*.value',
                 ],
-                'item_gift_spesification.*.value' => [
+                'spesification.*.value' => [
                     'string',
-                    'required_with:item_gift_spesification.*.key',
+                    'required_with:spesification.*.key',
                 ],
-                'item_gift_point' => [
+                'point' => [
                     'numeric',
                 ],
-                'item_gift_weight' => [
+                'weight' => [
                     'nullable',
                     'numeric',
                 ],
-                'item_gift_quantity' => [
+                'quantity' => [
                     'numeric',
                 ],
             ]
         );
 
         DB::beginTransaction();
-        $data_request['item_gift_slug'] = Str::slug($data_request['item_gift_name']);
-        $data_request['item_gift_point'] = ($check_data->variants->count() > 0) ? min($check_data->variants->pluck('variant_point')->toArray()) : $data_request['item_gift_point'];
-        $data_request['item_gift_spesification'] = (isset($data_request['item_gift_spesification'])) ? json_encode($data_request['item_gift_spesification']) : null;
+        $data_request['slug'] = Str::slug($data_request['name']);
+        $data_request['point'] = ($check_data->variants->count() > 0) ? min($check_data->variants->pluck('variant_point')->toArray()) : $data_request['point'];
+        $data_request['spesification'] = (isset($data_request['spesification'])) ? json_encode($data_request['spesification']) : null;
         $check_data->update($data_request);
         DB::commit();
 
@@ -356,12 +356,12 @@ class ItemGiftService extends BaseService
         $check_data = $this->repository->getSingleData($locale, $id);
         
         DB::beginTransaction();
-        foreach($check_data->item_gift_images as $image) {
-            if(Storage::disk('s3')->exists('images/' . $image->item_gift_image)) {
-                Storage::disk('s3')->delete('images/' . $image->item_gift_image);
+        foreach($check_data->images as $image) {
+            if(Storage::disk('s3')->exists('images/' . $image->image)) {
+                Storage::disk('s3')->delete('images/' . $image->image);
             }
-            if(Storage::disk('s3')->exists('images/' . 'thumbnails/' . $image->item_gift_image)) {
-                Storage::disk('s3')->delete('images/' . 'thumbnails/' . $image->item_gift_image);
+            if(Storage::disk('s3')->exists('images/' . 'thumbnails/' . $image->image)) {
+                Storage::disk('s3')->delete('images/' . 'thumbnails/' . $image->image);
             }
         }
         $result = $check_data->delete();

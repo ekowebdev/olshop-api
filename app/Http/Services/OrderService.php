@@ -3,32 +3,32 @@
 namespace App\Http\Services;
 
 use App\Http\Models\City;
-use App\Http\Models\Redeem;
+use App\Http\Models\Order;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use App\Http\Models\Variant;
-use App\Http\Models\ItemGift;
+use App\Http\Models\Product;
 use App\Http\Models\Shipping;
 use Illuminate\Support\Facades\DB;
-use App\Http\Models\RedeemItemGift;
-use App\Http\Services\RedeemService;
+use App\Http\Models\OrderProduct;
+use App\Http\Services\OrderService;
 use Illuminate\Database\QueryException;
 use App\Exceptions\ApplicationException;
 use App\Events\RealTimeNotificationEvent;
 use App\Http\Repositories\CityRepository;
-use App\Http\Repositories\RedeemRepository;
+use App\Http\Repositories\OrderRepository;
 use App\Http\Repositories\AddressRepository;
-use App\Http\Repositories\ItemGiftRepository;
+use App\Http\Repositories\ProductRepository;
 
-class RedeemService extends BaseService
+class OrderService extends BaseService
 {
-    private $model, $repository, $item_gift_repository, $city_repository, $address_repository;
+    private $model, $repository, $product_repository, $city_repository, $address_repository;
     
-    public function __construct(Redeem $model, RedeemRepository $repository, ItemGiftRepository $item_gift_repository, CityRepository $city_repository, AddressRepository $address_repository)
+    public function __construct(Order $model, OrderRepository $repository, ProductRepository $product_repository, CityRepository $city_repository, AddressRepository $address_repository)
     {
         $this->model = $model;
         $this->repository = $repository;
-        $this->item_gift_repository = $item_gift_repository;
+        $this->product_repository = $product_repository;
         $this->city_repository = $city_repository;
         $this->address_repository = $address_repository;
         $this->origin = config('setting.shipping.origin_id');
@@ -37,7 +37,7 @@ class RedeemService extends BaseService
     public function getIndexData($locale, $data)
     {
         $search = [
-            'redeem_code' => 'redeem_code',
+            'code' => 'code',
             'user_id' => 'user_id',
             'total_point' => 'total_point',
             'note' => 'note',
@@ -45,7 +45,7 @@ class RedeemService extends BaseService
 
         $search_column = [
             'id' => 'id',
-            'redeem_code' => 'redeem_code',
+            'code' => 'code',
             'user_id' => 'user_id',
             'total_point' => 'total_point',
             'note' => 'note',
@@ -70,18 +70,18 @@ class RedeemService extends BaseService
         $data_request = $data;
 
         $this->repository->validate($data_request, [
-                'redeem_item_gifts_details' => [
+                'order_products_details' => [
                     'required',
                 ],
-                'redeem_item_gifts_details.*.item_gift_id' => [
+                'order_products_details.*.product_id' => [
                     'required',
-                    'exists:item_gifts,id',
+                    'exists:products,id',
                 ],
-                'redeem_item_gifts_details.*.variant_id' => [
+                'order_products_details.*.variant_id' => [
                     'nullable',
                     'exists:variants,id',
                 ],
-                'redeem_item_gifts_details.*.redeem_quantity' => [
+                'order_products_details.*.quantity' => [
                     'required',
                     'numeric',
                     'min:1',
@@ -89,19 +89,19 @@ class RedeemService extends BaseService
                 'shipping_details' => [
                     'required',
                 ],
-                'shipping_details.shipping_destination' => [
+                'shipping_details.destination' => [
                     'required',
                     'string',
                 ],
-                'shipping_details.shipping_weight' => [
+                'shipping_details.weight' => [
                     'required',
                     'numeric',
                 ],
-                'shipping_details.shipping_courier' => [
+                'shipping_details.courier' => [
                     'required',
                     'in:jne,pos,tiki',
                 ],
-                'shipping_details.shipping_cost' => [
+                'shipping_details.cost' => [
                     'required',
                     'numeric',
                 ],
@@ -126,53 +126,53 @@ class RedeemService extends BaseService
         
             // Initialize variables
             $total_point = 0;
-            $metadata_redeem_item_gifts = [];
-            $redeem_code = Str::uuid();
+            $metadata_order_products = [];
+            $order_code = Str::uuid();
             $item_details = [];
             $user = auth()->user();
-            $redeem_details = $data_request['redeem_details'];
-            $redeem_item_gifts_details = $data_request['redeem_item_gifts_details'];
+            $order_details = $data_request['order_details'];
+            $order_products_details = $data_request['order_products_details'];
             $address_details = $data_request['address_details'];
             $shipping_details = $data_request['shipping_details'];
-            $shipping_cost = (int) $shipping_details['shipping_cost'];
+            $cost = (int) $shipping_details['cost'];
             $city = $this->city_repository->getSingleData($locale, $address_details['city_id']);
 
             $check_address = $this->address_repository->getSingleData($locale, $address_details['id']);
 
-            // Create Redeem entry
-            $redeem = Redeem::create([
+            // Create Order entry
+            $order = Order::create([
                 'user_id' => $user->id,
                 'address_id' => (int) $address_details['id'],
-                'redeem_code' => $redeem_code,
+                'code' => $order_code,
                 'total_point' => $total_point,
-                'shipping_fee' => $shipping_cost,
-                'total_amount' => $total_point + $shipping_cost,
-                'redeem_date' => date('Y-m-d'),
-                'note' => $redeem_details['note'],
+                'shipping_fee' => $cost,
+                'total_amount' => $total_point + $cost,
+                'date' => date('Y-m-d'),
+                'note' => $order_details['note'],
             ]);
         
-            // Process Redeem Item Gifts
-            foreach ($redeem_item_gifts_details as $redeem_item_gifts) {
-                $redeem_quantity = $redeem_item_gifts['redeem_quantity'];
-                $variant_id = ($redeem_item_gifts['variant_id'] == '') ? null : $redeem_item_gifts['variant_id'];
+            // Process Order Item Gifts
+            foreach ($order_products_details as $order_products) {
+                $quantity = $order_products['quantity'];
+                $variant_id = ($order_products['variant_id'] == '') ? null : $order_products['variant_id'];
         
-                $item_gift = ItemGift::lockForUpdate()->find($redeem_item_gifts['item_gift_id']);
+                $product = Product::lockForUpdate()->find($order_products['product_id']);
         
                 // Check variant if required
-                if ($item_gift->variants->count() > 0 && !isset($variant_id)) {
+                if ($product->variants->count() > 0 && !isset($variant_id)) {
                     return response()->json([
-                        'message' => trans('error.variant_required', ['id' => $item_gift->id]),
+                        'message' => trans('error.variant_required', ['id' => $product->id]),
                         'status' => 400,
                     ], 400);
-                } else if ($item_gift->variants->count() == 0 && isset($variant_id)) {
+                } else if ($product->variants->count() == 0 && isset($variant_id)) {
                     return response()->json([
-                        'message' => trans('error.variant_not_found_in_item_gifts', ['id' => $item_gift->id]),
+                        'message' => trans('error.variant_not_found_in_products', ['id' => $product->id]),
                         'status' => 400,
                     ], 400);
                 }
 
                 // Check item availability
-                if (!$item_gift || $item_gift->item_gift_quantity < $redeem_quantity || $item_gift->item_gift_status == 'O') {
+                if (!$product || $product->quantity < $quantity || $product->status == 'O') {
                     return response()->json([
                         'message' => trans('error.out_of_stock'),
                         'status' => 400,
@@ -182,16 +182,16 @@ class RedeemService extends BaseService
                 // Process the chosen variant (if any)
                 $subtotal = 0;
                 if (!is_null($variant_id)) {
-                    $variant = $item_gift->variants()->lockForUpdate()->find($variant_id);
+                    $variant = $product->variants()->lockForUpdate()->find($variant_id);
 
                     if (is_null($variant)) {
                         return response()->json([
-                            'message' => trans('error.variant_not_available_in_item_gifts', ['id' => $item_gift->id, 'variant_id' => $variant_id]),
+                            'message' => trans('error.variant_not_available_in_products', ['id' => $product->id, 'variant_id' => $variant_id]),
                             'status' => 400,
                         ], 400);
                     }
 
-                    if ($variant->variant_quantity == 0 || $redeem_quantity > $variant->variant_quantity) {
+                    if ($variant->quantity == 0 || $quantity > $variant->quantity) {
                         return response()->json([
                             'message' => trans('error.out_of_stock'),
                             'status' => 400,
@@ -199,46 +199,46 @@ class RedeemService extends BaseService
                     }
         
                     if ($variant) {
-                        $subtotal = $variant->variant_point * $redeem_quantity;
+                        $subtotal = $variant->point * $quantity;
                         $variant->update([
-                            'variant_quantity' => $variant->variant_quantity - $redeem_quantity,
+                            'quantity' => $variant->quantity - $quantity,
                         ]);
                     }
                 } else {
-                    $subtotal = $item_gift->item_gift_point * $redeem_quantity;
+                    $subtotal = $product->point * $quantity;
                 }
         
                 $total_point += $subtotal;
         
-                // Create RedeemItemGift entry
-                $redeem_item_gift = new RedeemItemGift([
-                    'item_gift_id' => $item_gift->id,
+                // Create OrderProduct entry
+                $order_product = new OrderProduct([
+                    'product_id' => $product->id,
                     'variant_id' => $variant_id == 0 ? null : $variant_id,
-                    'redeem_quantity' => (int) $redeem_quantity,
-                    'redeem_point' => $subtotal,
+                    'quantity' => (int) $quantity,
+                    'point' => $subtotal,
                 ]);
         
-                $metadata_redeem_item_gifts[] = $redeem_item_gift->toArray();
+                $metadata_order_products[] = $order_product->toArray();
                 $item_details[] = [
-                    'id' => $item_gift->id,
-                    'price' => ($variant_id) ? $variant->variant_point : $item_gift->item_gift_point,
-                    'quantity' => $redeem_quantity,
-                    'name' => ($item_gift->variants->count() > 0) ? mb_strimwidth($item_gift->item_gift_name . ' - ' . $variant->variant_name, 0, 50, '..') : mb_strimwidth($item_gift->item_gift_name, 0, 50, '..'),
-                    "brand" => ($item_gift->brand) ? $item_gift->brand->brand_name : null,
-                    "category" => ($item_gift->category) ? $item_gift->category->category_name : null,
-                    "merchant_name" => config('app.name'),
+                    'id' => $product->id,
+                    'price' => ($variant_id) ? $variant->point : $product->point,
+                    'quantity' => $quantity,
+                    'name' => ($product->variants->count() > 0) ? mb_strimwidth($product->name . ' - ' . $variant->name, 0, 50, '..') : mb_strimwidth($product->name, 0, 50, '..'),
+                    'brand' => ($product->brand) ? $product->brand->brand_name : null,
+                    'category' => ($product->category) ? $product->category->name : null,
+                    'merchant_name' => config('app.name'),
                 ];
 
-                $redeem->redeem_item_gifts()->save($redeem_item_gift);
+                $order->order_products()->save($order_product);
 
-                $item_gift->item_gift_quantity -= $redeem_quantity;
-                $item_gift->save();
+                $product->quantity -= $quantity;
+                $product->save();
             }
         
             // Create shipping and transaction details
             $transaction_details = [
-                'order_id' => $redeem->id . '-' . Str::random(5),
-                'gross_amount' => $total_point + $shipping_cost,
+                'order_id' => $order->id . '-' . Str::random(5),
+                'gross_amount' => $total_point + $cost,
             ];
         
             $customer_details = [
@@ -248,15 +248,15 @@ class RedeemService extends BaseService
                 "shipping_address" => [
                     "first_name" => $address_details['person_name'],
                     "phone" => $address_details['person_phone'],
-                    "address" => $address_details['address'],
-                    "city" => $city->city_name,
+                    "address" => $address_details['street'],
+                    "city" => $city->name,
                     "postal_code" => $address_details['postal_code'],
                     "country_code" => "IDN"
                 ]
             ];
         
             $item_details[] = [
-                'price' => $shipping_cost,
+                'price' => $cost,
                 'quantity' => 1,
                 'name' => '(+) Shipping Fee',
             ];
@@ -265,39 +265,39 @@ class RedeemService extends BaseService
                 'transaction_details' => $transaction_details,
                 'item_details' => $item_details,
                 'customer_details' => $customer_details
-            ];
+            ];           
         
-            // Update Redeem and related data
+            // Update Order and related data
             $midtrans_data = $this->create_transaction_midtrans($midtrans_params);
-	        $redeem->snap_token = $midtrans_data->token;
-            $redeem->snap_url = $midtrans_data->redirect_url;
-            $redeem->metadata = [
+	        $order->snap_token = $midtrans_data->token;
+            $order->snap_url = $midtrans_data->redirect_url;
+            $order->metadata = [
                 'user_id' => $user->id,
                 'address_id' => (int) $address_details['id'],
-                'redeem_code' => $redeem_code,
-                'redeem_item_gifts' => $metadata_redeem_item_gifts,
+                'code' => $order_code,
+                'order_products' => $metadata_order_products,
                 'total_point' => $total_point,
-                'shipping_fee' => $shipping_cost,
-                'total_amount' => $total_point + $shipping_cost,
-                'redeem_date' => date('Y-m-d'),
-                'note' => $redeem_details['note'],
+                'shipping_fee' => $cost,
+                'total_amount' => $total_point + $cost,
+                'date' => date('Y-m-d'),
+                'note' => $order_details['note'],
             ];
-            $redeem->total_point = $total_point;
-            $redeem->shipping_fee = $shipping_cost;
-            $redeem->total_amount = $total_point + $shipping_cost;
-            $redeem->save();
+            $order->total_point = $total_point;
+            $order->shipping_fee = $cost;
+            $order->total_amount = $total_point + $cost;
+            $order->save();
         
             // Create shipping record
             $shipping = new Shipping([
-                'redeem_id' => $redeem->id,
+                'order_id' => $order->id,
                 'origin' => $this->origin,
-                'destination' => $shipping_details['shipping_destination'],
-                'weight' => $shipping_details['shipping_weight'],
-                'courier' => $shipping_details['shipping_courier'],
-                'service' => $shipping_details['shipping_service'],
-                'description' => $shipping_details['shipping_description'],
-                'cost' => $shipping_cost,
-                'etd' => $shipping_details['shipping_etd'],
+                'destination' => $shipping_details['destination'],
+                'weight' => $shipping_details['weight'],
+                'courier' => $shipping_details['courier'],
+                'service' => $shipping_details['service'],
+                'description' => $shipping_details['description'],
+                'cost' => $cost,
+                'etd' => $shipping_details['etd'],
                 'status' => 'on progress',
             ]);
             $shipping->save();
@@ -316,10 +316,10 @@ class RedeemService extends BaseService
             DB::commit();
         
             return response()->json([
-                'message' => trans('all.success_redeem'),
+                'message' => trans('all.success_order'),
                 'data' => [
-                    'snap_token' => $redeem->snap_token,
-                    'snap_url' => $redeem->snap_url
+                    'snap_token' => $order->snap_token,
+                    'snap_url' => $order->snap_url
                 ],
                 'status' => 200,
                 'error' => 0,
@@ -335,15 +335,15 @@ class RedeemService extends BaseService
         $check_data = $this->repository->getSingleData($locale, $id);
 
         $data = array_merge([
-            'redeem_status' => $check_data->redeem_status,
+            'status' => $check_data->status,
         ], $data);
 
         $data_request = Arr::only($data, [
-            'redeem_status',
+            'status',
         ]);
 
         $this->repository->validate($data_request, [
-                'redeem_status' => [
+                'status' => [
                     'required',
                     'in:cancelled'
                 ],
@@ -351,36 +351,36 @@ class RedeemService extends BaseService
         );
 
         DB::beginTransaction();
-        if($check_data->redeem_status != 'shipped' && $check_data->redeem_status != 'success'){
-            $redeem_item_gifts = $check_data->redeem_item_gifts()->get();
-            foreach ($redeem_item_gifts as $redeem_item) {
-                $item_gift = ItemGift::find($redeem_item->item_gift_id);
-                $variant = Variant::find($redeem_item->variant_id);
-                if ($item_gift) {
-                    $item_gift->item_gift_quantity += $redeem_item->redeem_quantity;
-                    $item_gift->save();
+        if($check_data->status != 'shipped' && $check_data->status != 'success'){
+            $order_products = $check_data->order_products()->get();
+            foreach ($order_products as $order_product) {
+                $product = Product::find($order_product->product_id);
+                $variant = Variant::find($order_product->variant_id);
+                if ($product) {
+                    $product->quantity += $order_product->quantity;
+                    $product->save();
                 }
                 if ($variant) {
-                    $variant->variant_quantity += $redeem_item->redeem_quantity;
+                    $variant->quantity += $order_product->quantity;
                     $variant->save();
                 }
             }
-            $shippings = Shipping::where('redeem_id', $id)->first();
+            $shippings = Shipping::where('order_id', $id)->first();
             $shippings->update(['status' => null]);
             $check_data->update($data_request);
-            $message = trans('all.success_cancel_redeem');
-            $code = 200;  
+            $message = trans('all.success_cancel_order');
+            $status_code = 200;  
         } else {
-            $message = trans('error.failed_cancel_redeem');
-            $code = 400;
+            $message = trans('error.failed_cancel_order');
+            $status_code = 400;
         }
         DB::commit();
 
         return response()->json([
             'message' => $message,
-            'status' => $code,
+            'status' => $status_code,
             'error' => 0,
-        ], $code);
+        ], $status_code);
     }
 
     public function receive($locale, $id, $data)
@@ -388,15 +388,15 @@ class RedeemService extends BaseService
         $check_data = $this->repository->getSingleData($locale, $id);
 
         $data = array_merge([
-            'redeem_status' => $check_data->redeem_status,
+            'status' => $check_data->status,
         ], $data);
 
         $data_request = Arr::only($data, [
-            'redeem_status',
+            'status',
         ]);
 
         $this->repository->validate($data_request, [
-                'redeem_status' => [
+                'status' => [
                     'required',
                     'in:received'
                 ],
@@ -404,16 +404,16 @@ class RedeemService extends BaseService
         );
 
         DB::beginTransaction();
-        if($check_data->redeem_status == 'shipped' && $check_data->shippings->resi != null){
-            $shippings = Shipping::where('redeem_id', $id)->first();
+        if($check_data->status == 'shipped' && $check_data->shippings->resi != null){
+            $shippings = Shipping::where('order_id', $id)->first();
             $shippings->update(['status' => 'delivered']);
-            $data_request['redeem_status'] = 'success';
+            $data_request['status'] = 'success';
             $check_data->update($data_request);
         }
         DB::commit();
 
         return response()->json([
-            'message' => trans('all.success_receive_redeem'),
+            'message' => trans('all.success_receive_order'),
             'status' => 200,
             'error' => 0,
         ]);
@@ -424,22 +424,22 @@ class RedeemService extends BaseService
         $check_data = $this->repository->getSingleData($locale, $id);
         
         DB::beginTransaction();
-        if($check_data->redeem_status != 'cancelled' && $check_data->redeem_status != 'shipped' && $check_data->redeem_status != 'success'){
-            $redeem_item_gifts = $check_data->redeem_item_gifts()->get();
-            foreach ($redeem_item_gifts as $redeem_item) {
-                $item_gift = ItemGift::find($redeem_item->item_gift_id);
-                $variant = Variant::find($redeem_item->variant_id);
-                if ($item_gift) {
-                    $item_gift->item_gift_quantity += $redeem_item->redeem_quantity;
-                    $item_gift->save();
+        if($check_data->status != 'cancelled' && $check_data->status != 'shipped' && $check_data->status != 'success'){
+            $order_products = $check_data->order_products()->get();
+            foreach ($order_products as $order_product) {
+                $product = Product::find($order_product->product_id);
+                $variant = Variant::find($order_product->variant_id);
+                if ($product) {
+                    $product->quantity += $order_product->quantity;
+                    $product->save();
                 }
                 if ($variant) {
-                    $variant->variant_quantity += $redeem_item->redeem_quantity;
+                    $variant->quantity += $order_product->quantity;
                     $variant->save();
                 }
             }
         }
-        $shippings = Shipping::where('redeem_id', $id)->first();
+        $shippings = Shipping::where('order_id', $id)->first();
         $shippings->update(['status' => null]);
         $result = $check_data->update(['deleted_at' => now()->format('Y-m-d H:i:s')]);
         DB::commit();

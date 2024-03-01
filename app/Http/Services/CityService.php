@@ -19,14 +19,14 @@ class CityService extends BaseService
     {
         $search = [
             'province_id' => 'province_id',
-            'city_name' => 'city_name',
+            'name' => 'name',
             'postal_code' => 'postal_code',
         ];
 
         $search_column = [
             'city_id' => 'city_id',
             'province_id' => 'province_id',
-            'city_name' => 'city_name',
+            'name' => 'name',
             'postal_code' => 'postal_code',
         ];
 

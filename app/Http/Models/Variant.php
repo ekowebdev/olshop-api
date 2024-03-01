@@ -3,10 +3,10 @@
 namespace App\Http\Models;
 
 use App\Http\Models\Cart;
-use App\Http\Models\ItemGift;
+use App\Http\Models\Product;
 use App\Http\Models\BaseModel;
-use App\Http\Models\ItemGiftImage;
-use App\Http\Models\RedeemItemGift;
+use App\Http\Models\ProductImage;
+use App\Http\Models\OrderProduct;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Variant extends BaseModel
@@ -14,16 +14,16 @@ class Variant extends BaseModel
     use HasFactory;
 
     protected $table = 'variants';
-    protected $fillable = ['item_gift_id', 'variant_name', 'variant_slug', 'variant_point', 'variant_weight', 'variant_quantity'];
+    protected $fillable = ['product_id', 'name', 'slug', 'point', 'weight', 'quantity'];
 
-    public function item_gifts()
+    public function products()
     {
-        return $this->belongsTo(ItemGift::class, 'item_gift_id');
+        return $this->belongsTo(Product::class, 'product_id');
     }
 
-    public function redeem_item_gifts()
+    public function order_products()
     {
-        return $this->hasMany(RedeemItemGift::class);
+        return $this->hasMany(OrderProduct::class);
     }
 
     public function carts()
@@ -31,9 +31,9 @@ class Variant extends BaseModel
         return $this->hasMany(Cart::class);
     }
 
-    public function item_gift_images()
+    public function product_images()
     {
-        return $this->hasOne(ItemGiftImage::class);
+        return $this->hasOne(ProductImage::class);
     }
 
     public function getVariantWeightAttribute($value)
@@ -45,12 +45,12 @@ class Variant extends BaseModel
     {
         return $query->select([
                     'id', 
-                    'item_gift_id', 
-                    'variant_name',
-                    'variant_slug',
-                    'variant_quantity',
-                    'variant_point',
-                    'variant_weight',
+                    'product_id', 
+                    'name',
+                    'slug',
+                    'quantity',
+                    'point',
+                    'weight',
                 ]);
     }
 }

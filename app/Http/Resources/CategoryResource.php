@@ -10,13 +10,13 @@ class CategoryResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'category_code' => $this->category_code,
-            'category_name' => $this->category_name,
-            'category_slug' => $this->category_slug,
-            'category_image' => $this->category_image,
-            'category_image_url' => $this->category_image_url,
-            'category_sort' => $this->category_sort,
-            'category_status' => $this->category_status,
+            'code' => $this->code,
+            'name' => $this->name,
+            'slug' => $this->slug,
+            'image' => $this->image,
+            'image_url' => $this->image_url,
+            'sort' => $this->sort,
+            'status' => $this->status,
         ];
     }
 }

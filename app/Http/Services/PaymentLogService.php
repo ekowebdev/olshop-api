@@ -19,16 +19,16 @@ class PaymentLogService extends BaseService
     public function getIndexData($locale, $data)
     {
         $search = [
-            'payment_type' => 'payment_type',
-            'redeem_id' => 'redeem_id',
-            'payment_status' => 'payment_status',
+            'type' => 'type',
+            'order_id' => 'order_id',
+            'status' => 'status',
         ];
 
         $search_column = [
             'id' => 'id',
-            'payment_type' => 'payment_type',
-            'redeem_id' => 'user_id',
-            'payment_status' => 'payment_status',
+            'type' => 'type',
+            'order_id' => 'order_id',
+            'status' => 'status',
         ];
 
         $sortable_and_searchable_column = [

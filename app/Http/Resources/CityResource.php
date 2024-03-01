@@ -9,12 +9,12 @@ class CityResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'city_id' => $this->city_id,
+            'id' => $this->city_id,
             'province' => [
-                'province_id' => $this->province->province_id,
-                'province_name' => $this->province->province_name,
+                'id' => $this->province->province_id,
+                'name' => $this->province->name,
             ],
-            'city_name' => $this->city_name,
+            'name' => $this->name,
             'postal_code' => $this->postal_code
         ];
     }

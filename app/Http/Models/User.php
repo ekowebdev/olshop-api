@@ -4,8 +4,8 @@ namespace App\Http\Models;
 
 use Validator;
 use App\Http\Models\Cart;
-use App\Http\Models\Rating;
-use App\Http\Models\Redeem;
+use App\Http\Models\Review;
+use App\Http\Models\Order;
 use Illuminate\Support\Arr;
 use App\Http\Models\Address;
 use App\Http\Models\Profile;
@@ -57,9 +57,9 @@ class User extends Authenticable implements MustVerifyEmail
         return $this->accessToken;
     }
 
-    public function redeems()
+    public function orders()
     {
-        return $this->hasMany(Redeem::class);
+        return $this->hasMany(Order::class);
     }
 
     public function wishlists()
@@ -67,9 +67,9 @@ class User extends Authenticable implements MustVerifyEmail
         return $this->hasMany(Wishlist::class);
     }
 
-    public function ratings()
+    public function reviews()
     {
-        return $this->hasMany(Rating::class);
+        return $this->hasMany(Review::class);
     }
 
 	public function carts()

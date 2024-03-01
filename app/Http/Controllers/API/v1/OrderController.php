@@ -2,17 +2,17 @@
 
 namespace App\Http\Controllers\API\v1;
 
-use App\Http\Services\RedeemService;
-use App\Http\Resources\RedeemResource;
+use App\Http\Services\OrderService;
+use App\Http\Resources\OrderResource;
 use App\Http\Resources\DeletedResource;
 use Illuminate\Support\Facades\Request;
 use App\Http\Controllers\BaseController;
 
-class RedeemController extends BaseController
+class OrderController extends BaseController
 {
     private $service;
 
-    public function __construct(RedeemService $service)
+    public function __construct(OrderService $service)
     {
         parent::__construct();
         $this->service = $service;
@@ -21,7 +21,7 @@ class RedeemController extends BaseController
     public function index($locale)
     {
         $data = $this->service->getIndexData($locale, Request::all());
-        return (RedeemResource::collection($data))
+        return (OrderResource::collection($data))
                 ->additional([
                     'sortable_and_searchable_column' => $data->sortableAndSearchableColumn,
                 ]);
@@ -30,7 +30,7 @@ class RedeemController extends BaseController
     public function show($locale, $id)
     {
         $data = $this->service->getSingleData($locale, $id);
-        return new RedeemResource($data);
+        return new OrderResource($data);
     }
 
     public function checkout($locale)

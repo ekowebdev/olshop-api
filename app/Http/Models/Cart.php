@@ -4,13 +4,13 @@ namespace App\Http\Models;
 
 use App\Http\Models\User;
 use App\Http\Models\Variant;
-use App\Http\Models\ItemGift;
+use App\Http\Models\Product;
 use BaoPham\DynamoDb\DynamoDbModel;
 
 class Cart extends DynamoDbModel
 {
     protected $primaryKey = 'id';
-    protected $fillable = ['user_id', 'item_gift_id', 'variant_id', 'cart_quantity'];
+    protected $fillable = ['user_id', 'product_id', 'variant_id', 'quantity'];
     protected $dates = ['created_at', 'updated_at'];
 
     public function getTable()
@@ -24,9 +24,9 @@ class Cart extends DynamoDbModel
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    public function item_gifts()
+    public function products()
     {
-        return $this->belongsTo(ItemGift::class, 'item_gift_id');
+        return $this->belongsTo(Product::class, 'product_id');
     }
 
     public function variants()

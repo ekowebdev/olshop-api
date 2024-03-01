@@ -96,7 +96,7 @@ class AccessTokenController extends ApiAuthController
 	        'password' => 'required_if:grant_type,password|string|min:6|max:32',
 	        'provider' => 'nullable|required_if:grant_type,social|in:google',
 			'access_token' => 'required_if:grant_type,social',
-            'g-recaptcha-response' => ['nullable', 'required_if:grant_type,password', new ReCaptcha]
+            // 'g-recaptcha-response' => ['nullable', 'required_if:grant_type,password', new ReCaptcha]
         ]);
 
         $parsedBody = array_merge($serverRequest->getParsedBody(), [

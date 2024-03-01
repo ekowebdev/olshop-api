@@ -2,7 +2,6 @@
 
 namespace App\Http\Services;
 
-use App\Http\Models\Redeem;
 use Illuminate\Support\Arr;
 use App\Http\Models\Shipping;
 use Illuminate\Support\Facades\DB;
@@ -71,8 +70,8 @@ class ShippingService extends BaseService
         ]);
 
         DB::beginTransaction();
-        if($check_data->redeems->redeem_status != 'shipped' && $check_data->redeems->redeem_status != 'success' && $check_data->redeems->payment_logs == null){
-            throw new ValidationException(json_encode(['redeem_status' => [trans('error.redeem_not_completed', ['id' => $check_data->redeem_id])]]));
+        if($check_data->orders->status != 'shipped' && $check_data->orders->status != 'success' && $check_data->orders->payment_logs == null){
+            throw new ValidationException(json_encode(['status' => [trans('error.order_not_completed', ['id' => $check_data->order_id])]]));
         }
         $data_request['resi'] = isset($data_request['resi']) ? $data_request['resi'] : $check_data->resi;
         $data_request['status'] = isset($data_request['resi']) ? 'on delivery' : $check_data->status;

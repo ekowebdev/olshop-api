@@ -3,8 +3,8 @@
 namespace App\Http\Models;
 
 use App\Http\Models\User;
-use App\Http\Models\Redeem;
-use App\Http\Models\ItemGift;
+use App\Http\Models\Order;
+use App\Http\Models\Product;
 use App\Http\Models\BaseModel;
 use App\Http\Models\ReviewFile;
 use Illuminate\Support\Facades\DB;
@@ -15,7 +15,7 @@ class Review extends BaseModel
     use HasFactory;
 
     protected $table = 'reviews';
-    protected $fillable = ['user_id', 'redeem_id', 'item_gift_id', 'review_text', 'review_rating', 'review_date'];
+    protected $fillable = ['user_id', 'order_id', 'product_id', 'text', 'rating', 'date'];
     protected $appends = ['has_files'];
 
     public function users()
@@ -23,14 +23,14 @@ class Review extends BaseModel
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    public function item_gifts()
+    public function products()
     {
-        return $this->belongsTo(ItemGift::class, 'item_gift_id');
+        return $this->belongsTo(Product::class, 'product_id');
     }
 
-    public function redeems()
+    public function orders()
     {
-        return $this->belongsTo(Redeem::class, 'redeem_id');
+        return $this->belongsTo(Order::class, 'order_id');
     }
 
     public function review_files()
@@ -49,16 +49,16 @@ class Review extends BaseModel
         return $query->select(
                 'reviews.id', 
                 'reviews.user_id', 
-                'reviews.redeem_id', 
-                'reviews.item_gift_id', 
-                'reviews.review_text', 
-                'reviews.review_rating', 
-                'reviews.review_date', 
+                'reviews.order_id', 
+                'reviews.product_id', 
+                'reviews.text', 
+                'reviews.rating', 
+                'reviews.date', 
                 'reviews.created_at',
                 DB::raw('
                     (
                         CASE 
-                            WHEN EXISTS (SELECT 1 FROM review_files WHERE review_files.review_id = reviews.id) THEN "yes"
+                            WHEN EXISTS (SELECT 1 FROM review_files WHERE review_files.id = reviews.id) THEN "yes"
                             ELSE "no"
                         END
                     ) AS has_files
@@ -66,7 +66,7 @@ class Review extends BaseModel
             )
             ->joinSub($this->lastReviews(), 'last_reviews', function ($join) {
                 $join->on('reviews.user_id', '=', 'last_reviews.user_id')
-                    ->on('reviews.item_gift_id', '=', 'last_reviews.item_gift_id')
+                    ->on('reviews.product_id', '=', 'last_reviews.product_id')
                     ->on('reviews.created_at', '=', 'last_reviews.last_created_at');
             })
             ->where('reviews.user_id', '=', DB::raw('last_reviews.user_id'));
@@ -75,7 +75,7 @@ class Review extends BaseModel
     private function lastReviews()
     {
         return DB::table('reviews')
-            ->select('user_id', 'item_gift_id', DB::raw('MAX(created_at) as last_created_at'))
-            ->groupBy('user_id', 'item_gift_id');
+            ->select('user_id', 'product_id', DB::raw('MAX(created_at) as last_created_at'))
+            ->groupBy('user_id', 'product_id');
     }
 }

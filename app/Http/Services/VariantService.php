@@ -5,7 +5,7 @@ namespace App\Http\Services;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use App\Http\Models\Variant;
-use App\Http\Models\ItemGift;
+use App\Http\Models\Product;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\QueryException;
 use App\Exceptions\ApplicationException;
@@ -24,20 +24,20 @@ class VariantService extends BaseService
     public function getIndexData($locale, $data)
     {
         $search = [
-            'item_gift_id' => 'item_gift_id',
-            'variant_name' => 'variant_name',
-            'variant_quantity' => 'variant_quantity',
-            'variant_point' => 'variant_point',
-            'variant_weight' => 'variant_weight',
+            'product_id' => 'product_id',
+            'name' => 'name',
+            'quantity' => 'quantity',
+            'point' => 'point',
+            'weight' => 'weight',
         ];
 
         $search_column = [
             'id' => 'id',
-            'item_gift_id' => 'item_gift_id',
-            'variant_name' => 'variant_name',
-            'variant_quantity' => 'variant_quantity',
-            'variant_point' => 'variant_point',
-            'variant_weight' => 'variant_weight',
+            'product_id' => 'product_id',
+            'name' => 'name',
+            'quantity' => 'quantity',
+            'point' => 'point',
+            'weight' => 'weight',
         ];
 
         $sortable_and_searchable_column = [
@@ -62,33 +62,33 @@ class VariantService extends BaseService
     public function store($locale, $data)
     {
         $data_request = Arr::only($data, [
-            'item_gift_id',
-            'variant_name',
-            'variant_slug',
-            'variant_point',
-            'variant_weight',
-            'variant_quantity',
+            'product_id',
+            'name',
+            'slug',
+            'point',
+            'weight',
+            'quantity',
         ]);
 
         $this->repository->validate($data_request, [
-                'item_gift_id' => [
+                'product_id' => [
                     'required',
-                    'exists:item_gifts,id',
+                    'exists:products,id',
                 ],
-                'variant_name' => [
+                'name' => [
                     'required',
                     'string',
-                    'unique:variants,variant_name',
+                    'unique:variants,name',
                 ],
-                'variant_point' => [
+                'point' => [
                     'required',
                     'numeric',
                 ],
-                'variant_weight' => [
+                'weight' => [
                     'required',
                     'numeric',
                 ],
-                'variant_quantity' => [
+                'quantity' => [
                     'required',
                     'numeric',
                 ],
@@ -97,16 +97,16 @@ class VariantService extends BaseService
 
         try {
             DB::beginTransaction();
-            $item_gift = ItemGift::find($data_request['item_gift_id']);
-            $data_request['variant_slug'] = $item_gift->item_gift_slug . '-' . Str::slug($data_request['variant_name']);
+            $item_gift = Product::find($data_request['product_id']);
+            $data_request['slug'] = $item_gift->item_gift_slug . '-' . Str::slug($data_request['name']);
             if($item_gift->variants->count() > 0){
-                $quantity = $item_gift->item_gift_quantity + $data_request['variant_quantity'];
-                $point = (min($item_gift->variants->pluck('variant_point')->toArray()) > (int) $data_request['variant_point']) ? (int) $data_request['variant_point'] : min($item_gift->variants->pluck('variant_point')->toArray());
-                $weight = (min($item_gift->variants->pluck('variant_weight')->toArray()) > (int) $data_request['variant_weight']) ? (int) $data_request['variant_weight'] : min($item_gift->variants->pluck('variant_weight')->toArray());
+                $quantity = $item_gift->item_gift_quantity + $data_request['quantity'];
+                $point = (min($item_gift->variants->pluck('point')->toArray()) > (int) $data_request['point']) ? (int) $data_request['point'] : min($item_gift->variants->pluck('point')->toArray());
+                $weight = (min($item_gift->variants->pluck('weight')->toArray()) > (int) $data_request['weight']) ? (int) $data_request['weight'] : min($item_gift->variants->pluck('weight')->toArray());
             } else {
-                $quantity = $data_request['variant_quantity'];
-                $point = $data_request['variant_point'];
-                $weight = $data_request['variant_weight'];
+                $quantity = $data_request['quantity'];
+                $point = $data_request['point'];
+                $weight = $data_request['weight'];
             }
             $item_gift->update([
                 'item_gift_point' => $point,
@@ -128,38 +128,38 @@ class VariantService extends BaseService
         $check_data = $this->repository->getSingleData($locale, $id);
 
         $data = array_merge([
-            'item_gift_id' => $check_data->item_gift_id,
-            'variant_name' => $check_data->variant_name,
-            'variant_slug' => $check_data->variant_slug,
-            'variant_point' => $check_data->variant_point,
-            'variant_weight' => $check_data->variant_weight,
-            'variant_quantity' => $check_data->variant_quantity,
+            'product_id' => $check_data->product_id,
+            'name' => $check_data->name,
+            'slug' => $check_data->slug,
+            'point' => $check_data->point,
+            'weight' => $check_data->weight,
+            'quantity' => $check_data->quantity,
         ], $data);
 
         $data_request = Arr::only($data, [
-            'item_gift_id',
-            'variant_name',
-            'variant_slug',
-            'variant_point',
-            'variant_weight',
-            'variant_quantity',
+            'product_id',
+            'name',
+            'slug',
+            'point',
+            'weight',
+            'quantity',
         ]);
 
         $this->repository->validate($data_request, [
-                'item_gift_id' => [
-                    'exists:item_gifts,id',
+                'product_id' => [
+                    'exists:products,id',
                 ],
-                'variant_name' => [
+                'name' => [
                     'string',
-                    'unique:variants,variant_name,' . $id,
+                    'unique:variants,name,' . $id,
                 ],
-                'variant_point' => [
+                'point' => [
                     'numeric',
                 ],
-                'variant_weight' => [
+                'weight' => [
                     'numeric',
                 ],
-                'variant_quantity' => [
+                'quantity' => [
                     'numeric',
                 ],
             ]
@@ -167,12 +167,12 @@ class VariantService extends BaseService
 
         try {
             DB::beginTransaction();
-            $item_gift = ItemGift::find($check_data->item_gift_id);
-            $data_request['variant_slug'] = $item_gift->item_gift_slug . '-' . Str::slug($data_request['variant_name']);
+            $item_gift = Product::find($check_data->product_id);
+            $data_request['slug'] = $item_gift->item_gift_slug . '-' . Str::slug($data_request['name']);
             $check_data->update($data_request);
-            $weight = min($check_data->where('item_gift_id', $data_request['item_gift_id'])->pluck('variant_weight')->toArray());
-            $point = min($check_data->where('item_gift_id', $data_request['item_gift_id'])->pluck('variant_point')->toArray());
-            $quantity = array_sum($check_data->where('item_gift_id', $data_request['item_gift_id'])->pluck('variant_quantity')->toArray());
+            $weight = min($check_data->where('product_id', $data_request['product_id'])->pluck('weight')->toArray());
+            $point = min($check_data->where('product_id', $data_request['product_id'])->pluck('point')->toArray());
+            $quantity = array_sum($check_data->where('product_id', $data_request['product_id'])->pluck('quantity')->toArray());
             $item_gift->update([
                 'item_gift_point' => $point,
                 'item_gift_weight' => $weight,
@@ -194,14 +194,14 @@ class VariantService extends BaseService
         try {
             DB::beginTransaction();
             $result = $check_data->delete();
-            $item_gift = ItemGift::with('variants')->find($check_data->item_gift_id);
+            $item_gift = Product::with('variants')->find($check_data->product_id);
             $variants = $item_gift->variants->where('id', '!=', $id);
-            $min_variant_point = $variants->min('variant_point');
-            $min_variant_weight = $variants->min('variant_weight');
+            $min_point = $variants->min('point');
+            $min_weight = $variants->min('weight');
             $item_gift->update([
-                'item_gift_point' => $min_variant_point ?? 0,
-                'item_gift_weight' => $min_variant_weight ?? 0,
-                'item_gift_quantity' => $item_gift->item_gift_quantity - $check_data->variant_quantity,
+                'item_gift_point' => $min_point ?? 0,
+                'item_gift_weight' => $min_weight ?? 0,
+                'item_gift_quantity' => $item_gift->item_gift_quantity - $check_data->quantity,
             ]);
             DB::commit();
         } catch (QueryException $e) {

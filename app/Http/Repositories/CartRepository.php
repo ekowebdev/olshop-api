@@ -87,13 +87,13 @@ class CartRepository extends BaseRepository
         return $result;
 	}
 
-    public function getByUserItemAndVariant($user_id, $item_gift_id, $variant_id)
+    public function getByUserProductAndVariant($user_id, $product_id, $variant_id)
 	{
         $variant_id = ($variant_id == null) ? '' : intval($variant_id);
 		$result = $this->model
                   ->all()
                   ->where('user_id', '=', intval($user_id))
-                  ->where('item_gift_id', '=', intval($item_gift_id))
+                  ->where('product_id', '=', intval($product_id))
                   ->where('variant_id', '=', $variant_id);
 		return $result;	
 	}

@@ -3,7 +3,7 @@
 namespace App\Http\Models;
 
 use App\Http\Models\City;
-use App\Http\Models\Redeem;
+use App\Http\Models\Order;
 use App\Http\Models\BaseModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -12,11 +12,11 @@ class Shipping extends BaseModel
     use HasFactory;
 
     protected $table = 'shippings';
-    protected $fillable = ['redeem_id', 'origin', 'destination', 'weight', 'courier', 'service', 'description', 'cost', 'etd', 'resi', 'status'];
+    protected $fillable = ['order_id', 'origin', 'destination', 'weight', 'courier', 'service', 'description', 'cost', 'etd', 'resi', 'status'];
 
-    public function redeems()
+    public function orders()
     {
-        return $this->belongsTo(Redeem::class, 'redeem_id');
+        return $this->belongsTo(Order::class, 'order_id');
     }
 
     public function city_origin()
@@ -38,7 +38,7 @@ class Shipping extends BaseModel
     {
         return $query->select([
                     'id', 
-                    'redeem_id', 
+                    'order_id', 
                     'origin', 
                     'destination', 
                     'weight', 

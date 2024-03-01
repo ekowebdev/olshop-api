@@ -19,13 +19,13 @@ class SubdistrictService extends BaseService
     {
         $search = [
             'city_id' => 'city_id',
-            'subdistrict_name' => 'subdistrict_name',
+            'name' => 'name',
         ];
 
         $search_column = [
-            'subdistrict_id' => 'subdistrict_id',
+            'id' => 'id',
             'city_id' => 'city_id',
-            'subdistrict_name' => 'subdistrict_name',
+            'name' => 'name',
         ];
 
         $sortable_and_searchable_column = [

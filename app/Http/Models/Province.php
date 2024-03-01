@@ -12,7 +12,7 @@ class Province extends BaseModel
     use HasFactory;
 
     protected $table = 'provinces';
-    protected $fillable = ['province_name'];
+    protected $fillable = ['name'];
 
     public function address()
     {
@@ -28,7 +28,7 @@ class Province extends BaseModel
     {
         return $query->select([
                     'province_id', 
-                    'province_name',
+                    'name',
                 ]);
     }
 }

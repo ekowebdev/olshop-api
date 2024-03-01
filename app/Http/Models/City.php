@@ -15,7 +15,7 @@ class City extends BaseModel
     use HasFactory;
 
     protected $table = 'cities';
-    protected $fillable = ['province_id', 'city_name', 'postal_code'];
+    protected $fillable = ['province_id', 'name', 'postal_code'];
 
     public function address()
     {
@@ -42,7 +42,7 @@ class City extends BaseModel
         return $query->select([
                     'city_id', 
                     'province_id', 
-                    'city_name', 
+                    'name', 
                     'postal_code',
                 ]);
     }

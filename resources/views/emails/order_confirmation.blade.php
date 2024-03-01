@@ -45,7 +45,7 @@
                     </div>
                     <div
                         style="padding-top: 18px; padding-bottom: 5px; font-size: 12px; color: #272727; font-weight: 600; line-height: 19px;">
-                        #{{ $header_data['redeem_code'] }}
+                        #{{ $header_data['code'] }}
                     </div>
                 </div>
             </td>

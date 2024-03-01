@@ -12,7 +12,7 @@ class Subdistrict extends BaseModel
     use HasFactory;
 
     protected $table = 'subdistricts';
-    protected $fillable = ['city_id', 'subdistrict_name'];
+    protected $fillable = ['city_id', 'name'];
 
     public function address()
     {
@@ -29,7 +29,7 @@ class Subdistrict extends BaseModel
         return $query->select([
                     'subdistrict_id',
                     'city_id',  
-                    'subdistrict_name',
+                    'name',
                 ]);
     }
 }

@@ -22,16 +22,16 @@ class CategoryService extends BaseService
     public function getIndexData($locale, $data)
     {
         $search = [
-            'category_name' => 'category_name',
-            'category_slug' => 'category_slug',
-            'category_sort' => 'category_sort',
+            'name' => 'name',
+            'slug' => 'slug',
+            'sort' => 'sort',
         ];
 
         $search_column = [
             'id' => 'id',
-            'category_name' => 'category_name',
-            'category_slug' => 'category_slug',
-            'category_sort' => 'category_sort',
+            'name' => 'name',
+            'slug' => 'slug',
+            'sort' => 'sort',
         ];
 
         $sortable_and_searchable_column = [
@@ -56,22 +56,22 @@ class CategoryService extends BaseService
     public function store($locale, $data)
     {
         $data_request = Arr::only($data, [
-            'category_name',
-            'category_sort',
-            'category_image',
+            'name',
+            'sort',
+            'image',
         ]);
 
         $this->repository->validate($data_request, [
-                'category_name' => [
+                'name' => [
                     'required',
-                    'unique:categories,category_name',
+                    'unique:categories,name',
                 ],
-                'category_sort' => [
+                'sort' => [
                     'required',
                     'integer',
-                    'unique:categories,category_sort',
+                    'unique:categories,sort',
                 ],
-                'category_image' => [
+                'image' => [
                     'required',
                     'max:1000',
                     'image',
@@ -81,17 +81,17 @@ class CategoryService extends BaseService
         );
 
         DB::beginTransaction();
-        $data_request['category_code'] = Str::uuid();
-        $data_request['category_slug'] = Str::slug($data_request['category_name']);
-        $image = $data_request['category_image'];
+        $data_request['code'] = Str::uuid();
+        $data_request['slug'] = Str::slug($data_request['name']);
+        $image = $data_request['image'];
         $image_name = time() . '.' . $image->getClientOriginalExtension();
         Storage::disk('s3')->put('images/category/' . $image_name, file_get_contents($image));
         $result = $this->model->create([
-            'category_code' => $data_request['category_code'],
-            'category_name' => $data_request['category_name'],
-            'category_slug' => $data_request['category_slug'],
-            'category_sort' => $data_request['category_sort'],
-            'category_image' => $image_name,
+            'code' => $data_request['code'],
+            'name' => $data_request['name'],
+            'slug' => $data_request['slug'],
+            'sort' => $data_request['sort'],
+            'image' => $image_name,
         ]);
         DB::commit();
 
@@ -103,20 +103,20 @@ class CategoryService extends BaseService
         $check_data = $this->repository->getSingleData($locale, $id);
 
         $data_request = Arr::only($data, [
-            'category_name',
-            'category_sort',
-            'category_image',
+            'name',
+            'sort',
+            'image',
         ]);
 
         $this->repository->validate($data_request, [
-            'category_name' => [
-                'unique:categories,category_name,' . $id,
+            'name' => [
+                'unique:categories,name,' . $id,
             ],
-            'category_sort' => [
+            'sort' => [
                 'integer',
-                'unique:categories,category_sort,' . $id,
+                'unique:categories,sort,' . $id,
             ],
-            'category_image' => [
+            'image' => [
                 'max:1000',
                 'image',
                 'mimes:jpg,png',
@@ -124,19 +124,19 @@ class CategoryService extends BaseService
         ]);
 
         DB::beginTransaction();
-        if (isset($data_request['category_image'])) {
-            if(Storage::disk('s3')->exists('images/category/' . $check_data->category_image)) {
-                Storage::disk('s3')->delete('images/category/' . $check_data->category_image);
+        if (isset($data_request['image'])) {
+            if(Storage::disk('s3')->exists('images/category/' . $check_data->image)) {
+                Storage::disk('s3')->delete('images/category/' . $check_data->image);
             }
-            $image = $data_request['category_image'];
+            $image = $data_request['image'];
             $image_name = time() . '.' . $image->getClientOriginalExtension();
             Storage::disk('s3')->put('images/category/' . $image_name, file_get_contents($image));
-            $check_data->category_image = $image_name;
+            $check_data->image = $image_name;
         }
-        $data_request['category_slug'] = Str::slug($data_request['category_name'] ?? $check_data->category_name);
-        $check_data->category_name = $data_request['category_name'] ?? $check_data->category_name;
-        $check_data->category_slug = $data_request['category_slug'] ?? $check_data->category_slug;
-        $check_data->category_sort = $data_request['category_sort'] ?? $check_data->category_sort;
+        $data_request['slug'] = Str::slug($data_request['name'] ?? $check_data->name);
+        $check_data->name = $data_request['name'] ?? $check_data->name;
+        $check_data->slug = $data_request['slug'] ?? $check_data->slug;
+        $check_data->sort = $data_request['sort'] ?? $check_data->sort;
         $check_data->save();
         DB::commit();
 
@@ -147,8 +147,8 @@ class CategoryService extends BaseService
     {
         $check_data = $this->repository->getSingleData($locale, $id);
         DB::beginTransaction();
-        if(Storage::disk('s3')->exists('images/category/' . $check_data->category_image)) {
-            Storage::disk('s3')->delete('images/category/' . $check_data->category_image);
+        if(Storage::disk('s3')->exists('images/category/' . $check_data->image)) {
+            Storage::disk('s3')->delete('images/category/' . $check_data->image);
         }
         $result = $check_data->delete();
         DB::commit();

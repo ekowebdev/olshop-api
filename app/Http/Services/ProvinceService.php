@@ -18,12 +18,12 @@ class ProvinceService extends BaseService
     public function getIndexData($locale, $data)
     {
         $search = [
-            'province_name' => 'province_name',
+            'name' => 'name',
         ];
 
         $search_column = [
-            'province_id' => 'province_id',
-            'province_name' => 'province_name',
+            'id' => 'id',
+            'name' => 'name',
         ];
 
         $sortable_and_searchable_column = [

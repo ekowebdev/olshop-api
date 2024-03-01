@@ -7,15 +7,15 @@ use App\Http\Models\Address;
 use App\Http\Models\Shipping;
 use App\Http\Models\BaseModel;
 use App\Http\Models\PaymentLog;
-use App\Http\Models\RedeemItemGift;
+use App\Http\Models\OrderProduct;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Redeem extends BaseModel
+class Order extends BaseModel
 {
     use HasFactory;
 
-    protected $table = 'redeems';
-    protected $fillable = ['user_id', 'address_id', 'redeem_code', 'total_point', 'shipping_fee', 'total_amount', 'note', 'redeem_date', 'snap_token', 'snap_url', 'metadata', 'redeem_status', 'deleted_at'];
+    protected $table = 'orders';
+    protected $fillable = ['user_id', 'address_id', 'code', 'total_point', 'shipping_fee', 'total_amount', 'note', 'date', 'snap_token', 'snap_url', 'metadata', 'status', 'deleted_at'];
     protected $dates = ['deleted_at'];
 
     public function users()
@@ -23,9 +23,9 @@ class Redeem extends BaseModel
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    public function redeem_item_gifts()
+    public function order_products()
     {
-        return $this->hasMany(RedeemItemGift::class);
+        return $this->hasMany(OrderProduct::class);
     }
 
     public function payment_logs()
@@ -49,16 +49,16 @@ class Redeem extends BaseModel
                     'id', 
                     'user_id', 
                     'address_id', 
-                    'redeem_code', 
+                    'code', 
                     'total_point', 
                     'shipping_fee', 
                     'total_amount',
-                    'redeem_date',
+                    'date',
                     'note',
 		            'snap_token',
                     'snap_url', 
                     'metadata', 
-                    'redeem_status',
+                    'status',
                     'created_at',
                 ])
                 ->whereNull('deleted_at');
@@ -70,16 +70,16 @@ class Redeem extends BaseModel
                     'id',
                     'user_id', 
                     'address_id', 
-                    'redeem_code', 
+                    'code', 
                     'total_point', 
                     'shipping_fee', 
                     'total_amount',
-                    'redeem_date',
+                    'date',
                     'note',
 		            'snap_token',
                     'snap_url', 
                     'metadata', 
-                    'redeem_status',
+                    'status',
                     'created_at',
                 ]);
     }

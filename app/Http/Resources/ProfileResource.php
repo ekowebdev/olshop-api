@@ -15,7 +15,7 @@ class ProfileResource extends JsonResource
             'phone_number' => $this->phone_number,
             'avatar' => $this->avatar,
             'avatar_url' => $this->avatar_url,
-            'users' => $this->users->makeHidden(['email_verified_at', 'google_id', 'google_access_token', 'created_at', 'updated_at']),
+            'users' => $this->users->makeHidden(['email_verified_at', 'google_access_token', 'created_at', 'updated_at']),
         ];
     }
 }

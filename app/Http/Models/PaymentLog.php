@@ -2,7 +2,7 @@
 
 namespace App\Http\Models;
 
-use App\Http\Models\Redeem;
+use App\Http\Models\Order;
 use App\Http\Models\BaseModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -11,20 +11,20 @@ class PaymentLog extends BaseModel
     use HasFactory;
 
     protected $table = 'payment_logs';
-    protected $fillable = ['payment_type', 'redeem_id', 'payment_status', 'raw_response'];
+    protected $fillable = ['type', 'order_id', 'status', 'raw_response'];
 
-    public function redeems()
+    public function orders()
     {
-        return $this->belongsTo(Redeem::class, 'redeem_id');
+        return $this->belongsTo(Order::class, 'order_id');
     }
 
     public function scopeGetAll($query)
     {      
         return $query->select([
                     'id',
-                    'payment_type', 
-                    'redeem_id', 
-                    'payment_status', 
+                    'type', 
+                    'order_id', 
+                    'status', 
                     'raw_response'
                 ]);
     }

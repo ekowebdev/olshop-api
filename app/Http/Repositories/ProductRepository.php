@@ -3,17 +3,17 @@
 namespace App\Http\Repositories;
 
 use Illuminate\Support\Arr;
-use App\Http\Models\ItemGift;
+use App\Http\Models\Product;
 use App\Http\Models\SearchLog;
 use App\Exceptions\DataEmptyException;
 use Illuminate\Support\Facades\Request;
 
-class ItemGiftRepository extends BaseRepository 
+class ProductRepository extends BaseRepository 
 {
     private $repository_name = 'Product';
     private $model;
 
-	public function __construct(ItemGift $model)
+	public function __construct(Product $model)
 	{
 		$this->model = $model;
 	}
@@ -49,7 +49,7 @@ class ItemGiftRepository extends BaseRepository
 	{
 		$result = $this->model
                   ->getAll()
-                  ->where('item_gift_slug', $slug)	
+                  ->where('slug', $slug)	
                   ->first();
 		if($result === null) throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => $this->repository_name], $locale));
         return $result;	
@@ -63,7 +63,7 @@ class ItemGiftRepository extends BaseRepository
 		$result = $this->model
                 ->getAll()
                 ->whereHas('category', function ($query) use ($category) {
-                    $query->where('category_slug', $category);
+                    $query->where('slug', $category);
                 })
                 ->setSortableAndSearchableColumn($sortable_and_searchable_column)
                 ->search()
@@ -83,7 +83,7 @@ class ItemGiftRepository extends BaseRepository
 		$result = $this->model
                 ->getAll()
                 ->whereHas('brand', function ($query) use ($brand) {
-                    $query->where('brand_slug', $brand);
+                    $query->where('slug', $brand);
                 })
                 ->setSortableAndSearchableColumn($sortable_and_searchable_column)
                 ->search()
@@ -104,7 +104,7 @@ class ItemGiftRepository extends BaseRepository
 
         $search_logs = SearchLog::LastMonth()->where('user_id', auth()->user()->id)->get()->toArray();
 
-        $match_item_gifts = [];
+        $match_products = [];
 
         // Urutkan $search_logs berdasarkan panjang search_text secara descending
         usort($search_logs, function ($a, $b) {
@@ -115,44 +115,44 @@ class ItemGiftRepository extends BaseRepository
             $search_text = $item["search_text"];
             // Cari key yang mirip
             $found = false;
-            foreach ($match_item_gifts as $key => $value) {
+            foreach ($match_products as $key => $value) {
                 similar_text($search_text, $key, $percent);
                 // Jika ada yang mirip, tambahkan ke nilai yang sudah ada
                 if ($percent >= 65) {
-                    $match_item_gifts[$key] += 1;
+                    $match_products[$key] += 1;
                     $found = true;
                     break;
                 }
             }
             // Jika tidak ada yang mirip, buat key baru
             if (!$found) {
-                $match_item_gifts[$search_text] = 1;
+                $match_products[$search_text] = 1;
             }
         }
 
         $min_search = Arr::get(Request::all(), 'min_search', 5);
 
-        $item_gifts = array_filter($match_item_gifts, function ($count) use ($min_search) {
+        $products = array_filter($match_products, function ($count) use ($min_search) {
             return $count >= $min_search;
         });
-        $item_gifts = array_keys($item_gifts);
+        $products = array_keys($products);
 
-        if(count($item_gifts) == 0){
+        if(count($products) == 0){
             throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => $this->repository_name], $locale));
         }
         
         $result = $this->model
                     ->getAll()
-                    ->where(function ($query) use ($item_gifts) {
-                        foreach ($item_gifts as $item) {
-                            $query->orWhere('item_gift_name', 'LIKE', '%' . $item . '%');
+                    ->where(function ($query) use ($products) {
+                        foreach ($products as $item) {
+                            $query->orWhere('name', 'LIKE', '%' . $item . '%');
                         }
                     })
                     ->setSortableAndSearchableColumn($sortable_and_searchable_column)
                     ->search()
                     ->sort()
-                    ->groupBy('item_gift_name')
-                    ->havingRaw('total_redeem = MAX(total_redeem)')
+                    ->groupBy('name')
+                    ->havingRaw('total_order = MAX(total_order)')
                     ->paginate(Arr::get(Request::all(), 'per_page', 15));
         $result->sortableAndSearchableColumn = $sortable_and_searchable_column;
         if($result->total() == 0) throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => $this->repository_name], $locale));

@@ -3,7 +3,7 @@
 namespace App\Jobs;
 
 use Illuminate\Bus\Queueable;
-use App\Mail\RedeemConfirmation;
+use App\Mail\OrderConfirmation;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
@@ -11,7 +11,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 
-class SendEmailRedeemConfirmationJob implements ShouldQueue
+class SendEmailOrderConfirmationJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -37,6 +37,6 @@ class SendEmailRedeemConfirmationJob implements ShouldQueue
      */
     public function handle()
     {
-        Mail::to($this->email)->send(new RedeemConfirmation($this->header_data, $this->detail_data, $this->locale));
+        Mail::to($this->email)->send(new OrderConfirmation($this->header_data, $this->detail_data, $this->locale));
     }
 }

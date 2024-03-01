@@ -4,7 +4,7 @@ namespace App\Http\Models;
 
 use App\Http\Models\City;
 use App\Http\Models\User;
-use App\Http\Models\Redeem;
+use App\Http\Models\Order;
 use App\Http\Models\Province;
 use App\Http\Models\BaseModel;
 use App\Http\Models\Subdistrict;
@@ -16,25 +16,7 @@ class Address extends BaseModel
     use HasFactory;
 
     protected $table = 'addresses';
-    protected $fillable = ['user_id', 'person_name', 'person_phone', 'province_id', 'city_id', 'subdistrict_id', 'postal_code', 'address'];
-
-    // public static function boot()
-    // {
-    //     parent::boot();
-
-    //     static::saving(function ($address) {
-    //         if ($address->is_main === 'yes' && $address->user_id) {
-    //             $existing_main_address = $address->users->address()
-    //                 ->where('is_main', 'yes')
-    //                 ->where('id', '<>', $address->id)
-    //                 ->first();
-
-    //             if ($existing_main_address) {
-    //                 throw new ValidationException(json_encode(['user_id' => [trans('error.main_address_exists', ['id' => $address->user_id])]]));
-    //             }
-    //         }
-    //     });
-    // }
+    protected $fillable = ['user_id', 'person_name', 'person_phone', 'province_id', 'city_id', 'subdistrict_id', 'postal_code', 'street'];
 
     public function users()
     {
@@ -56,9 +38,9 @@ class Address extends BaseModel
         return $this->belongsTo(Subdistrict::class, 'subdistrict_id', 'subdistrict_id');
     }
 
-    public function redeems()
+    public function orders()
     {
-        return $this->hasMany(Redeem::class);
+        return $this->hasMany(Order::class);
     }
 
     public function scopeGetAll($query)
@@ -72,7 +54,7 @@ class Address extends BaseModel
                     'addresses.city_id',
                     'addresses.subdistrict_id', 
                     'addresses.postal_code', 
-                    'addresses.address',
+                    'addresses.street',
                     DB::raw('
                         (
                             CASE WHEN users.main_address_id = addresses.id 

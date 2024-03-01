@@ -5,17 +5,17 @@ namespace App\Http\Services;
 use Image;
 use Illuminate\Support\Arr;
 use App\Http\Models\Variant;
-use App\Http\Models\ItemGiftImage;
+use App\Http\Models\ProductImage;
 use Illuminate\Support\Facades\DB;
 use App\Exceptions\ValidationException;
 use Illuminate\Support\Facades\Storage;
-use App\Http\Repositories\ItemGiftImageRepository;
+use App\Http\Repositories\ProductImageRepository;
 
-class ItemGiftImageService extends BaseService
+class ProductImageService extends BaseService
 {
     private $model, $repository;
     
-    public function __construct(ItemGiftImage $model, ItemGiftImageRepository $repository)
+    public function __construct(ProductImage $model, ProductImageRepository $repository)
     {
         $this->model = $model;
         $this->repository = $repository;
@@ -24,13 +24,13 @@ class ItemGiftImageService extends BaseService
     public function getIndexData($locale, $data)
     {
         $search = [
-            'item_gift_id' => 'item_gift_id',
+            'product_id' => 'product_id',
             'variant_id' => 'variant_id',
         ];
 
         $search_column = [
             'id' => 'id',
-            'item_gift_id' => 'item_gift_id',
+            'product_id' => 'product_id',
             'variant_id' => 'variant_id',
         ];
 
@@ -51,21 +51,21 @@ class ItemGiftImageService extends BaseService
     public function store($locale, $data)
     {
         $data_request = Arr::only($data, [
-            'item_gift_id',
+            'product_id',
             'variant_id',
-            'item_gift_image',
+            'image',
         ]);
 
         $this->repository->validate($data_request, [
-                'item_gift_id' => [
+                'product_id' => [
                     'required',
-                    'exists:item_gifts,id',
+                    'exists:products,id',
                 ],
                 'variant_id' => [
                     'nullable',
                     'exists:variants,id',
                 ],
-                'item_gift_image' => [
+                'image' => [
                     'required',
                     'max:1000',
                     'image',
@@ -76,15 +76,15 @@ class ItemGiftImageService extends BaseService
 
         DB::beginTransaction();
         if(isset($data_request['variant_id'])){
-            $variant = Variant::where('id', $data_request['variant_id'])->where('item_gift_id', $data_request['item_gift_id'])->first();
+            $variant = Variant::where('id', $data_request['variant_id'])->where('product_id', $data_request['product_id'])->first();
             if(is_null($variant)) {
-                throw new ValidationException(json_encode(['item_gift_variants' => [trans('error.variant_not_found_in_item_gifts', ['id' => $data_request['item_gift_id']])]]));           }
-            $exists_variant = $this->repository->getSingleDataByItemGiftVariant($locale, $data_request['item_gift_id'], $data_request['variant_id']);
+                throw new ValidationException(json_encode(['product_variants' => [trans('error.variant_not_found_in_products', ['id' => $data_request['product_id']])]]));           }
+            $exists_variant = $this->repository->getSingleDataByProductVariant($locale, $data_request['product_id'], $data_request['variant_id']);
             if(!is_null($exists_variant)){
-                throw new ValidationException(json_encode(['item_gift_images' => [trans('error.exists_image_variant_item_gifts', ['id' => $data_request['item_gift_id'], 'variant_id' => $data_request['variant_id']])]]));
+                throw new ValidationException(json_encode(['images' => [trans('error.exists_image_variant_products', ['id' => $data_request['product_id'], 'variant_id' => $data_request['variant_id']])]]));
             }
         }
-        $image = $data_request['item_gift_image'];
+        $image = $data_request['image'];
         $image_name = time() . '.' . $image->getClientOriginalExtension();
         Storage::disk('s3')->put('images/' . $image_name, file_get_contents($image));
         $img = Image::make($image);
@@ -92,9 +92,9 @@ class ItemGiftImageService extends BaseService
         $img_thumb = $img_thumb->stream()->detach();
         Storage::disk('s3')->put('images/thumbnails/' . $image_name, $img_thumb);
         $result = $this->model->create([
-            'item_gift_id' => $data_request['item_gift_id'],
+            'product_id' => $data_request['product_id'],
             'variant_id' => (isset($data_request['variant_id'])) ? $data_request['variant_id'] : null,
-            'item_gift_image' => $image_name,
+            'image' => $image_name,
         ]);
         DB::commit();
 
@@ -106,19 +106,19 @@ class ItemGiftImageService extends BaseService
         $check_data = $this->repository->getSingleData($locale, $id);
 
         $data_request = Arr::only($data, [
-            'item_gift_id',
+            'product_id',
             'variant_id',
-            'item_gift_image',
+            'image',
         ]);
 
         $this->repository->validate($data_request, [
-                'item_gift_id' => [
-                    'exists:item_gifts,id',
+                'product_id' => [
+                    'exists:products,id',
                 ],
                 'variant_id' => [
                     'exists:variants,id',
                 ],
-                'item_gift_image' => [
+                'image' => [
                     'max:1000',
                     'image',
                     'mimes:jpg,png',
@@ -128,26 +128,26 @@ class ItemGiftImageService extends BaseService
 
         DB::beginTransaction();
         if(isset($data_request['variant_id']) && !empty($data_request['variant_id'])){
-            $variant = Variant::where('id', $data_request['variant_id'])->where('item_gift_id', isset($data_request['item_gift_id']) ? $data_request['item_gift_id'] : $check_data->item_gift_id)->first();
+            $variant = Variant::where('id', $data_request['variant_id'])->where('product_id', isset($data_request['product_id']) ? $data_request['product_id'] : $check_data->product_id)->first();
             if(is_null($variant)) {
-                throw new ValidationException(json_encode(['item_gift_variants' => [trans('error.variant_not_found_in_item_gifts', ['id' => $data_request['item_gift_id']])]])); 
+                throw new ValidationException(json_encode(['product_variants' => [trans('error.variant_not_found_in_products', ['id' => $data_request['product_id']])]])); 
             }
         }
-        if (isset($data_request['item_gift_image'])) {
-            if(Storage::disk('s3')->exists('images/' . $check_data->item_gift_image)) {
-                Storage::disk('s3')->delete('images/' . $check_data->item_gift_image);
+        if (isset($data_request['image'])) {
+            if(Storage::disk('s3')->exists('images/' . $check_data->image)) {
+                Storage::disk('s3')->delete('images/' . $check_data->image);
             }
-            if(Storage::disk('s3')->exists('images/' . 'thumbnails/' . $check_data->item_gift_image)) {
-                Storage::disk('s3')->delete('images/' . 'thumbnails/' . $check_data->item_gift_image);
+            if(Storage::disk('s3')->exists('images/' . 'thumbnails/' . $check_data->image)) {
+                Storage::disk('s3')->delete('images/' . 'thumbnails/' . $check_data->image);
             }
-            $image = $data_request['item_gift_image'];
+            $image = $data_request['image'];
             $image_name = time() . '.' . $image->getClientOriginalExtension();
             Storage::disk('s3')->put('images/' . $image_name, file_get_contents($image));
             $img = Image::make($image);
             $img_thumb = $img->crop(5, 5);
             $img_thumb = $img_thumb->stream()->detach();
             Storage::disk('s3')->put('images/thumbnails/' . $image_name, $img_thumb);
-            $check_data->item_gift_image = $image_name;
+            $check_data->image = $image_name;
         }
         if(isset($data_request['variant_id'])) {
             if($data_request['variant_id'] == ''){
@@ -158,7 +158,7 @@ class ItemGiftImageService extends BaseService
         } else {
             $variant_id = $check_data->variant_id;
         }
-        $check_data->item_gift_id = $data_request['item_gift_id'] ?? $check_data->item_gift_id;
+        $check_data->product_id = $data_request['product_id'] ?? $check_data->product_id;
         $check_data->variant_id = $variant_id;
         $check_data->save();
         DB::commit();
@@ -171,11 +171,11 @@ class ItemGiftImageService extends BaseService
         $data = $this->repository->getSingleData($locale, $id);
         
         DB::beginTransaction();
-        if(Storage::disk('s3')->exists('images/' . $data->item_gift_image)) {
-            Storage::disk('s3')->delete('images/' . $data->item_gift_image);
+        if(Storage::disk('s3')->exists('images/' . $data->image)) {
+            Storage::disk('s3')->delete('images/' . $data->image);
         }
-        if(Storage::disk('s3')->exists('images/' . 'thumbnails/' . $data->item_gift_image)) {
-            Storage::disk('s3')->delete('images/' . 'thumbnails/' . $data->item_gift_image);
+        if(Storage::disk('s3')->exists('images/' . 'thumbnails/' . $data->image)) {
+            Storage::disk('s3')->delete('images/' . 'thumbnails/' . $data->image);
         }
         $result = $data->delete();
         DB::commit();

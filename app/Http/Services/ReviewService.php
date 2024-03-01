@@ -8,40 +8,40 @@ use Illuminate\Support\Arr;
 use App\Http\Models\ReviewFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
-use App\Http\Repositories\RedeemRepository;
+use App\Http\Repositories\OrderRepository;
 use App\Http\Repositories\ReviewRepository;
 
 class ReviewService extends BaseService
 {
-    private $model, $repository, $redeem_repository;
+    private $model, $repository, $order_repository;
     
-    public function __construct(Review $model, ReviewRepository $repository, RedeemRepository $redeem_repository)
+    public function __construct(Review $model, ReviewRepository $repository, OrderRepository $order_repository)
     {
         $this->model = $model;
         $this->repository = $repository;
-        $this->redeem_repository = $redeem_repository;
+        $this->order_repository = $order_repository;
     }
 
     public function getIndexData($locale, $data)
     {
         $search = [
             'user_id' => 'user_id',
-            'redeem_id' => 'redeem_id',
-            'item_gift_id' => 'item_gift_id',
-            'review_text' => 'review_text',
-            'review_rating' => 'review_rating',
-            'review_date' => 'review_date',
+            'order_id' => 'order_id',
+            'product_id' => 'product_id',
+            'text' => 'text',
+            'rating' => 'rating',
+            'date' => 'date',
             'has_files' => 'has_files',
         ];
 
         $search_column = [
             'id' => 'id',
             'user_id' => 'user_id',
-            'redeem_id' => 'redeem_id',
-            'item_gift_id' => 'item_gift_id',
-            'review_text' => 'review_text',
-            'review_rating' => 'review_rating',
-            'review_date' => 'review_date',
+            'order_id' => 'order_id',
+            'product_id' => 'product_id',
+            'text' => 'text',
+            'rating' => 'rating',
+            'date' => 'date',
             'has_files' => 'has_files',
         ];
 
@@ -62,35 +62,35 @@ class ReviewService extends BaseService
     public function store($locale, $data)
     {
         $data_request = Arr::only($data, [
-            'redeem_id',
-            'item_gift_id',
-            'review_text',
-            'review_rating',
-            'review_file',
+            'order_id',
+            'product_id',
+            'text',
+            'rating',
+            'file',
         ]);
 
         $this->repository->validate($data_request, [
-                'redeem_id' => [
+                'order_id' => [
                     'required',
-                    'exists:redeems,id',
+                    'exists:orders,id',
                 ],
-                'item_gift_id' => [
+                'product_id' => [
                     'required',
-                    'exists:item_gifts,id',
+                    'exists:products,id',
                 ],
-                'review_text' => [
+                'text' => [
                     'required'
                 ],
-                'review_rating' => [
+                'rating' => [
                     'required',
                     'numeric',
                     'between:0.5,5'
                 ],
-                'review_file' => [
+                'file' => [
                     'nullable',
                     'array',
                 ],
-                'review_file.*' => [
+                'file.*' => [
                     'nullable',
                     'max:10000',
                     'mimes:jpg,png,mp4,mov',
@@ -101,40 +101,40 @@ class ReviewService extends BaseService
         DB::beginTransaction();
 
         $user = auth()->user();
-        $redeem = $this->redeem_repository->getSingleData($locale, $data_request['redeem_id']);
+        $order = $this->order_repository->getSingleData($locale, $data_request['order_id']);
 
-        if ($redeem->redeem_status != 'shipped' && $redeem->redeem_status != 'success' && $redeem->payment_logs == null) {
+        if ($order->status != 'shipped' && $order->status != 'success' && $order->payment_logs == null) {
             return response()->json([
-                'message' => trans('error.redeem_not_completed', ['id' => $data_request['redeem_id']]),
+                'message' => trans('error.order_not_completed', ['id' => $data_request['order_id']]),
                 'status' => 400,
             ], 400);
         }
 
-        $check_rating = $this->repository->getDataByUserRedeemAndItem($locale, $user->id, $data_request['redeem_id'], $data_request['item_gift_id']);
+        $check_rating = $this->repository->getDataByUserOrderAndProduct($locale, $user->id, $data_request['order_id'], $data_request['product_id']);
 
         if (isset($check_rating)) {
             return response()->json([
-                'message' => trans('error.already_reviews', ['redeem_id' => $data_request['redeem_id'], 'item_gift_id' => $data_request['item_gift_id']]),
+                'message' => trans('error.already_reviews', ['order_id' => $data_request['order_id'], 'product_id' => $data_request['product_id']]),
                 'status' => 409,
             ], 409);
         }
 
         $result = Review::create([
             'user_id' => $user->id,
-            'redeem_id' => $data_request['redeem_id'],
-            'item_gift_id' => $data_request['item_gift_id'],
-            'review_text' => $data_request['review_text'],
-            'review_rating' => rounded_rating($data_request['review_rating']),
-            'review_date' => date('Y-m-d'),
+            'order_id' => $data_request['order_id'],
+            'product_id' => $data_request['product_id'],
+            'text' => $data_request['text'],
+            'rating' => rounded_rating($data_request['rating']),
+            'date' => date('Y-m-d'),
         ]);
 
-        if(isset($data_request['review_file'])){
-            foreach ($data_request['review_file'] as $file) {
+        if(isset($data_request['file'])){
+            foreach ($data_request['file'] as $file) {
                 $file_name = time() . '.' . $file->getClientOriginalExtension();
                 Storage::disk('s3')->put('files/reviews/' . $file_name, file_get_contents($file));
                 ReviewFile::create([
                     'review_id' => $result->id,
-                    'review_file' => $file_name,
+                    'file' => $file_name,
                 ]);
             }
         }
@@ -153,43 +153,43 @@ class ReviewService extends BaseService
         $data_request = $data;
 
         $this->repository->validate($data_request, [
-            'redeem_id' => [
+            'order_id' => [
                 'required',
                 'array',
             ],
-            'redeem_id.*' => [
+            'order_id.*' => [
                 'required',
-                'exists:redeems,id'
+                'exists:orders,id'
             ],
-            'item_gift_id' => [
-                'required',
-                'array',
-            ],
-            'item_gift_id.*' => [
-                'required',
-                'exists:item_gifts,id',
-            ],
-            'review_text' => [
+            'product_id' => [
                 'required',
                 'array',
             ],
-            'review_text.*' => [
+            'product_id.*' => [
+                'required',
+                'exists:products,id',
+            ],
+            'text' => [
+                'required',
+                'array',
+            ],
+            'text.*' => [
                 'required'
             ],
-            'review_rating' => [
+            'rating' => [
                 'required',
                 'array',
             ],
-            'review_rating.*' => [
+            'rating.*' => [
                 'required',
                 'numeric',
                 'between:0.5,5'
             ],
-            'review_file.*' => [
+            'file.*' => [
                 'nullable',
                 'array',
             ],
-            'review_file.*.*' => [
+            'file.*.*' => [
                 'nullable',
                 'file',
                 'mimes:jpg,png,mp4,mov',
@@ -199,45 +199,45 @@ class ReviewService extends BaseService
 
         DB::beginTransaction();
 
-        $count_item_gifts = count($data_request['item_gift_id']);
+        $count_products = count($data_request['product_id']);
 
-        for ($i = 0; $i < $count_item_gifts; $i++) {
+        for ($i = 0; $i < $count_products; $i++) {
 
             $user = auth()->user();
-            $redeem = $this->redeem_repository->getSingleData($locale, $data_request['redeem_id'][$i]);
+            $order = $this->order_repository->getSingleData($locale, $data_request['order_id'][$i]);
 
-            if ($redeem->redeem_status != 'shipped' && $redeem->redeem_status != 'success' && $redeem->payment_logs == null) {
+            if ($order->status != 'shipped' && $order->status != 'success' && $order->payment_logs == null) {
                 return response()->json([
-                    'message' => trans('error.redeem_not_completed', ['id' => $data_request['redeem_id'][$i]]),
+                    'message' => trans('error.order_not_completed', ['id' => $data_request['order_id'][$i]]),
                     'status' => 400,
                 ], 400);
             }
 
-            $check_rating = $this->repository->getDataByUserRedeemAndItem($locale, $user->id, $data_request['redeem_id'][$i], $data_request['item_gift_id'][$i]);
+            $check_rating = $this->repository->getDataByUserOrderAndProduct($locale, $user->id, $data_request['order_id'][$i], $data_request['product_id'][$i]);
 
             if (isset($check_rating)) {
                 return response()->json([
-                    'message' => trans('error.already_reviews', ['redeem_id' => $data_request['redeem_id'][$i], 'item_gift_id' => $data_request['item_gift_id'][$i]]),
+                    'message' => trans('error.already_reviews', ['order_id' => $data_request['order_id'][$i], 'product_id' => $data_request['product_id'][$i]]),
                     'status' => 409,
                 ], 409);
             }
 
             $result = Review::create([
                 'user_id' => $user->id,
-                'redeem_id' => $data_request['redeem_id'][$i],
-                'item_gift_id' => $data_request['item_gift_id'][$i],
-                'review_text' => $data_request['review_text'][$i],
-                'review_rating' => rounded_rating($data_request['review_rating'][$i]),
-                'review_date' => date('Y-m-d'),
+                'order_id' => $data_request['order_id'][$i],
+                'product_id' => $data_request['product_id'][$i],
+                'text' => $data_request['text'][$i],
+                'rating' => rounded_rating($data_request['rating'][$i]),
+                'date' => date('Y-m-d'),
             ]);
 
-            if(isset($data_request['review_file'])){
-                foreach ($data_request['review_file'][$i] as $file) {
+            if(isset($data_request['file'])){
+                foreach ($data_request['file'][$i] as $file) {
                     $file_name = time() . '.' . $file->getClientOriginalExtension();
                     Storage::disk('s3')->put('files/reviews/' . $file_name, file_get_contents($file));
                     ReviewFile::create([
                         'review_id' => $result->id,
-                        'review_file' => $file_name,
+                        'file' => $file_name,
                     ]);
                 }
             }
@@ -258,26 +258,26 @@ class ReviewService extends BaseService
 
         $data = array_merge([
             'user_id' => $check_data->user_id,
-            'redeem_id' => $check_data->redeem_id,
-            'item_gift_id' => $check_data->item_gift_id,
-            'review_text' => $check_data->review_text,
-            'review_rating' => $check_data->review_rating,
+            'order_id' => $check_data->order_id,
+            'product_id' => $check_data->product_id,
+            'text' => $check_data->text,
+            'rating' => $check_data->rating,
         ], $data);
 
         $data_request = Arr::only($data, [
-            'review_text',
-            'review_rating',
+            'text',
+            'rating',
         ]);
 
         $this->repository->validate($data_request, [
-                'review_text' => [
+                'text' => [
                     'string'
                 ],
-                'review_rating' => [
+                'rating' => [
                     'numeric',
                     'between:0.5,5'
                 ],
-                'review_file' => [
+                'file' => [
                     'nullable',
                     'array',
                 ],
@@ -285,7 +285,7 @@ class ReviewService extends BaseService
         );
 
         DB::beginTransaction();
-        $data_request['review_rating'] = rounded_rating($data_request['review_rating']);
+        $data_request['rating'] = rounded_rating($data_request['rating']);
         $check_data->update($data_request);
         DB::commit();
 
@@ -296,9 +296,9 @@ class ReviewService extends BaseService
     {
         $check_data = $this->repository->getSingleData($locale, $id);
         DB::beginTransaction();
-        foreach($check_data->review_files as $file) {
-            if(Storage::disk('s3')->exists('files/reviews/' . $file->review_file)) {
-                Storage::disk('s3')->delete('files/reviews/' . $file->review_file);
+        foreach($check_data->files as $file) {
+            if(Storage::disk('s3')->exists('files/reviews/' . $file->file)) {
+                Storage::disk('s3')->delete('files/reviews/' . $file->file);
             }
         }
         $result = $check_data->delete();

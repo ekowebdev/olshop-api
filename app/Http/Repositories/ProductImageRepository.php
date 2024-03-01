@@ -3,16 +3,16 @@
 namespace App\Http\Repositories;
 
 use Illuminate\Support\Arr;
-use App\Http\Models\ItemGiftImage;
+use App\Http\Models\ProductImage;
 use App\Exceptions\DataEmptyException;
 use Illuminate\Support\Facades\Request;
 
-class ItemGiftImageRepository extends BaseRepository 
+class ProductImageRepository extends BaseRepository 
 {
     private $repository_name = 'Product Image';
     private $model;
 
-	public function __construct(ItemGiftImage $model)
+	public function __construct(ProductImage $model)
 	{
 		$this->model = $model;
 	}
@@ -44,11 +44,11 @@ class ItemGiftImageRepository extends BaseRepository
         return $result;	
 	}
 
-    public function getSingleDataByItemGiftVariant($locale, $item_gift_id, $variant_id)
+    public function getSingleDataByItemGiftVariant($locale, $product_id, $variant_id)
 	{
 		$result = $this->model
                   ->getAll()
-                  ->where('item_gift_id', $item_gift_id)	
+                  ->where('product_id', $product_id)	
                   ->where('variant_id', $variant_id)	
                   ->first();
 		return $result;	

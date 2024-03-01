@@ -3,16 +3,16 @@
 namespace App\Http\Repositories;
 
 use Illuminate\Support\Arr;
-use App\Http\Models\Redeem;
+use App\Http\Models\Order;
 use App\Exceptions\DataEmptyException;
 use Illuminate\Support\Facades\Request;
 
-class RedeemRepository extends BaseRepository 
+class OrderRepository extends BaseRepository 
 {
     private $repository_name = 'Order';
     private $model;
 
-	public function __construct(Redeem $model)
+	public function __construct(Order $model)
 	{
 		$this->model = $model;
 	}
@@ -49,7 +49,7 @@ class RedeemRepository extends BaseRepository
 		$result = $this->model
                   ->getAll()
                   ->where($this->model->KeyPrimaryTable, $id)
-                  ->where('redeem_status', '!=', 'success')	
+                  ->where('status', '!=', 'success')	
                   ->first();
 		if($result === null) throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => $this->repository_name], $locale));
         return $result;	

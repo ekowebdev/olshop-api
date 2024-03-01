@@ -10,11 +10,11 @@ class BrandResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'brand_name' => $this->brand_name,
-            'brand_slug' => $this->brand_slug,
-            'brand_logo' => $this->brand_logo,
-            'brand_logo_url' => $this->brand_logo_url,
-            'brand_sort' => $this->brand_sort,
+            'name' => $this->name,
+            'slug' => $this->slug,
+            'logo' => $this->logo,
+            'logo_url' => $this->logo_url,
+            'sort' => $this->sort,
         ];
     }
 }

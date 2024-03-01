@@ -6,7 +6,7 @@ use App\Http\Models\Cart;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use App\Http\Models\Variant;
-use App\Http\Models\ItemGift;
+use App\Http\Models\Product;
 use Illuminate\Support\Facades\DB;
 use App\Exceptions\ValidationException;
 use Illuminate\Database\QueryException;
@@ -42,21 +42,21 @@ class CartService extends BaseService
     public function store($locale, $data)
     {
         $data_request = Arr::only($data, [
-            'item_gift_id',
+            'product_id',
             'variant_id',
-            'cart_quantity',
+            'quantity',
         ]);
 
         $this->repository->validate($data_request, [
-                'item_gift_id' => [
+                'product_id' => [
                     'required',
-                    'exists:item_gifts,id',
+                    'exists:products,id',
                 ],
                 'variant_id' => [
                     'nullable',
                     'exists:variants,id',
                 ],
-                'cart_quantity' => [
+                'quantity' => [
                     'required',
                     'numeric',
                 ],
@@ -71,21 +71,21 @@ class CartService extends BaseService
 
             $variant_id = isset($data_request['variant_id']) ? intval($data_request['variant_id']) : null;
         
-            $item_gift = ItemGift::lockForUpdate()->find($data_request['item_gift_id']);
+            $product = Product::lockForUpdate()->find($data_request['product_id']);
 
-            if ($item_gift->variants->count() > 0 && !isset($variant_id)) {
+            if ($product->variants->count() > 0 && !isset($variant_id)) {
                 return response()->json([
-                    'message' => trans('error.variant_required', ['id' => $item_gift->id]),
+                    'message' => trans('error.variant_required', ['id' => $product->id]),
                     'status' => 400,
                 ], 400);
-            } else if ($item_gift->variants->count() == 0 && isset($variant_id)) {
+            } else if ($product->variants->count() == 0 && isset($variant_id)) {
                 return response()->json([
-                    'message' => trans('error.variant_not_found_in_item_gifts', ['id' => $item_gift->id]),
+                    'message' => trans('error.variant_not_found_in_products', ['id' => $product->id]),
                     'status' => 400,
                 ], 400);
             }
 
-            if(!$item_gift || $item_gift->item_gift_quantity < $data_request['cart_quantity'] || $item_gift->item_gift_status == 'O'){
+            if(!$product || $product->quantity < $data_request['quantity'] || $product->status == 'O'){
                 return response()->json([
                     'message' => trans('error.out_of_stock'),
                     'status' => 400,
@@ -93,16 +93,16 @@ class CartService extends BaseService
             }
             
             if (!is_null($variant_id)) {
-                $variant = $item_gift->variants()->lockForUpdate()->find($variant_id);
+                $variant = $product->variants()->lockForUpdate()->find($variant_id);
 
                 if (is_null($variant)) {
                     return response()->json([
-                        'message' => trans('error.variant_not_available_in_item_gifts', ['id' => $item_gift->id, 'variant_id' => $variant_id]),
+                        'message' => trans('error.variant_not_available_in_products', ['id' => $product->id, 'variant_id' => $variant_id]),
                         'status' => 400,
                     ], 400);
                 }
 
-                if ($variant->variant_quantity == 0 || $data_request['cart_quantity'] > $variant->variant_quantity) {
+                if ($variant->quantity == 0 || $data_request['quantity'] > $variant->quantity) {
                     return response()->json([
                         'message' => trans('error.out_of_stock'),
                         'status' => 400,
@@ -110,15 +110,15 @@ class CartService extends BaseService
                 }
             }
 
-            $exists_cart = $this->repository->getByUserItemAndVariant($user->id, $data_request['item_gift_id'], $variant_id)->first();
+            $exists_cart = $this->repository->getByUserProductAndVariant($user->id, $data_request['product_id'], $variant_id)->first();
             
             if(!empty($exists_cart)) {
-                $quantity = $exists_cart->cart_quantity + intval($data_request['cart_quantity']);
+                $quantity = $exists_cart->quantity + intval($data_request['quantity']);
 
-                if($item_gift->variants->count() > 0){
-                    $real_quantity = $variant->variant_quantity;
+                if($product->variants->count() > 0){
+                    $real_quantity = $variant->quantity;
                 } else {
-                    $real_quantity = $item_gift->item_gift_quantity;
+                    $real_quantity = $product->quantity;
                 }
             
                 if ($quantity > $real_quantity) {
@@ -129,15 +129,15 @@ class CartService extends BaseService
                 }
 
                 $exists_cart->update([
-                    'cart_quantity' => $exists_cart->cart_quantity + $data_request['cart_quantity'],
+                    'quantity' => $exists_cart->quantity + $data_request['quantity'],
                 ]);
             } else {
                 $cart = $this->model;
                 $cart->id = strval(Str::uuid());
                 $cart->user_id = intval($user->id);
-                $cart->item_gift_id = intval($data_request['item_gift_id']);
+                $cart->product_id = intval($data_request['product_id']);
                 $cart->variant_id = $variant_id ?? '';
-                $cart->cart_quantity = intval($data_request['cart_quantity']);
+                $cart->quantity = intval($data_request['quantity']);
                 $cart->save();
             }
         
@@ -159,36 +159,36 @@ class CartService extends BaseService
         $check_data = $this->repository->getSingleData($locale, $id);
 
         $data = array_merge([
-            'cart_quantity' => $check_data->cart_quantity,
+            'quantity' => $check_data->quantity,
         ], $data);
 
         $data_request = Arr::only($data, [
-            'cart_quantity',
+            'quantity',
         ]);
 
         $this->repository->validate($data, [
-            'cart_quantity' => [
+            'quantity' => [
                 'numeric',
             ],
         ]);
 
         DB::beginTransaction();
 
-        $quantity = $data_request['cart_quantity'];
-        $item_gift = ItemGift::find($check_data->item_gift_id);
+        $quantity = $data_request['quantity'];
+        $product = Product::find($check_data->product_id);
 
-        if($item_gift->variants->count() > 0){
-            $variant = Variant::where('id', $check_data->variant_id)->where('item_gift_id', $item_gift->id)->first();
-            $real_quantity = $variant->variant_quantity;
+        if($product->variants->count() > 0){
+            $variant = Variant::where('id', $check_data->variant_id)->where('product_id', $product->id)->first();
+            $real_quantity = $variant->quantity;
         } else {
-            $real_quantity = $item_gift->item_gift_quantity;
+            $real_quantity = $product->quantity;
         }
     
         if ($quantity > $real_quantity) {
-            throw new ValidationException(json_encode(['item_gift_quantity' => [trans('error.out_of_stock')]]));
+            throw new ValidationException(json_encode(['quantity' => [trans('error.out_of_stock')]]));
         }
 
-        $data_request['cart_quantity'] = intval($data_request['cart_quantity']);
+        $data_request['quantity'] = intval($data_request['quantity']);
         $check_data->update($data_request);
 
         DB::commit();

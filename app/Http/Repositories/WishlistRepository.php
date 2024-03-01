@@ -37,7 +37,7 @@ class WishlistRepository extends BaseRepository
             $data->count(),
             $per_page,
             $page,
-            ['path' => url('/gifts/wishlist')]
+            ['path' => url('/wishlists')]
         );
 
         if ($result->isEmpty()) {
@@ -78,7 +78,7 @@ class WishlistRepository extends BaseRepository
             $data->count(),
             $per_page,
             $page,
-            ['path' => url('/gifts/wishlist')]
+            ['path' => url('/wishlists')]
         );
 
         if ($result->isEmpty()) {
@@ -88,12 +88,12 @@ class WishlistRepository extends BaseRepository
         return $result;
 	}
 
-    public function getDataByUserAndItem($locale, $item_gift_id)
+    public function getDataByUserAndProduct($locale, $product_id)
 	{
         $result = $this->model
                   ->all()
                   ->where('user_id', auth()->user()->id)
-                  ->where('item_gift_id', intval($item_gift_id));
+                  ->where('product_id', intval($product_id));
 		return $result;	
 	}
 }

@@ -29,7 +29,7 @@ class AddressService extends BaseService
             'province_id' => 'province_id',
             'city_id' => 'city_id',
             'postal_code' => 'postal_code',
-            'address' => 'address',
+            'street' => 'street',
         ];
 
         $search_column = [
@@ -40,7 +40,7 @@ class AddressService extends BaseService
             'province_id' => 'province_id',
             'city_id' => 'city_id',
             'postal_code' => 'postal_code',
-            'address' => 'address',
+            'street' => 'street',
         ];
 
         $sortable_and_searchable_column = [
@@ -67,7 +67,7 @@ class AddressService extends BaseService
             'city_id',
             'subdistrict_id',
             'postal_code',
-            'address',
+            'street',
         ]);
 
         $this->repository->validate($data_request, [
@@ -98,7 +98,7 @@ class AddressService extends BaseService
                     'required',
                     'numeric',
                 ],
-                'address' => [
+                'street' => [
                     'required',
                     'string',
                 ],
@@ -129,7 +129,7 @@ class AddressService extends BaseService
             'city_id' => $check_data->city_id,
             'subdistrict_id' => $check_data->subdistrict_id,
             'postal_code' => $check_data->postal_code,
-            'address' => $check_data->address,
+            'street' => $check_data->street,
         ], $data);
 
         $data_request = Arr::only($data, [
@@ -140,7 +140,7 @@ class AddressService extends BaseService
             'city_id',
             'subdistrict_id',
             'postal_code',
-            'address',
+            'street',
         ]);
 
         $this->repository->validate($data_request, [
@@ -163,7 +163,7 @@ class AddressService extends BaseService
             'postal_code' => [
                 'numeric',
             ],
-            'address' => [
+            'street' => [
                 'string',
             ],
         ]);

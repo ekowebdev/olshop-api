@@ -48,7 +48,7 @@ class CategoryRepository extends BaseRepository
 	{
 		$result = $this->model
                   ->getAll()
-                  ->where('category_slug', $slug)	
+                  ->where('slug', $slug)	
                   ->first();
 		if($result === null) throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => $this->repository_name], $locale));
         return $result;	

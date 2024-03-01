@@ -14,20 +14,20 @@ class AddressResource extends JsonResource
             'person_phone' => $this->person_phone,
             'province' => [
                 'id' => $this->province->province_id,
-                'province_name' => $this->province->province_name
+                'name' => $this->province->name
             ],
             'city' => [
                 'id' => $this->city->city_id,
-                'city_name' => $this->city->city_name
+                'name' => $this->city->name
             ],
             'subdistrict' => [
                 'id' => $this->subdistrict->subdistrict_id,
-                'subdistrict_name' => $this->subdistrict->subdistrict_name
+                'name' => $this->subdistrict->name
             ],
             'postal_code' => $this->postal_code,
-            'address' => $this->address,
+            'street' => $this->street,
             'is_main' => $this->is_main,
-            'users' => $this->users->makeHidden(['email_verified_at', 'google_id', 'google_access_token', 'created_at', 'updated_at']),
+            'users' => $this->users->makeHidden(['email_verified_at', 'google_access_token', 'created_at', 'updated_at']),
         ];
     }
 }

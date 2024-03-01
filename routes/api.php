@@ -56,14 +56,14 @@ Route::middleware(['xssclean'])->group(function () {
                 // Product
                 Route::group(['prefix' => '/products'], function(){
                     // Product Image
-                    Route::post('/images', '\App\Http\Controllers\API\v1\ItemGiftImageController@store');
-                    Route::post('/images/{id}', '\App\Http\Controllers\API\v1\ItemGiftImageController@update');
-                    Route::delete('/images/{id}', '\App\Http\Controllers\API\v1\ItemGiftImageController@delete');
+                    Route::post('/images', '\App\Http\Controllers\API\v1\ProductImageController@store');
+                    Route::post('/images/{id}', '\App\Http\Controllers\API\v1\ProductImageController@update');
+                    Route::delete('/images/{id}', '\App\Http\Controllers\API\v1\ProductImageController@delete');
                     // Product
-                    Route::post('/', '\App\Http\Controllers\API\v1\ItemGiftController@store');
-                    Route::put('/{id}', '\App\Http\Controllers\API\v1\ItemGiftController@update');
-                    Route::patch('/{id}', '\App\Http\Controllers\API\v1\ItemGiftController@update');
-                    Route::delete('/{id}', '\App\Http\Controllers\API\v1\ItemGiftController@delete');
+                    Route::post('/', '\App\Http\Controllers\API\v1\ProductController@store');
+                    Route::put('/{id}', '\App\Http\Controllers\API\v1\ProductController@update');
+                    Route::patch('/{id}', '\App\Http\Controllers\API\v1\ProductController@update');
+                    Route::delete('/{id}', '\App\Http\Controllers\API\v1\ProductController@delete');
                 });
                 // Cart
                 Route::get('/carts', '\App\Http\Controllers\API\v1\CartController@index');
@@ -125,9 +125,9 @@ Route::middleware(['xssclean'])->group(function () {
                 });
                 Route::group(['prefix' => '/products'], function(){
                     // Product
-                    Route::get('/recomendations', '\App\Http\Controllers\API\v1\ItemGiftController@showByUserRecomendation');
+                    Route::get('/recomendations', '\App\Http\Controllers\API\v1\ProductController@showByUserRecomendation');
                     // Wishlist Product
-                    Route::post('/{itemGiftId}/wishlists', '\App\Http\Controllers\API\v1\WishlistController@wishlist');
+                    Route::post('/{productId}/wishlists', '\App\Http\Controllers\API\v1\WishlistController@wishlist');
                 });
                 // Review 
                 Route::group(['prefix' => '/reviews'], function(){
@@ -138,13 +138,13 @@ Route::middleware(['xssclean'])->group(function () {
                 });
                 // Order
                 Route::group(['prefix' => '/orders'], function(){
-                    Route::get('/', '\App\Http\Controllers\API\v1\RedeemController@index');
-                    Route::post('/checkout', '\App\Http\Controllers\API\v1\RedeemController@checkout')->middleware('verified');
-                    Route::get('/{id}', '\App\Http\Controllers\API\v1\RedeemController@show');
-                    Route::post('/', '\App\Http\Controllers\API\v1\RedeemController@store')->middleware('verified');
-                    Route::post('/{id}/cancel', '\App\Http\Controllers\API\v1\RedeemController@cancel')->middleware('verified');
-                    Route::post('/{id}/receive', '\App\Http\Controllers\API\v1\RedeemController@receive')->middleware('verified');
-                    Route::delete('/{id}', '\App\Http\Controllers\API\v1\RedeemController@delete');
+                    Route::get('/', '\App\Http\Controllers\API\v1\OrderController@index');
+                    Route::post('/checkout', '\App\Http\Controllers\API\v1\OrderController@checkout')->middleware('verified');
+                    Route::get('/{id}', '\App\Http\Controllers\API\v1\OrderController@show');
+                    Route::post('/', '\App\Http\Controllers\API\v1\OrderController@store')->middleware('verified');
+                    Route::post('/{id}/cancel', '\App\Http\Controllers\API\v1\OrderController@cancel')->middleware('verified');
+                    Route::post('/{id}/receive', '\App\Http\Controllers\API\v1\OrderController@receive')->middleware('verified');
+                    Route::delete('/{id}', '\App\Http\Controllers\API\v1\OrderController@delete');
                 });
                 // Wishlist
                 Route::group(['prefix' => '/wishlists'], function(){
@@ -218,14 +218,14 @@ Route::middleware(['xssclean'])->group(function () {
         // Product
         Route::group(['prefix' => '/products'], function(){
             // Product Image
-            Route::get('/images', '\App\Http\Controllers\API\v1\ItemGiftImageController@index');
-            Route::get('/images/{id}', '\App\Http\Controllers\API\v1\ItemGiftImageController@show');
+            Route::get('/images', '\App\Http\Controllers\API\v1\ProductImageController@index');
+            Route::get('/images/{id}', '\App\Http\Controllers\API\v1\ProductImageController@show');
             // Product
-            Route::get('/', '\App\Http\Controllers\API\v1\ItemGiftController@index');
-            Route::get('/slugs/{slug}', '\App\Http\Controllers\API\v1\ItemGiftController@showBySlug');
-            Route::get('/categories/{categorySlug}', '\App\Http\Controllers\API\v1\ItemGiftController@showByCategory');
-            Route::get('/brands/{brandSlug}', '\App\Http\Controllers\API\v1\ItemGiftController@showByBrand');
-            Route::get('/{id}', '\App\Http\Controllers\API\v1\ItemGiftController@show');
+            Route::get('/', '\App\Http\Controllers\API\v1\ProductController@index');
+            Route::get('/slugs/{slug}', '\App\Http\Controllers\API\v1\ProductController@showBySlug');
+            Route::get('/categories/{categorySlug}', '\App\Http\Controllers\API\v1\ProductController@showByCategory');
+            Route::get('/brands/{brandSlug}', '\App\Http\Controllers\API\v1\ProductController@showByBrand');
+            Route::get('/{id}', '\App\Http\Controllers\API\v1\ProductController@show');
         });
         // Review
         Route::group(['prefix' => '/reviews'], function(){

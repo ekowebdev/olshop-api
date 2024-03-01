@@ -9,7 +9,7 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class RedeemConfirmation extends Mailable
+class OrderConfirmation extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -47,7 +47,7 @@ class RedeemConfirmation extends Mailable
     public function content()
     {
         return new Content(
-            view: 'emails.redeem_confirmation',
+            view: 'emails.order_confirmation',
             with : [
                 'header_data' => $this->header_data,
                 'detail_data' => $this->detail_data

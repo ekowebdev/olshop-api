@@ -44,23 +44,23 @@ class ReviewRepository extends BaseRepository
         return $result;	
 	}
 
-    public function getDataByUserRedeem($locale, $user_id, $redeem_id)
+    public function getDataByUserOrder($locale, $user_id, $order_id)
 	{
 		$result = $this->model
                   ->getAll()
                   ->where('reviews.user_id', $user_id)	
-                  ->where('reviews.redeem_id', $redeem_id)	
+                  ->where('reviews.order_id', $order_id)	
                   ->first();
 		return $result;	
 	}
 
-    public function getDataByUserRedeemAndItem($locale, $user_id, $redeem_id, $item_gift_id)
+    public function getDataByUserOrderAndProduct($locale, $user_id, $order_id, $product_id)
 	{
 		$result = $this->model
                   ->getAll()
                   ->where('reviews.user_id', $user_id)	
-                  ->where('reviews.redeem_id', $redeem_id)	
-                  ->where('reviews.item_gift_id', $item_gift_id)	
+                  ->where('reviews.order_id', $order_id)	
+                  ->where('reviews.product_id', $product_id)	
                   ->first();
 		return $result;	
 	}

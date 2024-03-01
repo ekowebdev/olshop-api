@@ -11,13 +11,13 @@ class ReviewFile extends BaseModel
     use HasFactory;
 
     protected $table = 'review_files';
-    protected $fillable = ['review_id', 'review_file'];
-    protected $appends = ['review_file_url'];
+    protected $fillable = ['review_id', 'file'];
+    protected $appends = ['file_url'];
 
-    public function getReviewFileUrlAttribute()
+    public function getFileUrlAttribute()
     {
-        if ($this->review_file != null) {
-            $url = 'https://'. config('filesystems.disks.s3.bucket') .'.s3-'. config('filesystems.disks.s3.region') .'.amazonaws.com/files/reviews/' . $this->review_file;
+        if ($this->file != null) {
+            $url = 'https://'. config('filesystems.disks.s3.bucket') .'.s3-'. config('filesystems.disks.s3.region') .'.amazonaws.com/files/reviews/' . $this->file;
         }
         return $url ?? null;
     }
@@ -32,7 +32,7 @@ class ReviewFile extends BaseModel
         return $query->select([
                     'id',
                     'review_id',
-                    'review_file',
+                    'file',
                 ]);
     }
 }

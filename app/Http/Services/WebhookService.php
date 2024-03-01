@@ -5,15 +5,15 @@ namespace App\Http\Services;
 use App\Http\Models\Cart;
 use App\Http\Models\Shipping;
 use App\Http\Models\PaymentLog;
-use App\Http\Models\RedeemItemGift;
-use App\Http\Repositories\RedeemRepository;
-use App\Jobs\SendEmailRedeemConfirmationJob;
+use App\Http\Models\OrderProduct;
+use App\Http\Repositories\OrderRepository;
+use App\Jobs\SendEmailOrderConfirmationJob;
 
 class WebhookService extends BaseService
 {
     private $repository;
     
-    public function __construct(RedeemRepository $repository)
+    public function __construct(OrderRepository $repository)
     {
         $this->repository = $repository;
     }
@@ -39,9 +39,9 @@ class WebhookService extends BaseService
         }
 
         $real_order_id = explode('-', $order_id);
-        $redeem = $this->repository->getSingleData($locale, $real_order_id[0]);
+        $order = $this->repository->getSingleData($locale, $real_order_id[0]);
 
-        if ($redeem->redeem_status == 'shipped' && $redeem->redeem_status == 'success') {
+        if ($order->status == 'shipped' && $order->status == 'success') {
             return response()->json([
                 'message' => trans('error.operation_not_permitted'),
                 'status' => 405,
@@ -50,74 +50,74 @@ class WebhookService extends BaseService
 
         if ($transaction_status == 'capture'){
             if ($fraud_status == 'challenge'){
-                $redeem->redeem_status = 'challenge';
+                $order->status = 'challenge';
             } else if ($fraud_status == 'accept'){
-                $redeem->redeem_status = 'shipped';
+                $order->status = 'shipped';
             }
         } else if ($transaction_status == 'settlement'){
-            $redeem->redeem_status = 'shipped';
+            $order->status = 'shipped';
         } else if ($transaction_status == 'cancel' ||
           $transaction_status == 'deny' ||
           $transaction_status == 'expire'){
-            $redeem->redeem_status = 'failure';
+            $order->status = 'failure';
         } else if ($transaction_status == 'pending'){
-            $redeem->redeem_status = 'pending';
+            $order->status = 'pending';
         }
 
         $payment_log_data = [
-            'payment_status' => $transaction_status,
+            'status' => $transaction_status,
             'raw_response' => json_encode($data),
-            'redeem_id' => $real_order_id[0],
-            'payment_type' => $type
+            'order_id' => $real_order_id[0],
+            'type' => $type
         ];
         PaymentLog::create($payment_log_data);
 
-        $redeem->save();
+        $order->save();
 
-        if ($redeem->redeem_status == 'shipped') {
+        if ($order->status == 'shipped') {
             $header_data = [
-                'redeem_code' => $redeem->redeem_code,
-                'total_price' => $redeem->total_point,
-                'shipping_fee' => $redeem->shipping_fee,
-                'total_amount' => $redeem->total_amount,
+                'code' => $order->code,
+                'total_price' => $order->total_point,
+                'shipping_fee' => $order->shipping_fee,
+                'total_amount' => $order->total_amount,
             ];
 
-            $redeem_item_gifts = RedeemItemGift::with(['item_gifts', 'variants'])
-                ->where('redeem_id', $redeem->id)
+            $order_products = OrderProduct::with(['products', 'variants'])
+                ->where('order_id', $order->id)
                 ->get();
 
             $detail_data = [];
 
-            foreach ($redeem_item_gifts as $redeem_item) {
+            foreach ($order_products as $order_product) {
                 $variant_name = '';
-                $price = $redeem_item->item_gifts->item_gift_point;
+                $price = $order_product->products->point;
 
-                if ($redeem_item->variants) {
-                    $variant_name = ' - ' . $redeem_item->variants->variant_name;
-                    $price = $redeem_item->variants->variant_point;
+                if ($order_product->variants) {
+                    $variant_name = ' - ' . $order_product->variants->name;
+                    $price = $order_product->variants->point;
                 }
 
                 $detail_data[] = [
                     'price' => intval($price),
-                    'quantity' => $redeem_item->redeem_quantity,
-                    'name' => $redeem_item->item_gifts->item_gift_name . $variant_name,
+                    'quantity' => $order_product->quantity,
+                    'name' => $order_product->products->name . $variant_name,
                 ];
             }
 
-            if($redeem->metadata != null){
-                $metadata = json_decode($redeem->metadata, true);
-                $metadata_redeem_item_gifts = $metadata['redeem_item_gifts'];
-                foreach ($metadata_redeem_item_gifts as $item) {
-                    $user_id = (int) $redeem->user_id;
-                    $item_gift_id = (int) $item['item_gift_id'];
-                    $variant_id = ($item['variant_id'] == null) ? '' : (int) $item['variant_id'];
-                    $redeem_quantity = (int) $item['redeem_quantity'];
+            if($order->metadata != null){
+                $metadata = json_decode($order->metadata, true);
+                $metadata_order_products = $metadata['order_products'];
+                foreach ($metadata_order_products as $product) {
+                    $user_id = (int) $order->user_id;
+                    $product_id = (int) $product['product_id'];
+                    $variant_id = ($product['variant_id'] == null) ? '' : (int) $product['variant_id'];
+                    $quantity = (int) $product['quantity'];
 
                     $carts = Cart::all()
                         ->where('user_id', '=', $user_id)
-                        ->where('item_gift_id', '=', $item_gift_id)
+                        ->where('product_id', '=', $product_id)
                         ->where('variant_id', '=', $variant_id)
-                        ->where('cart_quantity', '=', $redeem_quantity)
+                        ->where('quantity', '=', $quantity)
                         ->first();
                     
                     if(!is_null($carts)) {
@@ -126,20 +126,20 @@ class WebhookService extends BaseService
                 }
             }
 
-            $shippings = Shipping::where('redeem_id', $redeem->id)->first();
+            $shippings = Shipping::where('order_id', $order->id)->first();
             if($shippings->resi == null) $shipping_status = 'on progress';
             else $shipping_status = 'on delivery';
             $shippings->update([
                 'status' => $shipping_status
             ]);
 
-            $payments = PaymentLog::where('redeem_id', $redeem->id)->first();
+            $payments = PaymentLog::where('order_id', $order->id)->first();
             $payments->update([
-                'payment_status' => $transaction_status, 
+                'status' => $transaction_status, 
                 'raw_response' => json_encode($data)
             ]);
 
-            SendEmailRedeemConfirmationJob::dispatch($redeem->users->email, $header_data, $detail_data);
+            SendEmailOrderConfirmationJob::dispatch($order->users->email, $header_data, $detail_data);
         }
 
         return response()->json([
