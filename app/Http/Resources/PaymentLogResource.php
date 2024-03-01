@@ -39,7 +39,7 @@ class PaymentLogResource extends JsonResource
                             'description' => $order_product->products->description,
                             'spesification' => json_decode($order_product->products->spesification) ?? [],
                             'point' => $order_product->products->point ?? 0,
-                            'fpoint' => $this->point($order_product),
+                            'fpoint' => $this->format_product_point($order_product),
                             'weight' => $order_product->products->weight ?? 0,
                             'fweight' => $this->format_product_weight($order_product),
                             'status' => $order_product->products->status,
