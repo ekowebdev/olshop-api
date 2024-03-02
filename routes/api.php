@@ -140,10 +140,10 @@ Route::middleware(['xssclean'])->group(function () {
                 Route::group(['prefix' => '/orders'], function(){
                     Route::get('/', '\App\Http\Controllers\API\v1\OrderController@index');
                     Route::post('/checkout', '\App\Http\Controllers\API\v1\OrderController@checkout')->middleware('verified');
-                    Route::get('/{id}', '\App\Http\Controllers\API\v1\OrderController@show');
-                    Route::post('/', '\App\Http\Controllers\API\v1\OrderController@store')->middleware('verified');
                     Route::post('/{id}/cancel', '\App\Http\Controllers\API\v1\OrderController@cancel')->middleware('verified');
                     Route::post('/{id}/receive', '\App\Http\Controllers\API\v1\OrderController@receive')->middleware('verified');
+                    Route::get('/{id}', '\App\Http\Controllers\API\v1\OrderController@show');
+                    Route::post('/', '\App\Http\Controllers\API\v1\OrderController@store')->middleware('verified');
                     Route::delete('/{id}', '\App\Http\Controllers\API\v1\OrderController@delete');
                 });
                 // Wishlist

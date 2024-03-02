@@ -36,7 +36,7 @@ class Variant extends BaseModel
         return $this->hasOne(ProductImage::class);
     }
 
-    public function getVariantWeightAttribute($value)
+    public function getWeightAttribute($value)
     {
         return (int) $value;
     }
