@@ -224,8 +224,8 @@ class OrderService extends BaseService
                     'price' => ($variant_id) ? $variant->point : $product->point,
                     'quantity' => $quantity,
                     'name' => ($product->variants->count() > 0) ? mb_strimwidth($product->name . ' - ' . $variant->name, 0, 50, '..') : mb_strimwidth($product->name, 0, 50, '..'),
-                    'brand' => ($product->brand) ? $product->brand->brand_name : null,
-                    'category' => ($product->category) ? $product->category->name : null,
+                    'brand' => ($product->brands) ? $product->brands->brand_name : null,
+                    'category' => ($product->categories) ? $product->categories->name : null,
                     'merchant_name' => config('app.name'),
                 ];
 

@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Str;
+use App\Http\Models\Product;
 use App\Http\Models\Notification;
 
 function rounded_rating($rating)

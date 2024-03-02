@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use Carbon\Carbon;
+use App\Http\Models\Product;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class ProductResource extends JsonResource
@@ -14,8 +15,8 @@ class ProductResource extends JsonResource
             'code' => $this->code,
             'name' => $this->name,
             'slug' => $this->slug,
-            'category' => ($this->category_id != null) ? $this->category->makeHidden(['created_at', 'updated_at']) : null,
-            'brand' => ($this->brand_id != null) ? $this->brand->makeHidden(['created_at', 'updated_at']) : null,
+            'category' => ($this->category_id != null) ? $this->categories->makeHidden(['created_at', 'updated_at']) : null,
+            'brand' => ($this->brand_id != null) ? $this->brands->makeHidden(['created_at', 'updated_at']) : null,
             'description' => $this->description,
             'spesification' => json_decode($this->spesification) ?? [],
             'point' => $this->point ?? 0,

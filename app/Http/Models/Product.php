@@ -43,12 +43,12 @@ class Product extends BaseModel
         return $this->hasMany(Review::class);
     }
 
-    public function category()
+    public function categories()
     {
         return $this->belongsTo(Category::class, 'category_id');
     }
 
-    public function brand()
+    public function brands()
     {
         return $this->belongsTo(Brand::class, 'brand_id');
     }
@@ -68,7 +68,7 @@ class Product extends BaseModel
         return $this->hasOne(Address::class);
     }
 
-    public function getProductWeightAttribute($value)
+    public function getWeightAttribute($value)
     {
         return (int) $value;
     }
