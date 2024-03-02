@@ -110,11 +110,11 @@ class OrderResource extends JsonResource
                 'id' => $this->shippings->id,
                 'origin' => [
                     'id' => $this->shippings->city_origin->city_id,
-                    'city' => $this->shippings->city_origin->city_name
+                    'city' => $this->shippings->city_origin->name
                 ],
                 'destination' => [
                     'id' => $this->shippings->city_destination->city_id,
-                    'city' => $this->shippings->city_destination->city_name
+                    'city' => $this->shippings->city_destination->name
                 ],
                 'weight' => $this->shippings->weight,
                 'fweight' => $this->shippings->weight . ' Gram',

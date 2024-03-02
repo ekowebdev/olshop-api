@@ -72,11 +72,11 @@ class ShippingResource extends JsonResource
             ],
             'origin' => [
                 'id' => $this->city_origin->city_id,
-                'city_name' => $this->city_origin->city_name
+                'city_name' => $this->city_origin->name
             ],
             'destination' => [
                 'id' => $this->city_destination->city_id,
-                'city_name' => $this->city_destination->city_name
+                'city_name' => $this->city_destination->name
             ],
             'weight' => $this->weight,
             'fweight' => $this->weight . ' Gram',
