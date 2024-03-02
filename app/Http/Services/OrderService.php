@@ -212,8 +212,8 @@ class OrderService extends BaseService
         
                 // Create OrderProduct entry
                 $order_product = new OrderProduct([
-                    'product_id' => $product->id,
-                    'variant_id' => $variant_id == 0 ? null : $variant_id,
+                    'product_id' => (int) $product->id,
+                    'variant_id' => (int) $variant_id == 0 ? null : (int) $variant_id,
                     'quantity' => (int) $quantity,
                     'point' => $subtotal,
                 ]);
