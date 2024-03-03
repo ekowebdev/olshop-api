@@ -88,7 +88,7 @@ class AccessTokenController extends ApiAuthController
 	        'provider' => 'nullable|required_if:grant_type,social|in:google',
             'google_id' => 'nullable|required_if:provider,google',
 			'access_token' => 'nullable|required_if:grant_type,social',
-            // 'g-recaptcha-response' => ['nullable', 'required_if:grant_type,password', new ReCaptcha]
+            'g-recaptcha-response' => ['nullable', 'required_if:grant_type,password', new ReCaptcha]
         ]);
 
         $parsedBody = array_merge($serverRequest->getParsedBody(), [
@@ -194,7 +194,7 @@ class AccessTokenController extends ApiAuthController
                 ],
                 'status_code' => 200,
                 'error' => 0
-            ]);
+            ], 200);
         } catch (\Exception $e){
             \DB::rollback();
             throw new AuthenticationException($e->getMessage());
@@ -278,7 +278,7 @@ class AccessTokenController extends ApiAuthController
                 ],
                 'status_code' => 200,
                 'error' => 0
-            ]);
+            ], 200);
         } else {
             return $this->withErrorHandling(function () use ($modifiedServerRequest) {
                 return $this->convertResponse(
