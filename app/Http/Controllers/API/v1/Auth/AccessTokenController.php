@@ -4,8 +4,8 @@ namespace App\Http\Controllers\API\v1\Auth;
 
 use Request;
 use Carbon\Carbon;
-use App\Http\Models\User;
 use App\Rules\ReCaptcha;
+use App\Http\Models\User;
 use Illuminate\Support\Facades\App;
 use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Hash;
@@ -37,7 +37,7 @@ class AccessTokenController extends ApiAuthController
 	        'grant_type' =>	'required|in:password,social',
 	        'provider' => 'nullable|required_if:grant_type,social|in:google',
 			'google_id' => 'nullable|required_if:provider,google',
-			'google_access_token' => 'nullable|required_if:provider,google',
+			'access_token' => 'nullable|required_if:grant_type,social',
             'g-recaptcha-response' => ['nullable', 'required_if:grant_type,password', new ReCaptcha]
         ]);
 
@@ -48,7 +48,7 @@ class AccessTokenController extends ApiAuthController
                 'username' => $username,
                 'email' => $request['username'],
                 'google_id' => $request['google_id'],
-                'google_access_token' => $request['google_access_token'],
+                'google_access_token' => $request['access_token'],
                 'email_verified_at' => date('Y-m-d H:i:s')
             ]);
             $user->assignRole('customer');
@@ -63,15 +63,10 @@ class AccessTokenController extends ApiAuthController
             $user->profile()->create(['name' => $request['name'], 'birthdate' => $request['birthdate']]);
             SendEmailVerificationJob::dispatch($locale, $user);
         }
-
         $request['is_register'] = true;
-
         $serverRequest = $serverRequest->withParsedBody($serverRequest->getParsedBody() + $request);
-        
         request()->merge($request);
-
         $response = $this->issueToken($serverRequest);
-
         \DB::commit();
 
         return $response;
@@ -92,7 +87,7 @@ class AccessTokenController extends ApiAuthController
 	        'password' => 'nullable|required_if:grant_type,password|string|min:6|max:32',
 	        'provider' => 'nullable|required_if:grant_type,social|in:google',
             'google_id' => 'nullable|required_if:provider,google',
-            'google_access_token' => 'nullable|required_if:provider,google',
+			'access_token' => 'nullable|required_if:grant_type,social',
             'g-recaptcha-response' => ['nullable', 'required_if:grant_type,password', new ReCaptcha]
         ]);
 
@@ -103,72 +98,87 @@ class AccessTokenController extends ApiAuthController
 
         $modifiedServerRequest = $serverRequest->withParsedBody($parsedBody);
 
-        $user = User::where('email', $request['username'])->first();
+        try {
+            \DB::beginTransaction();
 
-        if(empty($user)){
-            throw new AuthenticationException(trans('auth.account_not_registered'));
-        }
+            $user = User::where('email', $request['username'])->first();
 
-        if($request['grant_type'] == 'social'){
-            if(!empty($user)){
-                if($request['google_id'] != $user->google_id) {
-                    $user->update(['google_id' => $request['google_id']]);
-                }
-                if($request['google_access_token'] != $user->google_access_token) {
-                    $user->update(['google_access_token' => $request['google_access_token']]);
+            if(empty($user)){
+                throw new AuthenticationException(trans('auth.account_not_registered'));
+            }
+
+            if($request['grant_type'] == 'social'){
+                if(!empty($request['is_register'])){
+                    if(!empty($user)){
+                        if($request['google_id'] != $user->google_id) {
+                            $user->update(['google_id' => $request['google_id']]);
+                        }
+                        if($request['access_token'] != $user->google_access_token) {
+                            $user->update(['google_access_token' => $request['access_token']]);
+                        }
+                    }
+                } else {
+                    if(!empty($user)){
+                        if($request['google_id'] != $user->google_id){
+                            throw new AuthenticationException(trans('auth.failed'));
+                        }
+                        if($request['access_token'] != $user->google_access_token) {
+                            $user->update(['google_access_token' => $request['access_token']]);
+                        }
+                    }
                 }
             }
-            if($user->google_access_token != null){
-                if($request['google_access_token'] != $user->google_access_token){
+
+            if($request['grant_type'] == 'password'){
+                if($user->password == null) {
+                    throw new AuthenticationException(trans('auth.password_not_been_set'));
+                }
+
+                if (empty($user) OR !Hash::check($request['password'], $user->password, [])) {
                     throw new AuthenticationException(trans('auth.failed'));
                 }
             }
-        }
-        
-        if($request['grant_type'] == 'password'){
-            if($user->password == null) {
-                throw new AuthenticationException(trans('auth.password_not_been_set'));
+
+            $response = $this->withErrorHandling(function () use ($modifiedServerRequest) {
+                return $this->convertResponse(
+                    $this->server->respondToAccessTokenRequest($modifiedServerRequest, new Psr7Response)
+                );
+            });
+
+            if(!isJson($response->getContent())){
+                throw new AuthenticationException($response->getContent());
             }
 
-            if (empty($user) OR !Hash::check($request['password'], $user->password, [])) {
-                throw new AuthenticationException(trans('auth.failed'));
-            }
-        }
+            $data = json_decode($response->getContent(), true);
 
-        $response = $this->withErrorHandling(function () use ($modifiedServerRequest) {
-            return $this->convertResponse(
-                $this->server->respondToAccessTokenRequest($modifiedServerRequest, new Psr7Response)
-            );
-        });
-
-        if(!isJson($response->getContent())){
-            throw new AuthenticationException($response->getContent());
-        }
-        
-        $data = json_decode($response->getContent(), true);
-
-        if(!empty($request['is_register'])){
-            if($request['grant_type'] == 'password') {
-                $message = trans('all.success_register');
+            if(!empty($request['is_register'])){
+                if($request['grant_type'] == 'password') {
+                    $message = trans('all.success_register');
+                } else {
+                    $message = trans('all.success_register_without_verification');
+                }
             } else {
-                $message = trans('all.success_register_without_verification');
+                $message = trans('all.success_login');
             }
-        } else {
-            $message = trans('all.success_login');
-        }
 
-        return response()->json([
-            'message' => $message,
-            'data' => [
-                'users' => new UserResource($user),
-                'token_type' => 'Bearer',
-                'expires_in' => $data['expires_in'],
-                'access_token' => $data['access_token'],
-                'refresh_token' => $data['refresh_token'],
-            ],
-            'status' => 200,
-            'error' => 0
-        ]);
+            \DB::commit();
+
+            return response()->json([
+                'message' => $message,
+                'data' => [
+                    'users' => new UserResource($user),
+                    'token_type' => 'Bearer',
+                    'expires_in' => $data['expires_in'],
+                    'access_token' => $data['access_token'],
+                    'refresh_token' => $data['refresh_token'],
+                ],
+                'status' => 200,
+                'error' => 0
+            ]);
+        } catch (\Exception $e){
+            \DB::rollback();
+            throw new AuthenticationException(trans('auth.failed'));
+        }
     }
 
     /**
