@@ -36,8 +36,8 @@ class AccessTokenController extends ApiAuthController
             'password' => 'nullable|required_if:grant_type,password|string|min:6|confirmed|max:32',	        
 	        'grant_type' =>	'required|in:password,social',
 	        'provider' => 'nullable|required_if:grant_type,social|in:google',
-			'google_id' => 'required_if:provider,google',
-			'google_access_token' => 'required_if:provider,google',
+			'google_id' => 'nullable|required_if:provider,google',
+			'google_access_token' => 'nullable|required_if:provider,google',
             'g-recaptcha-response' => ['nullable', 'required_if:grant_type,password', new ReCaptcha]
         ]);
 
@@ -93,9 +93,10 @@ class AccessTokenController extends ApiAuthController
     	User::validate($request, [        
 	        'username'	=> 'required|string|max:255',	        
 	        'grant_type' =>	'required|in:password,social',
-	        'password' => 'required_if:grant_type,password|string|min:6|max:32',
+	        'password' => 'nullable|required_if:grant_type,password|string|min:6|max:32',
 	        'provider' => 'nullable|required_if:grant_type,social|in:google',
-			'access_token' => 'required_if:grant_type,social',
+            'google_id' => 'nullable|required_if:provider,google',
+			'access_token' => 'nullable|required_if:grant_type,social',
             'g-recaptcha-response' => ['nullable', 'required_if:grant_type,password', new ReCaptcha]
         ]);
 
@@ -113,6 +114,14 @@ class AccessTokenController extends ApiAuthController
         }
 
         if($request['grant_type'] == 'social'){
+            if(!empty($user)){
+                if($request['google_id'] != $user->google_id) {
+                    $user->update(['google_id' => $request['google_id']]);
+                }
+                if($request['access_token'] != $user->google_access_token) {
+                    $user->update(['google_access_token' => $request['access_token']]);
+                }
+            }
             if($user->google_access_token != null){
                 if($request['access_token'] != $user->google_access_token){
                     throw new AuthenticationException(trans('auth.failed'));
