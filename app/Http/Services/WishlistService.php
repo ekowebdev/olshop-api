@@ -59,8 +59,8 @@ class WishlistService extends BaseService
 
         return response()->json([
             'message' => $message,
-            'status' => 200,
+            'status_code' => 200,
             'error' => 0
-        ]);
+        ], 200);
     }
 }

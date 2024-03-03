@@ -20,6 +20,6 @@ return [
     'not_authorize_access'           => 'Not authorized to access',
     'not_verified_account'           => 'You need to verify account',
     'verification_failed'            => 'You code verify failed',
-    'password_not_been_set'          => 'Password has not been set, please log in using Gmail',
+    'password_not_set'          => 'Password has not been set, please log in using Gmail',
     'account_not_registered'         => 'Account has not been registered, please register first',
 ];

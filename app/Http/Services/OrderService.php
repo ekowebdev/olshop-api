@@ -161,22 +161,31 @@ class OrderService extends BaseService
                 // Check variant if required
                 if ($product->variants->count() > 0 && !isset($variant_id)) {
                     return response()->json([
-                        'message' => trans('error.variant_required', ['id' => $product->id]),
-                        'status' => 400,
-                    ], 400);
+                        'error' => [
+                            'message' => trans('error.variant_required', ['id' => $product->id]),
+                            'status_code' => 422,
+                            'error' => 1
+                        ]
+                    ], 422);
                 } else if ($product->variants->count() == 0 && isset($variant_id)) {
                     return response()->json([
-                        'message' => trans('error.variant_not_found_in_products', ['id' => $product->id]),
-                        'status' => 400,
-                    ], 400);
+                        'error' => [
+                            'message' => trans('error.variant_not_found_in_products', ['id' => $product->id]),
+                            'status_code' => 404,
+                            'error' => 1
+                        ]
+                    ], 404);
                 }
 
                 // Check item availability
                 if (!$product || $product->quantity < $quantity || $product->status == 'O') {
                     return response()->json([
-                        'message' => trans('error.out_of_stock'),
-                        'status' => 400,
-                    ], 400);
+                        'error' => [
+                            'message' => trans('error.out_of_stock'),
+                            'status_code' => 409,
+                            'error' => 1
+                        ]
+                    ], 409);
                 }
         
                 // Process the chosen variant (if any)
@@ -186,16 +195,22 @@ class OrderService extends BaseService
 
                     if (is_null($variant)) {
                         return response()->json([
-                            'message' => trans('error.variant_not_available_in_products', ['id' => $product->id, 'variant_id' => $variant_id]),
-                            'status' => 400,
-                        ], 400);
+                            'error' => [
+                                'message' => trans('error.variant_not_available_in_products', ['id' => $product->id, 'variant_id' => $variant_id]),
+                                'status_code' => 409,
+                                'error' => 1
+                            ]
+                        ], 409);
                     }
 
                     if ($variant->quantity == 0 || $quantity > $variant->quantity) {
                         return response()->json([
-                            'message' => trans('error.out_of_stock'),
-                            'status' => 400,
-                        ], 400);
+                            'error' => [
+                                'message' => trans('error.out_of_stock'),
+                                'status_code' => 409,
+                                'error' => 1
+                            ]
+                        ], 409);
                     }
         
                     if ($variant) {
@@ -321,7 +336,7 @@ class OrderService extends BaseService
                     'snap_token' => $order->snap_token,
                     'snap_url' => $order->snap_url
                 ],
-                'status' => 200,
+                'status_code' => 200,
                 'error' => 0,
             ]);
         } catch (QueryException $e) {
@@ -378,7 +393,7 @@ class OrderService extends BaseService
 
         return response()->json([
             'message' => $message,
-            'status' => $status_code,
+            'status_code' => $status_code,
             'error' => 0,
         ], $status_code);
     }
@@ -414,9 +429,9 @@ class OrderService extends BaseService
 
         return response()->json([
             'message' => trans('all.success_receive_order'),
-            'status' => 200,
+            'status_code' => 200,
             'error' => 0,
-        ]);
+        ], 200);
     }
 
     public function delete($locale, $id)

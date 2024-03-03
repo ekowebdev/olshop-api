@@ -88,7 +88,7 @@ class AccessTokenController extends ApiAuthController
 	        'provider' => 'nullable|required_if:grant_type,social|in:google',
             'google_id' => 'nullable|required_if:provider,google',
 			'access_token' => 'nullable|required_if:grant_type,social',
-            'g-recaptcha-response' => ['nullable', 'required_if:grant_type,password', new ReCaptcha]
+            // 'g-recaptcha-response' => ['nullable', 'required_if:grant_type,password', new ReCaptcha]
         ]);
 
         $parsedBody = array_merge($serverRequest->getParsedBody(), [
@@ -104,7 +104,35 @@ class AccessTokenController extends ApiAuthController
             $user = User::where('email', $request['username'])->first();
 
             if(empty($user)){
-                throw new AuthenticationException(trans('auth.account_not_registered'));
+                return response()->json([
+                    'error' => [
+                        'message' => trans('auth.account_not_registered'),
+                        'status_code' => 404,
+                        'error' => 1
+                    ]
+                ], 404);
+            }
+
+            if($request['grant_type'] == 'password'){
+                if($user->password === null) {
+                    return response()->json([
+                        'error' => [
+                            'message' => trans('auth.password_not_set'),
+                            'status_code' => 403,
+                            'error' => 1
+                        ]
+                    ], 403);
+                }
+
+                if (empty($user) OR !Hash::check($request['password'], $user->password, [])) {
+                    return response()->json([
+                        'error' => [
+                            'message' => trans('auth.failed'),
+                            'status_code' => 401,
+                            'error' => 1
+                        ]
+                    ], 401);
+                }
             }
 
             if($request['grant_type'] == 'social'){
@@ -120,7 +148,13 @@ class AccessTokenController extends ApiAuthController
                 } else {
                     if(!empty($user)){
                         if($request['google_id'] != $user->google_id){
-                            throw new AuthenticationException(trans('auth.failed'));
+                            return response()->json([
+                                'error' => [
+                                    'message' => trans('auth.failed'),
+                                    'status_code' => 401,
+                                    'error' => 1
+                                ]
+                            ], 401);
                         }
                         if($request['access_token'] != $user->google_access_token) {
                             $user->update(['google_access_token' => $request['access_token']]);
@@ -129,25 +163,11 @@ class AccessTokenController extends ApiAuthController
                 }
             }
 
-            if($request['grant_type'] == 'password'){
-                if($user->password == null) {
-                    throw new AuthenticationException(trans('auth.password_not_been_set'));
-                }
-
-                if (empty($user) OR !Hash::check($request['password'], $user->password, [])) {
-                    throw new AuthenticationException(trans('auth.failed'));
-                }
-            }
-
             $response = $this->withErrorHandling(function () use ($modifiedServerRequest) {
                 return $this->convertResponse(
                     $this->server->respondToAccessTokenRequest($modifiedServerRequest, new Psr7Response)
                 );
             });
-
-            if(!isJson($response->getContent())){
-                throw new AuthenticationException($response->getContent());
-            }
 
             $data = json_decode($response->getContent(), true);
 
@@ -172,12 +192,12 @@ class AccessTokenController extends ApiAuthController
                     'access_token' => $data['access_token'],
                     'refresh_token' => $data['refresh_token'],
                 ],
-                'status' => 200,
+                'status_code' => 200,
                 'error' => 0
             ]);
         } catch (\Exception $e){
             \DB::rollback();
-            throw new AuthenticationException(trans('auth.failed'));
+            throw new AuthenticationException($e->getMessage());
         }
     }
 
@@ -256,7 +276,7 @@ class AccessTokenController extends ApiAuthController
                     'access_token' => $data['access_token'],
                     'refresh_token' => $data['refresh_token'],
                 ],
-                'status' => 200,
+                'status_code' => 200,
                 'error' => 0
             ]);
         } else {

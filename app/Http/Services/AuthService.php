@@ -57,9 +57,9 @@ class AuthService extends BaseService
 
         return response()->json([
             'message' => trans('all.success_register'),
-            'status' => 200,
+            'status_code' => 200,
             'error' => 0,
-        ]);
+        ], 200);
     }
 
     public function login($locale, $request)
@@ -78,7 +78,7 @@ class AuthService extends BaseService
             }
 
             if ($user->password == null) {
-                throw new AuthenticationException(trans('auth.password_not_been_set'));
+                throw new AuthenticationException(trans('auth.password_not_set'));
             }
 
             if (empty($user) OR !Hash::check($request['password'], $user->password, [])) {
@@ -97,9 +97,9 @@ class AuthService extends BaseService
                 'access_token' => $token_response['access_token'],
                 'refresh_token' => $token_response['refresh_token'],
             ],
-            'status' => 200,
+            'status_code' => 200,
             'error' => 0
-        ]);
+        ], 200);
     }
 
     public function refresh_token($locale, $request)
@@ -148,11 +148,11 @@ class AuthService extends BaseService
                 'access_token' => $token_response['access_token'],
                 'refresh_token' => $token_response['refresh_token'],
             ],
-            'status' => 200,
+            'status_code' => 200,
             'error' => 0
         ];
 
-        return response()->json($data);
+        return response()->json($data, 200);
     }
 
     public function logout($locale)
@@ -161,27 +161,30 @@ class AuthService extends BaseService
             auth()->user()->get_access_token()->delete();
             return response()->json([
                 'message' => trans('all.success_logout'), 
-                'status' => 200,
+                'status_code' => 200,
                 'error' => 0,
-            ]);
+            ], 200);
         }
 
         return response()->json([
-                'message' => trans('error.failed_logout'),  
-                'status' => 401,
-                'error' => 0,
-            ], 401
-        );
+            'error' => [
+                'message' => trans('error.failed_logout'),
+                'status_code' => 500,
+                'error' => 1
+            ]
+        ], 500);
     }
 
     public function verify($id, $request)
     {
         if(!$request->hasValidSignature()){
             return response()->json([
-                'message' => 'Gagal verifikasi email',
-                'status' => 400,
-                'error' => 0,
-            ], 400);
+                'error' => [
+                    'message' => 'Failed verification email',
+                    'status_code' => 500,
+                    'error' => 1
+                ]
+            ], 500);
         }
 
         $user = User::find($id);
@@ -205,17 +208,19 @@ class AuthService extends BaseService
 
         if($user->email_verified_at != null){
             return response()->json([
-                'message' => trans('error.already_verification'), 
-                'status' => 409,
-                'error' => 0,
-            ], 409);
+                'error' => [
+                    'message' => trans('error.already_verification'),
+                    'status_code' => 400,
+                    'error' => 1
+                ]
+            ], 400);
         }
 
         SendEmailVerificationJob::dispatch($user, $locale);
 
         return response()->json([
             'message' => trans('all.success_resend_verification'), 
-            'status' => 200,
+            'status_code' => 200,
             'error' => 0,
         ]);
     }
@@ -244,9 +249,9 @@ class AuthService extends BaseService
 
         return response()->json([
             'message' => trans('all.success_send_reset_password_link'), 
-            'status' => 200,
+            'status_code' => 200,
             'error' => 0,
-        ]);
+        ], 200);
     }
 
     public function reset_password($locale, $request) 
@@ -260,19 +265,23 @@ class AuthService extends BaseService
 
         if($password_reset == null){
             return response()->json([
-                'message' => trans('error.token_reset_password_is_invalid'),
-                'status' => 422,
-                'error' => 0,
-            ], 422);
+                'error' => [
+                    'message' => trans('error.token_reset_password_is_invalid'),
+                    'status_code' => 400,
+                    'error' => 1
+                ]
+            ], 400);
         }
 
         if (strtotime($password_reset->created_at) < strtotime('-60 minutes')) {
             DB::table('password_resets')->where('token', $request->token)->delete();
             return response()->json([
-                'message' => trans('error.token_reset_password_is_expired'),
-                'status' => 422,
-                'error' => 0,
-            ], 422);
+                'error' => [
+                    'message' => trans('error.token_reset_password_is_expired'),
+                    'status_code' => 401,
+                    'error' => 1
+                ]
+            ], 401);
         }
 
         DB::beginTransaction();
@@ -287,9 +296,9 @@ class AuthService extends BaseService
 
         return response()->json([
             'message' => trans('all.success_reset_password'), 
-            'status' => 200,
+            'status_code' => 200,
             'error' => 0,
-        ]);
+        ], 200);
     }
 
     public function auth_google($locale)
@@ -298,9 +307,9 @@ class AuthService extends BaseService
             'data' => [
                 'auth_url' => Socialite::driver('google')->stateless()->redirect()->getTargetUrl(),
             ],
-            'status' => 200,
+            'status_code' => 200,
             'error' => 0,
-        ]);
+        ], 200);
     }
 
     public function auth_google_callback($locale)

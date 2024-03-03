@@ -71,7 +71,11 @@ class TrackResiService extends BaseService
 
         $data = $data['data'];
 
-        return response()->json(['data' => $data]);
+        return response()->json([
+            'data' => $data,
+            'status_code' => 200,
+            'error' => 1
+        ], 200);
     }
     
 }

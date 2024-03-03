@@ -94,7 +94,7 @@ Route::middleware(['xssclean'])->group(function () {
                 Route::put('/notifications/{id}', '\App\Http\Controllers\API\v1\NotificationController@update');
                 // RajaOngkir
                 Route::group(['prefix' => '/rajaongkir'], function(){
-                    Route::get('/provinces', '\App\Http\Controllers\API\v1\Controller@getProvince');
+                    Route::get('/provinces', '\App\Http\Controllers\API\v1\RajaOngkirController@getProvince');
                     Route::get('/cities', '\App\Http\Controllers\API\v1\RajaOngkirController@getCity');
                 });
             });

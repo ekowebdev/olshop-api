@@ -25,13 +25,13 @@ class DeletedResource extends JsonResource
         if(empty($this->resource))
         {
             return [
-                'status' => 500,
+                'status_code' => 500,
                 'error'  => 1,
             ];
         }
 
         return [
-            'status' => 200,
+            'status_code' => 200,
             'error'  => 0,
         ];
     }

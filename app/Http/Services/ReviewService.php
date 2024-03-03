@@ -105,17 +105,23 @@ class ReviewService extends BaseService
 
         if ($order->status != 'shipped' && $order->status != 'success' && $order->payment_logs == null) {
             return response()->json([
-                'message' => trans('error.order_not_completed', ['id' => $data_request['order_id']]),
-                'status' => 400,
-            ], 400);
+                'error' => [
+                    'message' => trans('error.order_not_completed', ['id' => $data_request['order_id']]),
+                    'status_code' => 422,
+                    'error' => 1
+                ]
+            ], 422);
         }
 
         $check_rating = $this->repository->getDataByUserOrderAndProduct($locale, $user->id, $data_request['order_id'], $data_request['product_id']);
 
         if (isset($check_rating)) {
             return response()->json([
-                'message' => trans('error.already_reviews', ['order_id' => $data_request['order_id'], 'product_id' => $data_request['product_id']]),
-                'status' => 409,
+                'error' => [
+                    'message' => trans('error.already_reviews', ['order_id' => $data_request['order_id'], 'product_id' => $data_request['product_id']]),
+                    'status_code' => 409,
+                    'error' => 1
+                ]
             ], 409);
         }
 
@@ -143,9 +149,9 @@ class ReviewService extends BaseService
 
         return response()->json([
             'message' => trans('all.success_reviews'),
-            'status' => 200,
+            'status_code' => 200,
             'error' => 0,
-        ]);
+        ], 200);
     }
 
     public function storeBulk($locale, $data)
@@ -208,17 +214,23 @@ class ReviewService extends BaseService
 
             if ($order->status != 'shipped' && $order->status != 'success' && $order->payment_logs == null) {
                 return response()->json([
-                    'message' => trans('error.order_not_completed', ['id' => $data_request['order_id'][$i]]),
-                    'status' => 400,
-                ], 400);
+                    'error' => [
+                        'message' => trans('error.order_not_completed', ['id' => $data_request['order_id'][$i]]),
+                        'status_code' => 422,
+                        'error' => 1
+                    ]
+                ], 422);
             }
 
             $check_rating = $this->repository->getDataByUserOrderAndProduct($locale, $user->id, $data_request['order_id'][$i], $data_request['product_id'][$i]);
 
             if (isset($check_rating)) {
                 return response()->json([
-                    'message' => trans('error.already_reviews', ['order_id' => $data_request['order_id'][$i], 'product_id' => $data_request['product_id'][$i]]),
-                    'status' => 409,
+                    'error' => [
+                        'message' => trans('error.already_reviews', ['order_id' => $data_request['order_id'][$i], 'product_id' => $data_request['product_id'][$i]]),
+                        'status_code' => 409,
+                        'error' => 1
+                    ]
                 ], 409);
             }
 
@@ -247,9 +259,9 @@ class ReviewService extends BaseService
 
         return response()->json([
             'message' => trans('all.success_reviews'),
-            'status' => 200,
+            'status_code' => 200,
             'error' => 0,
-        ]);
+        ], 200);
     }
 
     public function update($locale, $id, $data)

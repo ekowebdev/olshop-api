@@ -5,9 +5,10 @@ namespace App\Http\Services;
 use App\Http\Models\Cart;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
-use App\Http\Models\Variant;
 use App\Http\Models\Product;
+use App\Http\Models\Variant;
 use Illuminate\Support\Facades\DB;
+use App\Http\Resources\CartResource;
 use App\Exceptions\ValidationException;
 use Illuminate\Database\QueryException;
 use App\Exceptions\ApplicationException;
@@ -75,21 +76,30 @@ class CartService extends BaseService
 
             if ($product->variants->count() > 0 && !isset($variant_id)) {
                 return response()->json([
-                    'message' => trans('error.variant_required', ['id' => $product->id]),
-                    'status' => 400,
-                ], 400);
+                    'error' => [
+                        'message' => trans('error.variant_required', ['id' => $product->id]),
+                        'status_code' => 422,
+                        'error' => 1
+                    ]
+                ], 422);
             } else if ($product->variants->count() == 0 && isset($variant_id)) {
                 return response()->json([
-                    'message' => trans('error.variant_not_found_in_products', ['id' => $product->id]),
-                    'status' => 400,
-                ], 400);
+                    'error' => [
+                        'message' => trans('error.variant_not_found_in_products', ['id' => $product->id]),
+                        'status_code' => 409,
+                        'error' => 1
+                    ]
+                ], 409);
             }
 
             if(!$product || $product->quantity < $data_request['quantity'] || $product->status == 'O'){
                 return response()->json([
-                    'message' => trans('error.out_of_stock'),
-                    'status' => 400,
-                ], 400);
+                    'error' => [
+                        'message' => trans('error.out_of_stock'),
+                        'status_code' => 409,
+                        'error' => 1
+                    ]
+                ], 409);
             }
             
             if (!is_null($variant_id)) {
@@ -97,16 +107,22 @@ class CartService extends BaseService
 
                 if (is_null($variant)) {
                     return response()->json([
-                        'message' => trans('error.variant_not_available_in_products', ['id' => $product->id, 'variant_id' => $variant_id]),
-                        'status' => 400,
-                    ], 400);
+                        'error' => [
+                            'message' => trans('error.variant_not_available_in_products', ['id' => $product->id, 'variant_id' => $variant_id]),
+                            'status_code' => 409,
+                            'error' => 1
+                        ]
+                    ], 409);
                 }
 
                 if ($variant->quantity == 0 || $data_request['quantity'] > $variant->quantity) {
                     return response()->json([
-                        'message' => trans('error.out_of_stock'),
-                        'status' => 400,
-                    ], 400);
+                        'error' => [
+                            'message' => trans('error.out_of_stock'),
+                            'status_code' => 409,
+                            'error' => 1
+                        ]
+                    ], 409);
                 }
             }
 
@@ -123,9 +139,12 @@ class CartService extends BaseService
             
                 if ($quantity > $real_quantity) {
                     return response()->json([
-                        'message' => trans('error.out_of_stock'),
-                        'status' => 400,
-                    ], 400);
+                        'error' => [
+                            'message' => trans('error.out_of_stock'),
+                            'status_code' => 409,
+                            'error' => 1
+                        ]
+                    ], 409);
                 }
 
                 $exists_cart->update([
@@ -145,9 +164,9 @@ class CartService extends BaseService
         
             return response()->json([
                 'message' => trans('all.success_add_to_cart'),
-                'status' => 200,
+                'status_code' => 200,
                 'error' => 0,
-            ]);
+            ], 200);
         } catch (DynamoDbException $e) {
             DB::rollback();
             throw new ApplicationException(json_encode([$e->getMessage()]));
@@ -184,7 +203,7 @@ class CartService extends BaseService
             $real_quantity = $product->quantity;
         }
     
-        if ($quantity > $real_quantity) {
+        if ($real_quantity < $quantity) {
             throw new ValidationException(json_encode(['quantity' => [trans('error.out_of_stock')]]));
         }
 

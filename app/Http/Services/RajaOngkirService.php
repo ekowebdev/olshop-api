@@ -57,8 +57,11 @@ class RajaOngkirService extends BaseService
 
         if ($err) {
             return response()->json([
-                'message' => "cURL Error #:" . $err,
-                'status' => 500,
+                'error' => [
+                    'message' => 'cURL Error #:' . $err,
+                    'status_code' => 500,
+                    'error' => 1
+                ]
             ], 500);
         }
 
@@ -66,8 +69,11 @@ class RajaOngkirService extends BaseService
 
         if ($data['rajaongkir']['status']['code'] == 400) {
             return response()->json([
-                'message' => $data['rajaongkir']['status']['description'],
-                'status' => 400,
+                'error' => [
+                    'message' => $data['rajaongkir']['status']['description'],
+                    'status_code' => 400,
+                    'error' => 1
+                ]
             ], 400);
         }
 
@@ -76,11 +82,13 @@ class RajaOngkirService extends BaseService
         if($collection->isEmpty()) throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => 'Province'], $locale));
 
         if(is_multidimensional_array($collection->toArray())) {
-            $response = response()->json($this->format_json($collection, $page, $per_page, ['path' => config('app.url') . '/api/v1/id/rajaongkir/get-province']));
+            $response = response()->json($this->format_json($collection, $page, $per_page, ['path' => config('app.url') . '/api/v1/id/rajaongkir/provinces']));
         } else {
             $response = response()->json([
-                'data' => $collection
-            ]);
+                'data' => $collection,
+                'status_code' => 200,
+                'error' => 0
+            ], 200);
         }
 
         return $response;
@@ -123,8 +131,11 @@ class RajaOngkirService extends BaseService
 
         if ($err) {
             return response()->json([
-                'message' => "cURL Error #:" . $err,
-                'status' => 500,
+                'error' => [
+                    'message' => 'cURL Error #:' . $err,
+                    'status_code' => 500,
+                    'error' => 1
+                ]
             ], 500);
         }
 
@@ -132,8 +143,11 @@ class RajaOngkirService extends BaseService
 
         if ($data['rajaongkir']['status']['code'] == 400) {
             return response()->json([
-                'message' => $data['rajaongkir']['status']['description'],
-                'status' => 400,
+                'error' => [
+                    'message' => $data['rajaongkir']['status']['description'],
+                    'status_code' => 400,
+                    'error' => 1
+                ]
             ], 400);
         }
 
@@ -155,14 +169,12 @@ class RajaOngkirService extends BaseService
     public function getCost($locale, $data)
     {
         $data_request = Arr::only($data, [
-            // 'origin_city',
             'destination_city',
             'weight',
             'courier',
         ]);
 
         $this->validate($data_request, [
-                // 'origin_city' => 'required',
                 'destination_city' => 'required',
                 'weight' => 'required|integer',
                 'courier' => 'required|in:jne,pos,tiki',
@@ -200,8 +212,11 @@ class RajaOngkirService extends BaseService
 
         if ($err) {
             return response()->json([
-                'message' => "cURL Error #:" . $err,
-                'status' => 500,
+                'error' => [
+                    'message' => 'cURL Error #:' . $err,
+                    'status_code' => 500,
+                    'error' => 1
+                ]
             ], 500);
         }
 
@@ -209,8 +224,11 @@ class RajaOngkirService extends BaseService
 
         if ($data['rajaongkir']['status']['code'] == 400) {
             return response()->json([
-                'message' => $data['rajaongkir']['status']['description'],
-                'status' => 400,
+                'error' => [
+                    'message' => $data['rajaongkir']['status']['description'],
+                    'status_code' => 400,
+                    'error' => 1
+                ]
             ], 400);
         }
 
@@ -222,7 +240,9 @@ class RajaOngkirService extends BaseService
 
         return response()->json([
             'data' => $collection,
-        ]);
+            'status_code' => 200,
+            'error' => 1
+        ], 200);
     }
 
     private function format_json($original_data, $page, $per_page, $options)

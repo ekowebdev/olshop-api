@@ -77,7 +77,7 @@ class Handler extends ExceptionHandler
             if ($exception instanceof UnauthorizedException) {
                 return response()->json([
                     'message' => trans('auth.not_authorize_access'),
-                    'status_code'  => 403,
+                    'status_code' => 403,
                     'error' => 'Forbidden'
                 ]);
             }

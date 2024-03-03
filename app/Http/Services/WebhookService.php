@@ -33,9 +33,12 @@ class WebhookService extends BaseService
 
         if ($signature_key !== $my_signature_key) {
             return response()->json([
-                'message' => trans('error.invalid_signature_midtrans'),
-                'status' => 400,
-            ], 400);
+                'error' => [
+                    'message' => trans('error.invalid_signature_midtrans'),
+                    'status_code' => 401,
+                    'error' => 1
+                ]
+            ], 401);
         }
 
         $real_order_id = explode('-', $order_id);
@@ -43,9 +46,12 @@ class WebhookService extends BaseService
 
         if ($order->status == 'shipped' && $order->status == 'success') {
             return response()->json([
-                'message' => trans('error.operation_not_permitted'),
-                'status' => 405,
-            ], 405);   
+                'error' => [
+                    'message' => trans('error.operation_not_permitted'),
+                    'status_code' => 403,
+                    'error' => 1
+                ]
+            ], 403); 
         }
 
         if ($transaction_status == 'capture'){
@@ -144,8 +150,8 @@ class WebhookService extends BaseService
 
         return response()->json([
             'message' => 'OK',
-            'status' => 200,
+            'status_code' => 200,
             'error' => 0,
-        ]);
+        ], 200);
     }
 }
