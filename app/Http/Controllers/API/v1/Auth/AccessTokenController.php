@@ -64,10 +64,6 @@ class AccessTokenController extends ApiAuthController
             SendEmailVerificationJob::dispatch($locale, $user);
         }
 
-        if(!empty($request['google_access_token'])){
-            $request['access_token'] = $request['google_access_token'];
-        }
-
         $request['is_register'] = true;
 
         $serverRequest = $serverRequest->withParsedBody($serverRequest->getParsedBody() + $request);
@@ -96,7 +92,7 @@ class AccessTokenController extends ApiAuthController
 	        'password' => 'nullable|required_if:grant_type,password|string|min:6|max:32',
 	        'provider' => 'nullable|required_if:grant_type,social|in:google',
             'google_id' => 'nullable|required_if:provider,google',
-			'access_token' => 'nullable|required_if:grant_type,social',
+            'google_access_token' => 'nullable|required_if:provider,google',
             'g-recaptcha-response' => ['nullable', 'required_if:grant_type,password', new ReCaptcha]
         ]);
 
@@ -118,12 +114,12 @@ class AccessTokenController extends ApiAuthController
                 if($request['google_id'] != $user->google_id) {
                     $user->update(['google_id' => $request['google_id']]);
                 }
-                if($request['access_token'] != $user->google_access_token) {
-                    $user->update(['google_access_token' => $request['access_token']]);
+                if($request['google_access_token'] != $user->google_access_token) {
+                    $user->update(['google_access_token' => $request['google_access_token']]);
                 }
             }
             if($user->google_access_token != null){
-                if($request['access_token'] != $user->google_access_token){
+                if($request['google_access_token'] != $user->google_access_token){
                     throw new AuthenticationException(trans('auth.failed'));
                 }
             }
