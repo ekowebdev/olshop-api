@@ -61,7 +61,7 @@ class ProductResource extends JsonResource
                     'product_id' => $review->product_id,
                     'text' => $review->text,
                     'rating' => (float) $review->rating,
-                    'files' => $review->review_files->makeHidden(['created_at', 'updated_at']),
+                    'review_files' => $review->review_files->makeHidden(['created_at', 'updated_at']),
                     'date' => $review->date,
                     'fdate' => Carbon::parse($review->created_at)->diffForHumans(),
                 ];
