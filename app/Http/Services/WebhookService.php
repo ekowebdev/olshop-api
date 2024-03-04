@@ -31,8 +31,6 @@ class WebhookService extends BaseService
         $server_key = config('services.midtrans.server_key');
         $my_signature_key = hash('sha512', $order_id.$status_code.$gross_amount.$server_key);
 
-        \DB::beginTransaction();
-
         if ($signature_key !== $my_signature_key) {
             return response()->json([
                 'error' => [
@@ -43,120 +41,133 @@ class WebhookService extends BaseService
             ], 401);
         }
 
-        $real_order_id = explode('-', $order_id);
-        $order = $this->repository->getSingleData($locale, $real_order_id[0]);
+        try {
+            \DB::beginTransaction();
 
-        if ($order->status == 'shipped' && $order->status == 'success') {
-            return response()->json([
-                'error' => [
-                    'message' => trans('error.operation_not_permitted'),
-                    'status_code' => 403,
-                    'error' => 1
-                ]
-            ], 403); 
-        }
+            $real_order_id = explode('-', $order_id);
+            $order = $this->repository->getSingleData($locale, $real_order_id[0]);
 
-        if ($transaction_status == 'capture'){
-            if ($fraud_status == 'challenge'){
-                $order->status = 'challenge';
-            } else if ($fraud_status == 'accept'){
-                $order->status = 'shipped';
+            if ($order->status == 'shipped' && $order->status == 'success') {
+                return response()->json([
+                    'error' => [
+                        'message' => trans('error.operation_not_permitted'),
+                        'status_code' => 403,
+                        'error' => 1
+                    ]
+                ], 403); 
             }
-        } else if ($transaction_status == 'settlement'){
-            $order->status = 'shipped';
-        } else if ($transaction_status == 'cancel' ||
-          $transaction_status == 'deny' ||
-          $transaction_status == 'expire'){
-            $order->status = 'failure';
-        } else if ($transaction_status == 'pending'){
-            $order->status = 'pending';
-        }
 
-        $payment_logs_data = [
-            'status' => $transaction_status,
-            'raw_response' => json_encode($data),
-            'order_id' => $real_order_id[0],
-            'type' => $type
-        ];
-        PaymentLog::create($payment_logs_data);
+            if ($transaction_status == 'capture'){
+                if ($fraud_status == 'challenge'){
+                    $order->status = 'challenge';
+                } else if ($fraud_status == 'accept'){
+                    $order->status = 'shipped';
+                }
+            } else if ($transaction_status == 'settlement'){
+                $order->status = 'shipped';
+            } else if ($transaction_status == 'cancel' ||
+            $transaction_status == 'deny' ||
+            $transaction_status == 'expire'){
+                $order->status = 'failure';
+            } else if ($transaction_status == 'pending'){
+                $order->status = 'pending';
+            }
 
-        $order->save();
-
-        if ($order->status == 'shipped') {
-            $header_data = [
-                'code' => $order->code,
-                'total_price' => $order->total_point,
-                'shipping_fee' => $order->shipping_fee,
-                'total_amount' => $order->total_amount,
+            $payment_logs_data = [
+                'status' => $transaction_status,
+                'raw_response' => json_encode($data),
+                'order_id' => $real_order_id[0],
+                'type' => $type
             ];
+            PaymentLog::create($payment_logs_data);
 
-            $order_products = OrderProduct::with(['products', 'variants'])
-                ->where('order_id', $order->id)
-                ->get();
+            $order->save();
 
-            $detail_data = [];
+            if ($order->status == 'shipped') {
+                $header_data = [
+                    'code' => $order->code,
+                    'total_price' => $order->total_point,
+                    'shipping_fee' => $order->shipping_fee,
+                    'total_amount' => $order->total_amount,
+                ];
 
-            foreach ($order_products as $order_product) {
-                $variant_name = '';
-                $price = $order_product->products->point;
+                $order_products = OrderProduct::with(['products', 'variants'])
+                    ->where('order_id', $order->id)
+                    ->get();
 
-                if ($order_product->variants) {
-                    $variant_name = ' - ' . $order_product->variants->name;
-                    $price = $order_product->variants->point;
+                $detail_data = [];
+
+                foreach ($order_products as $order_product) {
+                    $variant_name = '';
+                    $price = $order_product->products->point;
+
+                    if ($order_product->variants) {
+                        $variant_name = ' - ' . $order_product->variants->name;
+                        $price = $order_product->variants->point;
+                    }
+
+                    $detail_data[] = [
+                        'price' => intval($price),
+                        'quantity' => $order_product->quantity,
+                        'name' => $order_product->products->name . $variant_name,
+                    ];
                 }
 
-                $detail_data[] = [
-                    'price' => intval($price),
-                    'quantity' => $order_product->quantity,
-                    'name' => $order_product->products->name . $variant_name,
-                ];
-            }
+                if($order->metadata != null){
+                    $metadata = json_decode($order->metadata, true);
+                    $metadata_order_products = $metadata['order_products'];
+                    foreach ($metadata_order_products as $product) {
+                        $user_id = (int) $order->user_id;
+                        $product_id = (int) $product['product_id'];
+                        $variant_id = ($product['variant_id'] == null) ? '' : (int) $product['variant_id'];
+                        $quantity = (int) $product['quantity'];
 
-            if($order->metadata != null){
-                $metadata = json_decode($order->metadata, true);
-                $metadata_order_products = $metadata['order_products'];
-                foreach ($metadata_order_products as $product) {
-                    $user_id = (int) $order->user_id;
-                    $product_id = (int) $product['product_id'];
-                    $variant_id = ($product['variant_id'] == null) ? '' : (int) $product['variant_id'];
-                    $quantity = (int) $product['quantity'];
-
-                    $carts = Cart::all()
-                        ->where('user_id', '=', $user_id)
-                        ->where('product_id', '=', $product_id)
-                        ->where('variant_id', '=', $variant_id)
-                        ->where('quantity', '=', $quantity)
-                        ->first();
-                    
-                    if(!is_null($carts)) {
-                        $carts->delete();
+                        $carts = Cart::all()
+                            ->where('user_id', '=', $user_id)
+                            ->where('product_id', '=', $product_id)
+                            ->where('variant_id', '=', $variant_id)
+                            ->where('quantity', '=', $quantity)
+                            ->first();
+                        
+                        if(!is_null($carts)) {
+                            $carts->delete();
+                        }
                     }
                 }
+
+                $shippings = Shipping::where('order_id', $order->id)->first();
+                if($shippings->resi == null) $shipping_status = 'on progress';
+                else $shipping_status = 'on delivery';
+                $shippings->update([
+                    'status' => $shipping_status
+                ]);
+
+                $payments = PaymentLog::where('order_id', $order->id)->first();
+                $payments->update([
+                    'status' => $transaction_status, 
+                    'raw_response' => json_encode($data)
+                ]);
+
+                SendEmailOrderConfirmationJob::dispatch($order->users->email, $header_data, $detail_data);
+
             }
 
-            $shippings = Shipping::where('order_id', $order->id)->first();
-            if($shippings->resi == null) $shipping_status = 'on progress';
-            else $shipping_status = 'on delivery';
-            $shippings->update([
-                'status' => $shipping_status
-            ]);
+            \DB::commit();
 
-            $payments = PaymentLog::where('order_id', $order->id)->first();
-            $payments->update([
-                'status' => $transaction_status, 
-                'raw_response' => json_encode($data)
-            ]);
-
-            SendEmailOrderConfirmationJob::dispatch($order->users->email, $header_data, $detail_data);
-
+            return response()->json([
+                'message' => 'OK',
+                'status_code' => 200,
+                'error' => 0,
+            ], 200);
+        } catch (\Exception $e) {
+            \DB::rollback();
+            return response()->json([
+                'error' => [
+                    'message' => $e->getMessage(),
+                    'status_code' => 500,
+                    'error' => 1,
+                ]
+            ], 500);
         }
-
-        \DB::commit();
-
-        return response()->json([
-            'message' => 'OK',
-            'status_code' => 200,
-            'error' => 0,
-        ], 200);
     }
 }
