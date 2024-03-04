@@ -147,17 +147,21 @@ class AccessTokenController extends ApiAuthController
                     }
                 } else {
                     if(!empty($user)){
-                        if($request['google_id'] != $user->google_id){
-                            return response()->json([
-                                'error' => [
-                                    'message' => trans('auth.failed'),
-                                    'status_code' => 401,
-                                    'error' => 1
-                                ]
-                            ], 401);
-                        }
-                        if($request['access_token'] != $user->google_access_token) {
-                            $user->update(['google_access_token' => $request['access_token']]);
+                        if($user->google_id == null && $user->google_access_token == null) {
+                            $user->update(['google_id' => $request['google_id'], 'google_access_token' => $request['access_token']]);
+                        } else {
+                            if($request['google_id'] != $user->google_id){
+                                return response()->json([
+                                    'error' => [
+                                        'message' => trans('auth.failed'),
+                                        'status_code' => 401,
+                                        'error' => 1
+                                    ]
+                                ], 401);
+                            }
+                            if($request['access_token'] != $user->google_access_token) {
+                                $user->update(['google_access_token' => $request['access_token']]);
+                            }
                         }
                     }
                 }
