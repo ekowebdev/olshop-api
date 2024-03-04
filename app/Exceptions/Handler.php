@@ -76,18 +76,20 @@ class Handler extends ExceptionHandler
 
             if ($exception instanceof UnauthorizedException) {
                 return response()->json([
-                    'message' => trans('auth.not_authorize_access'),
-                    'status_code' => 403,
-                    'error' => 'Forbidden'
+                    'error' => [
+                        'message' => trans('auth.not_authorize_access'),
+                        'status_code' => 403,
+                        'error' => 1
+                    ]
                 ]);
             }
 
             // we prepare custom response for other situation such as modelnotfound
             $response = [];
             $response['error'] = [
-                'message' => 'Error Found', 
+                'message' => $exception->getMessage(), 
                 'status_code' => 500,
-                'error' => $exception->getMessage()
+                'error' => 1
             ];
 
             // we look for assigned status code if there isn't we assign 500

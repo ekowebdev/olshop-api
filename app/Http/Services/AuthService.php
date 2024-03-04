@@ -222,7 +222,7 @@ class AuthService extends BaseService
             'message' => trans('all.success_resend_verification'), 
             'status_code' => 200,
             'error' => 0,
-        ]);
+        ], 200);
     }
 
     public function forget_password($locale, $request)

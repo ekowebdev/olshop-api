@@ -23,12 +23,7 @@ class ApplicationException extends \Exception
 	                'message' => (!empty($this->message)) ? $this->message : trans('admin/error.system_error'), 
 					'status_code' => $this->code,
 					'error_tagging' => $this->taging,
-					'error_code' => $this->code,
-	                'error' => [
-	                	[
-	                		(!empty($this->message)) ? $this->message : trans('admin/error.system_error')
-	                	]
-	                ]
+	                'error' => 1
 	            ]
 	        ], $this->code
 		);

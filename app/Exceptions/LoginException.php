@@ -19,12 +19,11 @@ class LoginException extends \Exception
 		return Response::json(
 	        [
 	            'error' => [
-	                'message' => (!empty($this->message)) ? $this->message : "Not Authorized", 
+	                'message' => (!empty($this->message)) ? $this->message : trans('auth.wrong_email_or_password'), 
 					'status_code' => $this->code,
 					'error_tagging' => $this->taging,
-					'error_code' => $this->code,
 	                'is_login' => 1,
-	                'error' => (!empty($this->message)) ? $this->message : trans('auth.wrong_email_or_password')
+	                'error' => 1
 	            ]
 	        ], $this->code
 		);

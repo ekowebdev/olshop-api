@@ -60,8 +60,11 @@ class TrackResiService extends BaseService
 
         if ($err) {
             return response()->json([
-                'message' => "cURL Error #:" . $err,
-                'status' => 500,
+                'error' => [
+                    'message' => "cURL Error #:" . $err,
+                    'status' => 500,
+                    'error' => 1
+                ]
             ], 500);
         }
 
@@ -74,7 +77,7 @@ class TrackResiService extends BaseService
         return response()->json([
             'data' => $data,
             'status_code' => 200,
-            'error' => 1
+            'error' => 0
         ], 200);
     }
     

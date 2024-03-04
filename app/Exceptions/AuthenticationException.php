@@ -13,13 +13,8 @@ class AuthenticationException extends \Exception
 	            'error' => [
 	                'message' => (!empty($this->message)) ? $this->message : trans('auth.failed'), 
 					'status_code' => 401,
-					'error_code' => $this->code,
 	                'is_login' => 0,
-	                'error' => [
-	                	[
-	                		(!empty($this->message)) ? $this->message : trans('auth.failed')
-	                	]
-	                ]
+	                'error' => 1
 	            ]
 	        ], 401
 		);

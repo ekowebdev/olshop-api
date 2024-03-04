@@ -11,9 +11,9 @@ class ForbiddenException extends \Exception
 		return Response::json(
 	        [
 	            'error' => [
-	                'message' => 'Forbidden.', 
+	                'message' => (!empty($this->message)) ? $this->message : trans('auth.not_authorize_access'), 
 	                'status_code' => 403,
-	                'error' => (!empty($this->message)) ? $this->message : trans('auth.not_authorize_access')
+	                'error' => 1
 	            ]
 	        ], 403
 		);

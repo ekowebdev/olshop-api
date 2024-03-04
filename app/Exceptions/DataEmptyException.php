@@ -17,8 +17,7 @@ class DataEmptyException extends \Exception
 	            'error' => [
 	                'message' => (!empty($this->message)) ? $this->message : 'Data does not exist', 
 					'status_code' => 404,
-					'error_code' => $this->code,
-	                'error' => (!empty($this->message)) ? $this->message : 'Data does not exist'
+	                'error' => 1
 	            ]
 	        ], 404
 		);
