@@ -31,6 +31,8 @@ class WebhookService extends BaseService
         $server_key = config('services.midtrans.server_key');
         $my_signature_key = hash('sha512', $order_id.$status_code.$gross_amount.$server_key);
 
+        \DB::beginTransaction();
+
         if ($signature_key !== $my_signature_key) {
             return response()->json([
                 'error' => [
@@ -70,13 +72,13 @@ class WebhookService extends BaseService
             $order->status = 'pending';
         }
 
-        $payment_log_data = [
+        $payment_logs_data = [
             'status' => $transaction_status,
             'raw_response' => json_encode($data),
             'order_id' => $real_order_id[0],
             'type' => $type
         ];
-        PaymentLog::create($payment_log_data);
+        PaymentLog::create($payment_logs_data);
 
         $order->save();
 
@@ -146,7 +148,10 @@ class WebhookService extends BaseService
             ]);
 
             SendEmailOrderConfirmationJob::dispatch($order->users->email, $header_data, $detail_data);
+
         }
+
+        \DB::commit();
 
         return response()->json([
             'message' => 'OK',
