@@ -147,7 +147,7 @@ return [
         'phone_is_E164'                 => 'format :attribute tidak sesuai'
     ],
 
-	'too_many_requests'	     => "Terlalu Banyak Permintaan",
-	'too_many_requests_wait' => "Terlalu Banyak Permintaan, Tunggu hingga :wait",
+	'too_many_requests'	     => "Terlalu banyak permintaan, coba lagi nanti",
+	'too_many_requests_wait' => "Terlalu banyak permintaan, tunggu hingga :wait",
     'google_recaptcha'       => 'Google recaptcha tidak sesuai',
 ];

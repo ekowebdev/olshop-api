@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['xssclean'])->group(function () {
+Route::middleware(['xssclean', 'throttle:api'])->group(function () {
     // Email Verification
     Route::get('/email/verify/{id}', '\App\Http\Controllers\API\v1\Auth\AuthController@verify')->name('verification.verify');
     Route::group(['prefix' => '/v1/{locale}'], function(){

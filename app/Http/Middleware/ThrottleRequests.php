@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use RuntimeException;
 use Illuminate\Support\Str;
+use Lcobucci\JWT\Parser as JwtParser;
 use Illuminate\Cache\RateLimiter;
 use Illuminate\Support\InteractsWithTime;
 use Symfony\Component\HttpFoundation\Response;
@@ -13,7 +14,7 @@ class ThrottleRequests
 {
     use InteractsWithTime;
 
-    protected $custom_message;
+    protected $customMessage;
 
     /**
      * The rate limiter instance.
@@ -27,10 +28,10 @@ class ThrottleRequests
      *
      * @param  \Illuminate\Cache\RateLimiter $limiter
      */
-    public function __construct(RateLimiter $limiter, $custom_message = '')
+    public function __construct(RateLimiter $limiter, $customMessage = '')
     {
         $this->limiter = $limiter;
-        $this->custom_message = $custom_message;
+        $this->customMessage = $customMessage;
     }
 
     /**
@@ -54,7 +55,7 @@ class ThrottleRequests
 
         $maxAttempts = $this->resolveMaxAttempts($request, $maxAttempts);
 
-        if ($this->limiter->tooManyAttempts($key, $maxAttempts, $decayMinutes)) {
+        if($this->limiter->tooManyAttempts($key, $maxAttempts, $decayMinutes)) {
             return $this->buildResponse($key, $maxAttempts);
         }
 
@@ -76,8 +77,8 @@ class ThrottleRequests
      */
     protected function resolveRequestSignature($request)
     {
-        if( $bearerToken = $request->bearerToken() ) {
-            $tokenId    = (new \Lcobucci\JWT\Parser())->parse($bearerToken)->getHeader('jti');
+        if($bearerToken = $request->bearerToken()) {
+            $tokenId = app(JwtParser::class)->parse($bearerToken)->claims()->get('jti');
             return sha1(url()->current().'|'.$tokenId);
         }
         
@@ -105,7 +106,7 @@ class ThrottleRequests
             $maxAttempts = explode('|', $maxAttempts, 2)[$request->user() ? 1 : 0];
         }
 
-        if (! is_numeric($maxAttempts) && $request->user()) {
+        if (!is_numeric($maxAttempts) && $request->user()) {
             $maxAttempts = $request->user()->{$maxAttempts};
         }
 
@@ -123,19 +124,20 @@ class ThrottleRequests
     {
         $retryAfter = $this->limiter->availableIn($key);
 
-        $error_message = $this->custom_message;
-        if(empty($custom_message)){
-            $error_message = trans('validation.too_many_requests_wait',[
+        $errorMessage = $this->customMessage;
+        if(empty($customMessage)){
+            $errorMessage = trans('validation.too_many_requests_wait',[
                 'wait' => $this->humanTime($retryAfter)
             ]);
         }
         
         $message = json_encode([
             'error' => [
-                'message' => $error_message, 
+                'message' => $errorMessage, 
                 'status_code' => 429,
-                'error' => $error_message,
-            ]], 429);
+                'error' => 1,
+            ]
+        ], 429);
 
         $response = new Response($message, 429);
 
