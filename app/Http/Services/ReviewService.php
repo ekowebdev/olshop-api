@@ -308,7 +308,7 @@ class ReviewService extends BaseService
     {
         $check_data = $this->repository->getSingleData($locale, $id);
         DB::beginTransaction();
-        foreach($check_data->files as $file) {
+        foreach($check_data->review_files as $file) {
             if(Storage::disk('s3')->exists('files/reviews/' . $file->file)) {
                 Storage::disk('s3')->delete('files/reviews/' . $file->file);
             }
