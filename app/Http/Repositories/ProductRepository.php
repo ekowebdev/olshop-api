@@ -62,7 +62,7 @@ class ProductRepository extends BaseRepository
         ]);
 		$result = $this->model
                 ->getAll()
-                ->whereHas('category', function ($query) use ($category) {
+                ->whereHas('categories', function ($query) use ($category) {
                     $query->where('slug', $category);
                 })
                 ->setSortableAndSearchableColumn($sortable_and_searchable_column)
@@ -82,7 +82,7 @@ class ProductRepository extends BaseRepository
         ]);
 		$result = $this->model
                 ->getAll()
-                ->whereHas('brand', function ($query) use ($brand) {
+                ->whereHas('brands', function ($query) use ($brand) {
                     $query->where('slug', $brand);
                 })
                 ->setSortableAndSearchableColumn($sortable_and_searchable_column)
