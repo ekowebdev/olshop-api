@@ -22,7 +22,6 @@ services:
       - dynamodb-local
     links:
       - dynamodb-local
-    # command: dynamodb describe-limits --endpoint-url http://dynamodb-local:8010 --region ap-southeast-1
   database:
     container_name: database
     image: mysql:8.0
@@ -44,6 +43,8 @@ services:
     container_name: redis
     image: redis:alpine
     command: redis-server --appendonly yes --requirepass "secret"
+    volumes:
+      - ./data/redis:/data
     ports:
       - ${REDIS_PORT}:6379
   websockets:

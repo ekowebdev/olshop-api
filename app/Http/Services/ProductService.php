@@ -263,7 +263,7 @@ class ProductService extends BaseService
             $img_thumb = $img->crop(5, 5);
             $img_thumb = $img_thumb->stream()->detach();
             Storage::disk('s3')->put('images/thumbnails/' . $image_name, $img_thumb);
-            $result->images()->create([
+            $result->product_images()->create([
                 'image' => $image_name,
             ]);
         }
