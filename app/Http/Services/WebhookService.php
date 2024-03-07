@@ -42,7 +42,7 @@ class WebhookService extends BaseService
         }
 
         //try {
-            \DB::beginTransaction();
+            //\DB::beginTransaction();
 
             $real_order_id = explode('-', $order_id);
             $order = $this->repository->getSingleData($locale, $real_order_id[0]);
@@ -152,7 +152,7 @@ class WebhookService extends BaseService
 
             }
 
-            \DB::commit();
+            //\DB::commit();
 
             return response()->json([
                 'message' => 'OK',
