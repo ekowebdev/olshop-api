@@ -41,7 +41,7 @@ class WebhookService extends BaseService
             ], 401);
         }
 
-        try {
+        //try {
             \DB::beginTransaction();
 
             $real_order_id = explode('-', $order_id);
@@ -159,15 +159,15 @@ class WebhookService extends BaseService
                 'status_code' => 200,
                 'error' => 0,
             ], 200);
-        } catch (\Exception $e) {
-            \DB::rollback();
-            return response()->json([
-                'error' => [
-                    'message' => $e->getMessage(),
-                    'status_code' => 500,
-                    'error' => 1,
-                ]
-            ], 500);
-        }
+        //} catch (\Exception $e) {
+           // \DB::rollback();
+           // return response()->json([
+              //  'error' => [
+                 //   'message' => $e->getMessage(),
+                  //  'status_code' => 500,
+                //    'error' => 1,
+             //   ]
+    //  ], 500);
+       // }
     }
 }
