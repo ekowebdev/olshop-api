@@ -130,9 +130,16 @@ class BrandService extends BaseService
             if(Storage::disk('s3')->exists('images/brand/' . $check_data->logo)) {
                 Storage::disk('s3')->delete('images/brand/' . $check_data->logo);
             }
+            if(Storage::disk('s3')->exists('images/brand/thumbnails/' . $check_data->logo)) {
+                Storage::disk('s3')->delete('images/brand/thumbnails/' . $check_data->logo);
+            }
             $image = $data_request['logo'];
             $image_name = time() . '.' . $image->getClientOriginalExtension();
             Storage::disk('s3')->put('images/brand/' . $image_name, file_get_contents($image));
+            $img = Image::make($image);
+            $img_thumb = $img->crop(5, 5);
+            $img_thumb = $img_thumb->stream()->detach();
+            Storage::disk('s3')->put('images/brand/thumbnails/' . $image_name, $img_thumb);
             $check_data->logo = $image_name;
         }
         $data_request['slug'] = Str::slug($data_request['name'] ?? $check_data->name);

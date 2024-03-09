@@ -11,12 +11,20 @@ class Slider extends BaseModel
 
     protected $table = 'sliders';
     protected $fillable = ['image', 'title', 'description', 'link', 'sort', 'start_date', 'end_date', 'status'];
-    protected $appends = ['image_url'];
+    protected $appends = ['image_url', 'image_thumb_url'];
 
     public function getImageUrlAttribute()
     {
         if ($this->image != null) {
             $url = 'https://'. config('filesystems.disks.s3.bucket') .'.s3-'. config('filesystems.disks.s3.region') .'.amazonaws.com/images/slider/' . $this->image;
+        }
+        return $url ?? null;
+    }
+
+    public function getImageThumbUrlAttribute()
+    {
+        if ($this->image != null) {
+            $url = 'https://'. config('filesystems.disks.s3.bucket') .'.s3-'. config('filesystems.disks.s3.region') .'.amazonaws.com/images/slider/thumbnails/' . $this->image;
         }
         return $url ?? null;
     }

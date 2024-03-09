@@ -132,9 +132,16 @@ class CategoryService extends BaseService
             if(Storage::disk('s3')->exists('images/category/' . $check_data->image)) {
                 Storage::disk('s3')->delete('images/category/' . $check_data->image);
             }
+            if(Storage::disk('s3')->exists('images/category/thumbnails/' . $check_data->image)) {
+                Storage::disk('s3')->delete('images/category/thumbnails/' . $check_data->image);
+            }
             $image = $data_request['image'];
             $image_name = time() . '.' . $image->getClientOriginalExtension();
             Storage::disk('s3')->put('images/category/' . $image_name, file_get_contents($image));
+            $img = Image::make($image);
+            $img_thumb = $img->crop(5, 5);
+            $img_thumb = $img_thumb->stream()->detach();
+            Storage::disk('s3')->put('images/category/thumbnails/' . $image_name, $img_thumb);
             $check_data->image = $image_name;
         }
         $data_request['slug'] = Str::slug($data_request['name'] ?? $check_data->name);

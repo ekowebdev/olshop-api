@@ -133,6 +133,10 @@ class SliderService extends BaseService
         $image = $data_request['image'];
         $image_name = time() . '.' . $image->getClientOriginalExtension();
         Storage::disk('s3')->put('images/slider/' . $image_name, file_get_contents($image));
+        $img = Image::make($image);
+        $img_thumb = $img->crop(5, 5);
+        $img_thumb = $img_thumb->stream()->detach();
+        Storage::disk('s3')->put('images/slider/thumbnails/' . $image_name, $img_thumb);
         $result = $this->model->create([
             'title' => $data_request['title'],
             'description' => $data_request['description'],
@@ -185,9 +189,16 @@ class SliderService extends BaseService
             if(Storage::disk('s3')->exists('images/slider/' . $check_data->image)) {
                 Storage::disk('s3')->delete('images/slider/' . $check_data->image);
             }
+            if(Storage::disk('s3')->exists('images/slider/thumbnails/' . $check_data->image)) {
+                Storage::disk('s3')->delete('images/slider/thumbnails/' . $check_data->image);
+            }
             $image = $data_request['image'];
             $image_name = time() . '.' . $image->getClientOriginalExtension();
             Storage::disk('s3')->put('images/slider/' . $image_name, file_get_contents($image));
+            $img = Image::make($image);
+            $img_thumb = $img->crop(5, 5);
+            $img_thumb = $img_thumb->stream()->detach();
+            Storage::disk('s3')->put('images/slider/thumbnails/' . $image_name, $img_thumb);
             $check_data->image = $image_name;
         }
         $check_data->title = $data_request['title'] ?? $check_data->title;

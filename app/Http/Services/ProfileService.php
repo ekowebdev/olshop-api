@@ -146,9 +146,16 @@ class ProfileService extends BaseService
             if(Storage::disk('s3')->exists('images/avatar/' . $check_data->avatar)) {
                 Storage::disk('s3')->delete('images/avatar/' . $check_data->avatar);
             }
+            if(Storage::disk('s3')->exists('images/avatar/thumbnails/' . $check_data->avatar)) {
+                Storage::disk('s3')->delete('images/avatar/thumbnails/' . $check_data->avatar);
+            }
             $image = $data_request['avatar'];
             $image_name = time() . '.' . $image->getClientOriginalExtension();
             Storage::disk('s3')->put('images/avatar/' . $image_name, file_get_contents($image));
+            $img = Image::make($image);
+            $img_thumb = $img->crop(5, 5);
+            $img_thumb = $img_thumb->stream()->detach();
+            Storage::disk('s3')->put('images/avatar/thumbnails/' . $image_name, $img_thumb);
             $check_data->avatar = $image_name;
         }
         $check_data->user_id = $data_request['user_id'] ?? $check_data->user_id;
