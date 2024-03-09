@@ -44,7 +44,7 @@ class ProductImageRepository extends BaseRepository
         return $result;	
 	}
 
-    public function getSingleDataByItemGiftVariant($locale, $product_id, $variant_id)
+    public function getSingleDataByProductVariant($locale, $product_id, $variant_id)
 	{
 		$result = $this->model
                   ->getAll()
