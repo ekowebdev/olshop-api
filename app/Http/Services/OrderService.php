@@ -60,6 +60,30 @@ class OrderService extends BaseService
         return $this->repository->getIndexData($locale, $sortable_and_searchable_column);
     }
 
+    public function getDataByUser($locale, $data, $id)
+    {
+        $search = [
+            'code' => 'code',
+            'total_point' => 'total_point',
+            'note' => 'note',
+        ];
+
+        $search_column = [
+            'id' => 'id',
+            'code' => 'code',
+            'total_point' => 'total_point',
+            'note' => 'note',
+        ];
+
+        $sortable_and_searchable_column = [
+            'search'        => $search,
+            'search_column' => $search_column,
+            'sort_column'   => array_merge($search, $search_column),
+        ];
+        
+        return $this->repository->getDataByUser($locale, $sortable_and_searchable_column, $id);
+    }
+
     public function getSingleData($locale, $id)
     {
         return $this->repository->getSingleData($locale, $id);
@@ -455,7 +479,7 @@ class OrderService extends BaseService
             }
         }
         $shippings = Shipping::where('order_id', $id)->first();
-        $shippings->update(['status' => null]);
+        $shippings->update(['resi' => null]);
         $result = $check_data->update(['deleted_at' => now()->format('Y-m-d H:i:s')]);
         DB::commit();
 

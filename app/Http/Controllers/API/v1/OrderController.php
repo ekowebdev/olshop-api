@@ -27,6 +27,15 @@ class OrderController extends BaseController
                 ]);
     }
 
+    public function showByUser($locale, $id)
+    {
+        $data = $this->service->getDataByUser($locale, Request::all(), $id);
+        return (OrderResource::collection($data))
+                ->additional([
+                    'sortable_and_searchable_column' => $data->sortableAndSearchableColumn,
+                ]);
+    }
+
     public function show($locale, $id)
     {
         $data = $this->service->getSingleData($locale, $id);
