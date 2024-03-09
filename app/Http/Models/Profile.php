@@ -12,12 +12,20 @@ class Profile extends BaseModel
 
     protected $table = 'profiles';
     protected $fillable = ['user_id', 'name', 'birthdate', 'phone_number', 'avatar'];
-    protected $appends = ['avatar_url'];
+    protected $appends = ['avatar_url', 'avatar_thumb_url'];
 
     public function getAvatarUrlAttribute()
     {
         if ($this->avatar != null) {
             $url = 'https://'. config('filesystems.disks.s3.bucket') .'.s3-'. config('filesystems.disks.s3.region') .'.amazonaws.com/images/avatar/' . $this->avatar;
+        }
+        return $url ?? null;
+    }
+
+    public function getAvatarThumbUrlAttribute()
+    {
+        if ($this->avatar != null) {
+            $url = 'https://'. config('filesystems.disks.s3.bucket') .'.s3-'. config('filesystems.disks.s3.region') .'.amazonaws.com/images/avatar/thumbnails/' . $this->avatar;
         }
         return $url ?? null;
     }

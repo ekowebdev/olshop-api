@@ -27,7 +27,7 @@ class Province extends BaseModel
     public function scopeGetAll($query)
     {
         return $query->select([
-                    'province_id', 
+                    'id', 
                     'name',
                 ]);
     }

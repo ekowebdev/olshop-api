@@ -12,12 +12,20 @@ class Category extends BaseModel
 
     protected $table = 'categories';
     protected $fillable = ['code', 'name', 'slug', 'image', 'sort', 'status'];
-    protected $appends = ['image_url'];
+    protected $appends = ['image_url', 'image_thumb_url'];
 
     public function getImageUrlAttribute()
     {
         if ($this->image != null) {
             $url = 'https://'. config('filesystems.disks.s3.bucket') .'.s3-'. config('filesystems.disks.s3.region') .'.amazonaws.com/images/category/' . $this->image;
+        }
+        return $url ?? null;
+    }
+
+    public function getImageThumbUrlAttribute()
+    {
+        if ($this->image != null) {
+            $url = 'https://'. config('filesystems.disks.s3.bucket') .'.s3-'. config('filesystems.disks.s3.region') .'.amazonaws.com/images/category/thumbnails/' . $this->image;
         }
         return $url ?? null;
     }

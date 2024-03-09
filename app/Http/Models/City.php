@@ -29,7 +29,7 @@ class City extends BaseModel
 
     public function province()
     {
-        return $this->belongsTo(Province::class, 'province_id', 'province_id');
+        return $this->belongsTo(Province::class, 'province_id');
     }
 
     public function subdistricts()
@@ -40,7 +40,7 @@ class City extends BaseModel
     public function scopeGetAll($query)
     {
         return $query->select([
-                    'city_id', 
+                    'id', 
                     'province_id', 
                     'name', 
                     'postal_code',

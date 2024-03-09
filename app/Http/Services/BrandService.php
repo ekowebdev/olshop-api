@@ -85,6 +85,10 @@ class BrandService extends BaseService
         $image = $data_request['logo'];
         $image_name = time() . '.' . $image->getClientOriginalExtension();
         Storage::disk('s3')->put('images/brand/' . $image_name, file_get_contents($image));
+        $img = Image::make($image);
+        $img_thumb = $img->crop(5, 5);
+        $img_thumb = $img_thumb->stream()->detach();
+        Storage::disk('s3')->put('images/brand/thumbnails/' . $image_name, $img_thumb);
         $result = $this->model->create([
             'name' => $data_request['name'],
             'slug' => $data_request['slug'],

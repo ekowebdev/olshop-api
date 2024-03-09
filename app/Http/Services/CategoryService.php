@@ -86,6 +86,10 @@ class CategoryService extends BaseService
         $image = $data_request['image'];
         $image_name = time() . '.' . $image->getClientOriginalExtension();
         Storage::disk('s3')->put('images/category/' . $image_name, file_get_contents($image));
+        $img = Image::make($image);
+        $img_thumb = $img->crop(5, 5);
+        $img_thumb = $img_thumb->stream()->detach();
+        Storage::disk('s3')->put('images/category/thumbnails/' . $image_name, $img_thumb);
         $result = $this->model->create([
             'code' => $data_request['code'],
             'name' => $data_request['name'],

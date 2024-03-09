@@ -21,13 +21,13 @@ class Subdistrict extends BaseModel
 
     public function city()
     {
-        return $this->belongsTo(City::class, 'city_id', 'city_id');
+        return $this->belongsTo(City::class, 'city_id');
     }
 
     public function scopeGetAll($query)
     {
         return $query->select([
-                    'subdistrict_id',
+                    'id',
                     'city_id',  
                     'name',
                 ]);

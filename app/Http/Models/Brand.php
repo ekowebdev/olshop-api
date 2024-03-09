@@ -12,12 +12,20 @@ class Brand extends BaseModel
 
     protected $table = 'brands';
     protected $fillable = ['name', 'slug', 'logo', 'sort'];
-    protected $appends = ['logo_url'];
+    protected $appends = ['logo_url', 'logo_thumb_url'];
 
     public function getLogoUrlAttribute()
     {
         if ($this->logo != null) {
             $url = 'https://'. config('filesystems.disks.s3.bucket') .'.s3-'. config('filesystems.disks.s3.region') .'.amazonaws.com/images/brand/' . $this->logo;
+        }
+        return $url ?? null;
+    }
+
+    public function getLogoThumbUrlAttribute()
+    {
+        if ($this->logo != null) {
+            $url = 'https://'. config('filesystems.disks.s3.bucket') .'.s3-'. config('filesystems.disks.s3.region') .'.amazonaws.com/images/brand/thumbnails/' . $this->logo;
         }
         return $url ?? null;
     }

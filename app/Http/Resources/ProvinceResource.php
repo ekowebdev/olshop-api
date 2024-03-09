@@ -9,7 +9,7 @@ class ProvinceResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'id' => $this->province_id,
+            'id' => $this->id,
             'name' => $this->name
         ];
     }
