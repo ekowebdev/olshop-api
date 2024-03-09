@@ -175,7 +175,7 @@ class OrderService extends BaseService
                 'note' => $order_details['note'],
             ]);
         
-            // Process Order Item Gifts
+            // Process Orders
             foreach ($order_products_details as $order_products) {
                 $quantity = $order_products['quantity'];
                 $variant_id = ($order_products['variant_id'] == '') ? null : $order_products['variant_id'];
