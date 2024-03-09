@@ -109,11 +109,11 @@ class OrderResource extends JsonResource
             'shippings' => [
                 'id' => $this->shippings->id,
                 'origin' => [
-                    'id' => $this->shippings->city_origin->city_id,
+                    'id' => $this->shippings->city_origin->id,
                     'city' => $this->shippings->city_origin->name
                 ],
                 'destination' => [
-                    'id' => $this->shippings->city_destination->city_id,
+                    'id' => $this->shippings->city_destination->id,
                     'city' => $this->shippings->city_destination->name
                 ],
                 'weight' => $this->shippings->weight,
@@ -147,15 +147,15 @@ class OrderResource extends JsonResource
                     'person_name' => $this->address->person_name,
                     'person_phone' => $this->address->person_phone,
                     'province' => [
-                        'id' => $this->address->province->province_id,
+                        'id' => $this->address->province->id,
                         'name' => $this->address->province->name
                     ],
                     'city' => [
-                        'id' => $this->address->city->city_id,
+                        'id' => $this->address->city->id,
                         'name' => $this->address->city->name
                     ],
                     'subdistrict' => [
-                        'id' => $this->address->subdistrict->subdistrict_id,
+                        'id' => $this->address->subdistrict->id,
                         'name' => $this->address->subdistrict->name
                     ],
                     'postal_code' => $this->address->postal_code,

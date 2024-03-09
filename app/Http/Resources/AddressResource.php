@@ -13,15 +13,15 @@ class AddressResource extends JsonResource
             'person_name' => $this->person_name,
             'person_phone' => $this->person_phone,
             'province' => [
-                'id' => $this->province->province_id,
+                'id' => $this->province->id,
                 'name' => $this->province->name
             ],
             'city' => [
-                'id' => $this->city->city_id,
+                'id' => $this->city->id,
                 'name' => $this->city->name
             ],
             'subdistrict' => [
-                'id' => $this->subdistrict->subdistrict_id,
+                'id' => $this->subdistrict->id,
                 'name' => $this->subdistrict->name
             ],
             'postal_code' => $this->postal_code,

@@ -1,13 +1,13 @@
 DROP TABLE IF EXISTS `cities`;
 CREATE TABLE `cities` (
-  `city_id` int(11) NOT NULL,
+  `id` int(11) NOT NULL,
   `province_id` int(11) DEFAULT NULL,
-  `city_name` varchar(255) DEFAULT NULL,
+  `name` varchar(255) DEFAULT NULL,
   `postal_code` char(5) DEFAULT NULL,
-  PRIMARY KEY (`city_id`)
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-INSERT INTO `cities` (`city_id`, `province_id`, `city_name`, `postal_code`) VALUES
+INSERT INTO `cities` (`id`, `province_id`, `name`, `postal_code`) VALUES
 (1,	21,	'Kabupaten Aceh Barat',	'23681'),
 (2,	21,	'Kabupaten Aceh Barat Daya',	'23764'),
 (3,	21,	'Kabupaten Aceh Besar',	'23951'),
@@ -512,12 +512,12 @@ INSERT INTO `cities` (`city_id`, `province_id`, `city_name`, `postal_code`) VALU
 
 DROP TABLE IF EXISTS `provinces`;
 CREATE TABLE `provinces` (
-  `province_id` int(11) NOT NULL,
-  `province_name` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`province_id`)
+  `id` int(11) NOT NULL,
+  `name` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-INSERT INTO `provinces` (`province_id`, `province_name`) VALUES
+INSERT INTO `provinces` (`id`, `name`) VALUES
 (1,	'Bali'),
 (2,	'Bangka Belitung'),
 (3,	'Banten'),
@@ -555,13 +555,13 @@ INSERT INTO `provinces` (`province_id`, `province_name`) VALUES
 
 DROP TABLE IF EXISTS `subdistricts`;
 CREATE TABLE `subdistricts` (
-  `subdistrict_id` int(11) NOT NULL,
+  `id` int(11) NOT NULL,
   `city_id` int(11) DEFAULT NULL,
-  `subdistrict_name` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`subdistrict_id`)
+  `name` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-INSERT INTO `subdistricts` (`subdistrict_id`, `city_id`, `subdistrict_name`) VALUES
+INSERT INTO `subdistricts` (`id`, `city_id`, `name`) VALUES
 (1,	1,	'Arongan Lambalek'),
 (2,	1,	'Bubon'),
 (3,	1,	'Johan Pahlawan'),

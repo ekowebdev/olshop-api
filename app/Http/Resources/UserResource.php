@@ -29,15 +29,15 @@ class UserResource extends JsonResource
                 'person_name' => $this->main_address->person_name,
                 'person_phone' => $this->main_address->person_phone,
                 'province' => [
-                    'id' => $this->main_address->province->province_id,
-                    'province_name' => $this->main_address->province->province_name
+                    'id' => $this->main_address->province->id,
+                    'name' => $this->main_address->province->name
                 ],
                 'city' => [
-                    'id' => $this->main_address->city->city_id,
+                    'id' => $this->main_address->city->id,
                     'name' => $this->main_address->city->name
                 ],
                 'subdistrict' => [
-                    'id' => $this->main_address->subdistrict->subdistrict_id,
+                    'id' => $this->main_address->subdistrict->id,
                     'name' => $this->main_address->subdistrict->name
                 ],
                 'postal_code' => $this->main_address->postal_code,
@@ -49,15 +49,15 @@ class UserResource extends JsonResource
                     'person_name' => $address->person_name,
                     'person_phone' => $address->person_phone,
                     'province' => [
-                        'id' => $address->province->province_id,
+                        'id' => $address->province->id,
                         'name' => $address->province->name
                     ],
                     'city' => [
-                        'id' => $address->city->city_id,
+                        'id' => $address->city->id,
                         'name' => $address->city->name
                     ],
                     'subdistrict' => [
-                        'id' => $address->subdistrict->subdistrict_id,
+                        'id' => $address->subdistrict->id,
                         'name' => $address->subdistrict->name
                     ],
                     'postal_code' => $address->postal_code,
