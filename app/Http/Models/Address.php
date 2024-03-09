@@ -25,17 +25,17 @@ class Address extends BaseModel
 
     public function province()
     {
-        return $this->belongsTo(Province::class, 'province_id', 'province_id');
+        return $this->belongsTo(Province::class, 'province_id');
     }
 
     public function city()
     {
-        return $this->belongsTo(City::class, 'city_id', 'city_id');
+        return $this->belongsTo(City::class, 'city_id');
     }
 
     public function subdistrict()
     {
-        return $this->belongsTo(Subdistrict::class, 'subdistrict_id', 'subdistrict_id');
+        return $this->belongsTo(Subdistrict::class, 'subdistrict_id');
     }
 
     public function orders()
