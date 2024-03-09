@@ -316,7 +316,7 @@ class AuthService extends BaseService
     {
         try {
             $socialite = Socialite::driver('google')->stateless()->user();
-            $url = config('setting.frontend.url') . '/auth-success?google_id='.$socialite->id.'&google_access_token='.$socialite->token.'&email='.$socialite->email;
+            $url = config('setting.frontend.url') . '/auth-success?email='.$socialite->email.'&google_access_token='.$socialite->token;
             return redirect()->to($url);
         } catch (\Exception $e) {
             $url = config('setting.frontend.url') . '/login?error='.$e->getMessage();
