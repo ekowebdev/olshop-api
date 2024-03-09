@@ -3,12 +3,12 @@
 namespace App\Observers;
 
 use App\Http\Models\User;
-use App\Http\Models\ItemGift;
+use App\Http\Models\Product;
 use App\Notifications\NewItem;
 
 class ItemObserver
 {
-    public function created(ItemGift $item)
+    public function created(Product $item)
     {
         $users = User::all();
         foreach ($users as $user) {

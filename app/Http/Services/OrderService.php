@@ -405,7 +405,7 @@ class OrderService extends BaseService
                 }
             }
             $shippings = Shipping::where('order_id', $id)->first();
-            $shippings->update(['status' => null]);
+            $shippings->update(['status' => 'cancelled']);
             $check_data->update($data_request);
             $message = trans('all.success_cancel_order');
             $status_code = 200;  

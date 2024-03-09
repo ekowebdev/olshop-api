@@ -3,7 +3,7 @@
 namespace App\Notifications;
 
 use App\Http\Models\User;
-use App\Http\Models\ItemGift;
+use App\Http\Models\Product;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -20,7 +20,7 @@ class NewItem extends Notification implements ShouldQueue
      *
      * @return void
      */
-    public function __construct(ItemGift $item, User $user)
+    public function __construct(Product $item, User $user)
     {
         $this->item = $item;
         $this->user = $user;

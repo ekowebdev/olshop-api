@@ -2,7 +2,7 @@
 
 namespace App\Providers;
 
-use App\Http\Models\ItemGift;
+use App\Http\Models\Product;
 use App\Observers\ItemObserver;
 use App\Resolvers\SocialUserResolver;
 use Illuminate\Support\Facades\Schema;
@@ -32,7 +32,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        // ItemGift::observe(ItemObserver::class);
+        // Product::observe(ItemObserver::class);
         Schema::defaultStringLength(191);
     }
 }
