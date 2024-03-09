@@ -37,7 +37,6 @@ class AccessTokenController extends ApiAuthController
             'password' => 'nullable|required_if:grant_type,password|string|min:6|confirmed|max:32',	        
 	        'grant_type' =>	'required|in:password,social',
 	        'provider' => 'nullable|required_if:grant_type,social|in:google',
-			'google_id' => 'nullable|required_if:provider,google',
 			'access_token' => 'nullable|required_if:grant_type,social',
             'g-recaptcha-response' => ['nullable', 'required_if:grant_type,password', new ReCaptcha]
         ]);
@@ -48,8 +47,6 @@ class AccessTokenController extends ApiAuthController
             $user = User::create([
                 'username' => $username,
                 'email' => $request['username'],
-                'google_id' => $request['google_id'],
-                'google_access_token' => $request['access_token'],
                 'email_verified_at' => date('Y-m-d H:i:s')
             ]);
             $user->assignRole('customer');
@@ -83,11 +80,10 @@ class AccessTokenController extends ApiAuthController
         $request = Request::all();
 
     	User::validate($request, [        
-	        'username'	=> 'required|string|max:255',	        
+	        'username'	=> 'required|string|max:255',        
 	        'grant_type' =>	'required|in:password,social',
 	        'password' => 'nullable|required_if:grant_type,password|string|min:6|max:32',
 	        'provider' => 'nullable|required_if:grant_type,social|in:google',
-            'google_id' => 'nullable|required_if:provider,google',
 			'access_token' => 'nullable|required_if:grant_type,social',
             //'g-recaptcha-response' => ['nullable', 'required_if:grant_type,password', new ReCaptcha]
         ]);
@@ -137,30 +133,16 @@ class AccessTokenController extends ApiAuthController
             }
 
             if($request['grant_type'] == 'social'){
-                if(!empty($request['is_register'])){
-                    if($request['google_id'] != $user->google_id) {
-                        $user->update(['google_id' => $request['google_id']]);
-                    }
-                    if($request['access_token'] != $user->google_access_token) {
-                        $user->update(['google_access_token' => $request['access_token']]);
-                    }
-                } else {
-                    if($user->google_id == null && $user->google_access_token == null) {
-                        $user->update(['google_id' => $request['google_id'], 'google_access_token' => $request['access_token']]);
-                    } else {
-                        if($request['google_id'] != $user->google_id){
-                            return response()->json([
-                                'error' => [
-                                    'message' => trans('auth.failed'),
-                                    'status_code' => 401,
-                                    'error' => 1
-                                ]
-                            ], 401);
-                        }
-                        if($request['access_token'] != $user->google_access_token) {
-                            $user->update(['google_access_token' => $request['access_token']]);
-                        }
-                    }
+                $checkGoogleCredentials = $this->checkGoogleCredentials($request['access_token']);
+
+                if($checkGoogleCredentials === false){
+                    return response()->json([
+                        'error' => [
+                            'message' => trans('auth.failed'),
+                            'status_code' => 401,
+                            'error' => 1
+                        ]
+                    ], 401);
                 }
             }
 
@@ -289,23 +271,27 @@ class AccessTokenController extends ApiAuthController
         }
     }
 
-    // private function checkGoogleCredentials($accessToken)
-    // {
-    //     $client = new Client();
-    //     $response = $client->request('GET', 'https://www.googleapis.com/oauth2/v1/tokeninfo?id_token='.$accessToken, ['http_errors' => false]);        
+    private function checkGoogleCredentials($accessToken)
+    {
+        $client = new Client();
+        $response = $client->request('GET', 'https://www.googleapis.com/oauth2/v2/tokeninfo?accessToken='.$accessToken, ['http_errors' => false]);        
 
-    //     if($response->getStatusCode() != 200) {
-    //         return false;
-    //     }
+        if($response->getStatusCode() != 200) {
+            return false;
+        }
 
-    //     $data = User::where('google_id','=',json_decode($response->getBody())->user_id)->first();
+        $data = User::where('email', '=', json_decode($response->getBody())->email)->first();
         
-    //     dd($data);
+        if($data === null) {
+            return false;
+        }
+
+        if($data->google_id === null) {
+            $data->update(['google_id' => json_decode($response->getBody())->user_id]);
+        }
+
+        $data->update(['google_access_token' => $accessToken]);
         
-    //     if($data === null) {
-    //         return false;
-    //     }
-        
-    //     return $data; 
-    // }
+        return $data; 
+    }
 }
