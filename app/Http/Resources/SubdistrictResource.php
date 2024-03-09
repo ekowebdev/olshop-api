@@ -9,7 +9,7 @@ class SubdistrictResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'id' => $this->d,
+            'id' => $this->id,
             'city' => [
                 'id' => $this->city->id,
                 'name' => $this->city->name,
