@@ -98,6 +98,21 @@ class WishlistResource extends JsonResource
         ];
     }
 
+    private function format_product_weight($product)
+    {
+        if(count($product->variants) == 0){
+            return strval($product->weight ?? 0) . ' Gram';
+        } else {
+            $weight = $product->variants->pluck('weight')->toArray();
+            if (count($weight) > 1) {
+                $weight = min($weight);
+                return strval($weight) . ' Gram';
+            } else {
+                return strval($weight[0]) . ' Gram';
+            }
+        }
+    }
+
     private function format_product_point($product)
     {
         if(count($product->variants) == 0){
