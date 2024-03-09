@@ -97,21 +97,21 @@ class VariantService extends BaseService
 
         try {
             DB::beginTransaction();
-            $item_gift = Product::find($data_request['product_id']);
-            $data_request['slug'] = $item_gift->item_gift_slug . '+' . Str::slug($data_request['name']);
-            if($item_gift->variants->count() > 0){
-                $quantity = $item_gift->item_gift_quantity + $data_request['quantity'];
-                $point = (min($item_gift->variants->pluck('point')->toArray()) > (int) $data_request['point']) ? (int) $data_request['point'] : min($item_gift->variants->pluck('point')->toArray());
-                $weight = (min($item_gift->variants->pluck('weight')->toArray()) > (int) $data_request['weight']) ? (int) $data_request['weight'] : min($item_gift->variants->pluck('weight')->toArray());
+            $product = Product::find($data_request['product_id']);
+            $data_request['slug'] = $product->slug . '+' . Str::slug($data_request['name']);
+            if($product->variants->count() > 0){
+                $quantity = $product->quantity + $data_request['quantity'];
+                $point = (min($product->variants->pluck('point')->toArray()) > (int) $data_request['point']) ? (int) $data_request['point'] : min($product->variants->pluck('point')->toArray());
+                $weight = (min($product->variants->pluck('weight')->toArray()) > (int) $data_request['weight']) ? (int) $data_request['weight'] : min($product->variants->pluck('weight')->toArray());
             } else {
                 $quantity = $data_request['quantity'];
                 $point = $data_request['point'];
                 $weight = $data_request['weight'];
             }
-            $item_gift->update([
-                'item_gift_point' => $point,
-                'item_gift_weight' => $weight,
-                'item_gift_quantity' => $quantity,
+            $product->update([
+                'point' => $point,
+                'weight' => $weight,
+                'quantity' => $quantity,
             ]);
             $result = $this->model->create($data_request);
             DB::commit();
@@ -167,16 +167,16 @@ class VariantService extends BaseService
 
         try {
             DB::beginTransaction();
-            $item_gift = Product::find($check_data->product_id);
-            $data_request['slug'] = $item_gift->item_gift_slug . '+' . Str::slug($data_request['name']);
+            $product = Product::find($check_data->product_id);
+            $data_request['slug'] = $product->slug . '+' . Str::slug($data_request['name']);
             $check_data->update($data_request);
             $weight = min($check_data->where('product_id', $data_request['product_id'])->pluck('weight')->toArray());
             $point = min($check_data->where('product_id', $data_request['product_id'])->pluck('point')->toArray());
             $quantity = array_sum($check_data->where('product_id', $data_request['product_id'])->pluck('quantity')->toArray());
-            $item_gift->update([
-                'item_gift_point' => $point,
-                'item_gift_weight' => $weight,
-                'item_gift_quantity' => $quantity,
+            $product->update([
+                'point' => $point,
+                'weight' => $weight,
+                'quantity' => $quantity,
             ]);
             DB::commit();
         } catch (QueryException $e) {
@@ -194,14 +194,14 @@ class VariantService extends BaseService
         try {
             DB::beginTransaction();
             $result = $check_data->delete();
-            $item_gift = Product::with('variants')->find($check_data->product_id);
-            $variants = $item_gift->variants->where('id', '!=', $id);
+            $product = Product::with('variants')->find($check_data->product_id);
+            $variants = $product->variants->where('id', '!=', $id);
             $min_point = $variants->min('point');
             $min_weight = $variants->min('weight');
-            $item_gift->update([
-                'item_gift_point' => $min_point ?? 0,
-                'item_gift_weight' => $min_weight ?? 0,
-                'item_gift_quantity' => $item_gift->item_gift_quantity - $check_data->quantity,
+            $product->update([
+                'point' => $min_point ?? 0,
+                'weight' => $min_weight ?? 0,
+                'quantity' => $product->quantity - $check_data->quantity,
             ]);
             DB::commit();
         } catch (QueryException $e) {

@@ -16,7 +16,7 @@ class WishlistService extends BaseService
     {
         $this->model = $model;
         $this->repository = $repository;
-        $this->item_gift_repository = $product_repository;
+        $this->product_repository = $product_repository;
     }
 
     public function getIndexData($locale, $data)
@@ -36,7 +36,7 @@ class WishlistService extends BaseService
 
     public function wishlist($locale, $id, $data)
     {
-        $product = $this->item_gift_repository->getSingleData($locale, $id);
+        $product = $this->product_repository->getSingleData($locale, $id);
         $user = auth()->user();
         $check_wishlist = $this->repository->getDataByUserAndProduct($locale, $product->id)->first();
 

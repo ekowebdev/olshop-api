@@ -48,7 +48,7 @@ class NewItem extends Notification implements ShouldQueue
         return [
             'user_id' => $this->user->id,
             'user_name' => $this->user->name,
-            'item' => $this->item->item_gift_name,
+            'item' => $this->product->name,
         ];
     }
 }

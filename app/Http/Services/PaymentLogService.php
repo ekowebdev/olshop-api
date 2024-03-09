@@ -8,7 +8,7 @@ use App\Http\Repositories\PaymentLogRepository;
 
 class PaymentLogService extends BaseService
 {
-    private $model, $repository, $item_gift_repository;
+    private $model, $repository;
     
     public function __construct(PaymentLog $model, PaymentLogRepository $repository)
     {
