@@ -21,12 +21,12 @@ class Shipping extends BaseModel
 
     public function city_origin()
     {
-        return $this->belongsTo(City::class, 'origin', 'city_id');
+        return $this->belongsTo(City::class, 'origin');
     }
 
     public function city_destination()
     {
-        return $this->belongsTo(City::class, 'destination', 'city_id');
+        return $this->belongsTo(City::class, 'destination');
     }
 
     public function getWeightAttribute($value)
