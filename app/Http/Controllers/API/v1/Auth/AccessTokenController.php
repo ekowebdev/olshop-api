@@ -39,7 +39,6 @@ class AccessTokenController extends ApiAuthController
 	        'provider' => 'nullable|required_if:grant_type,social|in:google',
 			'access_token' => 'nullable|required_if:grant_type,social',
             'g-recaptcha-response' => ['nullable', 'required_if:grant_type,password', new ReCaptcha],
-            'is_register' => 'required|in:yes',
         ]);
 
         \DB::beginTransaction();
@@ -51,7 +50,7 @@ class AccessTokenController extends ApiAuthController
                 'email_verified_at' => date('Y-m-d H:i:s')
             ]);
             $user->assignRole('customer');
-            $user->profile()->create(['name' => $request['name']]);
+            // $user->profile()->create(['name' => $request['name']]);
         } else {
             $user = User::create([
                 'username' => $username,
@@ -62,9 +61,8 @@ class AccessTokenController extends ApiAuthController
             $user->profile()->create(['name' => $request['name'], 'birthdate' => $request['birthdate']]);
             SendEmailVerificationJob::dispatch($locale, $user);
         }
-        // $request['is_register'] = true;
-        // $serverRequest = $serverRequest->withParsedBody($serverRequest->getParsedBody() + $request);
-        $serverRequest = $serverRequest->withParsedBody($serverRequest->getParsedBody());
+        $request['is_register'] = true;
+        $serverRequest = $serverRequest->withParsedBody($serverRequest->getParsedBody() + $request);
         request()->merge($request);
         $response = $this->issueToken($serverRequest);
         \DB::commit();
@@ -88,7 +86,6 @@ class AccessTokenController extends ApiAuthController
 	        'provider' => 'nullable|required_if:grant_type,social|in:google',
 			'access_token' => 'nullable|required_if:grant_type,social',
             //'g-recaptcha-response' => ['nullable', 'required_if:grant_type,password', new ReCaptcha],
-            'is_register' => 'nullable|in:no',
         ]);
 
         $parsedBody = array_merge($serverRequest->getParsedBody(), [
@@ -157,7 +154,7 @@ class AccessTokenController extends ApiAuthController
 
             $data = json_decode($response->getContent(), true);
 
-            if(!empty($request['is_register']) && $request['is_register'] == 'yes'){
+            if(!empty($request['is_register'])){
                 if($request['grant_type'] == 'password') {
                     $message = trans('all.success_register');
                 } else {
