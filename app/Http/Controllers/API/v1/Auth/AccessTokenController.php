@@ -121,7 +121,7 @@ class AccessTokenController extends ApiAuthController
                     ], 403);
                 }
 
-                if (empty($user) OR !Hash::check($request['password'], $user->password, [])) {
+                if (!Hash::check($request['password'], $user->password, [])) {
                     return response()->json([
                         'error' => [
                             'message' => trans('auth.failed'),

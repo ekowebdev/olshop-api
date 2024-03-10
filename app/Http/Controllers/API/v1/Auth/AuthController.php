@@ -16,21 +16,6 @@ class AuthController extends BaseController
         $this->service = $service;
     }
 
-    public function register($locale, Request $request)
-    {   
-        return $this->service->register($locale, $request->all());
-    }
-
-    public function login($locale, Request $request)
-    {   
-        return $this->service->login($locale, $request->all());
-    }
-
-    public function refresh_token($locale, Request $request)
-    {   
-        return $this->service->refresh_token($locale, $request->all());
-    }
-
     public function logout($locale)
 	{
         return $this->service->logout($locale);

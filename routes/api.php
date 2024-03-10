@@ -6,11 +6,6 @@ Route::middleware(['xssclean', 'throttle:api'])->group(function () {
     // Email Verification
     Route::get('/email/verify/{id}', '\App\Http\Controllers\API\v1\Auth\AuthController@verify')->name('verification.verify');
     Route::group(['prefix' => '/v1/{locale}'], function(){
-        // Auth
-        Route::post('/register', '\App\Http\Controllers\API\v1\Auth\AuthController@register');
-        Route::post('/login', '\App\Http\Controllers\API\v1\Auth\AuthController@login');
-        Route::post('/login/system', '\App\Http\Controllers\API\v1\Auth\SystemAccessTokenController@token_system');
-        Route::post('/refresh-token', '\App\Http\Controllers\API\v1\Auth\AuthController@refresh_token');
         // OAuth
         Route::post('/oauth/token', '\App\Http\Controllers\API\v1\Auth\AccessTokenController@issueToken');
         Route::post('/oauth/token/register', '\App\Http\Controllers\API\v1\Auth\AccessTokenController@issueTokenRegister');
