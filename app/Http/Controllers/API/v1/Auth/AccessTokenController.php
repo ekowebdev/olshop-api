@@ -88,7 +88,7 @@ class AccessTokenController extends ApiAuthController
 	        'provider' => 'nullable|required_if:grant_type,social|in:google',
 			'access_token' => 'nullable|required_if:grant_type,social',
             //'g-recaptcha-response' => ['nullable', 'required_if:grant_type,password', new ReCaptcha],
-            'is_register' => 'required|in:no',
+            'is_register' => 'nullable|in:no',
         ]);
 
         $parsedBody = array_merge($serverRequest->getParsedBody(), [
@@ -157,8 +157,7 @@ class AccessTokenController extends ApiAuthController
 
             $data = json_decode($response->getContent(), true);
 
-            // if(!empty($request['is_register'])){
-            if($request['is_register'] == 'yes'){
+            if(!empty($request['is_register']) && $request['is_register'] == 'yes'){
                 if($request['grant_type'] == 'password') {
                     $message = trans('all.success_register');
                 } else {
