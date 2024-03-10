@@ -64,7 +64,7 @@ class ShippingResource extends JsonResource
                                 'id' => $order_product->variants->product_images->id,
                                 'image' => $order_product->variants->product_images->image,
                                 'image_url' => $order_product->variants->product_images->image_url,
-                                'image_thumb_url' => $order_product->variants->product_images->image_thumb_url,
+                                'image_thumbnail_url' => $order_product->variants->product_images->image_thumb_url,
                             ] : null,
                         ] : null,
                     ];

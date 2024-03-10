@@ -26,6 +26,8 @@ class User extends Authenticable implements MustVerifyEmail
 
     public $table = 'users';
 
+	public $appends = ['has_password'];
+
     public $sortableAndSearchableColumn = [];
 
     protected $fillable = [
@@ -52,9 +54,14 @@ class User extends Authenticable implements MustVerifyEmail
         return ($value != null) ? Carbon::parse($value)->format('Y-m-d H:i:s') : null;
     }
 
-	public function get_access_token()
+	public function getAccessToken()
     {
         return $this->accessToken;
+    }
+
+	public function getHasPasswordAttribute()
+    {
+        return $this->password == null ? 'no' : 'yes';
     }
 
     public function orders()

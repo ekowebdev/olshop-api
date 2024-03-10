@@ -68,7 +68,7 @@ class ReviewResource extends JsonResource
                                     'id' => $order_product->variants->product_images->id,
                                     'image' => $order_product->variants->product_images->image,
                                     'image_url' => $order_product->variants->product_images->image_url,
-                                    'image_thumb_url' => $order_product->variants->product_images->image_thumb_url,
+                                    'image_thumbnail_url' => $order_product->variants->product_images->image_thumb_url,
                                 ] : null,
                             ] : null,
                     ];
@@ -111,7 +111,7 @@ class ReviewResource extends JsonResource
                             'id' => $variant->product_images->id,
                             'image' => $variant->product_images->image,
                             'image_url' => $variant->product_images->image_url,
-                            'image_thumb_url' => $variant->product_images->image_thumb_url,
+                            'image_thumbnail_url' => $variant->product_images->image_thumb_url,
                         ] : null,
                     ];
                 }),
@@ -123,6 +123,7 @@ class ReviewResource extends JsonResource
                 'email' => $this->users->email,
                 'email_status' => $this->users->email_verified_at != null ? 'verified' : 'unverified',
                 'email_verified_at' => $this->users->email_verified_at,
+                'has_password' => $this->users->has_password,
                 'profile' => ($this->users->profile) ? [
                     'id' => $this->users->profile->id,
                     'name' => $this->users->profile->name,

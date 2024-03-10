@@ -48,7 +48,7 @@ class CartResource extends JsonResource
                         'id' => $this->variants->product_images->id,
                         'image' => $this->variants->product_images->image,
                         'image_url' => $this->variants->product_images->image_url,
-                        'image_thumb_url' => $this->variants->product_images->image_thumb_url,
+                        'image_thumbnail_url' => $this->variants->product_images->image_thumb_url,
                     ] : null,
                 ] : null,
             'quantity' => $this->quantity,
@@ -59,6 +59,7 @@ class CartResource extends JsonResource
                 'email' => $this->users->email,
                 'email_status' => $this->users->email_verified_at != null ? 'verified' : 'unverified',
                 'email_verified_at' => $this->users->email_verified_at,
+                'has_password' => $this->users->has_password,
                 'profile' => ($this->users->profile) ? [
                     'id' => $this->users->profile->id,
                     'name' => $this->users->profile->name,

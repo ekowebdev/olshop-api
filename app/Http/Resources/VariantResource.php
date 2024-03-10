@@ -50,7 +50,7 @@ class VariantResource extends JsonResource
                             'id' => $variant->product_images->id,
                             'image' => $variant->product_images->image,
                             'image_url' => $variant->product_images->image_url,
-                            'image_thumb_url' => $variant->product_images->image_thumb_url,
+                            'image_thumbnail_url' => $variant->product_images->image_thumb_url,
                         ] : null,
                     ];
                 }),
@@ -65,6 +65,7 @@ class VariantResource extends JsonResource
                             'email' => $review->users->email,
                             'email_status' => $review->users->email_verified_at != null ? 'verified' : 'unverified',
                             'email_verified_at' => $review->users->email_verified_at,
+                            'has_password' => $review->users->has_password,
                             'avatar_url' => ($review->users->profile) ? $review->users->profile->avatar_url : null,
                         ] : null,
                         'order_id' => $review->order_id,
@@ -90,7 +91,7 @@ class VariantResource extends JsonResource
                 'id' => $this->product_images->id,
                 'image' => $this->product_images->image,
                 'image_url' => $this->product_images->image_url,
-                'image_thumb_url' => $this->product_images->image_thumb_url,
+                'image_thumbnail_url' => $this->product_images->image_thumb_url,
             ] : null,
         ];
     }

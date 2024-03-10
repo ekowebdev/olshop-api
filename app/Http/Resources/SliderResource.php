@@ -18,7 +18,7 @@ class SliderResource extends JsonResource
             'end_date' => $this->end_date,
             'image' => $this->image,
             'image_url' => $this->image_url,
-            'image_thumb_url' => $this->image_thumb_url,
+            'image_thumbnail_url' => $this->image_thumb_url,
         ];
     }
 }
