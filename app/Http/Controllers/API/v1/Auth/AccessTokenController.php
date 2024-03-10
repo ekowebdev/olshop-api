@@ -31,7 +31,7 @@ class AccessTokenController extends ApiAuthController
         $request = Request::all();
 
         User::validate($request, [
-            'name' => 'nullable|required_if:grant_type,password|string|max:255',
+            'name' => 'required|string|max:255',
             'birthdate' => 'nullable|required_if:grant_type,password|date',
             'username' => 'required|string|email:rfc,dns|unique:users,email|max:255',
             'password' => 'nullable|required_if:grant_type,password|string|min:6|confirmed|max:32',	        
@@ -50,7 +50,7 @@ class AccessTokenController extends ApiAuthController
                 'email_verified_at' => date('Y-m-d H:i:s')
             ]);
             $user->assignRole('customer');
-            // $user->profile()->create(['name' => $request['name']]);
+            $user->profile()->create(['name' => $request['name']]);
         } else {
             $user = User::create([
                 'username' => $username,
