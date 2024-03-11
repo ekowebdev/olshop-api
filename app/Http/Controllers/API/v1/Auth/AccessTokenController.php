@@ -128,15 +128,14 @@ class AccessTokenController extends ApiAuthController
 
             \DB::commit();
 
-            $authData = [
+            $responseData = [
                 'users' => new UserResource($user),
                 'token_type' => 'Bearer',
                 'expires_in' => $data['expires_in'],
                 'access_token' => $data['access_token'],
                 'refresh_token' => $data['refresh_token'],
             ];
-
-            return response()->api($message, $authData);
+            return response()->api($message, $responseData);
         } catch (\Exception $e){
             \DB::rollback();
             throw new AuthenticationException($e->getMessage());
@@ -200,15 +199,14 @@ class AccessTokenController extends ApiAuthController
             
             $data = json_decode($response->getContent(), true);
 
-            $authData = [
+            $responseData = [
                 'users' => new UserResource($user),
                 'token_type' => 'Bearer',
                 'expires_in' => $data['expires_in'],
                 'access_token' => $data['access_token'],
                 'refresh_token' => $data['refresh_token'],
             ];
-
-            return response()->api(trans('all.success_refresh_token'), $authData);
+            return response()->api(trans('all.success_refresh_token'), $responseData);
         } else {
             return $this->withErrorHandling(function () use ($serverRequest) {
                 return $this->convertResponse(
