@@ -143,12 +143,8 @@ class ProfileService extends BaseService
 
         DB::beginTransaction();
         if (isset($data_request['avatar'])) {
-            if(Storage::disk('s3')->exists('images/avatar/' . $check_data->avatar)) {
-                Storage::disk('s3')->delete('images/avatar/' . $check_data->avatar);
-            }
-            if(Storage::disk('s3')->exists('images/avatar/thumbnails/' . $check_data->avatar)) {
-                Storage::disk('s3')->delete('images/avatar/thumbnails/' . $check_data->avatar);
-            }
+            if(Storage::disk('s3')->exists('images/avatar/' . $check_data->avatar)) Storage::disk('s3')->delete('images/avatar/' . $check_data->avatar);
+            if(Storage::disk('s3')->exists('images/avatar/thumbnails/' . $check_data->avatar)) Storage::disk('s3')->delete('images/avatar/thumbnails/' . $check_data->avatar);
             $image = $data_request['avatar'];
             $image_name = time() . '.' . $image->getClientOriginalExtension();
             Storage::disk('s3')->put('images/avatar/' . $image_name, file_get_contents($image));
@@ -172,9 +168,7 @@ class ProfileService extends BaseService
     {
         $check_data = $this->repository->getSingleData($locale, $id);
         DB::beginTransaction();
-        if(Storage::disk('s3')->exists('images/avatar/' . $check_data->avatar)) {
-            Storage::disk('s3')->delete('images/avatar/' . $check_data->avatar);
-        }
+        if(Storage::disk('s3')->exists('images/avatar/' . $check_data->avatar)) Storage::disk('s3')->delete('images/avatar/' . $check_data->avatar);
         $result = $check_data->delete();
         DB::commit();
 

@@ -129,12 +129,8 @@ class ProductImageService extends BaseService
             if(is_null($variant)) throw new ApplicationException(trans('error.variant_not_found_in_products', ['product_name' => $variant->products->name]));
         }
         if (isset($data_request['image'])) {
-            if(Storage::disk('s3')->exists('images/' . $check_data->image)) {
-                Storage::disk('s3')->delete('images/' . $check_data->image);
-            }
-            if(Storage::disk('s3')->exists('images/' . 'thumbnails/' . $check_data->image)) {
-                Storage::disk('s3')->delete('images/' . 'thumbnails/' . $check_data->image);
-            }
+            if(Storage::disk('s3')->exists('images/' . $check_data->image)) Storage::disk('s3')->delete('images/' . $check_data->image);
+            if(Storage::disk('s3')->exists('images/' . 'thumbnails/' . $check_data->image)) Storage::disk('s3')->delete('images/' . 'thumbnails/' . $check_data->image);
             $image = $data_request['image'];
             $image_name = time() . '.' . $image->getClientOriginalExtension();
             Storage::disk('s3')->put('images/' . $image_name, file_get_contents($image));
@@ -145,11 +141,8 @@ class ProductImageService extends BaseService
             $check_data->image = $image_name;
         }
         if(isset($data_request['variant_id'])) {
-            if($data_request['variant_id'] == ''){
-                $variant_id = null;
-            } else {
-                $variant_id = $data_request['variant_id'];
-            }
+            if($data_request['variant_id'] == '') $variant_id = null;
+            else $variant_id = $data_request['variant_id'];
         } else {
             $variant_id = $check_data->variant_id;
         }

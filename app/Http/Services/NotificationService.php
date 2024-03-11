@@ -101,6 +101,7 @@ class NotificationService extends BaseService
     public function delete($locale, $id)
     {
         $check_data = $this->repository->getSingleData($locale, $id);
+        
         DB::beginTransaction();
         $result = $check_data->delete();
         DB::commit();

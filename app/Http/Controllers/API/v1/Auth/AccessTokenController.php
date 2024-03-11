@@ -88,15 +88,8 @@ class AccessTokenController extends ApiAuthController
 	        'password' => 'nullable|required_if:grant_type,password|string|min:6|max:32',
 	        'provider' => 'nullable|required_if:grant_type,social|in:google',
 			'access_token' => 'nullable|required_if:grant_type,social',
-            //'g-recaptcha-response' => ['nullable', 'required_if:grant_type,password', new ReCaptcha],
+            'g-recaptcha-response' => ['nullable', 'required_if:grant_type,password', new ReCaptcha],
         ]);
-
-        // $parsedBody = array_merge($serverRequest->getParsedBody(), [
-        //     'client_id' => config('setting.oauth.client_id'),
-        //     'client_secret' => config('setting.oauth.client_secret'),
-        // ]);
-
-        // $modifiedServerRequest = $serverRequest->withParsedBody($parsedBody);
 
         try {
             \DB::beginTransaction();
@@ -115,12 +108,6 @@ class AccessTokenController extends ApiAuthController
                 if($checkGoogleCredentials === false) throw new AuthenticationException();
             }
 
-            // $response = $this->withErrorHandling(function () use ($modifiedServerRequest) {
-            //     return $this->convertResponse(
-            //         $this->server->respondToAccessTokenRequest($modifiedServerRequest, new Psr7Response)
-            //     );
-            // });
-
             $response = $this->withErrorHandling(function () use ($serverRequest) {
                 return $this->convertResponse(
                     $this->server->respondToAccessTokenRequest($serverRequest, new Psr7Response)
@@ -131,9 +118,9 @@ class AccessTokenController extends ApiAuthController
 
             if(!empty($request['is_register'])){
                 if($request['grant_type'] == 'password') {
-                    $message = trans('all.success_register');
+                    $message = trans('all.success_register_with_verification');
                 } else {
-                    $message = trans('all.success_register_without_verification');
+                    $message = trans('all.success_register');
                 }
             } else {
                 $message = trans('all.success_login');
@@ -141,18 +128,15 @@ class AccessTokenController extends ApiAuthController
 
             \DB::commit();
 
-            return response()->json([
-                'message' => $message,
-                'data' => [
-                    'users' => new UserResource($user),
-                    'token_type' => 'Bearer',
-                    'expires_in' => $data['expires_in'],
-                    'access_token' => $data['access_token'],
-                    'refresh_token' => $data['refresh_token'],
-                ],
-                'status_code' => 200,
-                'error' => 0
-            ], 200);
+            $authData = [
+                'users' => new UserResource($user),
+                'token_type' => 'Bearer',
+                'expires_in' => $data['expires_in'],
+                'access_token' => $data['access_token'],
+                'refresh_token' => $data['refresh_token'],
+            ];
+
+            return response()->api($message, $authData);
         } catch (\Exception $e){
             \DB::rollback();
             throw new AuthenticationException($e->getMessage());
@@ -176,13 +160,6 @@ class AccessTokenController extends ApiAuthController
 	        'grant_type' => 'required|in:client_credentials,refresh_token',
             'refresh_token' => 'nullable|required_if:grant_type,refresh_token',
         ]);
-
-        // $parsedBody = array_merge($serverRequest->getParsedBody(), [
-        //     'client_id' => config('setting.oauth.client_id'),
-        //     'client_secret' => config('setting.oauth.client_secret'),
-        // ]);
-
-        // $modifiedServerRequest = $serverRequest->withParsedBody($parsedBody);
 
         if($request['grant_type'] == 'refresh_token') {
             $appKey = config('app.key');
@@ -213,12 +190,6 @@ class AccessTokenController extends ApiAuthController
 
             if(empty($user)) throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => 'User'], $locale));
 
-            // $response = $this->withErrorHandling(function () use ($modifiedServerRequest) {
-            //     return $this->convertResponse(
-            //         $this->server->respondToAccessTokenRequest($modifiedServerRequest, new Psr7Response)
-            //     );
-            // });
-
             $response = $this->withErrorHandling(function () use ($serverRequest) {
                 return $this->convertResponse(
                     $this->server->respondToAccessTokenRequest($serverRequest, new Psr7Response)
@@ -229,25 +200,16 @@ class AccessTokenController extends ApiAuthController
             
             $data = json_decode($response->getContent(), true);
 
-            return response()->json([
-                'message' => trans('all.success_refresh_token'),
-                'data' => [
-                    'users' => new UserResource($user),
-                    'token_type' => 'Bearer',
-                    'expires_in' => $data['expires_in'],
-                    'access_token' => $data['access_token'],
-                    'refresh_token' => $data['refresh_token'],
-                ],
-                'status_code' => 200,
-                'error' => 0
-            ], 200);
-        } else {
-            // return $this->withErrorHandling(function () use ($modifiedServerRequest) {
-            //     return $this->convertResponse(
-            //         $this->server->respondToAccessTokenRequest($modifiedServerRequest, new Psr7Response)
-            //     );
-            // });
+            $authData = [
+                'users' => new UserResource($user),
+                'token_type' => 'Bearer',
+                'expires_in' => $data['expires_in'],
+                'access_token' => $data['access_token'],
+                'refresh_token' => $data['refresh_token'],
+            ];
 
+            return response()->api(trans('all.success_refresh_token'), $authData);
+        } else {
             return $this->withErrorHandling(function () use ($serverRequest) {
                 return $this->convertResponse(
                     $this->server->respondToAccessTokenRequest($serverRequest, new Psr7Response)
@@ -260,17 +222,13 @@ class AccessTokenController extends ApiAuthController
     {
         $client = new Client();
         $response = $client->request('GET', 'https://www.googleapis.com/oauth2/v2/tokeninfo?accessToken='.$accessToken, ['http_errors' => false]);        
-
         if($response->getStatusCode() != 200) return false;
 
         $data = User::where('email', '=', json_decode($response->getBody())->email)->first();
-        
         if($data === null) return false;
 
         \DB::beginTransaction();
-        if($data->google_id === null) {
-            $data->update(['google_id' => json_decode($response->getBody())->user_id]);
-        }
+        if($data->google_id === null) $data->update(['google_id' => json_decode($response->getBody())->user_id]);
         $data->update(['google_access_token' => $accessToken]);
         \DB::commit();
         

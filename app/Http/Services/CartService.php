@@ -69,11 +69,8 @@ class CartService extends BaseService
             $data_request['user_id'] = $user->id;
             $variant_id = isset($data_request['variant_id']) ? intval($data_request['variant_id']) : null;
             $product = Product::lockForUpdate()->find($data_request['product_id']);
-            if ($product->variants->count() > 0 && !isset($variant_id)) {
-                throw new ApplicationException(trans('error.variant_required', ['product_name' => $product->name]));
-            } else if ($product->variants->count() == 0 && isset($variant_id)) {
-                throw new ApplicationException(trans('error.variant_not_found_in_products', ['product_name' => $product->name]));
-            }
+            if ($product->variants->count() > 0 && !isset($variant_id)) throw new ApplicationException(trans('error.variant_required', ['product_name' => $product->name]));
+            else if ($product->variants->count() == 0 && isset($variant_id)) throw new ApplicationException(trans('error.variant_not_found_in_products', ['product_name' => $product->name]));
             if(!$product || $product->quantity < $data_request['quantity'] || $product->status == 'O') throw new ApplicationException(trans('error.out_of_stock'));
             if (!is_null($variant_id)) {
                 $variant = $product->variants()->lockForUpdate()->find($variant_id);
@@ -86,11 +83,8 @@ class CartService extends BaseService
             
             if(!empty($exists_cart)) {
                 $quantity = $exists_cart->quantity + intval($data_request['quantity']);
-                if($product->variants->count() > 0){
-                    $real_quantity = $variant->quantity;
-                } else {
-                    $real_quantity = $product->quantity;
-                }
+                if($product->variants->count() > 0) $real_quantity = $variant->quantity;
+                else $real_quantity = $product->quantity;
                 if ($quantity > $real_quantity) throw new ApplicationException(trans('error.out_of_stock'));
                 $exists_cart->update(['quantity' => $exists_cart->quantity + $data_request['quantity']]);
             } else {
@@ -103,11 +97,7 @@ class CartService extends BaseService
                 $cart->save();
             }
             DB::commit();
-            return response()->json([
-                'message' => trans('all.success_add_to_cart'),
-                'status_code' => 200,
-                'error' => 0,
-            ], 200);
+            return response()->api(trans('all.success_add_to_cart', ['product_name' => $product->name]));
         } catch (DynamoDbException $e) {
             DB::rollback();
             throw new ApplicationException(json_encode([$e->getMessage()]));
@@ -144,9 +134,7 @@ class CartService extends BaseService
             $real_quantity = $product->quantity;
         }
     
-        if ($real_quantity < $quantity) {
-            throw new ApplicationException(trans('error.out_of_stock'));
-        }
+        if ($real_quantity < $quantity) throw new ApplicationException(trans('error.out_of_stock'));
 
         $data_request['quantity'] = intval($data_request['quantity']);
         $check_data->update($data_request);

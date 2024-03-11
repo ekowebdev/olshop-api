@@ -129,12 +129,8 @@ class CategoryService extends BaseService
 
         DB::beginTransaction();
         if (isset($data_request['image'])) {
-            if(Storage::disk('s3')->exists('images/category/' . $check_data->image)) {
-                Storage::disk('s3')->delete('images/category/' . $check_data->image);
-            }
-            if(Storage::disk('s3')->exists('images/category/thumbnails/' . $check_data->image)) {
-                Storage::disk('s3')->delete('images/category/thumbnails/' . $check_data->image);
-            }
+            if(Storage::disk('s3')->exists('images/category/' . $check_data->image)) Storage::disk('s3')->delete('images/category/' . $check_data->image);
+            if(Storage::disk('s3')->exists('images/category/thumbnails/' . $check_data->image)) Storage::disk('s3')->delete('images/category/thumbnails/' . $check_data->image);
             $image = $data_request['image'];
             $image_name = time() . '.' . $image->getClientOriginalExtension();
             Storage::disk('s3')->put('images/category/' . $image_name, file_get_contents($image));
@@ -158,9 +154,7 @@ class CategoryService extends BaseService
     {
         $check_data = $this->repository->getSingleData($locale, $id);
         DB::beginTransaction();
-        if(Storage::disk('s3')->exists('images/category/' . $check_data->image)) {
-            Storage::disk('s3')->delete('images/category/' . $check_data->image);
-        }
+        if(Storage::disk('s3')->exists('images/category/' . $check_data->image)) Storage::disk('s3')->delete('images/category/' . $check_data->image);
         $result = $check_data->delete();
         DB::commit();
 

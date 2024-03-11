@@ -132,11 +132,7 @@ class ReviewService extends BaseService
 
         DB::commit();
 
-        return response()->json([
-            'message' => trans('all.success_reviews'),
-            'status_code' => 200,
-            'error' => 0,
-        ], 200);
+        return response()->api(trans('all.success_reviews'));
     }
 
     public function storeBulk($locale, $data)
@@ -193,15 +189,13 @@ class ReviewService extends BaseService
         $count_products = count($data_request['product_id']);
 
         for ($i = 0; $i < $count_products; $i++) {
-
             $user = auth()->user();
-            $order = $this->order_repository->getSingleData($locale, $data_request['order_id'][$i]);
 
-            if ($order->status != 'shipped' && $order->status != 'success' && $order->payment_logs == null) throw new ApplicationException(trans('error.order_not_completed', ['order_code' => $order->code[$i]]));
+            $order = $this->order_repository->getSingleData($locale, $data_request['order_id'][$i]);
+            if($order->status != 'shipped' && $order->status != 'success' && $order->payment_logs == null) throw new ApplicationException(trans('error.order_not_completed', ['order_code' => $order->code[$i]]));
 
             $check_rating = $this->repository->getDataByUserOrderAndProduct($locale, $user->id, $data_request['order_id'][$i], $data_request['product_id'][$i]);
-
-            if (isset($check_rating)) throw new ApplicationException(trans('error.already_reviews', ['order_code' => $order->code[$i], 'product_name' => $product->name[$i]]));
+            if(isset($check_rating)) throw new ApplicationException(trans('error.already_reviews', ['order_code' => $order->code[$i], 'product_name' => $product->name[$i]]));
 
             $result = Review::create([
                 'user_id' => $user->id,
@@ -226,11 +220,7 @@ class ReviewService extends BaseService
 
         DB::commit();
 
-        return response()->json([
-            'message' => trans('all.success_reviews'),
-            'status_code' => 200,
-            'error' => 0,
-        ], 200);
+        return response()->api(trans('all.success_reviews'));
     }
 
     public function update($locale, $id, $data)
@@ -278,9 +268,7 @@ class ReviewService extends BaseService
         $check_data = $this->repository->getSingleData($locale, $id);
         DB::beginTransaction();
         foreach($check_data->review_files as $file) {
-            if(Storage::disk('s3')->exists('files/reviews/' . $file->file)) {
-                Storage::disk('s3')->delete('files/reviews/' . $file->file);
-            }
+            if(Storage::disk('s3')->exists('files/reviews/' . $file->file)) Storage::disk('s3')->delete('files/reviews/' . $file->file);
         }
         $result = $check_data->delete();
         DB::commit();

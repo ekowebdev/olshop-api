@@ -4,6 +4,7 @@ namespace App\Http\Services;
 
 use Illuminate\Support\Arr;
 use App\Exceptions\DataEmptyException;
+use App\Exceptions\ApplicationException;
 use App\Http\Repositories\OrderRepository;
 
 class TrackResiService extends BaseService
@@ -40,7 +41,7 @@ class TrackResiService extends BaseService
             'courier' => $data_request['courier'],
         ]);
 
-        $url = "https://api.binderbyte.com/v1/track?" . $body;
+        $url = 'https://api.binderbyte.com/v1/track?' . $body;
 
         $curl = curl_init();
 
@@ -58,15 +59,7 @@ class TrackResiService extends BaseService
           
         curl_close($curl);
 
-        if ($err) {
-            return response()->json([
-                'error' => [
-                    'message' => "cURL Error #:" . $err,
-                    'status' => 500,
-                    'error' => 1
-                ]
-            ], 500);
-        }
+        if($err) throw new ApplicationException('cURL Error #: '. $err);
 
         $data = json_decode($response, true);
 
@@ -74,11 +67,6 @@ class TrackResiService extends BaseService
 
         $data = $data['data'];
 
-        return response()->json([
-            'data' => $data,
-            'status_code' => 200,
-            'error' => 0
-        ], 200);
-    }
-    
+        return response()->api(null, $data);
+    }   
 }

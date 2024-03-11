@@ -6,6 +6,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Pagination\Paginator;
 use App\Exceptions\DataEmptyException;
+use App\Exceptions\ApplicationException;
 use App\Http\Repositories\CityRepository;
 use App\Http\Repositories\ProvinceRepository;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -55,40 +56,21 @@ class RajaOngkirService extends BaseService
 
         curl_close($curl);
 
-        if ($err) {
-            return response()->json([
-                'error' => [
-                    'message' => 'cURL Error #:' . $err,
-                    'status_code' => 500,
-                    'error' => 1
-                ]
-            ], 500);
-        }
+        if($err) throw new ApplicationException('cURL Error #: '. $err);
 
         $data = json_decode($response, true);
 
-        if ($data['rajaongkir']['status']['code'] == 400) {
-            return response()->json([
-                'error' => [
-                    'message' => $data['rajaongkir']['status']['description'],
-                    'status_code' => 400,
-                    'error' => 1
-                ]
-            ], 400);
-        }
+        if($data['rajaongkir']['status']['code'] == 400) throw new ApplicationException($data['rajaongkir']['status']['description']);
+
 
         $collection = collect($data['rajaongkir']['results']);
 
         if($collection->isEmpty()) throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => 'Province'], $locale));
 
         if(is_multidimensional_array($collection->toArray())) {
-            $response = response()->json($this->format_json($collection, $page, $per_page, ['path' => config('app.url') . '/api/v1/id/rajaongkir/provinces']));
+            $response = response()->api(null, $this->format_json($collection, $page, $per_page, ['path' => config('app.url') . '/api/v1/id/rajaongkir/provinces'])['data']);
         } else {
-            $response = response()->json([
-                'data' => $collection,
-                'status_code' => 200,
-                'error' => 0
-            ], 200);
+            $response = response()->api(null, $collection);
         }
 
         return $response;
@@ -129,38 +111,21 @@ class RajaOngkirService extends BaseService
 
         curl_close($curl);
 
-        if ($err) {
-            return response()->json([
-                'error' => [
-                    'message' => 'cURL Error #:' . $err,
-                    'status_code' => 500,
-                    'error' => 1
-                ]
-            ], 500);
-        }
+        if($err) throw new ApplicationException('cURL Error #: '. $err);
 
         $data = json_decode($response, true);
 
-        if ($data['rajaongkir']['status']['code'] == 400) {
-            return response()->json([
-                'error' => [
-                    'message' => $data['rajaongkir']['status']['description'],
-                    'status_code' => 400,
-                    'error' => 1
-                ]
-            ], 400);
-        }
+        if($data['rajaongkir']['status']['code'] == 400) throw new ApplicationException($data['rajaongkir']['status']['description']);
+
 
         $collection = collect($data['rajaongkir']['results']);
 
         if($collection->isEmpty()) throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => 'City'], $locale));
 
         if(is_multidimensional_array($collection->toArray())) {
-            $response = response()->json($this->format_json($collection, $page, $per_page, ['path' => config('app.url') . '/api/v1/id/rajaongkir/get-city']));
+            $response = response()->api($this->format_json($collection, $page, $per_page, ['path' => config('app.url') . '/api/v1/id/rajaongkir/get-city'])['data']);
         } else {
-            $response = response()->json([
-                'data' => $collection
-            ]);
+            $response = response()->api(null, $collection);
         }
 
         return $response;
@@ -210,27 +175,11 @@ class RajaOngkirService extends BaseService
           
         curl_close($curl);
 
-        if ($err) {
-            return response()->json([
-                'error' => [
-                    'message' => 'cURL Error #:' . $err,
-                    'status_code' => 500,
-                    'error' => 1
-                ]
-            ], 500);
-        }
+        if($err) throw new ApplicationException('cURL Error #: '. $err);
 
         $data = json_decode($response, true);
 
-        if ($data['rajaongkir']['status']['code'] == 400) {
-            return response()->json([
-                'error' => [
-                    'message' => $data['rajaongkir']['status']['description'],
-                    'status_code' => 400,
-                    'error' => 1
-                ]
-            ], 400);
-        }
+        if($data['rajaongkir']['status']['code'] == 400) throw new ApplicationException($data['rajaongkir']['status']['description']);
 
         $collection = collect($data['rajaongkir']['results']);
 
@@ -238,11 +187,7 @@ class RajaOngkirService extends BaseService
 
         if(empty($costs)) throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => 'Cost'], $locale));
 
-        return response()->json([
-            'data' => $collection,
-            'status_code' => 200,
-            'error' => 1
-        ], 200);
+        return response()->api(null, $collection);
     }
 
     private function format_json($original_data, $page, $per_page, $options)

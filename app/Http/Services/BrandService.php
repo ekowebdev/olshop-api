@@ -127,12 +127,8 @@ class BrandService extends BaseService
 
         DB::beginTransaction();
         if (isset($data_request['logo'])) {
-            if(Storage::disk('s3')->exists('images/brand/' . $check_data->logo)) {
-                Storage::disk('s3')->delete('images/brand/' . $check_data->logo);
-            }
-            if(Storage::disk('s3')->exists('images/brand/thumbnails/' . $check_data->logo)) {
-                Storage::disk('s3')->delete('images/brand/thumbnails/' . $check_data->logo);
-            }
+            if(Storage::disk('s3')->exists('images/brand/' . $check_data->logo)) Storage::disk('s3')->delete('images/brand/' . $check_data->logo);
+            if(Storage::disk('s3')->exists('images/brand/thumbnails/' . $check_data->logo)) Storage::disk('s3')->delete('images/brand/thumbnails/' . $check_data->logo);
             $image = $data_request['logo'];
             $image_name = time() . '.' . $image->getClientOriginalExtension();
             Storage::disk('s3')->put('images/brand/' . $image_name, file_get_contents($image));
@@ -156,9 +152,7 @@ class BrandService extends BaseService
     {
         $check_data = $this->repository->getSingleData($locale, $id);
         DB::beginTransaction();
-        if(Storage::disk('s3')->exists('images/brand/' . $check_data->logo)) {
-            Storage::disk('s3')->delete('images/brand/' . $check_data->logo);
-        }
+        if(Storage::disk('s3')->exists('images/brand/' . $check_data->logo)) Storage::disk('s3')->delete('images/brand/' . $check_data->logo);
         $result = $check_data->delete();
         DB::commit();
 

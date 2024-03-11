@@ -27,4 +27,3 @@ class SearchLog extends DynamoDbModel
         return $this->belongsTo(User::class, 'user_id');
     }
 }
-

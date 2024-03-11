@@ -263,9 +263,7 @@ class ProductService extends BaseService
             $img_thumb = $img->crop(5, 5);
             $img_thumb = $img_thumb->stream()->detach();
             Storage::disk('s3')->put('images/thumbnails/' . $image_name, $img_thumb);
-            $result->product_images()->create([
-                'image' => $image_name,
-            ]);
+            $result->product_images()->create(['image' => $image_name]);
         }
         DB::commit();
 
@@ -357,12 +355,8 @@ class ProductService extends BaseService
         
         DB::beginTransaction();
         foreach($check_data->images as $image) {
-            if(Storage::disk('s3')->exists('images/' . $image->image)) {
-                Storage::disk('s3')->delete('images/' . $image->image);
-            }
-            if(Storage::disk('s3')->exists('images/' . 'thumbnails/' . $image->image)) {
-                Storage::disk('s3')->delete('images/' . 'thumbnails/' . $image->image);
-            }
+            if(Storage::disk('s3')->exists('images/' . $image->image)) Storage::disk('s3')->delete('images/' . $image->image);
+            if(Storage::disk('s3')->exists('images/' . 'thumbnails/' . $image->image)) Storage::disk('s3')->delete('images/' . 'thumbnails/' . $image->image);
         }
         $result = $check_data->delete();
         DB::commit();

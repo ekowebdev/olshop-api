@@ -315,16 +315,12 @@ class OrderService extends BaseService
             broadcast(new RealTimeNotificationEvent($notification, $user->id));
         
             DB::commit();
-        
-            return response()->json([
-                'message' => trans('all.success_order'),
-                'data' => [
-                    'snap_token' => $order->snap_token,
-                    'snap_url' => $order->snap_url
-                ],
-                'status_code' => 200,
-                'error' => 0,
-            ]);
+
+            $responseData = [
+                'snap_token' => $order->snap_token,
+                'snap_url' => $order->snap_url
+            ];
+            return response()->api(trans('all.success_order'), $responseData);
         } catch (QueryException $e) {
             DB::rollback();
             throw new ApplicationException(json_encode([$e->getMessage()]));
@@ -369,19 +365,13 @@ class OrderService extends BaseService
             $shippings = Shipping::where('order_id', $id)->first();
             $shippings->update(['status' => 'cancelled']);
             $check_data->update($data_request);
-            $message = trans('all.success_cancel_order');
-            $status_code = 200;  
+            $message = trans('all.success_cancel_order'); 
         } else {
             $message = trans('error.failed_cancel_order');
-            $status_code = 400;
         }
         DB::commit();
 
-        return response()->json([
-            'message' => $message,
-            'status_code' => $status_code,
-            'error' => 0,
-        ], $status_code);
+        return response()->api($message);
     }
 
     public function receive($locale, $id, $data)
@@ -413,11 +403,7 @@ class OrderService extends BaseService
         }
         DB::commit();
 
-        return response()->json([
-            'message' => trans('all.success_receive_order'),
-            'status_code' => 200,
-            'error' => 0,
-        ], 200);
+        return response()->api(trans('all.success_receive_order'));
     }
 
     public function delete($locale, $id)

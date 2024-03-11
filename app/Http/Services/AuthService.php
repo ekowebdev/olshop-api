@@ -29,11 +29,7 @@ class AuthService extends BaseService
 	{
         if (auth()->check()) {
             auth()->user()->getAccessToken()->delete();
-            return response()->json([
-                'message' => trans('all.success_logout'), 
-                'status_code' => 200,
-                'error' => 0,
-            ], 200);
+            return response()->api(trans('all.success_logout'));
         }
 
         throw new ApplicationException(trans('error.failed_logout'));
@@ -45,9 +41,7 @@ class AuthService extends BaseService
 
         $user = $this->model->find($id);
 
-        if(!$user->hasVerifiedEmail()){
-            $user->markEmailAsVerified();
-        }
+        if(!$user->hasVerifiedEmail()) $user->markEmailAsVerified();
 
         $url = config('setting.frontend.url') . '/email-verification-success';
 
@@ -66,11 +60,8 @@ class AuthService extends BaseService
 
         SendEmailVerificationJob::dispatch($user, $locale);
 
-        return response()->json([
-            'message' => trans('all.success_resend_verification'), 
-            'status_code' => 200,
-            'error' => 0,
-        ], 200);
+        return response()->api(trans('all.success_resend_verification'));
+        
     }
 
     public function forget_password($locale, $request)
@@ -95,11 +86,7 @@ class AuthService extends BaseService
 
         DB::commit();
 
-        return response()->json([
-            'message' => trans('all.success_send_reset_password_link'), 
-            'status_code' => 200,
-            'error' => 0,
-        ], 200);
+        return response()->api(trans('all.success_send_reset_password_link'));
     }
 
     public function reset_password($locale, $request) 
@@ -128,22 +115,15 @@ class AuthService extends BaseService
 
         DB::commit();
 
-        return response()->json([
-            'message' => trans('all.success_reset_password'), 
-            'status_code' => 200,
-            'error' => 0,
-        ], 200);
+        return response()->api(trans('all.success_reset_password'));
     }
 
     public function auth_google($locale)
     {
-        return response()->json([
-            'data' => [
-                'auth_url' => Socialite::driver('google')->stateless()->redirect()->getTargetUrl(),
-            ],
-            'status_code' => 200,
-            'error' => 0,
-        ], 200);
+        $data = [
+            'auth_url' => Socialite::driver('google')->stateless()->redirect()->getTargetUrl(),
+        ];
+        return response()->api(trans('all.success_logout'), $data);
     }
 
     public function auth_google_callback($locale)
@@ -151,11 +131,8 @@ class AuthService extends BaseService
         try {
             $socialite = Socialite::driver('google')->stateless()->user();
             $user = $this->model->where('email', $socialite->email)->first();
-            if(empty($user)) {
-                $url = config('setting.frontend.url') . '/auth-success?is_register=true&name='.$socialite->user['given_name'].'&email='.$socialite->email.'&google_access_token='.$socialite->token;
-            } else {
-                $url = config('setting.frontend.url') . '/auth-success?email='.$socialite->email.'&google_access_token='.$socialite->token;
-            }
+            if(empty($user)) $url = config('setting.frontend.url') . '/auth-success?is_register=true&name='.$socialite->user['given_name'].'&email='.$socialite->email.'&google_access_token='.$socialite->token;
+            else $url = config('setting.frontend.url') . '/auth-success?email='.$socialite->email.'&google_access_token='.$socialite->token;
             return redirect()->to($url);
         } catch (\Exception $e) {
             $url = config('setting.frontend.url') . '/login?error='.$e->getMessage();

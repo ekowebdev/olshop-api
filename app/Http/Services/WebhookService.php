@@ -74,9 +74,7 @@ class WebhookService extends BaseService
                 'total_amount' => $order->total_amount,
             ];
 
-            $order_products = OrderProduct::with(['products', 'variants'])
-                ->where('order_id', $order->id)
-                ->get();
+            $order_products = OrderProduct::with(['products', 'variants'])->where('order_id', $order->id)->get();
 
             $detail_data = [];
 
@@ -112,9 +110,7 @@ class WebhookService extends BaseService
                         ->where('quantity', '=', $quantity)
                         ->first();
                     
-                    if(!is_null($carts)) {
-                        $carts->delete();
-                    }
+                    if(!is_null($carts)) $carts->delete();
                 }
             }
 
@@ -134,10 +130,6 @@ class WebhookService extends BaseService
             SendEmailOrderConfirmationJob::dispatch($order->users->email, $header_data, $detail_data);
         }
 
-        return response()->json([
-            'message' => 'OK',
-            'status_code' => 200,
-            'error' => 0,
-        ], 200);
+        return response()->api('OK');
     }
 }
