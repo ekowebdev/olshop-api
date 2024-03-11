@@ -242,9 +242,15 @@ class AccessTokenController extends ApiAuthController
                 'error' => 0
             ], 200);
         } else {
-            return $this->withErrorHandling(function () use ($modifiedServerRequest) {
+            // return $this->withErrorHandling(function () use ($modifiedServerRequest) {
+            //     return $this->convertResponse(
+            //         $this->server->respondToAccessTokenRequest($modifiedServerRequest, new Psr7Response)
+            //     );
+            // });
+            
+            return $this->withErrorHandling(function () use ($serverRequest) {
                 return $this->convertResponse(
-                    $this->server->respondToAccessTokenRequest($modifiedServerRequest, new Psr7Response)
+                    $this->server->respondToAccessTokenRequest($serverRequest, new Psr7Response)
                 );
             });
         }
