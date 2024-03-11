@@ -48,7 +48,7 @@ class PaymentLogResource extends JsonResource
                                     'product_id' => $image->id,
                                     'variant_id' => $image->variant_id,
                                     'product_image_url' => $image->image_url,
-                                    'product_image_thumbnail_url' => $image->image_thumb_url,
+                                    'product_image_thumbnail_url' => $image->image_thumbnail_url,
                                 ];
                             }),
                         ],
@@ -65,7 +65,7 @@ class PaymentLogResource extends JsonResource
                                 'id' => $order_product->variants->product_images->id,
                                 'image' => $order_product->variants->product_images->image,
                                 'image_url' => $order_product->variants->product_images->image_url,
-                                'image_thumbnail_url' => $order_product->variants->product_images->image_thumb_url,
+                                'image_thumbnail_url' => $order_product->variants->product_images->image_thumbnail_url,
                             ] : null,
                         ] : null,
                     ];

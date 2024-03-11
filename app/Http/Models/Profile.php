@@ -12,7 +12,7 @@ class Profile extends BaseModel
 
     protected $table = 'profiles';
     protected $fillable = ['user_id', 'name', 'birthdate', 'phone_number', 'avatar'];
-    protected $appends = ['avatar_url', 'avatar_thumb_url'];
+    protected $appends = ['avatar_url', 'avatar_thumbnail_url'];
 
     public function getAvatarUrlAttribute()
     {
@@ -22,7 +22,7 @@ class Profile extends BaseModel
         return $url ?? null;
     }
 
-    public function getAvatarThumbUrlAttribute()
+    public function getAvatarThumbnailUrlAttribute()
     {
         if ($this->avatar != null) {
             $url = 'https://'. config('filesystems.disks.s3.bucket') .'.s3-'. config('filesystems.disks.s3.region') .'.amazonaws.com/images/avatar/thumbnails/' . $this->avatar;

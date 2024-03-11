@@ -31,7 +31,7 @@ class WishlistResource extends JsonResource
                         'product_id' => $image->product_id,
                         'variant_id' => $image->variant_id,
                         'image_url' => $image->image_url,
-                        'image_thumbnail_url' => $image->image_thumb_url,
+                        'image_thumbnail_url' => $image->image_thumbnail_url,
                     ];
                 }),
                 'variants' => $this->products->variants->map(function ($variant) {
@@ -48,7 +48,7 @@ class WishlistResource extends JsonResource
                             'id' => $variant->product_images->id,
                             'image' => $variant->product_images->image,
                             'image_url' => $variant->product_images->image_url,
-                            'image_thumbnail_url' => $variant->product_images->image_thumb_url,
+                            'image_thumbnail_url' => $variant->product_images->image_thumbnail_url,
                         ] : null,
                     ];
                 }),

@@ -47,7 +47,7 @@ class ShippingResource extends JsonResource
                                     'product_id' => $image->product_id,
                                     'variant_id' => $image->variant_id,
                                     'image_url' => $image->image_url,
-                                    'image_thumbnail_url' => $image->image_thumb_url,
+                                    'image_thumbnail_url' => $image->image_thumbnail_url,
                                 ];
                             }),
                         ],
@@ -64,7 +64,7 @@ class ShippingResource extends JsonResource
                                 'id' => $order_product->variants->product_images->id,
                                 'image' => $order_product->variants->product_images->image,
                                 'image_url' => $order_product->variants->product_images->image_url,
-                                'image_thumbnail_url' => $order_product->variants->product_images->image_thumb_url,
+                                'image_thumbnail_url' => $order_product->variants->product_images->image_thumbnail_url,
                             ] : null,
                         ] : null,
                     ];

@@ -13,7 +13,7 @@ class ProductImage extends BaseModel
 
     protected $table = 'product_images';
     protected $fillable = ['product_id', 'variant_id', 'image'];
-    protected $appends = ['image_url', 'image_thumb_url'];
+    protected $appends = ['image_url', 'image_thumbnail_url'];
 
     public function getImageUrlAttribute()
     {
@@ -23,7 +23,7 @@ class ProductImage extends BaseModel
         return $url ?? null;
     }
 
-    public function getImageThumbUrlAttribute()
+    public function getImageThumbnailUrlAttribute()
     {
         if ($this->image != null) {
             $url = 'https://'. config('filesystems.disks.s3.bucket') .'.s3-'. config('filesystems.disks.s3.region') .'.amazonaws.com/images/thumbnails/' . $this->image;

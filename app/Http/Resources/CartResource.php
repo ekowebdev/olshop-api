@@ -30,7 +30,7 @@ class CartResource extends JsonResource
                         'product_id' => $image->product_id,
                         'variant_id' => $image->variant_id,
                         'image_url' => $image->image_url,
-                        'image_thumbnail_url' => $image->image_thumb_url,
+                        'image_thumbnail_url' => $image->image_thumbnail_url,
                     ];
                 }),
             ],
@@ -48,7 +48,7 @@ class CartResource extends JsonResource
                         'id' => $this->variants->product_images->id,
                         'image' => $this->variants->product_images->image,
                         'image_url' => $this->variants->product_images->image_url,
-                        'image_thumbnail_url' => $this->variants->product_images->image_thumb_url,
+                        'image_thumbnail_url' => $this->variants->product_images->image_thumbnail_url,
                     ] : null,
                 ] : null,
             'quantity' => $this->quantity,

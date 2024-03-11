@@ -11,7 +11,7 @@ class Slider extends BaseModel
 
     protected $table = 'sliders';
     protected $fillable = ['image', 'title', 'description', 'link', 'sort', 'start_date', 'end_date', 'status'];
-    protected $appends = ['image_url', 'image_thumb_url'];
+    protected $appends = ['image_url', 'image_thumbnail_url'];
 
     public function getImageUrlAttribute()
     {
@@ -21,7 +21,7 @@ class Slider extends BaseModel
         return $url ?? null;
     }
 
-    public function getImageThumbUrlAttribute()
+    public function getImageThumbnailUrlAttribute()
     {
         if ($this->image != null) {
             $url = 'https://'. config('filesystems.disks.s3.bucket') .'.s3-'. config('filesystems.disks.s3.region') .'.amazonaws.com/images/slider/thumbnails/' . $this->image;

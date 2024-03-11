@@ -38,7 +38,7 @@ class ProductImageResource extends JsonResource
             ] : null,
             'image' => $this->image,
             'image_url' => $this->image_url,
-            'image_thumbnail_url' => $this->image_thumb_url,
+            'image_thumbnail_url' => $this->image_thumbnail_url,
         ];
     }
 

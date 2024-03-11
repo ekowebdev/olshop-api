@@ -40,7 +40,7 @@ class ProductResource extends JsonResource
                         'id' => $variant->product_images->id,
                         'image' => $variant->product_images->image,
                         'image_url' => $variant->product_images->image_url,
-                        'image_thumbnail_url' => $variant->product_images->image_thumb_url,
+                        'image_thumbnail_url' => $variant->product_images->image_thumbnail_url,
                     ] : null,
                 ];
             }),
