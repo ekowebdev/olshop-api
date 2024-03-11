@@ -38,7 +38,6 @@ class XSSProtection
                 array('#REMOVED#', '#REMOVED#'),
                 $input
             );
-
             $input = htmlentities(trim(strip_tags($input)));
         });
 

@@ -9,7 +9,6 @@ use App\Http\Models\Product;
 use App\Http\Models\Variant;
 use Illuminate\Support\Facades\DB;
 use App\Http\Resources\CartResource;
-use App\Exceptions\ValidationException;
 use Illuminate\Database\QueryException;
 use App\Exceptions\ApplicationException;
 use App\Http\Repositories\CartRepository;
@@ -66,90 +65,34 @@ class CartService extends BaseService
 
         try {
             DB::beginTransaction();
-            
             $user = auth()->user();
             $data_request['user_id'] = $user->id;
-
             $variant_id = isset($data_request['variant_id']) ? intval($data_request['variant_id']) : null;
-        
             $product = Product::lockForUpdate()->find($data_request['product_id']);
-
             if ($product->variants->count() > 0 && !isset($variant_id)) {
-                return response()->json([
-                    'error' => [
-                        'message' => trans('error.variant_required', ['id' => $product->id]),
-                        'status_code' => 422,
-                        'error' => 1
-                    ]
-                ], 422);
+                throw new ApplicationException(trans('error.variant_required', ['product_name' => $product->name]));
             } else if ($product->variants->count() == 0 && isset($variant_id)) {
-                return response()->json([
-                    'error' => [
-                        'message' => trans('error.variant_not_found_in_products', ['id' => $product->id]),
-                        'status_code' => 409,
-                        'error' => 1
-                    ]
-                ], 409);
+                throw new ApplicationException(trans('error.variant_not_found_in_products', ['product_name' => $product->name]));
             }
-
-            if(!$product || $product->quantity < $data_request['quantity'] || $product->status == 'O'){
-                return response()->json([
-                    'error' => [
-                        'message' => trans('error.out_of_stock'),
-                        'status_code' => 409,
-                        'error' => 1
-                    ]
-                ], 409);
-            }
-            
+            if(!$product || $product->quantity < $data_request['quantity'] || $product->status == 'O') throw new ApplicationException(trans('error.out_of_stock'));
             if (!is_null($variant_id)) {
                 $variant = $product->variants()->lockForUpdate()->find($variant_id);
-
-                if (is_null($variant)) {
-                    return response()->json([
-                        'error' => [
-                            'message' => trans('error.variant_not_available_in_products', ['id' => $product->id, 'variant_id' => $variant_id]),
-                            'status_code' => 409,
-                            'error' => 1
-                        ]
-                    ], 409);
-                }
-
-                if ($variant->quantity == 0 || $data_request['quantity'] > $variant->quantity) {
-                    return response()->json([
-                        'error' => [
-                            'message' => trans('error.out_of_stock'),
-                            'status_code' => 409,
-                            'error' => 1
-                        ]
-                    ], 409);
-                }
+                $variant_name = Variant::find($variant_id)->name;
+                if (is_null($variant)) throw new ApplicationException(trans('error.variant_not_available_in_products', ['product_name' => $product->name, 'variant_name' => $variant_name]));
+                if ($variant->quantity == 0 || $data_request['quantity'] > $variant->quantity) throw new ApplicationException(trans('error.out_of_stock'));
             }
 
             $exists_cart = $this->repository->getByUserProductAndVariant($user->id, $data_request['product_id'], $variant_id)->first();
             
             if(!empty($exists_cart)) {
                 $quantity = $exists_cart->quantity + intval($data_request['quantity']);
-
                 if($product->variants->count() > 0){
                     $real_quantity = $variant->quantity;
                 } else {
                     $real_quantity = $product->quantity;
                 }
-            
-                if ($quantity > $real_quantity) {
-                    return response()->json([
-                        'error' => [
-                            'message' => trans('error.out_of_stock'),
-                            'status_code' => 409,
-                            'error' => 1
-                        ]
-                    ], 409);
-                }
-
-                $exists_cart->update([
-                    'quantity' => $exists_cart->quantity + $data_request['quantity'],
-                ]);
+                if ($quantity > $real_quantity) throw new ApplicationException(trans('error.out_of_stock'));
+                $exists_cart->update(['quantity' => $exists_cart->quantity + $data_request['quantity']]);
             } else {
                 $cart = $this->model;
                 $cart->id = strval(Str::uuid());
@@ -159,9 +102,7 @@ class CartService extends BaseService
                 $cart->quantity = intval($data_request['quantity']);
                 $cart->save();
             }
-        
             DB::commit();
-        
             return response()->json([
                 'message' => trans('all.success_add_to_cart'),
                 'status_code' => 200,
@@ -204,7 +145,7 @@ class CartService extends BaseService
         }
     
         if ($real_quantity < $quantity) {
-            throw new ValidationException(json_encode(['quantity' => [trans('error.out_of_stock')]]));
+            throw new ApplicationException(trans('error.out_of_stock'));
         }
 
         $data_request['quantity'] = intval($data_request['quantity']);

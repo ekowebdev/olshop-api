@@ -20,7 +20,7 @@ return [
     'not_authorize_access'           => 'Tidak ada otoritas akses',
     'not_verified_account'           => 'Anda harus memverifikasi akun terlebih dahulu',
     'verification_failed'            => 'Verifikasi kode Anda gagal',
-    'password_not_set'          => 'Sandi belum diatur, silahkan login menggunakan Gmail',
+    'password_not_set'               => 'Sandi belum diatur, silahkan login menggunakan social media',
     'account_not_registered'         => 'Akun belum terdaftar, silahkan melakukan pendaftaran terlebih dahulu',
 ];
 

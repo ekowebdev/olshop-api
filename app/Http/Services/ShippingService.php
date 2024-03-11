@@ -5,7 +5,7 @@ namespace App\Http\Services;
 use Illuminate\Support\Arr;
 use App\Http\Models\Shipping;
 use Illuminate\Support\Facades\DB;
-use App\Exceptions\ValidationException;
+use App\Exceptions\ApplicationException;
 use App\Http\Repositories\ShippingRepository;
 
 class ShippingService extends BaseService
@@ -70,9 +70,7 @@ class ShippingService extends BaseService
         ]);
 
         DB::beginTransaction();
-        if($check_data->orders->status != 'shipped' && $check_data->orders->status != 'success' && $check_data->orders->payment_logs == null){
-            throw new ValidationException(json_encode(['status' => [trans('error.order_not_completed', ['id' => $check_data->order_id])]]));
-        }
+        if($check_data->orders->status != 'shipped' && $check_data->orders->status != 'success' && $check_data->orders->payment_logs == null) throw new ApplicationException(trans('error.order_not_completed', ['order_code' => $check_data->orders->code]));
         $data_request['resi'] = isset($data_request['resi']) ? $data_request['resi'] : $check_data->resi;
         $data_request['status'] = isset($data_request['resi']) ? 'on delivery' : $check_data->status;
         $check_data->update($data_request);

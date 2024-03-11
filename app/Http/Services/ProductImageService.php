@@ -7,8 +7,8 @@ use Illuminate\Support\Arr;
 use App\Http\Models\Variant;
 use App\Http\Models\ProductImage;
 use Illuminate\Support\Facades\DB;
-use App\Exceptions\ValidationException;
 use Illuminate\Support\Facades\Storage;
+use App\Exceptions\ApplicationException;
 use App\Http\Repositories\ProductImageRepository;
 
 class ProductImageService extends BaseService
@@ -77,12 +77,9 @@ class ProductImageService extends BaseService
         DB::beginTransaction();
         if(isset($data_request['variant_id'])){
             $variant = Variant::where('id', $data_request['variant_id'])->where('product_id', $data_request['product_id'])->first();
-            if(is_null($variant)) {
-                throw new ValidationException(json_encode(['product_variants' => [trans('error.variant_not_found_in_products', ['id' => $data_request['product_id']])]]));           }
+            if(is_null($variant)) throw new ApplicationException(trans('error.variant_not_found_in_products', ['product_name' => $variant->products->name]));
             $exists_variant = $this->repository->getSingleDataByProductVariant($locale, $data_request['product_id'], $data_request['variant_id']);
-            if(!is_null($exists_variant)){
-                throw new ValidationException(json_encode(['images' => [trans('error.exists_image_variant_products', ['id' => $data_request['product_id'], 'variant_id' => $data_request['variant_id']])]]));
-            }
+            if(!is_null($exists_variant)) throw new ApplicationException(trans('error.exists_image_variant_products', ['product_name' => $variant->products->name, 'variant_name' => $variant->name]));
         }
         $image = $data_request['image'];
         $image_name = time() . '.' . $image->getClientOriginalExtension();
@@ -129,9 +126,7 @@ class ProductImageService extends BaseService
         DB::beginTransaction();
         if(isset($data_request['variant_id']) && !empty($data_request['variant_id'])){
             $variant = Variant::where('id', $data_request['variant_id'])->where('product_id', isset($data_request['product_id']) ? $data_request['product_id'] : $check_data->product_id)->first();
-            if(is_null($variant)) {
-                throw new ValidationException(json_encode(['product_variants' => [trans('error.variant_not_found_in_products', ['id' => $data_request['product_id']])]])); 
-            }
+            if(is_null($variant)) throw new ApplicationException(trans('error.variant_not_found_in_products', ['product_name' => $variant->products->name]));
         }
         if (isset($data_request['image'])) {
             if(Storage::disk('s3')->exists('images/' . $check_data->image)) {

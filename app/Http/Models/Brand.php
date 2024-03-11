@@ -12,7 +12,7 @@ class Brand extends BaseModel
 
     protected $table = 'brands';
     protected $fillable = ['name', 'slug', 'logo', 'sort'];
-    protected $appends = ['logo_url', 'logo_thumb_url'];
+    protected $appends = ['logo_url', 'logo_thumbnail_url'];
 
     public function getLogoUrlAttribute()
     {
@@ -22,7 +22,7 @@ class Brand extends BaseModel
         return $url ?? null;
     }
 
-    public function getLogoThumbUrlAttribute()
+    public function getLogoThumbnailUrlAttribute()
     {
         if ($this->logo != null) {
             $url = 'https://'. config('filesystems.disks.s3.bucket') .'.s3-'. config('filesystems.disks.s3.region') .'.amazonaws.com/images/brand/thumbnails/' . $this->logo;

@@ -102,28 +102,13 @@ class ReviewService extends BaseService
 
         $user = auth()->user();
         $order = $this->order_repository->getSingleData($locale, $data_request['order_id']);
+        $product = Product::find($data_request['product_id']);
 
-        if ($order->status != 'shipped' && $order->status != 'success' && $order->payment_logs == null) {
-            return response()->json([
-                'error' => [
-                    'message' => trans('error.order_not_completed', ['id' => $data_request['order_id']]),
-                    'status_code' => 422,
-                    'error' => 1
-                ]
-            ], 422);
-        }
+        if ($order->status != 'shipped' && $order->status != 'success' && $order->payment_logs == null) throw new ApplicationException(trans('error.order_not_completed', ['order_code' => $order->code]));
 
         $check_rating = $this->repository->getDataByUserOrderAndProduct($locale, $user->id, $data_request['order_id'], $data_request['product_id']);
 
-        if (isset($check_rating)) {
-            return response()->json([
-                'error' => [
-                    'message' => trans('error.already_reviews', ['order_id' => $data_request['order_id'], 'product_id' => $data_request['product_id']]),
-                    'status_code' => 409,
-                    'error' => 1
-                ]
-            ], 409);
-        }
+        if (isset($check_rating)) throw new ApplicationException(trans('error.already_reviews', ['order_code' => $order->code, 'product_name' => $product->name]));
 
         $result = Review::create([
             'user_id' => $user->id,
@@ -212,27 +197,11 @@ class ReviewService extends BaseService
             $user = auth()->user();
             $order = $this->order_repository->getSingleData($locale, $data_request['order_id'][$i]);
 
-            if ($order->status != 'shipped' && $order->status != 'success' && $order->payment_logs == null) {
-                return response()->json([
-                    'error' => [
-                        'message' => trans('error.order_not_completed', ['id' => $data_request['order_id'][$i]]),
-                        'status_code' => 422,
-                        'error' => 1
-                    ]
-                ], 422);
-            }
+            if ($order->status != 'shipped' && $order->status != 'success' && $order->payment_logs == null) throw new ApplicationException(trans('error.order_not_completed', ['order_code' => $order->code[$i]]));
 
             $check_rating = $this->repository->getDataByUserOrderAndProduct($locale, $user->id, $data_request['order_id'][$i], $data_request['product_id'][$i]);
 
-            if (isset($check_rating)) {
-                return response()->json([
-                    'error' => [
-                        'message' => trans('error.already_reviews', ['order_id' => $data_request['order_id'][$i], 'product_id' => $data_request['product_id'][$i]]),
-                        'status_code' => 409,
-                        'error' => 1
-                    ]
-                ], 409);
-            }
+            if (isset($check_rating)) throw new ApplicationException(trans('error.already_reviews', ['order_code' => $order->code[$i], 'product_name' => $product->name[$i]]));
 
             $result = Review::create([
                 'user_id' => $user->id,

@@ -44,7 +44,7 @@ class CartResource extends JsonResource
                     'fpoint' => format_money(strval($this->variants->point)),
                     'weight' => $this->variants->weight,
                     'fweight' => $this->variants->weight . ' Gram',
-                    'image' => ($this->variants->product_images) ? [
+                    'variant_images' => ($this->variants->product_images) ? [
                         'id' => $this->variants->product_images->id,
                         'image' => $this->variants->product_images->image,
                         'image_url' => $this->variants->product_images->image_url,

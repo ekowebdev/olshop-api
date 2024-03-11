@@ -22,7 +22,7 @@ class UserMiddleware
     {
         if(!auth()->guard('api')->user()) throw new AuthenticationException();
 
-        if (auth()->guard('api')->check()) {
+        if(auth()->guard('api')->check()) {
             if(!empty(auth()->user())){
                 throw new ForbiddenException(trans('error.not_authorize_user'));
             }

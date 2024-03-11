@@ -7,6 +7,7 @@ use Carbon\Carbon;
 use GuzzleHttp\Client;
 use App\Rules\ReCaptcha;
 use App\Http\Models\User;
+use App\Exceptions\LoginException;
 use Illuminate\Support\Facades\App;
 use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Hash;
@@ -79,7 +80,9 @@ class AccessTokenController extends ApiAuthController
         $locale = App::getLocale();
         $request = Request::all();
 
-    	User::validate($request, [        
+    	User::validate($request, [   
+            'client_id' => 'required',
+            'client_secret' => 'required',     
 	        'username'	=> 'required|string|max:255',        
 	        'grant_type' =>	'required|in:password,social',
 	        'password' => 'nullable|required_if:grant_type,password|string|min:6|max:32',
@@ -88,67 +91,39 @@ class AccessTokenController extends ApiAuthController
             //'g-recaptcha-response' => ['nullable', 'required_if:grant_type,password', new ReCaptcha],
         ]);
 
-        $parsedBody = array_merge($serverRequest->getParsedBody(), [
-            'client_id' => config('setting.oauth.client_id'),
-            'client_secret' => config('setting.oauth.client_secret'),
-        ]);
+        // $parsedBody = array_merge($serverRequest->getParsedBody(), [
+        //     'client_id' => config('setting.oauth.client_id'),
+        //     'client_secret' => config('setting.oauth.client_secret'),
+        // ]);
 
-        $modifiedServerRequest = $serverRequest->withParsedBody($parsedBody);
+        // $modifiedServerRequest = $serverRequest->withParsedBody($parsedBody);
 
         try {
             \DB::beginTransaction();
 
             $user = User::where('email', $request['username'])->first();
 
-            if(empty($user)){
-                return response()->json([
-                    'error' => [
-                        'message' => trans('auth.account_not_registered'),
-                        'status_code' => 404,
-                        'error' => 1
-                    ]
-                ], 404);
-            }
+            if(empty($user)) throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => 'User'], $locale));
 
             if($request['grant_type'] == 'password'){
-                if($user->password === null) {
-                    return response()->json([
-                        'error' => [
-                            'message' => trans('auth.password_not_set'),
-                            'status_code' => 403,
-                            'error' => 1
-                        ]
-                    ], 403);
-                }
-
-                if (!Hash::check($request['password'], $user->password, [])) {
-                    return response()->json([
-                        'error' => [
-                            'message' => trans('auth.failed'),
-                            'status_code' => 401,
-                            'error' => 1
-                        ]
-                    ], 401);
-                }
+                if($user->password === null) throw new LoginException();
+                if (!Hash::check($request['password'], $user->password, [])) throw new LoginException();
             }
 
             if($request['grant_type'] == 'social'){
                 $checkGoogleCredentials = $this->checkGoogleCredentials($request['access_token']);
-
-                if($checkGoogleCredentials === false){
-                    return response()->json([
-                        'error' => [
-                            'message' => trans('auth.failed'),
-                            'status_code' => 401,
-                            'error' => 1
-                        ]
-                    ], 401);
-                }
+                if($checkGoogleCredentials === false) throw new AuthenticationException();
             }
 
-            $response = $this->withErrorHandling(function () use ($modifiedServerRequest) {
+            // $response = $this->withErrorHandling(function () use ($modifiedServerRequest) {
+            //     return $this->convertResponse(
+            //         $this->server->respondToAccessTokenRequest($modifiedServerRequest, new Psr7Response)
+            //     );
+            // });
+
+            $response = $this->withErrorHandling(function () use ($serverRequest) {
                 return $this->convertResponse(
-                    $this->server->respondToAccessTokenRequest($modifiedServerRequest, new Psr7Response)
+                    $this->server->respondToAccessTokenRequest($serverRequest, new Psr7Response)
                 );
             });
 
@@ -195,17 +170,19 @@ class AccessTokenController extends ApiAuthController
         $locale = App::getLocale();
         $request = Request::all();
 
-        User::validate($request, [	        
+        User::validate($request, [	
+            'client_id' => 'required',
+            'client_secret' => 'required',        
 	        'grant_type' => 'required|in:client_credentials,refresh_token',
             'refresh_token' => 'nullable|required_if:grant_type,refresh_token',
         ]);
 
-        $parsedBody = array_merge($serverRequest->getParsedBody(), [
-            'client_id' => config('setting.oauth.client_id'),
-            'client_secret' => config('setting.oauth.client_secret'),
-        ]);
+        // $parsedBody = array_merge($serverRequest->getParsedBody(), [
+        //     'client_id' => config('setting.oauth.client_id'),
+        //     'client_secret' => config('setting.oauth.client_secret'),
+        // ]);
 
-        $modifiedServerRequest = $serverRequest->withParsedBody($parsedBody);
+        // $modifiedServerRequest = $serverRequest->withParsedBody($parsedBody);
 
         if($request['grant_type'] == 'refresh_token') {
             $appKey = config('app.key');
@@ -230,23 +207,25 @@ class AccessTokenController extends ApiAuthController
                 ->where('expires_at', '>', Carbon::now())                    
                 ->first();
 
-            if(empty($refreshToken) || empty($accessToken)){
-                throw new AuthenticationException(trans('error.failed_refresh_token'));  
-            }
+            if(empty($refreshToken) || empty($accessToken)) throw new AuthenticationException(trans('error.failed_refresh_token'));
 
             $user = User::where('id', $accessToken['user_id'])->first();
 
-            if (empty($user)) throw new DataEmptyException(trans('validation.attributes.data_not_exist', $locale));
+            if(empty($user)) throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => 'User'], $locale));
 
-            $response = $this->withErrorHandling(function () use ($modifiedServerRequest) {
+            // $response = $this->withErrorHandling(function () use ($modifiedServerRequest) {
+            //     return $this->convertResponse(
+            //         $this->server->respondToAccessTokenRequest($modifiedServerRequest, new Psr7Response)
+            //     );
+            // });
+
+            $response = $this->withErrorHandling(function () use ($serverRequest) {
                 return $this->convertResponse(
-                    $this->server->respondToAccessTokenRequest($modifiedServerRequest, new Psr7Response)
+                    $this->server->respondToAccessTokenRequest($serverRequest, new Psr7Response)
                 );
             });
 
-            if(!isJson($response->getContent())){
-                throw new AuthenticationException($response->getContent());
-            }
+            if(!isJson($response->getContent())) throw new AuthenticationException($response->getContent());
             
             $data = json_decode($response->getContent(), true);
 
@@ -276,21 +255,18 @@ class AccessTokenController extends ApiAuthController
         $client = new Client();
         $response = $client->request('GET', 'https://www.googleapis.com/oauth2/v2/tokeninfo?accessToken='.$accessToken, ['http_errors' => false]);        
 
-        if($response->getStatusCode() != 200) {
-            return false;
-        }
+        if($response->getStatusCode() != 200) return false;
 
         $data = User::where('email', '=', json_decode($response->getBody())->email)->first();
         
-        if($data === null) {
-            return false;
-        }
+        if($data === null) return false;
 
+        \DB::beginTransaction();
         if($data->google_id === null) {
             $data->update(['google_id' => json_decode($response->getBody())->user_id]);
         }
-
         $data->update(['google_access_token' => $accessToken]);
+        \DB::commit();
         
         return $data; 
     }

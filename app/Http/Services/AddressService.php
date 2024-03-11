@@ -5,7 +5,7 @@ namespace App\Http\Services;
 use Illuminate\Support\Arr;
 use App\Http\Models\Address;
 use Illuminate\Support\Facades\DB;
-use App\Exceptions\ValidationException;
+use App\Exceptions\ApplicationException;
 use App\Http\Repositories\UserRepository;
 use App\Http\Repositories\AddressRepository;
 
@@ -152,13 +152,16 @@ class AddressService extends BaseService
             ],
             'province_id' => [
                 'integer',
+                'exists:provinces,id',
             ],
             'city_id' => [
                 'integer',
+                'exists:cities,id',
             ],
             'subdistrict_id' => [
                 'nullable',
                 'integer',
+                'exists:subdistricts,id',
             ],
             'postal_code' => [
                 'numeric',
@@ -179,9 +182,7 @@ class AddressService extends BaseService
     {
         $check_data = $this->repository->getSingleData($locale, $id);
         DB::beginTransaction();
-        if($this->repository->countDataByUser($check_data->user_id) == 1 || $check_data->is_main == 1) {
-            throw new ValidationException(json_encode(['address' => [trans('error.cannot_delete_primary_address')]]));
-        }
+        if($this->repository->countDataByUser($check_data->user_id) == 1 || $check_data->is_main == 1) throw new ApplicationException(trans('error.cannot_delete_primary_address'));
         $result = $check_data->delete();
         DB::commit();
 

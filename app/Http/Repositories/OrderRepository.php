@@ -73,7 +73,7 @@ class OrderRepository extends BaseRepository
         return $result;	
 	}
 
-    public function getDataByIdAndResi($user_id, $resi)
+    public function getDataByIdAndReceipt($user_id, $resi)
 	{
 		$result = $this->model
                   ->getAll()

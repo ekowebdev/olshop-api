@@ -6,7 +6,9 @@ use App\Http\Models\Cart;
 use App\Http\Models\Shipping;
 use App\Http\Models\PaymentLog;
 use App\Http\Models\OrderProduct;
+use App\Exceptions\ForbiddenException;
 use App\Http\Repositories\OrderRepository;
+use App\Exceptions\AuthenticationException;
 use App\Jobs\SendEmailOrderConfirmationJob;
 
 class WebhookService extends BaseService
@@ -31,28 +33,12 @@ class WebhookService extends BaseService
         $server_key = config('services.midtrans.server_key');
         $my_signature_key = hash('sha512', $order_id.$status_code.$gross_amount.$server_key);
 
-        if ($signature_key !== $my_signature_key) {
-            return response()->json([
-                'error' => [
-                    'message' => trans('error.invalid_signature_midtrans'),
-                    'status_code' => 401,
-                    'error' => 1
-                ]
-            ], 401);
-        }
+        if ($signature_key !== $my_signature_key) throw new AuthenticationException(trans('error.invalid_signature_midtrans'));
 
         $real_order_id = explode('-', $order_id);
         $order = $this->repository->getSingleData($locale, $real_order_id[0]);
 
-        if ($order->status == 'shipped' && $order->status == 'success') {
-            return response()->json([
-                'error' => [
-                    'message' => trans('error.operation_not_permitted'),
-                    'status_code' => 403,
-                    'error' => 1
-                ]
-            ], 403); 
-        }
+        if ($order->status == 'shipped' && $order->status == 'success') throw new ForbiddenException(trans('error.operation_not_permitted'));
 
         if ($transaction_status == 'capture'){
             if ($fraud_status == 'challenge'){
@@ -146,7 +132,6 @@ class WebhookService extends BaseService
             ]);
 
             SendEmailOrderConfirmationJob::dispatch($order->users->email, $header_data, $detail_data);
-
         }
 
         return response()->json([

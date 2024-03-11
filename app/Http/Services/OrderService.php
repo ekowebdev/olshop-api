@@ -184,59 +184,21 @@ class OrderService extends BaseService
         
                 // Check variant if required
                 if ($product->variants->count() > 0 && !isset($variant_id)) {
-                    return response()->json([
-                        'error' => [
-                            'message' => trans('error.variant_required', ['id' => $product->id]),
-                            'status_code' => 422,
-                            'error' => 1
-                        ]
-                    ], 422);
+                    throw new ApplicationException(trans('error.variant_required', ['product_name' => $product->name]));
                 } else if ($product->variants->count() == 0 && isset($variant_id)) {
-                    return response()->json([
-                        'error' => [
-                            'message' => trans('error.variant_not_found_in_products', ['id' => $product->id]),
-                            'status_code' => 404,
-                            'error' => 1
-                        ]
-                    ], 404);
+                    throw new ApplicationException(trans('error.variant_not_found_in_products', ['product_name' => $product->name]));
                 }
 
                 // Check item availability
-                if (!$product || $product->quantity < $quantity || $product->status == 'O') {
-                    return response()->json([
-                        'error' => [
-                            'message' => trans('error.out_of_stock'),
-                            'status_code' => 409,
-                            'error' => 1
-                        ]
-                    ], 409);
-                }
+                if (!$product || $product->quantity < $quantity || $product->status == 'O') throw new ApplicationException(trans('error.out_of_stock'));
         
                 // Process the chosen variant (if any)
                 $subtotal = 0;
                 if (!is_null($variant_id)) {
                     $variant = $product->variants()->lockForUpdate()->find($variant_id);
-
-                    if (is_null($variant)) {
-                        return response()->json([
-                            'error' => [
-                                'message' => trans('error.variant_not_available_in_products', ['id' => $product->id, 'variant_id' => $variant_id]),
-                                'status_code' => 409,
-                                'error' => 1
-                            ]
-                        ], 409);
-                    }
-
-                    if ($variant->quantity == 0 || $quantity > $variant->quantity) {
-                        return response()->json([
-                            'error' => [
-                                'message' => trans('error.out_of_stock'),
-                                'status_code' => 409,
-                                'error' => 1
-                            ]
-                        ], 409);
-                    }
-        
+                    $variant_name = Variant::find($variant_id)->name;
+                    if (is_null($variant)) throw new ApplicationException(trans('error.variant_not_available_in_products', ['product_name' => $product->name, 'variant_name' => $variant_name]));
+                    if ($variant->quantity == 0 || $quantity > $variant->quantity) throw new ApplicationException(trans('error.out_of_stock'));
                     if ($variant) {
                         $subtotal = $variant->point * $quantity;
                         $variant->update([

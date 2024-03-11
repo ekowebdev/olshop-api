@@ -36,26 +36,12 @@ class AuthService extends BaseService
             ], 200);
         }
 
-        return response()->json([
-            'error' => [
-                'message' => trans('error.failed_logout'),
-                'status_code' => 500,
-                'error' => 1
-            ]
-        ], 500);
+        throw new ApplicationException(trans('error.failed_logout'));
     }
 
     public function verify($id, $request)
     {
-        if(!$request->hasValidSignature()){
-            return response()->json([
-                'error' => [
-                    'message' => 'Failed verification email',
-                    'status_code' => 500,
-                    'error' => 1
-                ]
-            ], 500);
-        }
+        if(!$request->hasValidSignature()) throw new ApplicationException(trans('error.failed_verification_email'));
 
         $user = $this->model->find($id);
 
@@ -76,15 +62,7 @@ class AuthService extends BaseService
 
         $user = $this->repository->getDataByMultipleParam(['email' => $request['email']]);
 
-        if($user->email_verified_at != null){
-            return response()->json([
-                'error' => [
-                    'message' => trans('error.already_verification'),
-                    'status_code' => 400,
-                    'error' => 1
-                ]
-            ], 400);
-        }
+        if($user->email_verified_at != null) throw new ApplicationException(trans('error.already_verification'));
 
         SendEmailVerificationJob::dispatch($user, $locale);
 
@@ -133,25 +111,11 @@ class AuthService extends BaseService
 
         $password_reset = DB::table('password_resets')->where('token', $request->token)->first();
 
-        if($password_reset == null){
-            return response()->json([
-                'error' => [
-                    'message' => trans('error.token_reset_password_is_invalid'),
-                    'status_code' => 400,
-                    'error' => 1
-                ]
-            ], 400);
-        }
+        if($password_reset == null) throw new ApplicationException(trans('error.token_reset_password_is_invalid'));
 
         if (strtotime($password_reset->created_at) < strtotime('-60 minutes')) {
             DB::table('password_resets')->where('token', $request->token)->delete();
-            return response()->json([
-                'error' => [
-                    'message' => trans('error.token_reset_password_is_expired'),
-                    'status_code' => 401,
-                    'error' => 1
-                ]
-            ], 401);
+            throw new ApplicationException(trans('error.token_reset_password_is_expired'));
         }
 
         DB::beginTransaction();

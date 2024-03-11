@@ -30,9 +30,9 @@ class TrackResiService extends BaseService
             'courier' => 'required|in:jne,jnt,pos,tiki,spx',
         ]);
 
-        $check = $this->repository->getDataByIdAndResi($data_request['user_id'], $data_request['resi']);
+        $check = $this->repository->getDataByIdAndReceipt($data_request['user_id'], $data_request['resi']);
 
-        if(!$check) throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => 'Resi'], $locale));
+        if(!$check) throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => 'Receipt'], $locale));
         
         $body = http_build_query([
             'api_key' => $this->api_key,
@@ -70,7 +70,7 @@ class TrackResiService extends BaseService
 
         $data = json_decode($response, true);
 
-        if($data['status'] == 400) throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => 'Resi'], $locale));
+        if($data['status'] == 400) throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => 'Receipt'], $locale));
 
         $data = $data['data'];
 
