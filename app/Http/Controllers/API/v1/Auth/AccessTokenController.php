@@ -81,8 +81,8 @@ class AccessTokenController extends ApiAuthController
         $request = Request::all();
 
     	User::validate($request, [   
-            'client_id' => 'required',
-            'client_secret' => 'required',     
+            'client_id' => 'required|exists:oauth_clients,id',
+            'client_secret' => 'required|exists:oauth_clients,secret',     
 	        'username'	=> 'required|string|max:255',        
 	        'grant_type' =>	'required|in:password,social',
 	        'password' => 'nullable|required_if:grant_type,password|string|min:6|max:32',
@@ -171,8 +171,8 @@ class AccessTokenController extends ApiAuthController
         $request = Request::all();
 
         User::validate($request, [	
-            'client_id' => 'required',
-            'client_secret' => 'required',        
+            'client_id' => 'required|exists:oauth_clients,id',
+            'client_secret' => 'required|exists:oauth_clients,secret',         
 	        'grant_type' => 'required|in:client_credentials,refresh_token',
             'refresh_token' => 'nullable|required_if:grant_type,refresh_token',
         ]);
@@ -247,7 +247,7 @@ class AccessTokenController extends ApiAuthController
             //         $this->server->respondToAccessTokenRequest($modifiedServerRequest, new Psr7Response)
             //     );
             // });
-            
+
             return $this->withErrorHandling(function () use ($serverRequest) {
                 return $this->convertResponse(
                     $this->server->respondToAccessTokenRequest($serverRequest, new Psr7Response)
