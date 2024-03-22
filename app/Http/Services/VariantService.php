@@ -98,7 +98,7 @@ class VariantService extends BaseService
         try {
             DB::beginTransaction();
             $product = Product::find($data_request['product_id']);
-            $data_request['slug'] = $product->slug . '+' . Str::slug($data_request['name']);
+            $data_request['slug'] = $product->slug . '-' . Str::slug($data_request['name']);
             if($product->variants->count() > 0){
                 $quantity = $product->quantity + $data_request['quantity'];
                 $point = (min($product->variants->pluck('point')->toArray()) > (int) $data_request['point']) ? (int) $data_request['point'] : min($product->variants->pluck('point')->toArray());
@@ -168,7 +168,7 @@ class VariantService extends BaseService
         try {
             DB::beginTransaction();
             $product = Product::find($check_data->product_id);
-            $data_request['slug'] = $product->slug . '+' . Str::slug($data_request['name']);
+            $data_request['slug'] = $product->slug . '-' . Str::slug($data_request['name']);
             $check_data->update($data_request);
             $weight = min($check_data->where('product_id', $data_request['product_id'])->pluck('weight')->toArray());
             $point = min($check_data->where('product_id', $data_request['product_id'])->pluck('point')->toArray());
