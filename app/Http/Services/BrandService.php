@@ -2,6 +2,7 @@
 
 namespace App\Http\Services;
 
+use Image;
 use App\Http\Models\Brand;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
