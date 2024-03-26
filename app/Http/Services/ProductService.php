@@ -327,6 +327,7 @@ class ProductService extends BaseService
                     'required_with:spesification.*.key',
                 ],
                 'point' => [
+                    'nullable',
                     'numeric',
                 ],
                 'weight' => [
