@@ -14,7 +14,7 @@ Route::get('/event', function () {
 });
 
 Route::get('/send-event', function () {
-    $user = User::find(45);
+    $user = User::first();
     $data_notification = [
         'data' => [
             'user_id' => $user->id,
