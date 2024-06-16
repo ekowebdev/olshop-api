@@ -14,7 +14,7 @@ use App\Jobs\SendEmailOrderConfirmationJob;
 class WebhookService extends BaseService
 {
     private $repository;
-    
+
     public function __construct(OrderRepository $repository)
     {
         $this->repository = $repository;
@@ -94,25 +94,25 @@ class WebhookService extends BaseService
                 ];
             }
 
-            if($order->metadata != null){
-                $metadata = json_decode($order->metadata, true);
-                $metadata_order_products = $metadata['order_products'];
-                foreach ($metadata_order_products as $product) {
-                    $user_id = (int) $order->user_id;
-                    $product_id = (int) $product['product_id'];
-                    $variant_id = ($product['variant_id'] == null) ? '' : (int) $product['variant_id'];
-                    $quantity = (int) $product['quantity'];
+            // if($order->metadata != null){
+            //     $metadata = json_decode($order->metadata, true);
+            //     $metadata_order_products = $metadata['order_products'];
+            //     foreach ($metadata_order_products as $product) {
+            //         $user_id = (int) $order->user_id;
+            //         $product_id = (int) $product['product_id'];
+            //         $variant_id = ($product['variant_id'] == null) ? '' : (int) $product['variant_id'];
+            //         $quantity = (int) $product['quantity'];
 
-                    $carts = Cart::all()
-                        ->where('user_id', '=', $user_id)
-                        ->where('product_id', '=', $product_id)
-                        ->where('variant_id', '=', $variant_id)
-                        ->where('quantity', '=', $quantity)
-                        ->first();
-                    
-                    if(!is_null($carts)) $carts->delete();
-                }
-            }
+            //         $carts = Cart::all()
+            //             ->where('user_id', '=', $user_id)
+            //             ->where('product_id', '=', $product_id)
+            //             ->where('variant_id', '=', $variant_id)
+            //             ->where('quantity', '=', $quantity)
+            //             ->first();
+
+            //         if(!is_null($carts)) $carts->delete();
+            //     }
+            // }
 
             $shippings = Shipping::where('order_id', $order->id)->first();
             if($shippings->resi == null) $shipping_status = 'on progress';
@@ -123,7 +123,7 @@ class WebhookService extends BaseService
 
             $payments = PaymentLog::where('order_id', $order->id)->first();
             $payments->update([
-                'status' => $transaction_status, 
+                'status' => $transaction_status,
                 'raw_response' => json_encode($data)
             ]);
 

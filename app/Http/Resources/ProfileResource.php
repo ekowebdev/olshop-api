@@ -16,7 +16,7 @@ class ProfileResource extends JsonResource
             'avatar' => $this->avatar,
             'avatar_url' => $this->avatar_url,
             'avatar_thumbnail_url' => $this->avatar_thumbnail_url,
-            'users' => $this->users->makeHidden(['email_verified_at', 'google_access_token', 'created_at', 'updated_at']),
+            'users' => (!$this->users) ? null : $this->users->makeHidden(['email_verified_at', 'google_access_token', 'created_at', 'updated_at']),
         ];
     }
 }

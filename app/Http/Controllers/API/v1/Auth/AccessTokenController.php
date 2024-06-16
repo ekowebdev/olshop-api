@@ -35,7 +35,7 @@ class AccessTokenController extends ApiAuthController
             'name' => 'required|string|max:255',
             'birthdate' => 'nullable|required_if:grant_type,password|date',
             'username' => 'required|string|email:rfc,dns|unique:users,email|max:255',
-            'password' => 'nullable|required_if:grant_type,password|string|min:6|confirmed|max:32',	        
+            'password' => 'nullable|required_if:grant_type,password|string|min:6|confirmed|max:32',
 	        'grant_type' =>	'required|in:password,social',
 	        'provider' => 'nullable|required_if:grant_type,social|in:google',
 			'access_token' => 'nullable|required_if:grant_type,social',
@@ -80,15 +80,15 @@ class AccessTokenController extends ApiAuthController
         $locale = App::getLocale();
         $request = Request::all();
 
-    	User::validate($request, [   
+    	User::validate($request, [
             'client_id' => 'required|exists:oauth_clients,id',
-            'client_secret' => 'required|exists:oauth_clients,secret',     
-	        'username'	=> 'required|string|max:255',        
+            'client_secret' => 'required|exists:oauth_clients,secret',
+	        'username'	=> 'required|string|max:255',
 	        'grant_type' =>	'required|in:password,social',
 	        'password' => 'nullable|required_if:grant_type,password|string|min:6|max:32',
 	        'provider' => 'nullable|required_if:grant_type,social|in:google',
 			'access_token' => 'nullable|required_if:grant_type,social',
-            'g-recaptcha-response' => ['nullable', 'required_if:grant_type,password', new ReCaptcha],
+            // 'g-recaptcha-response' => ['nullable', 'required_if:grant_type,password', new ReCaptcha],
         ]);
 
         try {
@@ -153,9 +153,9 @@ class AccessTokenController extends ApiAuthController
         $locale = App::getLocale();
         $request = Request::all();
 
-        User::validate($request, [	
+        User::validate($request, [
             'client_id' => 'required|exists:oauth_clients,id',
-            'client_secret' => 'required|exists:oauth_clients,secret',         
+            'client_secret' => 'required|exists:oauth_clients,secret',
 	        'grant_type' => 'required|in:client_credentials,refresh_token',
             'refresh_token' => 'nullable|required_if:grant_type,refresh_token',
         ]);
@@ -167,20 +167,20 @@ class AccessTokenController extends ApiAuthController
             try {
                 $crypto = \Defuse\Crypto\Crypto::decryptWithPassword($request['refresh_token'], $encriptionKey);
             } catch (\Exception $e){
-                throw new AuthenticationException($e->getMessage());  
+                throw new AuthenticationException($e->getMessage());
             }
 
             $crypto = json_decode($crypto, true);
 
             $accessToken = OauthAccessToken::where('id', $crypto['access_token_id'])
                 ->where('revoked', 0)
-                ->where('expires_at', '<' , Carbon::now())                    
+                ->where('expires_at', '<' , Carbon::now())
                 ->first();
 
             $refreshToken = OauthRefreshToken::where('id', $crypto['refresh_token_id'])
-                ->where('access_token_id', $crypto['access_token_id'])    
+                ->where('access_token_id', $crypto['access_token_id'])
                 ->where('revoked', 0)
-                ->where('expires_at', '>', Carbon::now())                    
+                ->where('expires_at', '>', Carbon::now())
                 ->first();
 
             if(empty($refreshToken) || empty($accessToken)) throw new AuthenticationException(trans('error.failed_refresh_token'));
@@ -196,7 +196,7 @@ class AccessTokenController extends ApiAuthController
             });
 
             if(!isJson($response->getContent())) throw new AuthenticationException($response->getContent());
-            
+
             $data = json_decode($response->getContent(), true);
 
             $responseData = [
@@ -219,7 +219,7 @@ class AccessTokenController extends ApiAuthController
     private function checkGoogleCredentials($accessToken)
     {
         $client = new Client();
-        $response = $client->request('GET', 'https://www.googleapis.com/oauth2/v2/tokeninfo?accessToken='.$accessToken, ['http_errors' => false]);        
+        $response = $client->request('GET', 'https://www.googleapis.com/oauth2/v2/tokeninfo?accessToken='.$accessToken, ['http_errors' => false]);
         if($response->getStatusCode() != 200) return false;
 
         $data = User::where('email', '=', json_decode($response->getBody())->email)->first();
@@ -229,7 +229,7 @@ class AccessTokenController extends ApiAuthController
         if($data->google_id === null) $data->update(['google_id' => json_decode($response->getBody())->user_id]);
         $data->update(['google_access_token' => $accessToken]);
         \DB::commit();
-        
-        return $data; 
+
+        return $data;
     }
 }

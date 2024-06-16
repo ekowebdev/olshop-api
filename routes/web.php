@@ -1,23 +1,31 @@
 <?php
 
-use Illuminate\Support\Facades\Auth;
+use App\Http\Models\User;
+use App\Http\Models\Notification;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Broadcast;
+use App\Events\RealTimeNotificationEvent;
 
 Route::get('/', function () {
-    return 'Baktiweb Olshop API versi 1';
-    // return view('welcome');
+    return 'Baktiweb Olshop API version 1';
 });
 
-// Route::get('/send-event', function () {
-//     $data_notification = [
-//         'user_id' => 14,
-//         'title' => 'Transaksi Berhasil',
-//         'text' => 'Anda telah berhasil melakukan transaksi!',
-//         'type' => 0,
-//         'status_read' => 0,
-//     ];
-//     $notification = store_notification($data_notification);
-//     broadcast(new RealTimeNotificationEvent($notification, 14));
-//     return "Event berhasil dikirim";
-// });
+Route::get('/event', function () {
+    return view('welcome');
+});
+
+Route::get('/send-event', function () {
+    $user = User::find(45);
+    $data_notification = [
+        'data' => [
+            'user_id' => $user->id,
+            'title' => 'Transaksi Berhasil',
+            'text' => 'Anda telah berhasil melakukan transaksi!',
+            'type' => 0,
+            'status_read' => 0,
+        ],
+        'total_unread' => Notification::query()->orderBy('created_at', 'desc')->where('user_id', $user->id)->where('status_read', 0)->count()
+    ];
+    store_notification($data_notification['data']);
+    broadcast(new RealTimeNotificationEvent($data_notification, $user->id));
+    return "Event berhasil dikirim";
+});

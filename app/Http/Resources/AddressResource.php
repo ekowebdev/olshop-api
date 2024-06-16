@@ -27,7 +27,7 @@ class AddressResource extends JsonResource
             'postal_code' => $this->postal_code,
             'street' => $this->street,
             'is_main' => $this->is_main,
-            'users' => $this->users->makeHidden(['email_verified_at', 'google_access_token', 'created_at', 'updated_at']),
+            'users' => (!$this->users) ? null : $this->users->makeHidden(['email_verified_at', 'google_access_token', 'created_at', 'updated_at']),
         ];
     }
 }

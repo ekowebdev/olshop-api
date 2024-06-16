@@ -2,15 +2,16 @@
 
 namespace App\Events;
 
-use Illuminate\Queue\SerializesModels;
+use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+use Illuminate\Notifications\Messages\BroadcastMessage;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 
-class RealTimeNotificationEvent implements ShouldBroadcast
+class RealTimeNotificationEvent implements ShouldBroadcastNow
 {
-    use Dispatchable, InteractsWithSockets, SerializesModels;
+    use Dispatchable, InteractsWithSockets;
 
     public $notification, $user_id;
 
@@ -33,13 +34,14 @@ class RealTimeNotificationEvent implements ShouldBroadcast
     public function broadcastOn()
     {
         return new PrivateChannel('App.Models.User.' . $this->user_id);
+        // return new Channel('PublicChannel');
     }
 
     public function broadcastWith()
     {
         return [
-            'data' => $this->notification,
-            'count_data' => count($this->notification)
+            'data' => $this->notification['data'],
+            'total_unread' => $this->notification['total_unread']
         ];
     }
 }

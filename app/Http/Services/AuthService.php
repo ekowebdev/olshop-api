@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\App;
 use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Hash;
 use App\Jobs\SendEmailVerificationJob;
+use App\Exceptions\ApplicationException;
 use Illuminate\Support\Facades\Password;
 use Laravel\Socialite\Facades\Socialite;
 use App\Http\Repositories\UserRepository;
@@ -58,10 +59,10 @@ class AuthService extends BaseService
 
         if($user->email_verified_at != null) throw new ApplicationException(trans('error.already_verification'));
 
-        SendEmailVerificationJob::dispatch($user, $locale);
+        SendEmailVerificationJob::dispatch($locale, $user);
 
         return response()->api(trans('all.success_resend_verification'));
-        
+
     }
 
     public function forget_password($locale, $request)
@@ -89,7 +90,7 @@ class AuthService extends BaseService
         return response()->api(trans('all.success_send_reset_password_link'));
     }
 
-    public function reset_password($locale, $request) 
+    public function reset_password($locale, $request)
     {
         $request->validate([
             'token' => 'required',

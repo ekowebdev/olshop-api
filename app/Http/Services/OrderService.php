@@ -2,15 +2,17 @@
 
 namespace App\Http\Services;
 
+use App\Http\Models\Cart;
 use App\Http\Models\City;
 use App\Http\Models\Order;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
-use App\Http\Models\Variant;
 use App\Http\Models\Product;
+use App\Http\Models\Variant;
 use App\Http\Models\Shipping;
-use Illuminate\Support\Facades\DB;
+use App\Http\Models\Notification;
 use App\Http\Models\OrderProduct;
+use Illuminate\Support\Facades\DB;
 use App\Http\Services\OrderService;
 use Illuminate\Database\QueryException;
 use App\Exceptions\ApplicationException;
@@ -23,7 +25,7 @@ use App\Http\Repositories\ProductRepository;
 class OrderService extends BaseService
 {
     private $model, $repository, $product_repository, $city_repository, $address_repository;
-    
+
     public function __construct(Order $model, OrderRepository $repository, ProductRepository $product_repository, CityRepository $city_repository, AddressRepository $address_repository)
     {
         $this->model = $model;
@@ -56,7 +58,7 @@ class OrderService extends BaseService
             'search_column' => $search_column,
             'sort_column'   => array_merge($search, $search_column),
         ];
-        
+
         return $this->repository->getIndexData($locale, $sortable_and_searchable_column);
     }
 
@@ -80,7 +82,7 @@ class OrderService extends BaseService
             'search_column' => $search_column,
             'sort_column'   => array_merge($search, $search_column),
         ];
-        
+
         return $this->repository->getDataByUser($locale, $sortable_and_searchable_column, $id);
     }
 
@@ -147,7 +149,7 @@ class OrderService extends BaseService
 
         try {
             DB::beginTransaction();
-        
+
             // Initialize variables
             $total_point = 0;
             $metadata_order_products = [];
@@ -174,14 +176,14 @@ class OrderService extends BaseService
                 'date' => date('Y-m-d'),
                 'note' => $order_details['note'],
             ]);
-        
+
             // Process Orders
             foreach ($order_products_details as $order_products) {
                 $quantity = $order_products['quantity'];
                 $variant_id = ($order_products['variant_id'] == '') ? null : $order_products['variant_id'];
-        
+
                 $product = Product::lockForUpdate()->find($order_products['product_id']);
-        
+
                 // Check variant if required
                 if ($product->variants->count() > 0 && !isset($variant_id)) {
                     throw new ApplicationException(trans('error.variant_required', ['product_name' => $product->name]));
@@ -191,7 +193,7 @@ class OrderService extends BaseService
 
                 // Check item availability
                 if (!$product || $product->quantity < $quantity || $product->status == 'O') throw new ApplicationException(trans('error.out_of_stock'));
-        
+
                 // Process the chosen variant (if any)
                 $subtotal = 0;
                 if (!is_null($variant_id)) {
@@ -208,9 +210,9 @@ class OrderService extends BaseService
                 } else {
                     $subtotal = $product->point * $quantity;
                 }
-        
+
                 $total_point += $subtotal;
-        
+
                 // Create OrderProduct entry
                 $order_product = new OrderProduct([
                     'product_id' => (int) $product->id,
@@ -218,7 +220,7 @@ class OrderService extends BaseService
                     'quantity' => (int) $quantity,
                     'point' => $subtotal,
                 ]);
-        
+
                 $metadata_order_products[] = $order_product->toArray();
                 $item_details[] = [
                     'id' => $product->id,
@@ -235,13 +237,13 @@ class OrderService extends BaseService
                 $product->quantity -= $quantity;
                 $product->save();
             }
-        
+
             // Create shipping and transaction details
             $transaction_details = [
                 'order_id' => $order->id . '-' . Str::random(5),
                 'gross_amount' => $total_point + $cost,
             ];
-        
+
             $customer_details = [
                 'first_name' => $user->profile->name,
                 'email' => $user->email,
@@ -255,19 +257,19 @@ class OrderService extends BaseService
                     "country_code" => "IDN"
                 ]
             ];
-        
+
             $item_details[] = [
                 'price' => $cost,
                 'quantity' => 1,
                 'name' => '(+) Shipping Fee',
             ];
-        
+
             $midtrans_params = [
                 'transaction_details' => $transaction_details,
                 'item_details' => $item_details,
                 'customer_details' => $customer_details
-            ];           
-        
+            ];
+
             // Update Order and related data
             $midtrans_data = $this->create_transaction_midtrans($midtrans_params);
 	        $order->snap_token = $midtrans_data->token;
@@ -287,7 +289,7 @@ class OrderService extends BaseService
             $order->shipping_fee = $cost;
             $order->total_amount = $total_point + $cost;
             $order->save();
-        
+
             // Create shipping record
             $shipping = new Shipping([
                 'order_id' => $order->id,
@@ -302,18 +304,42 @@ class OrderService extends BaseService
                 'status' => 'on progress',
             ]);
             $shipping->save();
-        
+
+            //Delete product in cart
+            if($order->metadata != null){
+                $metadata = $order->metadata;
+                $metadata_order_products = $metadata['order_products'];
+                foreach ($metadata_order_products as $product) {
+                    $user_id = (int) $order->user_id;
+                    $product_id = (int) $product['product_id'];
+                    $variant_id = ($product['variant_id'] == null) ? '' : (int) $product['variant_id'];
+                    $quantity = (int) $product['quantity'];
+
+                    $carts = Cart::all()
+                        ->where('user_id', '=', $user_id)
+                        ->where('product_id', '=', $product_id)
+                        ->where('variant_id', '=', $variant_id)
+                        ->where('quantity', '=', $quantity)
+                        ->first();
+
+                    if(!is_null($carts)) $carts->delete();
+                }
+            }
+
             // Create and broadcast a notification
             $data_notification = [
-                'user_id' => $user->id,
-                'title' => trans('all.notification_transaction_title'),
-                'text' => trans('all.notification_transaction_text'),
-                'type' => 0,
-                'status_read' => 0,
+                'data' => [
+                    'user_id' => $user->id,
+                    'title' => trans('all.notification_transaction_title'),
+                    'text' => trans('all.notification_transaction_text'),
+                    'type' => 0,
+                    'status_read' => 0,
+                ],
+                'total_unread' => Notification::query()->orderBy('created_at', 'desc')->where('user_id', $user->id)->where('status_read', 0)->count()
             ];
-            $notification = store_notification($data_notification);
-            broadcast(new RealTimeNotificationEvent($notification, $user->id));
-        
+            store_notification($data_notification['data']);
+            broadcast(new RealTimeNotificationEvent($data_notification, $user->id));
+
             DB::commit();
 
             $responseData = [
@@ -324,7 +350,7 @@ class OrderService extends BaseService
         } catch (QueryException $e) {
             DB::rollback();
             throw new ApplicationException(json_encode([$e->getMessage()]));
-        }        
+        }
     }
 
     public function cancel($locale, $id, $data)
@@ -365,7 +391,7 @@ class OrderService extends BaseService
             $shippings = Shipping::where('order_id', $id)->first();
             $shippings->update(['status' => 'cancelled']);
             $check_data->update($data_request);
-            $message = trans('all.success_cancel_order'); 
+            $message = trans('all.success_cancel_order');
         } else {
             $message = trans('error.failed_cancel_order');
         }
@@ -409,7 +435,7 @@ class OrderService extends BaseService
     public function delete($locale, $id)
     {
         $check_data = $this->repository->getSingleData($locale, $id);
-        
+
         DB::beginTransaction();
         if($check_data->status != 'cancelled' && $check_data->status != 'shipped' && $check_data->status != 'success'){
             $order_products = $check_data->order_products()->get();
