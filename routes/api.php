@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\Broadcast;
 
 Route::middleware(['xssclean', 'throttle:api'])->group(function () {
     // Email Verification
@@ -16,7 +18,7 @@ Route::middleware(['xssclean', 'throttle:api'])->group(function () {
         // Email Verification
         Route::post('/email/resend', '\App\Http\Controllers\API\v1\Auth\AuthController@resend')->name('verification.resend');
         // Forgot Password
-        Route::post('/forget/password', '\App\Http\Controllers\API\v1\Auth\AuthController@forget_password'); 
+        Route::post('/forget/password', '\App\Http\Controllers\API\v1\Auth\AuthController@forget_password');
         Route::post('/reset/password', '\App\Http\Controllers\API\v1\Auth\AuthController@reset_password');
         // Webhook
         Route::post('/webhook/midtrans', '\App\Http\Controllers\API\v1\WebhookController@midtrans_handler');
@@ -124,7 +126,7 @@ Route::middleware(['xssclean', 'throttle:api'])->group(function () {
                     // Wishlist Product
                     Route::post('/{productId}/wishlists', '\App\Http\Controllers\API\v1\WishlistController@wishlist');
                 });
-                // Review 
+                // Review
                 Route::group(['prefix' => '/reviews'], function(){
                     Route::post('/', '\App\Http\Controllers\API\v1\ReviewController@store');
                     Route::post('/bulk', '\App\Http\Controllers\API\v1\ReviewController@storeBulk');

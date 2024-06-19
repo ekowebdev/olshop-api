@@ -10,21 +10,20 @@ use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 
-class RealTimeNotificationEvent implements ShouldBroadcastNow
+class PublicNotificationEvent implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $notification, $user_id;
+    public $notification;
 
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct($notification, $user_id)
+    public function __construct($notification)
     {
         $this->notification = $notification;
-        $this->user_id = $user_id;
     }
 
     /**
@@ -34,14 +33,13 @@ class RealTimeNotificationEvent implements ShouldBroadcastNow
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('App.Models.User.' . $this->user_id);
+        return new Channel('PublicChannel');
     }
 
     public function broadcastWith()
     {
         return [
-            'data' => $this->notification['data'],
-            'total_unread' => $this->notification['total_unread']
+            'data' => $this->notification
         ];
     }
 }
