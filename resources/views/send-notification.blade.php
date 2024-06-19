@@ -7,6 +7,7 @@
     <title>Bakti Shop</title>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss/dist/tailwind.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
     <div class="container mx-auto pt-20 px-4">
@@ -16,23 +17,19 @@
                     <div class="bg-white border rounded shadow p-4">
                         <div class="flex flex-col items-center">
                             <!-- Status Message -->
-                            @if (session('status'))
-                                <div class="mb-4 p-2 bg-green-200 text-green-800 rounded w-full text-center">
-                                    {{ session('status') }}
-                                </div>
-                            @endif
+                            <div id="status-message" class="mb-4 p-2 bg-green-200 text-green-800 rounded w-full text-center" style="display: none;"></div>
+                            <div id="status-message-error" class="mb-4 p-2 bg-red-200 text-red-800 rounded w-full text-center" style="display: none;"></div>
                             <!-- End of Status Message -->
                             <h5 class="font-bold uppercase text-gray-800 mb-4">Input Notification</h5>
                             <!-- Add the form here -->
-                            <form id="message-form" action="{{ route('send-notification') }}" method="POST" class="w-full">
+                            <form id="message-form" class="w-full flex">
                                 @csrf
-                                <div class="mb-4">
-                                    <label for="message" class="block text-gray-700 text-sm font-bold mb-2"></label>
-                                    <input type="text" id="message" name="message" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                                <div class="flex w-full">
+                                    <input type="text" id="message" name="message" class="shadow appearance-none border rounded-l w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Enter your message" required>
+                                    <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-r focus:outline-none focus:shadow-outline">
+                                        Send
+                                    </button>
                                 </div>
-                                <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full md:w-auto">
-                                    Send
-                                </button>
                             </form>
                             <!-- End of form -->
                         </div>
@@ -41,6 +38,35 @@
             </div>
         </div>
     </div>
-    @vite('resources/js/app.js')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            $('#message-form').on('submit', function(e) {
+                e.preventDefault(); // Prevent the default form submission
+                var message = $('#message').val();
+                var token = $('meta[name="csrf-token"]').attr('content');
+
+                $.ajax({
+                    url: '{{ route("send-notification") }}',
+                    type: 'POST',
+                    data: {
+                        _token: token,
+                        message: message
+                    },
+                    success: function(response) {
+                        console.log(response);
+                        $('#status-message').text(response.status).fadeIn().delay(3000).fadeOut();
+                        $('#message').val('');
+                    },
+                    error: function(xhr) {
+                        var errorMsg = 'Error sending message.';
+                        if (xhr.responseJSON && xhr.responseJSON.errors && xhr.responseJSON.errors.message) {
+                            errorMsg = xhr.responseJSON.errors.message[0];
+                        }
+                        $('#status-message-error').text(errorMsg).fadeIn().delay(3000).fadeOut();
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>

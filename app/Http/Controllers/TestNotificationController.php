@@ -18,6 +18,6 @@ class TestNotificationController extends Controller
     public function send(Request $request){
         $message = $request->input('message');
         broadcast(new PublicNotificationEvent($message))->toOthers();
-        return redirect()->back()->with('status', 'Message sent successfully!');
+        return response()->json(['status' => 'Message sent successfully!'], 200);
     }
 }
