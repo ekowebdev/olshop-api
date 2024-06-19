@@ -16,7 +16,7 @@
                     <div class="bg-white border rounded shadow p-4">
                         <div class="flex flex-col items-center">
                             <div class="flex-1 text-center">
-                                <h5 class="font-bold uppercase text-gray-800">Realtime Notification</h5>
+                                <h5 class="font-bold uppercase text-gray-800">Message</h5>
                                 <h3 class="font-bold text-2xl">
                                     <p>
                                         <span id="text">-</span>
