@@ -36,6 +36,11 @@ class PublicNotificationEvent implements ShouldBroadcastNow
         return new Channel('PublicChannel');
     }
 
+    public function broadcastAs()
+    {
+        return 'public-channel';
+    }
+
     public function broadcastWith()
     {
         return [

@@ -23,13 +23,13 @@ class UserMiddleware
         if(!auth()->guard('api')->user()) throw new AuthenticationException();
 
         if(auth()->guard('api')->check()) {
-            if(!empty(auth()->user())){
+            if(!empty(auth()->guard('api')->user())){
                 throw new ForbiddenException(trans('error.not_authorize_user'));
             }
         } else {
             throw new ForbiddenException(trans('error.not_authorize_user'));
         }
-        
+
         Config::set('setting.user', auth()->guard('api')->user());
 
         return $next($request);

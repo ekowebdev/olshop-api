@@ -34,7 +34,12 @@ class RealTimeNotificationEvent implements ShouldBroadcastNow
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('App.Models.User.' . $this->user_id);
+        return new PrivateChannel('Order.User.' . $this->user_id);
+    }
+
+    public function broadcastAs()
+    {
+        return 'order-user';
     }
 
     public function broadcastWith()
