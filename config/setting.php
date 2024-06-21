@@ -7,7 +7,7 @@
 			'client_secret' => env('OAUTH_CLIENT_SECRET'),
 		],
 		'frontend' => [
-			'url' => env('FRONT_URL'),
+			'url' => env('FRONTEND_URL'),
 		],
 		'shipping' => [
 			'origin_id' => env('SHIPPING_ORIGIN_ID'),
