@@ -30,8 +30,8 @@ class UpdateOrderStatus extends Command
     public function handle()
     {
         $i = 0;
-        $expired = Carbon::now()->subHour(24);
-        $orders = Order::where('status', '=', 'pending')->where('created_at', '<=', $expired)->get();
+        $threshold = Carbon::now()->subHours(24);
+        $orders = Order::where('status', 'pending')->where('created_at', '<', $threshold)->get();
 
         foreach($orders as $order) {
             $order->status = 'failure';

@@ -14,17 +14,17 @@ class RealTimeNotificationEvent implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $notification, $user_id;
+    public $notification, $userId;
 
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct($notification, $user_id)
+    public function __construct($notification, $userId)
     {
         $this->notification = $notification;
-        $this->user_id = $user_id;
+        $this->userId = $userId;
     }
 
     /**
@@ -34,7 +34,7 @@ class RealTimeNotificationEvent implements ShouldBroadcastNow
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('Order.User.' . $this->user_id);
+        return new PrivateChannel('Order.User.' . $this->userId);
     }
 
     public function broadcastAs()
