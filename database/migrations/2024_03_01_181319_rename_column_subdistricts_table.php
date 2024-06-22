@@ -14,7 +14,9 @@ return new class extends Migration
     public function up()
     {
         Schema::table('subdistricts', function (Blueprint $table) {
-            $table->renameColumn('subdistrict_name', 'name');
+            if (Schema::hasColumn('subdistricts', 'subdistrict_name')) {
+                $table->renameColumn('subdistrict_name', 'name');
+            }
         });
     }
 

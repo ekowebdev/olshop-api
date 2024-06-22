@@ -16,9 +16,9 @@ return new class extends Migration
         Schema::table('subdistricts', function (Blueprint $table) {
             if ($this->isFK('subdistricts', 'city_id')) {
                 $table->dropForeign(['city_id']);
-                $table->foreign('city_id')->references('city_id')->on('cities')->onDelete('cascade');
+                $table->foreign('city_id')->references('id')->on('cities')->onDelete('cascade');
             }
-            $table->foreign('city_id')->references('city_id')->on('cities')->onDelete('cascade');
+            $table->foreign('city_id')->references('id')->on('cities')->onDelete('cascade');
         });
     }
 
@@ -35,7 +35,7 @@ return new class extends Migration
     }
 
     private function isFK(string $table, string $column): bool
-    {  
+    {
         $fkColumns = Schema::getConnection()
             ->getDoctrineSchemaManager()
             ->listTableForeignKeys($table);

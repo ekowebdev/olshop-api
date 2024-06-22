@@ -14,7 +14,9 @@ return new class extends Migration
     public function up()
     {
         Schema::table('provinces', function (Blueprint $table) {
-            $table->renameColumn('province_name', 'name');
+            if (Schema::hasColumn('provinces', 'province_name')) {
+                $table->renameColumn('province_name', 'name');
+            }
         });
     }
 

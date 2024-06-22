@@ -14,18 +14,28 @@ return new class extends Migration
     public function up()
     {
         Schema::table('addresses', function (Blueprint $table) {
+            // Check if columns exist in the 'addresses' table
             if (Schema::hasColumn('addresses', 'city_id') && Schema::hasColumn('addresses', 'province_id')) {
                 $table->integer('province_id')->change();
                 $table->integer('city_id')->change();
             }
-            if ($this->isFK('cities', 'city_id') && $this->isFK('provinces', 'province_id')) {
+
+            // Check if foreign keys exist and drop them if they do
+            if ($this->isFK('addresses', 'city_id')) {
                 $table->dropForeign(['city_id']);
-                $table->dropForeign(['province_id']);
-                $table->foreign('city_id')->references('city_id')->on('cities')->onDelete('cascade');
-                $table->foreign('province_id')->references('province_id')->on('provinces')->onDelete('cascade');
             }
-            $table->foreign('city_id')->references('city_id')->on('cities')->onDelete('cascade');
-            $table->foreign('province_id')->references('province_id')->on('provinces')->onDelete('cascade');
+            if ($this->isFK('addresses', 'province_id')) {
+                $table->dropForeign(['province_id']);
+            }
+
+            // Ensure the referenced columns exist in their respective tables
+            if (Schema::hasColumn('cities', 'id')) {
+                $table->foreign('city_id')->references('id')->on('cities')->onDelete('cascade');
+            }
+
+            if (Schema::hasColumn('provinces', 'id')) {
+                $table->foreign('province_id')->references('id')->on('provinces')->onDelete('cascade');
+            }
         });
     }
 
@@ -36,16 +46,27 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('addresses', function($table) {
-            $table->dropForeign(['city_id']);
-            $table->dropForeign(['province_id']);
+        Schema::table('addresses', function (Blueprint $table) {
+            if ($this->isFK('addresses', 'city_id')) {
+                $table->dropForeign(['city_id']);
+            }
+            if ($this->isFK('addresses', 'province_id')) {
+                $table->dropForeign(['province_id']);
+            }
             $table->dropColumn('city_id');
             $table->dropColumn('province_id');
         });
     }
 
+    /**
+     * Check if a column is a foreign key.
+     *
+     * @param string $table
+     * @param string $column
+     * @return bool
+     */
     private function isFK(string $table, string $column): bool
-    {  
+    {
         $fkColumns = Schema::getConnection()
             ->getDoctrineSchemaManager()
             ->listTableForeignKeys($table);

@@ -14,14 +14,14 @@ return new class extends Migration
     public function up()
     {
         Schema::table('shippings', function (Blueprint $table) {
-            if ($this->isFK('cities', 'city_id')) {
+            if ($this->isFK('cities', 'id')) {
                 $table->dropForeign(['origin']);
                 $table->dropForeign(['destination']);
-                $table->foreign('origin')->references('city_id')->on('cities')->onDelete('cascade');
-                $table->foreign('destination')->references('city_id')->on('cities')->onDelete('cascade');
+                $table->foreign('origin')->references('id')->on('cities')->onDelete('cascade');
+                $table->foreign('destination')->references('id')->on('cities')->onDelete('cascade');
             }
-            $table->foreign('origin')->references('city_id')->on('cities')->onDelete('cascade');
-            $table->foreign('destination')->references('city_id')->on('cities')->onDelete('cascade');
+            $table->foreign('origin')->references('id')->on('cities')->onDelete('cascade');
+            $table->foreign('destination')->references('id')->on('cities')->onDelete('cascade');
         });
     }
 
@@ -39,7 +39,7 @@ return new class extends Migration
     }
 
     private function isFK(string $table, string $column): bool
-    {  
+    {
         $fkColumns = Schema::getConnection()
             ->getDoctrineSchemaManager()
             ->listTableForeignKeys($table);
