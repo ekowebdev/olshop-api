@@ -13,6 +13,7 @@ class Variant extends BaseModel
 {
     use HasFactory;
 
+    protected $connection = 'mysql';
     protected $table = 'variants';
     protected $fillable = ['product_id', 'name', 'slug', 'point', 'weight', 'quantity'];
 
@@ -44,8 +45,8 @@ class Variant extends BaseModel
     public function scopeGetAll($query)
     {
         return $query->select([
-                    'id', 
-                    'product_id', 
+                    'id',
+                    'product_id',
                     'name',
                     'slug',
                     'quantity',

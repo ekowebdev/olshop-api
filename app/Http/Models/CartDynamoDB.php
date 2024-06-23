@@ -3,17 +3,21 @@
 namespace App\Http\Models;
 
 use App\Http\Models\User;
-use App\Http\Models\Product;
 use App\Http\Models\Variant;
-use Jenssegers\Mongodb\Eloquent\Model;
+use App\Http\Models\Product;
+use BaoPham\DynamoDb\DynamoDbModel;
 
-class Cart extends Model
+class CartDynamoDB extends DynamoDbModel
 {
-    protected $connection = 'mongodb';
-    protected $collection = 'carts';
     protected $primaryKey = 'id';
     protected $fillable = ['user_id', 'product_id', 'variant_id', 'quantity'];
     protected $dates = ['created_at', 'updated_at'];
+
+    public function getTable()
+    {
+        $table = config('app.env') === 'local' ? 'local_carts' : 'carts';
+        return $table;
+    }
 
     public function users()
     {

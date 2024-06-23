@@ -10,6 +10,7 @@ class Brand extends BaseModel
 {
     use HasFactory;
 
+    protected $connection = 'mysql';
     protected $table = 'brands';
     protected $fillable = ['name', 'slug', 'logo', 'sort'];
     protected $appends = ['logo_url', 'logo_thumbnail_url'];
@@ -38,8 +39,8 @@ class Brand extends BaseModel
     public function scopeGetAll($query)
     {
         return $query->select([
-                    'id', 
-                    'name', 
+                    'id',
+                    'name',
                     'slug',
                     'sort',
                     'logo',

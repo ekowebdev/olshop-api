@@ -9,6 +9,7 @@ class Slider extends BaseModel
 {
     use HasFactory;
 
+    protected $connection = 'mysql';
     protected $table = 'sliders';
     protected $fillable = ['image', 'title', 'description', 'link', 'sort', 'start_date', 'end_date', 'status'];
     protected $appends = ['image_url', 'image_thumbnail_url'];
@@ -32,14 +33,14 @@ class Slider extends BaseModel
     public function scopeGetAll($query)
     {
         return $query->select([
-                    'id', 
-                    'image', 
-                    'title', 
-                    'description', 
-                    'link', 
-                    'sort', 
-                    'start_date', 
-                    'end_date', 
+                    'id',
+                    'image',
+                    'title',
+                    'description',
+                    'link',
+                    'sort',
+                    'start_date',
+                    'end_date',
                     'status',
                 ])
                 ->where('status', '=', 'A');
@@ -48,14 +49,14 @@ class Slider extends BaseModel
     public function scopeGetAllActive($query)
     {
         return $query->select([
-                    'id', 
-                    'image', 
-                    'title', 
-                    'description', 
-                    'link', 
-                    'sort', 
-                    'start_date', 
-                    'end_date', 
+                    'id',
+                    'image',
+                    'title',
+                    'description',
+                    'link',
+                    'sort',
+                    'start_date',
+                    'end_date',
                     'status',
                 ])
                 ->where('start_date', '<=', now()->format('Y-m-d'))

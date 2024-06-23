@@ -6,7 +6,8 @@ use App\Http\Models\BaseModel;
 
 class OauthAccessToken extends BaseModel
 {
-    public $table = "oauth_access_tokens";
+    protected $connection = 'mysql';
+    protected $table = "oauth_access_tokens";
     protected $guarded = [];
-    public $timestamps = false;
+    protected $timestamps = false;
 }

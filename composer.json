@@ -12,6 +12,7 @@
         "doctrine/dbal": "^3.6",
         "guzzlehttp/guzzle": "^7.2",
         "intervention/image": "^2.7",
+        "jenssegers/mongodb": "^3.9",
         "laravel/framework": "^9.19",
         "laravel/passport": "^11.8",
         "laravel/sanctum": "^3.0",

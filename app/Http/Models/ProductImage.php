@@ -11,6 +11,7 @@ class ProductImage extends BaseModel
 {
     use HasFactory;
 
+    protected $connection = 'mysql';
     protected $table = 'product_images';
     protected $fillable = ['product_id', 'variant_id', 'image'];
     protected $appends = ['image_url', 'image_thumbnail_url'];
@@ -42,11 +43,11 @@ class ProductImage extends BaseModel
     }
 
     public function scopeGetAll($query)
-    {      
+    {
         return $query->select([
                     'id',
-                    'product_id', 
-                    'variant_id', 
+                    'product_id',
+                    'variant_id',
                     'image',
                 ]);
     }

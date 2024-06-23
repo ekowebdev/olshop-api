@@ -12,6 +12,7 @@ class OrderProduct extends BaseModel
 {
     use HasFactory;
 
+    protected $connection = 'mysql';
     protected $table = 'order_products';
     protected $fillable = ['order_id', 'product_id', 'variant_id', 'quantity', 'point'];
 

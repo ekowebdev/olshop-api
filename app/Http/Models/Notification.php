@@ -3,10 +3,12 @@
 namespace App\Http\Models;
 
 use App\Http\Models\User;
-use BaoPham\DynamoDb\DynamoDbModel;
+use Jenssegers\Mongodb\Eloquent\Model;
 
-class Notification extends DynamoDbModel
+class Notification extends Model
 {
+    protected $connection = 'mongodb';
+    protected $collection = 'notifications';
     protected $primaryKey = 'id';
     protected $fillable = [
         'id',
@@ -19,12 +21,6 @@ class Notification extends DynamoDbModel
         'background_color',
         'status_read',
     ];
-
-    public function getTable()
-    {
-        $table = config('app.env') === 'local' ? 'local_notifications' : 'notifications';
-        return $table;
-    }
 
     public function scopeRead($query)
     {

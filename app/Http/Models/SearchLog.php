@@ -3,18 +3,14 @@
 namespace App\Http\Models;
 
 use App\Http\Models\User;
-use BaoPham\DynamoDb\DynamoDbModel;
+use Jenssegers\Mongodb\Eloquent\Model;
 
-class SearchLog extends DynamoDbModel
+class SearchLog extends Model
 {
+    protected $connection = 'mongodb';
+    protected $collection = 'search_logs';
     protected $primaryKey = 'id';
     protected $fillable = ['user_id', 'search_text'];
-
-    public function getTable()
-    {
-        $table = config('app.env') === 'local' ? 'local_search_logs' : 'search_logs';
-        return $table;
-    }
 
     public function scopeLastMonth($query)
     {

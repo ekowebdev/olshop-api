@@ -14,6 +14,7 @@ class City extends BaseModel
 {
     use HasFactory;
 
+    protected $connection = 'mysql';
     protected $table = 'cities';
     protected $fillable = ['province_id', 'name', 'postal_code'];
 
@@ -40,9 +41,9 @@ class City extends BaseModel
     public function scopeGetAll($query)
     {
         return $query->select([
-                    'id', 
-                    'province_id', 
-                    'name', 
+                    'id',
+                    'province_id',
+                    'name',
                     'postal_code',
                 ]);
     }

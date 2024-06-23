@@ -14,6 +14,7 @@ class Review extends BaseModel
 {
     use HasFactory;
 
+    protected $connection = 'mysql';
     protected $table = 'reviews';
     protected $fillable = ['user_id', 'order_id', 'product_id', 'text', 'rating', 'date'];
     protected $appends = ['has_files'];
@@ -47,22 +48,22 @@ class Review extends BaseModel
     public function scopeGetAll($query)
     {
         return $query->select(
-                'reviews.id', 
-                'reviews.user_id', 
-                'reviews.order_id', 
-                'reviews.product_id', 
-                'reviews.text', 
-                'reviews.rating', 
-                'reviews.date', 
+                'reviews.id',
+                'reviews.user_id',
+                'reviews.order_id',
+                'reviews.product_id',
+                'reviews.text',
+                'reviews.rating',
+                'reviews.date',
                 'reviews.created_at',
                 DB::raw('
                     (
-                        CASE 
+                        CASE
                             WHEN EXISTS (SELECT 1 FROM review_files WHERE review_files.id = reviews.id) THEN "yes"
                             ELSE "no"
                         END
                     ) AS has_files
-                '),   
+                '),
             )
             ->joinSub($this->lastReviews(), 'last_reviews', function ($join) {
                 $join->on('reviews.user_id', '=', 'last_reviews.user_id')

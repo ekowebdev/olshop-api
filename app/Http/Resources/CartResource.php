@@ -34,7 +34,7 @@ class CartResource extends JsonResource
                     ];
                 }),
             ],
-            'variants' => ($this->variants) 
+            'variants' => ($this->variants)
                 ? [
                     'id' => $this->variants->id,
                     'name' => $this->variants->name,

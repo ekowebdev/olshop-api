@@ -7,7 +7,7 @@ use App\Exceptions\DataEmptyException;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 
-class CartRepository extends BaseRepository 
+class CartRepository extends BaseRepository
 {
     private $repository_name = 'Cart';
     private $model;
@@ -50,10 +50,10 @@ class CartRepository extends BaseRepository
 	{
 		$result = $this->model
                     ->all()
-                    ->where('id', $id)	
+                    ->where('id', $id)
                     ->first();
 		if($result === null) throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => $this->repository_name], $locale));
-        return $result;		
+        return $result;
 	}
 
     public function getDataByUser($locale, $user_id)
@@ -95,6 +95,6 @@ class CartRepository extends BaseRepository
                   ->where('user_id', '=', intval($user_id))
                   ->where('product_id', '=', intval($product_id))
                   ->where('variant_id', '=', $variant_id);
-		return $result;	
+		return $result;
 	}
 }

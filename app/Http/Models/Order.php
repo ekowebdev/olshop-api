@@ -14,6 +14,7 @@ class Order extends BaseModel
 {
     use HasFactory;
 
+    protected $connection = 'mysql';
     protected $table = 'orders';
     protected $fillable = ['user_id', 'address_id', 'code', 'total_point', 'shipping_fee', 'total_amount', 'note', 'date', 'snap_token', 'snap_url', 'metadata', 'status', 'deleted_at'];
     protected $dates = ['deleted_at'];
@@ -44,20 +45,20 @@ class Order extends BaseModel
     }
 
     public function scopeGetAll($query)
-    {      
+    {
         return $query->select([
-                    'id', 
-                    'user_id', 
-                    'address_id', 
-                    'code', 
-                    'total_point', 
-                    'shipping_fee', 
+                    'id',
+                    'user_id',
+                    'address_id',
+                    'code',
+                    'total_point',
+                    'shipping_fee',
                     'total_amount',
                     'date',
                     'note',
 		            'snap_token',
-                    'snap_url', 
-                    'metadata', 
+                    'snap_url',
+                    'metadata',
                     'status',
                     'created_at',
                 ])
@@ -65,20 +66,20 @@ class Order extends BaseModel
     }
 
     public function scopeGetAllWithTrashed($query)
-    {      
+    {
         return $query->select([
                     'id',
-                    'user_id', 
-                    'address_id', 
-                    'code', 
-                    'total_point', 
-                    'shipping_fee', 
+                    'user_id',
+                    'address_id',
+                    'code',
+                    'total_point',
+                    'shipping_fee',
                     'total_amount',
                     'date',
                     'note',
 		            'snap_token',
-                    'snap_url', 
-                    'metadata', 
+                    'snap_url',
+                    'metadata',
                     'status',
                     'created_at',
                 ]);

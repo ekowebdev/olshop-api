@@ -11,6 +11,7 @@ class Province extends BaseModel
 {
     use HasFactory;
 
+    protected $connection = 'mysql';
     protected $table = 'provinces';
     protected $fillable = ['name'];
 
@@ -27,7 +28,7 @@ class Province extends BaseModel
     public function scopeGetAll($query)
     {
         return $query->select([
-                    'id', 
+                    'id',
                     'name',
                 ]);
     }

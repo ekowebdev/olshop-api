@@ -15,6 +15,7 @@ class Address extends BaseModel
 {
     use HasFactory;
 
+    protected $connection = 'mysql';
     protected $table = 'addresses';
     protected $fillable = ['user_id', 'person_name', 'person_phone', 'province_id', 'city_id', 'subdistrict_id', 'postal_code', 'street'];
 
@@ -46,20 +47,20 @@ class Address extends BaseModel
     public function scopeGetAll($query)
     {
         return $query->select([
-                    'addresses.id', 
-                    'addresses.user_id', 
-                    'addresses.person_name', 
+                    'addresses.id',
+                    'addresses.user_id',
+                    'addresses.person_name',
                     'addresses.person_phone',
-                    'addresses.province_id', 
+                    'addresses.province_id',
                     'addresses.city_id',
-                    'addresses.subdistrict_id', 
-                    'addresses.postal_code', 
+                    'addresses.subdistrict_id',
+                    'addresses.postal_code',
                     'addresses.street',
                     DB::raw('
                         (
-                            CASE WHEN users.main_address_id = addresses.id 
-                                THEN 1 
-                                ELSE 0 
+                            CASE WHEN users.main_address_id = addresses.id
+                                THEN 1
+                                ELSE 0
                             END
                         ) AS is_main
                     '),

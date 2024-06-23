@@ -10,6 +10,7 @@ class PaymentLog extends BaseModel
 {
     use HasFactory;
 
+    protected $connection = 'mysql';
     protected $table = 'payment_logs';
     protected $fillable = ['type', 'order_id', 'status', 'raw_response'];
 
@@ -19,12 +20,12 @@ class PaymentLog extends BaseModel
     }
 
     public function scopeGetAll($query)
-    {      
+    {
         return $query->select([
                     'id',
-                    'type', 
-                    'order_id', 
-                    'status', 
+                    'type',
+                    'order_id',
+                    'status',
                     'raw_response'
                 ]);
     }

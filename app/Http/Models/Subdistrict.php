@@ -11,6 +11,7 @@ class Subdistrict extends BaseModel
 {
     use HasFactory;
 
+    protected $connection = 'mysql';
     protected $table = 'subdistricts';
     protected $fillable = ['city_id', 'name'];
 
@@ -28,7 +29,7 @@ class Subdistrict extends BaseModel
     {
         return $query->select([
                     'id',
-                    'city_id',  
+                    'city_id',
                     'name',
                 ]);
     }

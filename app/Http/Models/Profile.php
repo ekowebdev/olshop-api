@@ -10,6 +10,7 @@ class Profile extends BaseModel
 {
     use HasFactory;
 
+    protected $connection = 'mysql';
     protected $table = 'profiles';
     protected $fillable = ['user_id', 'name', 'birthdate', 'phone_number', 'avatar'];
     protected $appends = ['avatar_url', 'avatar_thumbnail_url'];
@@ -38,11 +39,11 @@ class Profile extends BaseModel
     public function scopeGetAll($query)
     {
         return $query->select([
-                    'id', 
-                    'user_id', 
+                    'id',
+                    'user_id',
                     'name',
-                    'birthdate', 
-                    'phone_number', 
+                    'birthdate',
+                    'phone_number',
                     'avatar',
                 ]);
     }

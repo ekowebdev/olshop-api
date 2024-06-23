@@ -10,6 +10,7 @@ class Category extends BaseModel
 {
     use HasFactory;
 
+    protected $connection = 'mysql';
     protected $table = 'categories';
     protected $fillable = ['code', 'name', 'slug', 'image', 'sort', 'status'];
     protected $appends = ['image_url', 'image_thumbnail_url'];
@@ -38,10 +39,10 @@ class Category extends BaseModel
     public function scopeGetAll($query)
     {
         return $query->select([
-                    'id', 
-                    'code', 
-                    'name', 
-                    'slug', 
+                    'id',
+                    'code',
+                    'name',
+                    'slug',
                     'sort',
                     'status',
                     'image',

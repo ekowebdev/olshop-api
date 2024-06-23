@@ -18,6 +18,7 @@ class Product extends BaseModel
 {
     use HasFactory;
 
+    protected $connection = 'mysql';
     protected $primaryKey = 'id';
     protected $table = 'products';
     protected $fillable = ['id', 'code', 'name', 'category_id', 'brand_id', 'slug', 'description', 'spesification', 'point', 'weight', 'quantity', 'status'];
@@ -109,14 +110,14 @@ class Product extends BaseModel
     public function scopeGetAll($query)
     {
         return $query->select([
-                    'id', 
-                    'code', 
-                    'name', 
-                    'category_id', 
-                    'brand_id', 
-                    'slug', 
-                    'description', 
-                    'spesification', 
+                    'id',
+                    'code',
+                    'name',
+                    'category_id',
+                    'brand_id',
+                    'slug',
+                    'description',
+                    'spesification',
                     'point',
                     'weight',
                     'quantity',

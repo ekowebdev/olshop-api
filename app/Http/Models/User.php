@@ -24,11 +24,10 @@ class User extends Authenticable implements MustVerifyEmail
 {
     use HasApiTokens, HasFactory, Notifiable, HasRoles;
 
-    public $table = 'users';
-
-	public $appends = ['has_password'];
-
-    public $sortableAndSearchableColumn = [];
+    protected $connection = 'mysql';
+    protected $table = 'users';
+	protected $appends = ['has_password'];
+    protected $sortableAndSearchableColumn = [];
 
     protected $fillable = [
         'username',
@@ -100,10 +99,10 @@ class User extends Authenticable implements MustVerifyEmail
 	}
 
     public function scopeGetAll($query)
-    {      
+    {
         return $query->select([
                     'id',
-                    'username', 
+                    'username',
                     'email',
                     'password',
 					'google_id',
@@ -150,16 +149,16 @@ class User extends Authenticable implements MustVerifyEmail
 		if(!empty($request['search_column']) && isset($request['search_text']))
 		{
 			if(is_array($request['search_column']))
-			{				
+			{
 				foreach ($request['search_column'] as $arr_search_column => $value_search_column) {
 					if($request['search_text'][$arr_search_column] != utf8_encode($request['search_text'][$arr_search_column])){
 						throw new \App\Exceptions\AuthenticationException('Periksa text pencarian anda, mungkin mengandung karakter yang tidak izinkan');
 					}
 					$query = $this->searchOperator($query, $request['search_column'][$arr_search_column], $request['search_text'][$arr_search_column], Arr::get($request,'search_operator.'.$arr_search_column,'like'));
-				}	
+				}
 			}
 			else
-			{	
+			{
 				if($request['search_text'] != utf8_encode($request['search_text'])){
 					throw new \App\Exceptions\AuthenticationException('Periksa text pencarian anda, mungkin mengandung karakter yang tidak izinkan');
 				}
@@ -168,18 +167,18 @@ class User extends Authenticable implements MustVerifyEmail
 		}
 
 		if(isset($request['search']))
-		{			
+		{
 			if($request['search'] != utf8_encode($request['search'])){
 				throw new \App\Exceptions\AuthenticationException('Periksa text pencarian anda, mungkin mengandung karakter yang tidak izinkan');
 			}
 
 			$query->where(function ($query) use ($search,$request) {
-				foreach ($search as $key => $value) {  
+				foreach ($search as $key => $value) {
                 	if($value)$query->orWhere(\DB::raw($value), 'like', '%'.$request['search'].'%');
 				}
             });
 		}
-        
+
         return $query;
 	}
 
@@ -189,7 +188,7 @@ class User extends Authenticable implements MustVerifyEmail
 
 		if(array_key_exists('search_column', $this->sortableAndSearchableColumn)){
 			$search_column = $this->sortableAndSearchableColumn['search_column'];
-		}	
+		}
 
 		if( $operator == 'like' )
 			$query->where(\DB::raw($search_column[$column]),'like','%'.$text.'%');
@@ -219,7 +218,7 @@ class User extends Authenticable implements MustVerifyEmail
 			$explodeIn = explode(',',$text);
 			$query->whereBetween(\DB::raw($search_column[$column]),$explodeIn);
 		}
-		
+
 		if( $operator == 'in' ){
 			$explodeIn = explode(',',$text);
 			$query->whereIn(\DB::raw($search_column[$column]), $explodeIn);
@@ -234,7 +233,7 @@ class User extends Authenticable implements MustVerifyEmail
 	}
 
 	public function getSql($model)
-	{		
+	{
 	    $replace = function ($sql, $bindings)
 	    {
 	        $needle = '?';
@@ -267,7 +266,7 @@ class User extends Authenticable implements MustVerifyEmail
 		if( !empty($request['sort_column']) && !empty($request['sort_type']) )
 		{
 			if( is_array($request['sort_column']) )
-			{			
+			{
 				$this->validate($request, [
 					'sort_column.*' => [
 						'required_with:sort_type',
@@ -278,13 +277,13 @@ class User extends Authenticable implements MustVerifyEmail
 						\Illuminate\Validation\Rule::in(['asc','desc'])
 					],
 				]);
-			
+
 				foreach ($request['sort_column'] as $arr_sort_column => $value_sort_column) {
 					$query->orderBy($sort[$value_sort_column],$request['sort_type'][$arr_sort_column]);
-				}	
+				}
 			}
 			else
-			{	
+			{
 				$this->validate($request, [
 					'sort_column' => [
 						'required_with:sort_type',
@@ -295,7 +294,7 @@ class User extends Authenticable implements MustVerifyEmail
 						\Illuminate\Validation\Rule::in(['asc','desc'])
 					],
 				]);
-				
+
 				$query->orderBy($sort[$request['sort_column']],$request['sort_type']);
 			}
 		}
@@ -303,7 +302,7 @@ class User extends Authenticable implements MustVerifyEmail
 
 	public static function validate($data, $rules = [], $messages = [])
 	{
-		$rules = empty($rules) ? self::$rules : $rules;  
+		$rules = empty($rules) ? self::$rules : $rules;
 		if(empty($rules)) return true;
 		$validator = Validator::make($data, $rules, $messages);
 		if($validator->fails()) throw new ValidationException($validator->errors());

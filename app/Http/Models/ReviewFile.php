@@ -10,6 +10,7 @@ class ReviewFile extends BaseModel
 {
     use HasFactory;
 
+    protected $connection = 'mysql';
     protected $table = 'review_files';
     protected $fillable = ['review_id', 'file'];
     protected $appends = ['file_url'];
@@ -28,7 +29,7 @@ class ReviewFile extends BaseModel
     }
 
     public function scopeGetAll($query)
-    {      
+    {
         return $query->select([
                     'id',
                     'review_id',

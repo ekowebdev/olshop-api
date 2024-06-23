@@ -11,6 +11,7 @@ class Shipping extends BaseModel
 {
     use HasFactory;
 
+    protected $connection = 'mysql';
     protected $table = 'shippings';
     protected $fillable = ['order_id', 'origin', 'destination', 'weight', 'courier', 'service', 'description', 'cost', 'etd', 'resi', 'status'];
 
@@ -37,15 +38,15 @@ class Shipping extends BaseModel
     public function scopeGetAll($query)
     {
         return $query->select([
-                    'id', 
-                    'order_id', 
-                    'origin', 
-                    'destination', 
-                    'weight', 
-                    'courier', 
-                    'service', 
-                    'description', 
-                    'cost', 
+                    'id',
+                    'order_id',
+                    'origin',
+                    'destination',
+                    'weight',
+                    'courier',
+                    'service',
+                    'description',
+                    'cost',
                     'etd',
                     'resi',
                     'status',
