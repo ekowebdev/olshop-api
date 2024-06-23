@@ -25,7 +25,8 @@
         "predis/predis": "^2.2",
         "pusher/pusher-php-server": "^7.0",
         "react/promise": "^3.0",
-        "spatie/laravel-permission": "^5.10"
+        "spatie/laravel-permission": "^5.10",
+        "yaza/laravel-google-drive-storage": "^2.0"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",

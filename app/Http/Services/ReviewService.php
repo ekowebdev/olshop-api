@@ -14,7 +14,7 @@ use App\Http\Repositories\ReviewRepository;
 class ReviewService extends BaseService
 {
     private $model, $repository, $order_repository;
-    
+
     public function __construct(Review $model, ReviewRepository $repository, OrderRepository $order_repository)
     {
         $this->model = $model;
@@ -50,7 +50,7 @@ class ReviewService extends BaseService
             'search_column' => $search_column,
             'sort_column'   => array_merge($search, $search_column),
         ];
-        
+
         return $this->repository->getIndexData($locale, $sortable_and_searchable_column);
     }
 
@@ -122,7 +122,7 @@ class ReviewService extends BaseService
         if(isset($data_request['file'])){
             foreach ($data_request['file'] as $file) {
                 $file_name = time() . '.' . $file->getClientOriginalExtension();
-                Storage::disk('s3')->put('files/reviews/' . $file_name, file_get_contents($file));
+                Storage::disk('google')->put('files/reviews/' . $file_name, file_get_contents($file));
                 ReviewFile::create([
                     'review_id' => $result->id,
                     'file' => $file_name,
@@ -209,7 +209,7 @@ class ReviewService extends BaseService
             if(isset($data_request['file'])){
                 foreach ($data_request['file'][$i] as $file) {
                     $file_name = time() . '.' . $file->getClientOriginalExtension();
-                    Storage::disk('s3')->put('files/reviews/' . $file_name, file_get_contents($file));
+                    Storage::disk('google')->put('files/reviews/' . $file_name, file_get_contents($file));
                     ReviewFile::create([
                         'review_id' => $result->id,
                         'file' => $file_name,
@@ -268,7 +268,7 @@ class ReviewService extends BaseService
         $check_data = $this->repository->getSingleData($locale, $id);
         DB::beginTransaction();
         foreach($check_data->review_files as $file) {
-            if(Storage::disk('s3')->exists('files/reviews/' . $file->file)) Storage::disk('s3')->delete('files/reviews/' . $file->file);
+            if(Storage::disk('google')->exists('files/reviews/' . $file->file)) Storage::disk('google')->delete('files/reviews/' . $file->file);
         }
         $result = $check_data->delete();
         DB::commit();

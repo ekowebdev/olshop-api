@@ -13,7 +13,7 @@ use App\Http\Repositories\ProductRepository;
 class ProductService extends BaseService
 {
     private $model, $repository;
-    
+
     public function __construct(Product $model, ProductRepository $repository)
     {
         $this->model = $model;
@@ -54,7 +54,7 @@ class ProductService extends BaseService
             'search_column' => $search_column,
             'sort_column'   => array_merge($search, $search_column),
         ];
-        
+
         return $this->repository->getIndexData($locale, $sortable_and_searchable_column);
     }
 
@@ -140,7 +140,7 @@ class ProductService extends BaseService
             'search_column' => $search_column,
             'sort_column'   => array_merge($search, $search_column),
         ];
-        
+
         return $this->repository->getDataByBrand($locale, $sortable_and_searchable_column, $brand);
     }
 
@@ -178,7 +178,7 @@ class ProductService extends BaseService
             'search_column' => $search_column,
             'sort_column'   => array_merge($search, $search_column),
         ];
-        
+
         return $this->repository->getDataByUserRecomendation($locale, $sortable_and_searchable_column);
     }
 
@@ -258,11 +258,11 @@ class ProductService extends BaseService
         $result = $this->model->create($data_request);
         foreach ($data_request['images'] as $image) {
             $image_name = time() . '.' . $image->getClientOriginalExtension();
-            Storage::disk('s3')->put('images/' . $image_name, file_get_contents($image));
+            Storage::disk('google')->put('images/' . $image_name, file_get_contents($image));
             $img = Image::make($image);
             $img_thumb = $img->crop(5, 5);
             $img_thumb = $img_thumb->stream()->detach();
-            Storage::disk('s3')->put('images/thumbnails/' . $image_name, $img_thumb);
+            Storage::disk('google')->put('images/thumbnails/' . $image_name, $img_thumb);
             $result->product_images()->create(['image' => $image_name]);
         }
         DB::commit();
@@ -353,11 +353,11 @@ class ProductService extends BaseService
     public function delete($locale, $id)
     {
         $check_data = $this->repository->getSingleData($locale, $id);
-        
+
         DB::beginTransaction();
         foreach($check_data->images as $image) {
-            if(Storage::disk('s3')->exists('images/' . $image->image)) Storage::disk('s3')->delete('images/' . $image->image);
-            if(Storage::disk('s3')->exists('images/' . 'thumbnails/' . $image->image)) Storage::disk('s3')->delete('images/' . 'thumbnails/' . $image->image);
+            if(Storage::disk('google')->exists('images/' . $image->image)) Storage::disk('google')->delete('images/' . $image->image);
+            if(Storage::disk('google')->exists('images/' . 'thumbnails/' . $image->image)) Storage::disk('google')->delete('images/' . 'thumbnails/' . $image->image);
         }
         $result = $check_data->delete();
         DB::commit();

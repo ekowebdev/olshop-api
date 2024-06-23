@@ -40,7 +40,7 @@ class BrandService extends BaseService
             'search_column' => $search_column,
             'sort_column'   => array_merge($search, $search_column),
         ];
-        
+
         return $this->repository->getIndexData($locale, $sortable_and_searchable_column);
     }
 
@@ -85,11 +85,11 @@ class BrandService extends BaseService
         $data_request['slug'] = Str::slug($data_request['name']);
         $image = $data_request['logo'];
         $image_name = time() . '.' . $image->getClientOriginalExtension();
-        Storage::disk('s3')->put('images/brand/' . $image_name, file_get_contents($image));
+        Storage::disk('google')->put('images/brand/' . $image_name, file_get_contents($image));
         $img = Image::make($image);
         $img_thumb = $img->crop(5, 5);
         $img_thumb = $img_thumb->stream()->detach();
-        Storage::disk('s3')->put('images/brand/thumbnails/' . $image_name, $img_thumb);
+        Storage::disk('google')->put('images/brand/thumbnails/' . $image_name, $img_thumb);
         $result = $this->model->create([
             'name' => $data_request['name'],
             'slug' => $data_request['slug'],
@@ -128,15 +128,15 @@ class BrandService extends BaseService
 
         DB::beginTransaction();
         if (isset($data_request['logo'])) {
-            if(Storage::disk('s3')->exists('images/brand/' . $check_data->logo)) Storage::disk('s3')->delete('images/brand/' . $check_data->logo);
-            if(Storage::disk('s3')->exists('images/brand/thumbnails/' . $check_data->logo)) Storage::disk('s3')->delete('images/brand/thumbnails/' . $check_data->logo);
+            if(Storage::disk('google')->exists('images/brand/' . $check_data->logo)) Storage::disk('google')->delete('images/brand/' . $check_data->logo);
+            if(Storage::disk('google')->exists('images/brand/thumbnails/' . $check_data->logo)) Storage::disk('google')->delete('images/brand/thumbnails/' . $check_data->logo);
             $image = $data_request['logo'];
             $image_name = time() . '.' . $image->getClientOriginalExtension();
-            Storage::disk('s3')->put('images/brand/' . $image_name, file_get_contents($image));
+            Storage::disk('google')->put('images/brand/' . $image_name, file_get_contents($image));
             $img = Image::make($image);
             $img_thumb = $img->crop(5, 5);
             $img_thumb = $img_thumb->stream()->detach();
-            Storage::disk('s3')->put('images/brand/thumbnails/' . $image_name, $img_thumb);
+            Storage::disk('google')->put('images/brand/thumbnails/' . $image_name, $img_thumb);
             $check_data->logo = $image_name;
         }
         $data_request['slug'] = Str::slug($data_request['name'] ?? $check_data->name);
@@ -153,7 +153,7 @@ class BrandService extends BaseService
     {
         $check_data = $this->repository->getSingleData($locale, $id);
         DB::beginTransaction();
-        if(Storage::disk('s3')->exists('images/brand/' . $check_data->logo)) Storage::disk('s3')->delete('images/brand/' . $check_data->logo);
+        if(Storage::disk('google')->exists('images/brand/' . $check_data->logo)) Storage::disk('google')->delete('images/brand/' . $check_data->logo);
         $result = $check_data->delete();
         DB::commit();
 

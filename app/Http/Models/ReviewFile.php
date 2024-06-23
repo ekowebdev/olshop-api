@@ -4,6 +4,7 @@ namespace App\Http\Models;
 
 use App\Http\Models\Review;
 use App\Http\Models\BaseModel;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class ReviewFile extends BaseModel
@@ -18,7 +19,7 @@ class ReviewFile extends BaseModel
     public function getFileUrlAttribute()
     {
         if ($this->file != null) {
-            $url = 'https://'. config('filesystems.disks.s3.bucket') .'.s3-'. config('filesystems.disks.s3.region') .'.amazonaws.com/files/reviews/' . $this->file;
+            $url = Storage::disk('google')->url('files/review/' . $this->file);
         }
         return $url ?? null;
     }

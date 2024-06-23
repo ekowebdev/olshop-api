@@ -4,6 +4,7 @@ namespace App\Http\Models;
 
 use App\Http\Models\Product;
 use App\Http\Models\BaseModel;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Brand extends BaseModel
@@ -18,7 +19,7 @@ class Brand extends BaseModel
     public function getLogoUrlAttribute()
     {
         if ($this->logo != null) {
-            $url = 'https://'. config('filesystems.disks.s3.bucket') .'.s3-'. config('filesystems.disks.s3.region') .'.amazonaws.com/images/brand/' . $this->logo;
+            $url = Storage::disk('google')->url('images/brand/' . $this->logo);
         }
         return $url ?? null;
     }
@@ -26,7 +27,7 @@ class Brand extends BaseModel
     public function getLogoThumbnailUrlAttribute()
     {
         if ($this->logo != null) {
-            $url = 'https://'. config('filesystems.disks.s3.bucket') .'.s3-'. config('filesystems.disks.s3.region') .'.amazonaws.com/images/brand/thumbnails/' . $this->logo;
+            $url = Storage::disk('google')->url('images/brand/thumbnails/' . $this->logo);
         }
         return $url ?? null;
     }

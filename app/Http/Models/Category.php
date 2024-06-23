@@ -4,6 +4,7 @@ namespace App\Http\Models;
 
 use App\Http\Models\Product;
 use App\Http\Models\BaseModel;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Category extends BaseModel
@@ -18,7 +19,7 @@ class Category extends BaseModel
     public function getImageUrlAttribute()
     {
         if ($this->image != null) {
-            $url = 'https://'. config('filesystems.disks.s3.bucket') .'.s3-'. config('filesystems.disks.s3.region') .'.amazonaws.com/images/category/' . $this->image;
+            $url = Storage::disk('google')->url('images/category/' . $this->image);
         }
         return $url ?? null;
     }
@@ -26,7 +27,7 @@ class Category extends BaseModel
     public function getImageThumbnailUrlAttribute()
     {
         if ($this->image != null) {
-            $url = 'https://'. config('filesystems.disks.s3.bucket') .'.s3-'. config('filesystems.disks.s3.region') .'.amazonaws.com/images/category/thumbnails/' . $this->image;
+            $url = Storage::disk('google')->url('images/category/thumbnails/' . $this->image);
         }
         return $url ?? null;
     }

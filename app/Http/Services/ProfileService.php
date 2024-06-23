@@ -40,7 +40,7 @@ class ProfileService extends BaseService
             'search_column' => $search_column,
             'sort_column'   => array_merge($search, $search_column),
         ];
-        
+
         return $this->repository->getIndexData($locale, $sortable_and_searchable_column);
     }
 
@@ -89,11 +89,11 @@ class ProfileService extends BaseService
         if (isset($data_request['avatar'])) {
             $image = $data_request['avatar'];
             $image_name = time() . '.' . $image->getClientOriginalExtension();
-            Storage::disk('s3')->put('images/avatar/' . $image_name, file_get_contents($image));
+            Storage::disk('google')->put('images/avatar/' . $image_name, file_get_contents($image));
             $img = Image::make($image);
             $img_thumb = $img->crop(5, 5);
             $img_thumb = $img_thumb->stream()->detach();
-            Storage::disk('s3')->put('images/avatar/thumbnails/' . $image_name, $img_thumb);
+            Storage::disk('google')->put('images/avatar/thumbnails/' . $image_name, $img_thumb);
             $data_request['avatar'] = $image_name;
         }
         $result = $this->model->create([
@@ -143,15 +143,15 @@ class ProfileService extends BaseService
 
         DB::beginTransaction();
         if (isset($data_request['avatar'])) {
-            if(Storage::disk('s3')->exists('images/avatar/' . $check_data->avatar)) Storage::disk('s3')->delete('images/avatar/' . $check_data->avatar);
-            if(Storage::disk('s3')->exists('images/avatar/thumbnails/' . $check_data->avatar)) Storage::disk('s3')->delete('images/avatar/thumbnails/' . $check_data->avatar);
+            if(Storage::disk('google')->exists('images/avatar/' . $check_data->avatar)) Storage::disk('google')->delete('images/avatar/' . $check_data->avatar);
+            if(Storage::disk('google')->exists('images/avatar/thumbnails/' . $check_data->avatar)) Storage::disk('google')->delete('images/avatar/thumbnails/' . $check_data->avatar);
             $image = $data_request['avatar'];
             $image_name = time() . '.' . $image->getClientOriginalExtension();
-            Storage::disk('s3')->put('images/avatar/' . $image_name, file_get_contents($image));
+            Storage::disk('google')->put('images/avatar/' . $image_name, file_get_contents($image));
             $img = Image::make($image);
             $img_thumb = $img->crop(5, 5);
             $img_thumb = $img_thumb->stream()->detach();
-            Storage::disk('s3')->put('images/avatar/thumbnails/' . $image_name, $img_thumb);
+            Storage::disk('google')->put('images/avatar/thumbnails/' . $image_name, $img_thumb);
             $check_data->avatar = $image_name;
         }
         $check_data->user_id = $data_request['user_id'] ?? $check_data->user_id;
@@ -168,7 +168,7 @@ class ProfileService extends BaseService
     {
         $check_data = $this->repository->getSingleData($locale, $id);
         DB::beginTransaction();
-        if(Storage::disk('s3')->exists('images/avatar/' . $check_data->avatar)) Storage::disk('s3')->delete('images/avatar/' . $check_data->avatar);
+        if(Storage::disk('google')->exists('images/avatar/' . $check_data->avatar)) Storage::disk('google')->delete('images/avatar/' . $check_data->avatar);
         $result = $check_data->delete();
         DB::commit();
 

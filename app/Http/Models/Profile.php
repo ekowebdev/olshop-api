@@ -4,6 +4,7 @@ namespace App\Http\Models;
 
 use App\Http\Models\User;
 use App\Http\Models\BaseModel;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Profile extends BaseModel
@@ -18,7 +19,7 @@ class Profile extends BaseModel
     public function getAvatarUrlAttribute()
     {
         if ($this->avatar != null) {
-            $url = 'https://'. config('filesystems.disks.s3.bucket') .'.s3-'. config('filesystems.disks.s3.region') .'.amazonaws.com/images/avatar/' . $this->avatar;
+            $url = Storage::disk('google')->url('images/avatar/' . $this->avatar);
         }
         return $url ?? null;
     }
@@ -26,7 +27,7 @@ class Profile extends BaseModel
     public function getAvatarThumbnailUrlAttribute()
     {
         if ($this->avatar != null) {
-            $url = 'https://'. config('filesystems.disks.s3.bucket') .'.s3-'. config('filesystems.disks.s3.region') .'.amazonaws.com/images/avatar/thumbnails/' . $this->avatar;
+            $url = Storage::disk('google')->url('images/avatar/thumbnails/' . $this->avatar);
         }
         return $url ?? null;
     }

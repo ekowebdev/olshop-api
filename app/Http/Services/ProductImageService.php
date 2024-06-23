@@ -14,7 +14,7 @@ use App\Http\Repositories\ProductImageRepository;
 class ProductImageService extends BaseService
 {
     private $model, $repository;
-    
+
     public function __construct(ProductImage $model, ProductImageRepository $repository)
     {
         $this->model = $model;
@@ -39,7 +39,7 @@ class ProductImageService extends BaseService
             'search_column' => $search_column,
             'sort_column'   => array_merge($search, $search_column),
         ];
-        
+
         return $this->repository->getIndexData($locale, $sortable_and_searchable_column);
     }
 
@@ -83,11 +83,11 @@ class ProductImageService extends BaseService
         }
         $image = $data_request['image'];
         $image_name = time() . '.' . $image->getClientOriginalExtension();
-        Storage::disk('s3')->put('images/' . $image_name, file_get_contents($image));
+        Storage::disk('google')->put('images/' . $image_name, file_get_contents($image));
         $img = Image::make($image);
         $img_thumb = $img->crop(5, 5);
         $img_thumb = $img_thumb->stream()->detach();
-        Storage::disk('s3')->put('images/thumbnails/' . $image_name, $img_thumb);
+        Storage::disk('google')->put('images/thumbnails/' . $image_name, $img_thumb);
         $result = $this->model->create([
             'product_id' => $data_request['product_id'],
             'variant_id' => (isset($data_request['variant_id'])) ? $data_request['variant_id'] : null,
@@ -129,15 +129,15 @@ class ProductImageService extends BaseService
             if(is_null($variant)) throw new ApplicationException(trans('error.variant_not_found_in_products', ['product_name' => $variant->products->name]));
         }
         if (isset($data_request['image'])) {
-            if(Storage::disk('s3')->exists('images/' . $check_data->image)) Storage::disk('s3')->delete('images/' . $check_data->image);
-            if(Storage::disk('s3')->exists('images/' . 'thumbnails/' . $check_data->image)) Storage::disk('s3')->delete('images/' . 'thumbnails/' . $check_data->image);
+            if(Storage::disk('google')->exists('images/' . $check_data->image)) Storage::disk('google')->delete('images/' . $check_data->image);
+            if(Storage::disk('google')->exists('images/' . 'thumbnails/' . $check_data->image)) Storage::disk('google')->delete('images/' . 'thumbnails/' . $check_data->image);
             $image = $data_request['image'];
             $image_name = time() . '.' . $image->getClientOriginalExtension();
-            Storage::disk('s3')->put('images/' . $image_name, file_get_contents($image));
+            Storage::disk('google')->put('images/' . $image_name, file_get_contents($image));
             $img = Image::make($image);
             $img_thumb = $img->crop(5, 5);
             $img_thumb = $img_thumb->stream()->detach();
-            Storage::disk('s3')->put('images/thumbnails/' . $image_name, $img_thumb);
+            Storage::disk('google')->put('images/thumbnails/' . $image_name, $img_thumb);
             $check_data->image = $image_name;
         }
         if(isset($data_request['variant_id'])) {
@@ -150,20 +150,20 @@ class ProductImageService extends BaseService
         $check_data->variant_id = $variant_id;
         $check_data->save();
         DB::commit();
-        
+
         return $this->repository->getSingleData($locale, $id);
     }
 
     public function delete($locale, $id)
     {
         $data = $this->repository->getSingleData($locale, $id);
-        
+
         DB::beginTransaction();
-        if(Storage::disk('s3')->exists('images/' . $data->image)) {
-            Storage::disk('s3')->delete('images/' . $data->image);
+        if(Storage::disk('google')->exists('images/' . $data->image)) {
+            Storage::disk('google')->delete('images/' . $data->image);
         }
-        if(Storage::disk('s3')->exists('images/' . 'thumbnails/' . $data->image)) {
-            Storage::disk('s3')->delete('images/' . 'thumbnails/' . $data->image);
+        if(Storage::disk('google')->exists('images/' . 'thumbnails/' . $data->image)) {
+            Storage::disk('google')->delete('images/' . 'thumbnails/' . $data->image);
         }
         $result = $data->delete();
         DB::commit();

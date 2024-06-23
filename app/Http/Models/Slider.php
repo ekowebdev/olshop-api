@@ -3,6 +3,7 @@
 namespace App\Http\Models;
 
 use App\Http\Models\BaseModel;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Slider extends BaseModel
@@ -17,7 +18,7 @@ class Slider extends BaseModel
     public function getImageUrlAttribute()
     {
         if ($this->image != null) {
-            $url = 'https://'. config('filesystems.disks.s3.bucket') .'.s3-'. config('filesystems.disks.s3.region') .'.amazonaws.com/images/slider/' . $this->image;
+            $url = Storage::disk('google')->url('images/slider/' . $this->image);
         }
         return $url ?? null;
     }
@@ -25,7 +26,7 @@ class Slider extends BaseModel
     public function getImageThumbnailUrlAttribute()
     {
         if ($this->image != null) {
-            $url = 'https://'. config('filesystems.disks.s3.bucket') .'.s3-'. config('filesystems.disks.s3.region') .'.amazonaws.com/images/slider/thumbnails/' . $this->image;
+            $url = Storage::disk('google')->url('images/slider/thumbnails/' . $this->image);
         }
         return $url ?? null;
     }
