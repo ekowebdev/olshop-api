@@ -24,8 +24,10 @@ jobs:
         run: |
           ssh -i ~/.ssh/id_rsa ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_HOSTNAME }} '
             cd ${{ secrets.VPS_PATH_PROJECT }} &&
-            git checkout . &&
-            git clean -f -d &&
+            if [ ! -d .git ]; then
+              git init &&
+              git remote add origin https://github.com/ekowebdev/olshop-api.git
+            fi &&
             git fetch --all &&
             git reset --hard origin/master &&
             git pull origin master &&
