@@ -10,24 +10,8 @@ use App\Http\Controllers\TestNotificationController;
 
 Route::get('/', function(){
     return 'Baktiweb Olshop API version 1';
+    // return redirect('https://baktiweb.my.id');
 });
-
-// Route::get('/event', function () {
-//     return view('notification');
-// });
-// Route::get('/send-event', function () {
-    // return view('send-notification');
-    // $user = User::first();
-    // $notification = [
-    //     'user_id' => $user->id,
-    //     'title' => 'Transaksi Berhasil',
-    //     'text' => 'Anda telah berhasil melakukan transaksi!',
-    //     'type' => 0,
-    //     'status_read' => 0,
-    // ];
-    // broadcast(new PublicNotificationEvent($notification));
-    // return "Public event berhasil dikirim";
-// });
 
 Route::get('/event', [TestNotificationController::class, 'index']);
 Route::get('/send-event', [TestNotificationController::class, 'form']);
