@@ -40,6 +40,7 @@ return [
     'recaptcha' => [
         'site_key' => env('GOOGLE_RECAPTCHA_SITE_KEY'),
         'secret_key' => env('GOOGLE_RECAPTCHA_SECRET_KEY'),
+        'development_key' => env('GOOGLE_RECAPTCHA_DEVELOPMENT_KEY'),
     ],
 
     'rajaongkir' => [

@@ -41,7 +41,7 @@ class AccessTokenController extends ApiAuthController
 			'access_token' => 'nullable|required_if:grant_type,social',
             // 'g-recaptcha-response' => ['nullable', 'required_if:grant_type,password', new ReCaptcha],
             'g-recaptcha-response' => [
-                (!empty($request['g-recaptcha-response']) && $request['g-recaptcha-response'] != 'grc-tester') ? new ReCaptcha : '',
+                (!empty($request['g-recaptcha-response']) && $request['g-recaptcha-response'] != config('services.recaptcha.development_key')) ? new ReCaptcha : '',
                 'required_if:grant_type,password',
             ],
         ]);
@@ -93,7 +93,7 @@ class AccessTokenController extends ApiAuthController
 	        'provider' => 'nullable|required_if:grant_type,social|in:google',
 			'access_token' => 'nullable|required_if:grant_type,social',
             'g-recaptcha-response' => [
-                (!empty($request['g-recaptcha-response']) && $request['g-recaptcha-response'] != 'grc-tester') ? new ReCaptcha : '',
+                (!empty($request['g-recaptcha-response']) && $request['g-recaptcha-response'] != config('services.recaptcha.development_key')) ? new ReCaptcha : '',
                 'required_if:grant_type,password',
             ],
         ]);
