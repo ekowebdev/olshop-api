@@ -9,5 +9,5 @@ class OauthAccessToken extends BaseModel
     protected $connection = 'mysql';
     protected $table = "oauth_access_tokens";
     protected $guarded = [];
-    protected $timestamps = false;
+    public $timestamps = false;
 }
