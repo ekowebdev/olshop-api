@@ -1,6 +1,6 @@
 # Olshop API
 
-Ini merupakan RESTful API yang dibuat untuk keperluan pembuatan toko online. Aplikasi ini di deploy menggunakan AWS EC2 instance dan dapat diakses dengan link ini `http://ec2-18-143-187-165.ap-southeast-1.compute.amazonaws.com/`. Aplikasi ini juga telah menerapkan fitur `payment gateway`, `sistem cek ongkir`, `multi bahasa`, `multi hak akses` yang terbagi menjadi 2 yaitu `admin` & `customer` dan juga menggunakan `websockets` untuk realtime notification.
+Ini merupakan RESTful API yang dibuat untuk keperluan pembuatan toko online. Aplikasi ini di deploy menggunakan AWS EC2 instance dan dapat diakses dengan link ini `https://api.baktiweb.my.id/`. Aplikasi ini juga telah menerapkan fitur `payment gateway`, `sistem cek ongkir`, `multi bahasa`, `multi hak akses` yang terbagi menjadi 2 yaitu `admin` & `customer` dan juga menggunakan `websockets` untuk realtime notification.
 
 ## Spesifikasi Teknis
 
