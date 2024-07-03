@@ -9,6 +9,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.GH_PAT }}
 
       - name: Configure SSH
         run: |
@@ -19,33 +21,33 @@ jobs:
 
       - name: Deploy to VPS
         run: |
-          ssh -i ~/.ssh/id_rsa ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_HOSTNAME }} '
-            cd ${{ secrets.VPS_PATH_PROJECT }} &&
+          ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_HOSTNAME }} << 'EOF'
+            cd ${{ secrets.VPS_PATH_PROJECT }} || exit
             if [ ! -d .git ]; then
-              git init &&
-              git remote add origin https://github.com/ekowebdev/olshop-api.git
-            fi &&
-            git fetch --all &&
-            git reset --hard origin/master &&
-            git pull origin master &&
-            curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash &&
-            source ~/.nvm/nvm.sh &&
-            nvm install --lts &&
-            nvm use --lts &&
-            npm install -g npm@latest &&
-            npm run build &&
-            sudo chmod -R 777 bootstrap/cache &&
-            sudo chmod -R 777 storage &&
-            composer update --no-dev --no-interaction --prefer-dist --optimize-autoloader &&
-            php artisan config:clear &&
-            php artisan cache:clear &&
-            php artisan view:clear &&
-            php artisan route:clear &&
-            php artisan event:clear &&
-            php artisan optimize:clear &&
-            php artisan migrate --force &&
+              git init
+              git remote add origin https://${{ secrets.GH_PAT }}@github.com/ekowebdev/olshop-api.git
+            fi
+            git fetch --all
+            git reset --hard origin/master
+            git pull origin master
+            curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
+            source ~/.nvm/nvm.sh
+            nvm install --lts
+            nvm use --lts
+            npm install -g npm@latest
+            npm run build
+            sudo chmod -R 777 bootstrap/cache
+            sudo chmod -R 777 storage
+            composer update --no-dev --no-interaction --prefer-dist --optimize-autoloader
+            php artisan config:clear
+            php artisan cache:clear
+            php artisan view:clear
+            php artisan route:clear
+            php artisan event:clear
+            php artisan optimize:clear
+            php artisan migrate --force
             php artisan up
-          '
+          EOF
 
       - name: Clear SSH key
         run: rm ~/.ssh/id_rsa
