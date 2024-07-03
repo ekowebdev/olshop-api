@@ -37,7 +37,7 @@ class UserService extends BaseService
             'search_column' => $search_column,
             'sort_column'   => array_merge($search, $search_column),
         ];
-        
+
         return $this->repository->getIndexData($locale, $sortable_and_searchable_column);
     }
 
@@ -124,19 +124,21 @@ class UserService extends BaseService
             ],
         ]);
 
+        DB::beginTransaction();
         $roles = auth()->user()->getRoleNames()->toArray();
 
         if(count($roles) == 1 && in_array('customer', $roles)){
             unset($data_request['role']);
         }
 
-        DB::beginTransaction();
         if(!empty($data_request['password'])){
             $data_request['password'] = Hash::make($data_request['password']);
         } else {
             unset($data_request['password']);
         }
+
         $check_data->update($data_request);
+
         if(!empty($data_request['role'])){
             $roles = Role::whereIn('name', $data_request['role'])->get();
             $check_data->syncRoles($roles);
@@ -148,8 +150,8 @@ class UserService extends BaseService
 
     public function delete($locale, $id)
     {
-        $check_data = $this->repository->getSingleData($locale, $id);
         DB::beginTransaction();
+        $check_data = $this->repository->getSingleData($locale, $id);
         $check_data->roles()->detach();
         $result = $check_data->delete();
         DB::commit();

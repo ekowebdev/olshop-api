@@ -11,7 +11,7 @@ use App\Http\Repositories\WishlistRepository;
 class WishlistService extends BaseService
 {
     private $model, $repository, $product_repository;
-    
+
     public function __construct(Wishlist $model, WishlistRepository $repository, ProductRepository $product_repository)
     {
         $this->model = $model;
@@ -36,11 +36,11 @@ class WishlistService extends BaseService
 
     public function wishlist($locale, $id, $data)
     {
+        DB::beginTransaction();
         $product = $this->product_repository->getSingleData($locale, $id);
         $user = auth()->user();
         $check_wishlist = $this->repository->getDataByUserAndProduct($locale, $product->id)->first();
 
-        DB::beginTransaction();
         if(is_null($check_wishlist)) {
             $wishlist = $this->model;
             $wishlist->id = strval(Str::uuid());

@@ -7,7 +7,6 @@ use Illuminate\Support\Str;
 use App\Http\Models\SearchLog;
 use Illuminate\Support\Facades\DB;
 use App\Exceptions\ApplicationException;
-use Aws\DynamoDb\Exception\DynamoDbException;
 use App\Http\Repositories\SearchLogRepository;
 
 class SearchLogService extends BaseService
@@ -59,7 +58,7 @@ class SearchLogService extends BaseService
             $data->search_text = strtolower($data_request['search_text']);
             $data->save();
             DB::commit();
-        } catch (DynamoDbException $e) {
+        } catch (\Exception $e) {
             DB::rollback();
             throw new ApplicationException(json_encode([$e->getMessage()]));
         }
@@ -83,7 +82,7 @@ class SearchLogService extends BaseService
 
         $this->repository->validate($data_request, [
             'search_text' => [
-                'string',    
+                'string',
                 'min:3',
             ],
         ]);

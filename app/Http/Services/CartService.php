@@ -12,12 +12,11 @@ use App\Http\Resources\CartResource;
 use Illuminate\Database\QueryException;
 use App\Exceptions\ApplicationException;
 use App\Http\Repositories\CartRepository;
-use Aws\DynamoDb\Exception\DynamoDbException;
 
 class CartService extends BaseService
 {
     private $model, $repository;
-    
+
     public function __construct(Cart $model, CartRepository $repository)
     {
         $this->model = $model;
@@ -80,7 +79,7 @@ class CartService extends BaseService
             }
 
             $exists_cart = $this->repository->getByUserProductAndVariant($user->id, $data_request['product_id'], $variant_id)->first();
-            
+
             if(!empty($exists_cart)) {
                 $quantity = $exists_cart->quantity + intval($data_request['quantity']);
                 if($product->variants->count() > 0) $real_quantity = $variant->quantity;
@@ -98,10 +97,10 @@ class CartService extends BaseService
             }
             DB::commit();
             return response()->api(trans('all.success_add_to_cart', ['product_name' => $product->name]));
-        } catch (DynamoDbException $e) {
+        } catch (\Exception $e) {
             DB::rollback();
             throw new ApplicationException(json_encode([$e->getMessage()]));
-        }        
+        }
     }
 
     public function update($locale, $id, $data)
@@ -133,7 +132,7 @@ class CartService extends BaseService
         } else {
             $real_quantity = $product->quantity;
         }
-    
+
         if ($real_quantity < $quantity) throw new ApplicationException(trans('error.out_of_stock'));
 
         $data_request['quantity'] = intval($data_request['quantity']);
@@ -147,7 +146,7 @@ class CartService extends BaseService
     public function delete($locale, $id)
     {
         $check_data = $this->repository->getSingleData($locale, $id);
-        
+
         DB::beginTransaction();
         $result = $check_data->delete();
         DB::commit();

@@ -339,12 +339,13 @@ class OrderService extends BaseService
             store_notification($data_notification['data']);
             broadcast(new RealTimeNotificationEvent($data_notification, $user->id));
 
-            DB::commit();
-
             $responseData = [
                 'snap_token' => $order->snap_token,
                 'snap_url' => $order->snap_url
             ];
+
+            DB::commit();
+
             return response()->api(trans('all.success_order'), $responseData);
         } catch (QueryException $e) {
             DB::rollback();

@@ -49,7 +49,6 @@ class CartRepository extends BaseRepository
 	public function getSingleData($locale, $id)
 	{
 		$result = $this->model
-                    ->all()
                     ->where('id', $id)
                     ->first();
 		if($result === null) throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => $this->repository_name], $locale));
@@ -91,7 +90,6 @@ class CartRepository extends BaseRepository
 	{
         $variant_id = ($variant_id == null) ? '' : intval($variant_id);
 		$result = $this->model
-                  ->all()
                   ->where('user_id', '=', intval($user_id))
                   ->where('product_id', '=', intval($product_id))
                   ->where('variant_id', '=', $variant_id);
