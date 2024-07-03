@@ -315,8 +315,7 @@ class OrderService extends BaseService
                     $variant_id = ($product['variant_id'] == null) ? '' : (int) $product['variant_id'];
                     $quantity = (int) $product['quantity'];
 
-                    $carts = Cart::all()
-                        ->where('user_id', '=', $user_id)
+                    $carts = Cart::where('user_id', '=', $user_id)
                         ->where('product_id', '=', $product_id)
                         ->where('variant_id', '=', $variant_id)
                         ->where('quantity', '=', $quantity)
