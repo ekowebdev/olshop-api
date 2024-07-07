@@ -38,7 +38,7 @@ class TestNotificationController extends Controller
 
         $notification = [
             'data' => [
-                'user_id' => (int) $user->id,
+                'user_id' => $user->id,
                 'title' => 'Transaksi Berhasil',
                 'text' => 'Anda telah berhasil melakukan transaksi!',
                 'type' => 0,
