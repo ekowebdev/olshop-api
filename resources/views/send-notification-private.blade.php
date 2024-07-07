@@ -26,7 +26,7 @@
                             <form id="notification-form" class="w-full flex flex-col items-center" data-route="{{ route('send-notification-private') }}">
                                 @csrf
                                 <div class="w-full mb-4">
-                                    <label for="user_id" class="block text-gray-700 text-sm font-bold mb-2">Select User</label>
+                                    <label for="user_id" class="block text-gray-700 text-sm font-bold mb-2">Select User Email</label>
                                     <select id="user_id" name="user_id" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
                                         <option value="">-</option>
                                         @foreach($users as $user)
@@ -69,8 +69,6 @@
                         if (xhr.responseJSON && xhr.responseJSON.errors) {
                             if (xhr.responseJSON.errors.user_id) {
                                 errorMsg = xhr.responseJSON.errors.user_id[0];
-                            } else if (xhr.responseJSON.errors.message) {
-                                errorMsg = xhr.responseJSON.errors.message[0];
                             }
                         }
                         $('#status-notification-error').text(errorMsg).fadeIn().delay(3000).fadeOut();

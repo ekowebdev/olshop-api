@@ -34,18 +34,20 @@ class TestNotificationController extends Controller
             'user_id' => 'required|exists:users,id'
         ]);
 
-        $data_notification = [
+        $user = User::find($request->user_id);
+
+        $notification = [
             'data' => [
-                'user_id' => $request->user_id,
+                'user_id' => (int) $user->id,
                 'title' => 'Transaksi Berhasil',
                 'text' => 'Anda telah berhasil melakukan transaksi!',
                 'type' => 0,
                 'status_read' => 0,
             ],
-            'total_unread' => Notification::query()->orderBy('created_at', 'desc')->where('user_id', $request->user_id)->where('status_read', 0)->count()
+            'total_unread' => Notification::where('user_id', $user->id)->where('status_read', 0)->count()
         ];
-        store_notification($data_notification['data']);
-        broadcast(new RealTimeNotificationEvent($data_notification, $request->user_id));
+        store_notification($notification['data']);
+        broadcast(new RealTimeNotificationEvent($notification, $user->id));
         return response()->json(['status' => 'Notification sent successfully!'], 200);
     }
 }
