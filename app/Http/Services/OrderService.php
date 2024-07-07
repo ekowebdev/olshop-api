@@ -326,18 +326,21 @@ class OrderService extends BaseService
             }
 
             // Create and broadcast a notification
-            $data_notification = [
-                'data' => [
-                    'user_id' => $user->id,
-                    'title' => trans('all.notification_transaction_title'),
-                    'text' => trans('all.notification_transaction_text'),
-                    'type' => 0,
-                    'status_read' => 0,
-                ],
-                'total_unread' => Notification::query()->orderBy('created_at', 'desc')->where('user_id', $user->id)->where('status_read', 0)->count()
+            $inputNotification = [
+                'user_id' => $user->id,
+                'title' => trans('all.notification_transaction_title'),
+                'text' => trans('all.notification_transaction_text'),
+                'type' => 0,
+                'status_read' => 0,
             ];
-            store_notification($data_notification['data']);
-            broadcast(new RealTimeNotificationEvent($data_notification, $user->id));
+
+            $notification = store_notification($inputNotification);
+
+            $dataNotification = [];
+            $dataNotification['data'] = $notification;
+            $dataNotification['total_unread'] = Notification::where('user_id', $user->id)->where('status_read', 0)->count();
+
+            broadcast(new RealTimeNotificationEvent($dataNotification, $user->id));
 
             $responseData = [
                 'snap_token' => $order->snap_token,
