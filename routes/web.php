@@ -16,19 +16,5 @@ Route::get('/', function(){
 Route::get('/event', [TestNotificationController::class, 'index']);
 Route::get('/send-event', [TestNotificationController::class, 'form']);
 Route::post('/send-event', [TestNotificationController::class, 'send'])->name('send-notification');
-Route::get('/send-event-private', function () {
-    $user = User::first();
-    $data_notification = [
-        'data' => [
-            'user_id' => $user->id,
-            'title' => 'Transaksi Berhasil',
-            'text' => 'Anda telah berhasil melakukan transaksi!',
-            'type' => 0,
-            'status_read' => 0,
-        ],
-        'total_unread' => Notification::query()->orderBy('created_at', 'desc')->where('user_id', $user->id)->where('status_read', 0)->count()
-    ];
-    store_notification($data_notification['data']);
-    broadcast(new RealTimeNotificationEvent($data_notification, $user->id));
-    return "Event berhasil dikirim";
-});
+Route::get('/send-event-private', [TestNotificationController::class, 'formPrivate']);
+Route::post('/send-event-private', [TestNotificationController::class, 'sendPrivate'])->name('send-notification-private');
