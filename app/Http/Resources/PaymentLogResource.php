@@ -92,15 +92,15 @@ class PaymentLogResource extends JsonResource
     private function format_product_point($product)
     {
         $points = $product->products->variants->pluck('point')->toArray();
-        
+
         if (count($points) == 1) {
-            return strval($points[0]);
+            return format_money(strval($points[0]));
         } elseif (count($points) > 1) {
             $min_value = min($points);
             $max_value = max($points);
 
             if ($min_value === $max_value) {
-                return strval($min_value);
+                return format_money(strval($min_value));
             }
 
             return format_money($min_value) . " ~ " . format_money($max_value);

@@ -67,11 +67,11 @@ class ProductImageResource extends JsonResource
                 $min_value = min($points);
                 $max_value = max($points);
                 if ($min_value === $max_value) {
-                    return strval($min_value);
+                    return format_money(strval($min_value));
                 }
                 return format_money($min_value) . " ~ " . format_money($max_value);
             } else {
-                return strval($points[0]);
+                return format_money(strval($points[0]));
             }
         }
     }

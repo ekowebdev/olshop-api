@@ -68,7 +68,7 @@ class OrderResource extends JsonResource
                         'total_order' => (int) $order_product->products->total_order,
                         'is_reviewed' => $this->is_reviewed($order_product->products->id, $this->id)
                     ],
-                    'variants' => ($order_product->variants) 
+                    'variants' => ($order_product->variants)
                         ? [
                             'id' => $order_product->variants->id,
                             'name' => $order_product->variants->name,
@@ -184,12 +184,12 @@ class OrderResource extends JsonResource
     {
         $points = $product->products->variants->pluck('point')->toArray();
         if (count($points) == 1) {
-            return strval($points[0]);
+            return format_money(strval($points[0]));
         } elseif (count($points) > 1) {
             $min_value = min($points);
             $max_value = max($points);
             if ($min_value === $max_value) {
-                return strval($min_value);
+                return format_money(strval($min_value));
             }
             return format_money($min_value) . " ~ " . format_money($max_value);
         } else {
