@@ -334,10 +334,17 @@ class OrderService extends BaseService
                 'status_read' => 0,
             ];
 
-            $notification = store_notification($inputNotification);
+            $allNotifications = store_notification($inputNotification);
 
-            $dataNotification = [];
-            $dataNotification['data'] = $notification;
+            $page = 1;
+            $perPage = 10;
+
+            if(is_multidimensional_array($allNotifications->toArray())) {
+                $dataNotification = format_json($allNotifications, $page, $perPage, ['path' => config('app.url') . '/api/v1/' . $locale . '/carts']);
+            } else {
+                $dataNotification = $allNotifications;
+            }
+
             $dataNotification['total_unread'] = Notification::where('user_id', $user->id)->where('status_read', 0)->count();
 
             broadcast(new RealTimeNotificationEvent($dataNotification, $user->id));

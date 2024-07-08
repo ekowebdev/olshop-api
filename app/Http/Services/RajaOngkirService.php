@@ -35,7 +35,7 @@ class RajaOngkirService extends BaseService
         }
 
         $url = "https://api.rajaongkir.com/starter/province?" . http_build_query($params);
-        
+
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
@@ -62,13 +62,12 @@ class RajaOngkirService extends BaseService
 
         if($data['rajaongkir']['status']['code'] == 400) throw new ApplicationException($data['rajaongkir']['status']['description']);
 
-
         $collection = collect($data['rajaongkir']['results']);
 
         if($collection->isEmpty()) throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => 'Province'], $locale));
 
         if(is_multidimensional_array($collection->toArray())) {
-            $response = response()->api(null, $this->format_json($collection, $page, $per_page, ['path' => config('app.url') . '/api/v1/id/rajaongkir/provinces'])['data']);
+            $response = response()->api(null, format_json($collection, $page, $per_page, ['path' => config('app.url') . '/api/v1/' . $locale . '/rajaongkir/provinces'])['data']);
         } else {
             $response = response()->api(null, $collection);
         }
@@ -90,7 +89,7 @@ class RajaOngkirService extends BaseService
         }
 
         $url = "https://api.rajaongkir.com/starter/city?" . http_build_query($params);
-        
+
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
@@ -123,7 +122,7 @@ class RajaOngkirService extends BaseService
         if($collection->isEmpty()) throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => 'City'], $locale));
 
         if(is_multidimensional_array($collection->toArray())) {
-            $response = response()->api($this->format_json($collection, $page, $per_page, ['path' => config('app.url') . '/api/v1/id/rajaongkir/get-city'])['data']);
+            $response = response()->api(format_json($collection, $page, $per_page, ['path' => config('app.url') . '/api/v1/' . $locale . '/rajaongkir/get-city'])['data']);
         } else {
             $response = response()->api(null, $collection);
         }
@@ -154,7 +153,7 @@ class RajaOngkirService extends BaseService
         ]);
 
         $curl = curl_init();
-        
+
         curl_setopt_array($curl, array(
             CURLOPT_URL => "https://api.rajaongkir.com/starter/cost",
             CURLOPT_RETURNTRANSFER => true,
@@ -169,10 +168,10 @@ class RajaOngkirService extends BaseService
                 "key: " . $this->api_key
             ),
         ));
-          
+
         $response = curl_exec($curl);
         $err = curl_error($curl);
-          
+
         curl_close($curl);
 
         if($err) throw new ApplicationException('cURL Error #: '. $err);
@@ -189,45 +188,4 @@ class RajaOngkirService extends BaseService
 
         return response()->api(null, $collection);
     }
-
-    private function format_json($original_data, $page, $per_page, $options)
-    {
-        $data_collection = $this->paginate($original_data, $page, $per_page, $options);
-
-        $transformed_data = $data_collection->map(function ($item) {
-            return $item;
-        });
-
-        $data_array = $data_collection->toArray();
-
-        $results = [
-            'data' => $transformed_data->toArray(),
-            'links' => [
-                'first' => $data_array['first_page_url'],
-                'last' => $data_array['last_page_url'],
-                'prev' => $data_array['prev_page_url'],
-                'next' => $data_array['next_page_url'],
-            ],
-            'meta' => [
-                'current_page' => $data_array['current_page'],
-                'from' => $data_array['from'],
-                'last_page' => $data_array['last_page'],
-                'links' => $data_array['links'],
-                'path' => $data_array['path'],
-                'per_page' => $data_array['per_page'],
-                'to' => $data_array['to'],
-                'total' => $data_array['total'],
-            ],
-        ];
-
-        return $results;
-    }
-
-    private function paginate($data, $page = null, $per_page = 15, $options = [])
-    {
-        $page = $page ?: (Paginator::resolveCurrentPage() ?: 1);
-        $data = $data instanceof Collection ? $data : Collection::make($data);
-        return new LengthAwarePaginator($data->forPage($page, $per_page), $data->count(), $per_page, $page, $options);
-    }
-    
 }

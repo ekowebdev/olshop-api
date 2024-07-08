@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Models\Notification;
-use App\Http\Models\User;
 use App\Events\PublicNotificationEvent;
 use App\Events\RealTimeNotificationEvent;
+use App\Http\Resources\NotificationResource;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class TestNotificationController extends Controller
 {
@@ -35,6 +37,8 @@ class TestNotificationController extends Controller
 
     public function sendPrivate(Request $request)
     {
+        $locale = 'id';
+
         $request->validate([
             'user_id' => 'required|exists:users,id'
         ]);
@@ -49,13 +53,20 @@ class TestNotificationController extends Controller
             'status_read' => 0,
         ];
 
-        $notification = store_notification($input);
+        $allNotifications = store_notification($input);
 
-        $data = [];
-        $data['data'] = $notification;
-        $data['total_unread'] = Notification::where('user_id', $user->id)->where('status_read', 0)->count();
+        $page = 1;
+        $perPage = 10;
 
-        broadcast(new RealTimeNotificationEvent($data, $user->id));
+        if(is_multidimensional_array($allNotifications->toArray())) {
+            $results = format_json($allNotifications, $page, $perPage, ['path' => config('app.url') . '/api/v1/' . $locale . '/carts']);
+        } else {
+            $results = $allNotifications;
+        }
+
+        $results['total_unread'] = Notification::where('user_id', $user->id)->where('status_read', 0)->count();
+
+        broadcast(new RealTimeNotificationEvent($results, $user->id));
 
         return response()->json(['status' => 'Notification sent successfully!'], 200);
     }

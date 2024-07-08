@@ -7,7 +7,7 @@ use App\Exceptions\DataEmptyException;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 
-class NotificationRepository extends BaseRepository 
+class NotificationRepository extends BaseRepository
 {
     private $repository_name = 'Notification';
     private $model;
@@ -26,7 +26,7 @@ class NotificationRepository extends BaseRepository
                     ->query()
                     ->orderBy('created_at', 'desc')
                     ->get();
-        
+
         if ($data->isEmpty()) {
             throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => $this->repository_name], $locale));
         }
@@ -50,10 +50,10 @@ class NotificationRepository extends BaseRepository
 	{
 		$result = $this->model
                     ->all()
-                    ->where('id', $id)	
+                    ->where('id', $id)
                     ->first();
 		if($result === null) throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => $this->repository_name], $locale));
-        return $result;	
+        return $result;
 	}
 
     public function getDataByUser($locale, $user_id)
@@ -65,9 +65,9 @@ class NotificationRepository extends BaseRepository
 		$data = $this->model
                     ->query()
                     ->orderBy('created_at', 'desc')
-                    ->where('user_id', $user_id)	
+                    ->where('user_id', $user_id)
                     ->get();
-        
+
         if ($data->isEmpty()) {
             throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => $this->repository_name], $locale));
         }
@@ -82,6 +82,36 @@ class NotificationRepository extends BaseRepository
 
         if ($result->isEmpty()) {
             throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => $this->repository_name], $locale));
+        }
+
+        return $result;
+	}
+
+    public function getDataByUserAndStatusRead($user_id, $status_read)
+	{
+        $user_id = intval($user_id);
+        $status_read = intval($status_read);
+        $per_page = intval(Request::get('per_page', 10));
+        $page = intval(Request::get('page', 1));
+
+		$data = $this->model
+                    ->query()
+                    ->orderBy('created_at', 'desc')
+                    ->where('user_id', $user_id)
+                    ->where('status_read', $status_read)
+                    ->get();
+
+        $result = new LengthAwarePaginator(
+            $data->forPage($page, $per_page),
+            $data->count(),
+            $per_page,
+            $page,
+            ['path' => url('/carts')]
+        );
+
+        if ($result->isEmpty()) {
+            // throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => $this->repository_name], $locale));
+            return null;
         }
 
         return $result;

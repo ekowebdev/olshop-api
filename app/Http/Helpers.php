@@ -3,6 +3,10 @@
 use Illuminate\Support\Str;
 use App\Http\Models\Product;
 use App\Http\Models\Notification;
+use Illuminate\Support\Collection;
+use Illuminate\Pagination\Paginator;
+use Illuminate\Pagination\LengthAwarePaginator;
+use App\Http\Repositories\NotificationRepository;
 
 function rounded_rating($rating)
 {
@@ -29,9 +33,11 @@ function is_multidimensional_array($array) {
     return false;
 }
 
-function store_notification($data = [])
+function store_notification(array $data)
 {
+    \DB::beginTransaction();
     $model = new Notification();
+    $repository = new NotificationRepository($model);
     $check = $model->query()->where('user_id', $data['user_id'])->where('status_read', 0);
     $model->id = strval(Str::uuid());
     $model->title = $data['title'];
@@ -53,12 +59,53 @@ function store_notification($data = [])
             $model->save();
         }
     }
-    $notification = $model->where('user_id', $data['user_id'])->get()->toArray();
+    $notification = $model->where(['user_id' => $data['user_id'], 'status_read' => 0])->get();
+    \DB::commit();
     return $notification;
 }
 
-function isJson($string) {
+function is_json($string) {
     if(!is_string($string) || empty($string) || $string == "[]") return false;
     $res = json_decode($string);
     return (json_last_error() == JSON_ERROR_NONE && $res != $string);
+}
+
+function format_json($original_data, $page, $per_page, $options)
+{
+    $data_collection = paginate($original_data, $page, $per_page, $options);
+
+    $transformed_data = $data_collection->map(function ($item) {
+        return $item;
+    });
+
+    $data_array = $data_collection->toArray();
+
+    $results = [
+        'data' => $transformed_data->toArray(),
+        'links' => [
+            'first' => $data_array['first_page_url'],
+            'last' => $data_array['last_page_url'],
+            'prev' => $data_array['prev_page_url'],
+            'next' => $data_array['next_page_url'],
+        ],
+        'meta' => [
+            'current_page' => $data_array['current_page'],
+            'from' => $data_array['from'],
+            'last_page' => $data_array['last_page'],
+            'links' => $data_array['links'],
+            'path' => $data_array['path'],
+            'per_page' => $data_array['per_page'],
+            'to' => $data_array['to'],
+            'total' => $data_array['total'],
+        ],
+    ];
+
+    return $results;
+}
+
+function paginate($data, $page = null, $per_page = 15, $options = [])
+{
+    $page = $page ?: (Paginator::resolveCurrentPage() ?: 1);
+    $data = $data instanceof Collection ? $data : Collection::make($data);
+    return new LengthAwarePaginator($data->forPage($page, $per_page), $data->count(), $per_page, $page, $options);
 }

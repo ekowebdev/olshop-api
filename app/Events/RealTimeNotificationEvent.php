@@ -45,8 +45,7 @@ class RealTimeNotificationEvent implements ShouldBroadcastNow
     public function broadcastWith()
     {
         return [
-            'data' => $this->notification['data'],
-            'total_unread' => $this->notification['total_unread']
+            'data' => $this->notification
         ];
     }
 }
