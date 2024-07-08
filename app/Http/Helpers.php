@@ -1,12 +1,10 @@
 <?php
 
 use Illuminate\Support\Str;
-use App\Http\Models\Product;
 use App\Http\Models\Notification;
 use Illuminate\Support\Collection;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Pagination\LengthAwarePaginator;
-use App\Http\Repositories\NotificationRepository;
 
 function rounded_rating($rating)
 {
@@ -37,7 +35,6 @@ function store_notification(array $data)
 {
     \DB::beginTransaction();
     $model = new Notification();
-    $repository = new NotificationRepository($model);
     $check = $model->query()->where('user_id', $data['user_id'])->where('status_read', 0);
     $model->id = strval(Str::uuid());
     $model->title = $data['title'];
@@ -59,7 +56,7 @@ function store_notification(array $data)
             $model->save();
         }
     }
-    $notification = $model->where(['user_id' => $data['user_id'], 'status_read' => 0])->get();
+    $notification = $model->where('user_id', $data['user_id'])->get();
     \DB::commit();
     return $notification;
 }
