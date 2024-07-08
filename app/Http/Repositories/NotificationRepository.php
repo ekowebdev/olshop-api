@@ -36,7 +36,7 @@ class NotificationRepository extends BaseRepository
             $data->count(),
             $per_page,
             $page,
-            ['path' => url('/carts')]
+            ['path' => url('/api/v1/' . $locale . '/notifications')]
         );
 
         if ($result->isEmpty()) {
@@ -77,41 +77,11 @@ class NotificationRepository extends BaseRepository
             $data->count(),
             $per_page,
             $page,
-            ['path' => url('/carts')]
+            ['path' => url('/api/v1/' . $locale . '/notifications')]
         );
 
         if ($result->isEmpty()) {
             throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => $this->repository_name], $locale));
-        }
-
-        return $result;
-	}
-
-    public function getDataByUserAndStatusRead($user_id, $status_read)
-	{
-        $user_id = intval($user_id);
-        $status_read = intval($status_read);
-        $per_page = intval(Request::get('per_page', 10));
-        $page = intval(Request::get('page', 1));
-
-		$data = $this->model
-                    ->query()
-                    ->orderBy('created_at', 'desc')
-                    ->where('user_id', $user_id)
-                    ->where('status_read', $status_read)
-                    ->get();
-
-        $result = new LengthAwarePaginator(
-            $data->forPage($page, $per_page),
-            $data->count(),
-            $per_page,
-            $page,
-            ['path' => url('/carts')]
-        );
-
-        if ($result->isEmpty()) {
-            // throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => $this->repository_name], $locale));
-            return null;
         }
 
         return $result;

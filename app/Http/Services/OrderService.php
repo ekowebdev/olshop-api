@@ -340,7 +340,7 @@ class OrderService extends BaseService
             $perPage = 10;
 
             if(is_multidimensional_array($allNotifications->toArray())) {
-                $dataNotification = format_json($allNotifications, $page, $perPage, ['path' => config('app.url') . '/api/v1/' . $locale . '/carts']);
+                $dataNotification = format_json($allNotifications, $page, $perPage, ['path' => config('app.url') . '/api/v1/' . $locale . '/notifications']);
             } else {
                 $dataNotification = $allNotifications;
             }

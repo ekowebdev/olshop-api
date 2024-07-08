@@ -8,7 +8,7 @@ use App\Exceptions\DataEmptyException;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 
-class SearchLogRepository extends BaseRepository 
+class SearchLogRepository extends BaseRepository
 {
     private $repository_name = 'Search Log';
     private $model;
@@ -37,7 +37,7 @@ class SearchLogRepository extends BaseRepository
             $data->count(),
             $per_page,
             $page,
-            ['path' => url('/carts')]
+            ['path' => url('/api/v1/' . $locale . '/search-logs')]
         );
 
         if ($result->isEmpty()) {
@@ -51,10 +51,10 @@ class SearchLogRepository extends BaseRepository
 	{
 		$result = $this->model
                     ->all()
-                    ->where('id', $id)	
+                    ->where('id', $id)
                     ->first();
 		if($result === null) throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => $this->repository_name], $locale));
-        return $result;	
+        return $result;
 	}
 
     public function getDataByUser($locale, $user_id)
@@ -68,7 +68,7 @@ class SearchLogRepository extends BaseRepository
                     ->orderBy('created_at', 'desc')
                     ->where('user_id', $user_id)
                     ->get();
-        
+
         if ($data->isEmpty()) {
             throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => $this->repository_name], $locale));
         }
@@ -78,7 +78,7 @@ class SearchLogRepository extends BaseRepository
             $data->count(),
             $per_page,
             $page,
-            ['path' => url('/carts')]
+            ['path' => url('/api/v1/' . $locale . '/search-logs')]
         );
 
         if ($result->isEmpty()) {

@@ -59,7 +59,7 @@ class TestNotificationController extends Controller
         $perPage = 10;
 
         if(is_multidimensional_array($allNotifications->toArray())) {
-            $results = format_json($allNotifications, $page, $perPage, ['path' => config('app.url') . '/api/v1/' . $locale . '/carts']);
+            $results = format_json($allNotifications, $page, $perPage, ['path' => config('app.url') . '/api/v1/' . $locale . '/notifications']);
         } else {
             $results = $allNotifications;
         }
