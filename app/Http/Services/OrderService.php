@@ -336,8 +336,12 @@ class OrderService extends BaseService
 
             $allNotifications = store_notification($inputNotification);
 
-            $dataNotification['data'] = $allNotifications->toArray();
-            $dataNotification['total_unread'] = Notification::Unread()->where('user_id', $user->id)->count();
+            $dataNotification['details'] = $allNotifications->toArray();
+            $dataNotification['summary'] = [
+                'total_data' => Notification::where('user_id', $user->id)->count(),
+                'total_read' => Notification::Read()->where('user_id', $user->id)->count(),
+                'total_unread' => Notification::Unread()->where('user_id', $user->id)->count()
+            ];
 
             broadcast(new RealTimeNotificationEvent($dataNotification, $user->id));
 

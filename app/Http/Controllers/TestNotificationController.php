@@ -55,8 +55,12 @@ class TestNotificationController extends Controller
 
         $allNotifications = store_notification($input);
 
-        $results['data'] = $allNotifications->toArray();
-        $results['total_unread'] = Notification::Unread()->where('user_id', $user->id)->count();
+        $results['details'] = $allNotifications->toArray();
+        $results['summary'] = [
+            'total_data' => Notification::where('user_id', $user->id)->count(),
+            'total_read' => Notification::Read()->where('user_id', $user->id)->count(),
+            'total_unread' => Notification::Unread()->where('user_id', $user->id)->count()
+        ];
 
         broadcast(new RealTimeNotificationEvent($results, $user->id));
 
