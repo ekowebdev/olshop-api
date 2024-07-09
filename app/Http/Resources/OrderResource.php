@@ -29,9 +29,9 @@ class OrderResource extends JsonResource
                         'description' => $order_product->products->description,
                         'spesification' => json_decode($order_product->products->spesification) ?? [],
                         'point' => $order_product->products->point ?? 0,
-                        'fpoint' => $this->format_product_point($order_product),
+                        'fpoint' => format_product_point($order_product->products),
                         'weight' => $order_product->products->weight ?? 0,
-                        'fweight' => $this->format_product_weight($order_product),
+                        'fweight' => format_product_weight($order_product->products),
                         'status' => $order_product->products->status,
                         'product_images' => $order_product->products->product_images->map(function ($image) {
                             return [
@@ -66,7 +66,7 @@ class OrderResource extends JsonResource
                         'total_review' => $order_product->products->total_review,
                         'total_rating' => floatval(rtrim($order_product->products->total_rating, '0')),
                         'total_order' => (int) $order_product->products->total_order,
-                        'is_reviewed' => $this->is_reviewed($order_product->products->id, $this->id)
+                        'is_reviewed' => is_reviewed($order_product->products->id, $this->id)
                     ],
                     'variants' => ($order_product->variants)
                         ? [
@@ -165,45 +165,5 @@ class OrderResource extends JsonResource
                 ] : null,
             ] : null
         ];
-    }
-
-    private function format_product_weight($product)
-    {
-        $weight = $product->products->variants->pluck('weight')->toArray();
-        if (count($weight) == 1) {
-            return strval($weight[0]) . ' Gram';
-        } elseif (count($weight) > 1) {
-            $weight = min($weight);
-            return strval($weight) . ' Gram';
-        } else {
-            return strval($product->products->weight ?? 0) . ' Gram';
-        }
-    }
-
-    private function format_product_point($product)
-    {
-        $points = $product->products->variants->pluck('point')->toArray();
-        if (count($points) == 1) {
-            return format_money(strval($points[0]));
-        } elseif (count($points) > 1) {
-            $min_value = min($points);
-            $max_value = max($points);
-            if ($min_value === $max_value) {
-                return format_money(strval($min_value));
-            }
-            return format_money($min_value) . " ~ " . format_money($max_value);
-        } else {
-            return format_money(strval($product->products->point ?? 0));
-        }
-    }
-
-    private function is_reviewed($product_id, $order_id)
-    {
-        $user_id = (auth()->user()) ? auth()->user()->id : 0;
-        $reviews = Review::where('user_id', $user_id)
-            ->where('product_id', $product_id)
-            ->where('order_id', $order_id)
-            ->get();
-        return (count($reviews) > 0) ? 1 : 0;
     }
 }

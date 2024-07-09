@@ -20,9 +20,9 @@ class ProductResource extends JsonResource
             'description' => $this->description,
             'spesification' => json_decode($this->spesification) ?? [],
             'point' => $this->point ?? 0,
-            'fpoint' => $this->format_product_point(),
+            'fpoint' => format_product_point($this),
             'weight' => $this->weight ?? 0,
-            'fweight' => $this->format_product_weight(),
+            'fweight' => format_product_weight($this),
             'quantity' => $this->quantity ?? 0,
             'status' => $this->status,
             'product_images' => $this->product_images->makeHidden(['created_at', 'updated_at']),
@@ -72,35 +72,5 @@ class ProductResource extends JsonResource
             'total_order' => (int) $this->total_order,
             'is_wishlist' => $this->is_wishlist
         ];
-    }
-
-    private function format_product_weight()
-    {
-        $weight = $this->variants->pluck('weight')->toArray();
-        if (count($weight) == 1) {
-            return strval($weight[0]) . ' Gram';
-        } elseif (count($weight) > 1) {
-            $weight = min($weight);
-            return strval($weight) . ' Gram';
-        } else {
-            return strval($this->weight ?? 0) . ' Gram';
-        }
-    }
-
-    private function format_product_point()
-    {
-        $points = $this->variants->pluck('point')->toArray();
-        if (count($points) == 1) {
-            return format_money(strval($points[0]));
-        } elseif (count($points) > 1) {
-            $min_value = min($points);
-            $max_value = max($points);
-            if ($min_value === $max_value) {
-                return format_money(strval($min_value));
-            }
-            return format_money($min_value) . " ~ " . format_money($max_value);
-        } else {
-            return format_money(strval($this->point ?? 0));
-        }
     }
 }

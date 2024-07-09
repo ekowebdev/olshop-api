@@ -23,9 +23,9 @@ class VariantResource extends JsonResource
                 'description' => $this->products->description,
                 'spesification' => json_decode($this->products->spesification) ?? [],
                 'point' => $this->products->point ?? 0,
-                'fpoint' => $this->format_product_point($this->products),
+                'fpoint' => format_product_point($this->products),
                 'weight' => $this->products->weight ?? 0,
-                'fweight' => $this->format_product_weight($this->products),
+                'fweight' => format_product_weight($this->products),
                 'quantity' => $this->products->quantity ?? 0,
                 'status' => $this->products->status,
                 'product_images' => $this->products->product_images->map(function ($image) {
@@ -94,37 +94,5 @@ class VariantResource extends JsonResource
                 'image_thumbnail_url' => $this->product_images->image_thumbnail_url,
             ] : null,
         ];
-    }
-
-    private function format_product_weight($product)
-    {
-        if(count($product->variants) == 0){
-            return strval($product->weight ?? 0) . ' Gram';
-        } else {
-            $weight = $product->variants->pluck('weight')->toArray();
-            if (count($weight) > 1) {
-                $weight = min($weight);
-                return strval($weight) . ' Gram';
-            } else {
-                return strval($weight[0]) . ' Gram';
-            }
-        }
-    }
-
-    private function format_product_point($product)
-    {
-        $points = $product->variants->pluck('point')->toArray();
-        if (count($points) == 1) {
-            return format_money(strval($points[0]));
-        } elseif (count($points) > 1) {
-            $min_value = min($points);
-            $max_value = max($points);
-            if ($min_value === $max_value) {
-                return format_money(strval($min_value));
-            }
-            return format_money($min_value) . " ~ " . format_money($max_value);
-        } else {
-            return format_money(strval($this->point ?? 0));
-        }
     }
 }
