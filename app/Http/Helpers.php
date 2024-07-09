@@ -5,12 +5,13 @@ use Illuminate\Support\Str;
 use App\Http\Models\Notification;
 use Illuminate\Support\Collection;
 use Illuminate\Pagination\Paginator;
+use App\Http\Resources\NotificationResource;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 function rounded_rating($rating)
 {
-    $rounded_rating = round($rating * 2) / 2;
-    return number_format($rounded_rating, 1);
+    $roundedRating = round($rating * 2) / 2;
+    return number_format($roundedRating, 1);
 }
 
 function format_money($number)
@@ -36,7 +37,7 @@ function store_notification(array $data)
 {
     \DB::beginTransaction();
     $model = new Notification();
-    $check = $model->query()->where('user_id', $data['user_id'])->where('status_read', 0);
+    $check = $model->Unread()->where('user_id', $data['user_id']);
     $model->id = strval(Str::uuid());
     $model->title = $data['title'];
     $model->text = $data['text'];
@@ -49,17 +50,31 @@ function store_notification(array $data)
         $model->background_color = "#E9FBE9";
         $model->save();
     } else if($data['type'] == 1){
-        $type_info = $check->where('type', 1)->get()->toArray();
-        if(count($type_info) == 0) {
+        $typeInfo = $check->where('type', 1)->get()->toArray();
+        if(count($typeInfo) == 0) {
             $model->url = config('setting.frontend.url') . '/accounts/profile';
             $model->icon = '';
             $model->background_color = "#E0E7EC";
             $model->save();
         }
     }
-    $notification = $model->where('user_id', $data['user_id'])->get();
+    $notification = $model->where('user_id', $data['user_id'])->orderBy('created_at', 'desc')->with('users')->limit(5)->get();
+    $results = collect($notification)->map(function($data) {
+        return [
+            'id' => $data->id,
+            'title' => $data->title,
+            'text' => $data->text,
+            'url' => $data->url,
+            'type' => $data->type,
+            'icon' => $data->icon,
+            'background_color' => $data->background_color,
+            'status_read' => $data->status_read,
+            'date' => $data->date,
+            'users' => (!$data->users) ? null : $data->users->makeHidden(['email_verified_at', 'google_access_token', 'created_at', 'updated_at'])->toArray(),
+        ];
+    });
     \DB::commit();
-    return $notification;
+    return $results;
 }
 
 function is_json($string) {
@@ -68,44 +83,44 @@ function is_json($string) {
     return (json_last_error() == JSON_ERROR_NONE && $res != $string);
 }
 
-function format_json($original_data, $page, $per_page, $options)
+function format_json($originalData, $page, $perPage, $options)
 {
-    $data_collection = paginate($original_data, $page, $per_page, $options);
+    $dataCollection = paginate($originalData, $page, $perPage, $options);
 
-    $transformed_data = $data_collection->map(function ($item) {
+    $transformedData = $dataCollection->map(function ($item) {
         return $item;
     });
 
-    $data_array = $data_collection->toArray();
+    $dataArray = $dataCollection->toArray();
 
     $results = [
-        'data' => $transformed_data->toArray(),
+        'data' => $transformedData->toArray(),
         'links' => [
-            'first' => $data_array['first_page_url'],
-            'last' => $data_array['last_page_url'],
-            'prev' => $data_array['prev_page_url'],
-            'next' => $data_array['next_page_url'],
+            'first' => $dataArray['first_page_url'],
+            'last' => $dataArray['last_page_url'],
+            'prev' => $dataArray['prev_page_url'],
+            'next' => $dataArray['next_page_url'],
         ],
         'meta' => [
-            'current_page' => $data_array['current_page'],
-            'from' => $data_array['from'],
-            'last_page' => $data_array['last_page'],
-            'links' => $data_array['links'],
-            'path' => $data_array['path'],
-            'per_page' => $data_array['per_page'],
-            'to' => $data_array['to'],
-            'total' => $data_array['total'],
+            'current_page' => $dataArray['current_page'],
+            'from' => $dataArray['from'],
+            'last_page' => $dataArray['last_page'],
+            'links' => $dataArray['links'],
+            'path' => $dataArray['path'],
+            'per_page' => $dataArray['per_page'],
+            'to' => $dataArray['to'],
+            'total' => $dataArray['total'],
         ],
     ];
 
     return $results;
 }
 
-function paginate($data, $page = null, $per_page = 15, $options = [])
+function paginate($data, $page = null, $perPage = 15, $options = [])
 {
     $page = $page ?: (Paginator::resolveCurrentPage() ?: 1);
     $data = $data instanceof Collection ? $data : Collection::make($data);
-    return new LengthAwarePaginator($data->forPage($page, $per_page), $data->count(), $per_page, $page, $options);
+    return new LengthAwarePaginator($data->forPage($page, $perPage), $data->count(), $perPage, $page, $options);
 }
 
 function format_product_weight($product)
@@ -127,23 +142,23 @@ function format_product_point($product)
     if (count($points) == 1) {
         return format_money(strval($points[0]));
     } elseif (count($points) > 1) {
-        $min_value = min($points);
-        $max_value = max($points);
-        if ($min_value === $max_value) {
-            return format_money(strval($min_value));
+        $minValue = min($points);
+        $maxValue = max($points);
+        if ($minValue === $maxValue) {
+            return format_money(strval($minValue));
         }
-        return format_money($min_value) . " ~ " . format_money($max_value);
+        return format_money($minValue) . " ~ " . format_money($maxValue);
     } else {
         return format_money(strval($product->point ?? 0));
     }
 }
 
-function is_reviewed($product_id, $order_id)
+function is_reviewed($productId, $orderId)
 {
-    $user_id = (auth()->user()) ? auth()->user()->id : 0;
-    $reviews = Review::where('user_id', $user_id)
-        ->where('product_id', $product_id)
-        ->where('order_id', $order_id)
+    $userId = (auth()->user()) ? auth()->user()->id : 0;
+    $reviews = Review::where('user_id', $userId)
+        ->where('product_id', $productId)
+        ->where('order_id', $orderId)
         ->get();
     return (count($reviews) > 0) ? 1 : 0;
 }

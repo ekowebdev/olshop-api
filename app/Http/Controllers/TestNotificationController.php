@@ -55,18 +55,11 @@ class TestNotificationController extends Controller
 
         $allNotifications = store_notification($input);
 
-        $page = 1;
-        $perPage = 10;
+        $results = $allNotifications;
 
-        if(is_multidimensional_array($allNotifications->toArray())) {
-            $results = format_json($allNotifications, $page, $perPage, ['path' => config('app.url') . '/api/v1/' . $locale . '/notifications']);
-        } else {
-            $results = $allNotifications;
-        }
+        $results['total_unread'] = Notification::Unread()->where('user_id', $user->id)->count();
 
-        $results['total_unread'] = Notification::where('user_id', $user->id)->where('status_read', 0)->count();
-
-        broadcast(new RealTimeNotificationEvent($results, $user->id));
+        broadcast(new RealTimeNotificationEvent($results->toArray(), $user->id));
 
         return response()->json(['status' => 'Notification sent successfully!'], 200);
     }

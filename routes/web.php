@@ -17,4 +17,4 @@ Route::get('/event', [TestNotificationController::class, 'index']);
 Route::get('/send-event', [TestNotificationController::class, 'form']);
 Route::post('/send-event', [TestNotificationController::class, 'send'])->name('send-notification');
 Route::get('/send-event-private', [TestNotificationController::class, 'formPrivate']);
-Route::post('/send-event-private', [TestNotificationController::class, 'sendPrivate'])->name('send-notification-private');
+Route::post('/send-event-private', [TestNotificationController::class, 'sendPrivate'])->name('send-notification-private')->middleware('throttle:30,1');

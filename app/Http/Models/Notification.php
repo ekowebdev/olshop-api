@@ -2,6 +2,7 @@
 
 namespace App\Http\Models;
 
+use Carbon\Carbon;
 use App\Http\Models\User;
 use Jenssegers\Mongodb\Eloquent\Model;
 
@@ -10,6 +11,7 @@ class Notification extends Model
     protected $connection = 'mongodb';
     protected $collection = 'notifications';
     protected $primaryKey = 'id';
+    protected $appends = ['date'];
     protected $fillable = [
         'id',
         'title',
@@ -21,6 +23,11 @@ class Notification extends Model
         'background_color',
         'status_read',
     ];
+
+    public function getDateAttribute()
+    {
+        return Carbon::parse($this->created_at)->diffForHumans();
+    }
 
     public function scopeRead($query)
     {

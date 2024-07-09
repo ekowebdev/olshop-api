@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers\API\v1;
 
-use App\Http\Services\NotificationService;
+use App\Http\Models\Notification;
 use App\Http\Resources\DeletedResource;
 use Illuminate\Support\Facades\Request;
 use App\Http\Controllers\BaseController;
+use App\Http\Services\NotificationService;
 use App\Http\Resources\NotificationResource;
 
 class NotificationController extends BaseController
@@ -21,7 +22,10 @@ class NotificationController extends BaseController
     public function index($locale)
     {
         $data = $this->service->getIndexData($locale, Request::all());
-        return (NotificationResource::collection($data));
+        $totalUnread = Notification::Unread()->count();
+        return (NotificationResource::collection($data))->additional([
+                    'total_unread' => $totalUnread
+                ]);
     }
 
     public function show($locale, $id)
@@ -33,7 +37,10 @@ class NotificationController extends BaseController
     public function showByUser($locale, $id)
     {
         $data = $this->service->getDataByUser($locale, $id);
-        return (NotificationResource::collection($data));
+        $totalUnread = Notification::Unread()->where('user_id', intval($id))->count();
+        return (NotificationResource::collection($data))->additional([
+                    'total_unread' => $totalUnread
+                ]);
     }
 
     public function store($locale)

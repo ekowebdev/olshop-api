@@ -336,18 +336,11 @@ class OrderService extends BaseService
 
             $allNotifications = store_notification($inputNotification);
 
-            $page = 1;
-            $perPage = 10;
+            $dataNotification = $allNotifications;
 
-            if(is_multidimensional_array($allNotifications->toArray())) {
-                $dataNotification = format_json($allNotifications, $page, $perPage, ['path' => config('app.url') . '/api/v1/' . $locale . '/notifications']);
-            } else {
-                $dataNotification = $allNotifications;
-            }
+            $dataNotification['total_unread'] = Notification::Unread()->where('user_id', $user->id)->count();
 
-            $dataNotification['total_unread'] = Notification::where('user_id', $user->id)->where('status_read', 0)->count();
-
-            broadcast(new RealTimeNotificationEvent($dataNotification, $user->id));
+            broadcast(new RealTimeNotificationEvent($dataNotification->toArray(), $user->id));
 
             $responseData = [
                 'snap_token' => $order->snap_token,
