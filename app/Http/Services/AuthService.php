@@ -97,6 +97,8 @@ class AuthService extends BaseService
             'password' => 'required|min:8|confirmed',
         ]);
 
+        DB::beginTransaction();
+
         $password_reset = DB::table('password_resets')->where('token', $request->token)->first();
 
         if($password_reset == null) throw new ApplicationException(trans('error.token_reset_password_is_invalid'));
@@ -105,8 +107,6 @@ class AuthService extends BaseService
             DB::table('password_resets')->where('token', $request->token)->delete();
             throw new ApplicationException(trans('error.token_reset_password_is_expired'));
         }
-
-        DB::beginTransaction();
 
         $user = $this->model->where('email', $password_reset->email)->first();
 
