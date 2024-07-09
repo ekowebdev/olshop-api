@@ -336,10 +336,10 @@ class OrderService extends BaseService
 
             $allNotifications = store_notification($inputNotification);
 
-            $dataNotification['data'] = $allNotifications;
+            $dataNotification['data'] = $allNotifications->toArray();
             $dataNotification['total_unread'] = Notification::Unread()->where('user_id', $user->id)->count();
 
-            broadcast(new RealTimeNotificationEvent($dataNotification->toArray(), $user->id));
+            broadcast(new RealTimeNotificationEvent($dataNotification, $user->id));
 
             $responseData = [
                 'snap_token' => $order->snap_token,
