@@ -7,7 +7,6 @@ use Carbon\Carbon;
 use GuzzleHttp\Client;
 use App\Rules\ReCaptcha;
 use App\Http\Models\User;
-use App\Exceptions\LoginException;
 use Illuminate\Support\Facades\App;
 use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Hash;
@@ -106,8 +105,8 @@ class AccessTokenController extends ApiAuthController
             if(empty($user)) throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => 'User'], $locale));
 
             if($request['grant_type'] == 'password'){
-                if($user->password === null) throw new LoginException();
-                if (!Hash::check($request['password'], $user->password, [])) throw new LoginException();
+                if($user->password === null) throw new AuthenticationException();
+                if (!Hash::check($request['password'], $user->password, [])) throw new AuthenticationException();
             }
 
             if($request['grant_type'] == 'social'){
@@ -174,7 +173,7 @@ class AccessTokenController extends ApiAuthController
             try {
                 $crypto = \Defuse\Crypto\Crypto::decryptWithPassword($request['refresh_token'], $encriptionKey);
             } catch (\Exception $e){
-                throw new AuthenticationException($e->getMessage());
+                throw new AuthenticationException(trans('error.refresh_token_is_invalid', ['error' => $e->getMessage()]));
             }
 
             $crypto = json_decode($crypto, true);

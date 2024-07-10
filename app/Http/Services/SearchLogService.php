@@ -53,7 +53,7 @@ class SearchLogService extends BaseService
         try{
             DB::beginTransaction();
             $data = $this->model;
-            $data->id = Str::uuid();
+            $data->id = (string) Str::uuid();
             $data->user_id = (int) auth()->user()->id;
             $data->search_text = strtolower($data_request['search_text']);
             $data->save();

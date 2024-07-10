@@ -153,7 +153,7 @@ class OrderService extends BaseService
             // Initialize variables
             $total_point = 0;
             $metadata_order_products = [];
-            $order_code = Str::uuid();
+            $order_code = (string) Str::uuid();
             $item_details = [];
             $user = auth()->user();
             $order_details = $data_request['order_details'];

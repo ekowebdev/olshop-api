@@ -39,7 +39,7 @@ function store_notification($data = [])
 
     $model = new Notification();
     $check = $model->Unread()->where('user_id', $data['user_id']);
-    $model->id = Str::uuid();
+    $model->id = (string) Str::uuid();
     $model->title = $data['title'];
     $model->text = $data['text'];
     $model->user_id = (int) $data['user_id'];
@@ -71,7 +71,7 @@ function store_notification($data = [])
             'icon' => $data->icon,
             'background_color' => $data->background_color,
             'status_read' => $data->status_read,
-            'date' => $data->date,
+            'fdate' => $data->fdate,
             'users' => (!$data->users) ? null : $data->users->makeHidden(['email_verified_at', 'google_access_token', 'created_at', 'updated_at'])->toArray(),
         ];
     });

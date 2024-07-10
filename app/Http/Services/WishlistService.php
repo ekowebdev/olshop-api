@@ -45,7 +45,7 @@ class WishlistService extends BaseService
 
         if(is_null($check_wishlist)) {
             $wishlist = $this->model;
-            $wishlist->id = Str::uuid();
+            $wishlist->id = (string) Str::uuid();
             $wishlist->user_id = $user->id;
             $wishlist->product_id = $product->id;
             $wishlist->save();

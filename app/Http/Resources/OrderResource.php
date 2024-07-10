@@ -64,7 +64,7 @@ class OrderResource extends JsonResource
                             ];
                         }),
                         'total_review' => $order_product->products->total_review,
-                        'total_rating' => floatval(rtrim($order_product->products->total_rating, '0')),
+                        'total_rating' => (float) rtrim($order_product->products->total_rating, '0'),
                         'total_order' => (int) $order_product->products->total_order,
                         'is_reviewed' => is_reviewed($order_product->products->id, $this->id)
                     ],

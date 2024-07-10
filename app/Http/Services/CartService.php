@@ -92,7 +92,7 @@ class CartService extends BaseService
                 $exists_cart->update(['quantity' => $exists_cart->quantity + $data_request['quantity']]);
             } else {
                 $cart = $this->model;
-                $cart->id = Str::uuid();
+                $cart->id = (string) Str::uuid();
                 $cart->user_id = (int) $user->id;
                 $cart->product_id = (int) $data_request['product_id'];
                 $cart->variant_id = $variant_id ?? '';

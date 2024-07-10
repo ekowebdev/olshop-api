@@ -11,7 +11,7 @@ class Notification extends Model
     protected $connection = 'mongodb';
     protected $collection = 'notifications';
     protected $primaryKey = 'id';
-    protected $appends = ['date'];
+    protected $appends = ['fdate'];
     protected $fillable = [
         'id',
         'title',
@@ -24,7 +24,7 @@ class Notification extends Model
         'status_read',
     ];
 
-    public function getDateAttribute()
+    public function getFdateAttribute()
     {
         return Carbon::parse($this->created_at)->diffForHumans();
     }

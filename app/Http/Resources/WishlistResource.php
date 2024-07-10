@@ -76,7 +76,7 @@ class WishlistResource extends JsonResource
                     ];
                 }),
                 'total_review' => $this->products->total_review,
-                'total_rating' => floatval(rtrim($this->products->total_rating, '0')),
+                'total_rating' => (float) rtrim($this->products->total_rating, '0'),
                 'total_order' => (int) $this->products->total_order,
                 'is_wishlist' => $this->products->is_wishlist
             ],

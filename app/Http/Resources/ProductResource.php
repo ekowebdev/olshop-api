@@ -68,7 +68,7 @@ class ProductResource extends JsonResource
                 ];
             }),
             'total_review' => $this->total_review,
-            'total_rating' => floatval(rtrim($this->total_rating, '0')),
+            'total_rating' => (float) rtrim($this->total_rating, '0'),
             'total_order' => (int) $this->total_order,
             'is_wishlist' => $this->is_wishlist
         ];

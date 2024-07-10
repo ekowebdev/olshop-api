@@ -83,7 +83,7 @@ class CategoryService extends BaseService
 
         DB::beginTransaction();
 
-        $data_request['code'] = Str::uuid();
+        $data_request['code'] = (string) Str::uuid();
         $data_request['slug'] = Str::slug($data_request['name']);
         $image = $data_request['image'];
         $image_name = time() . '.' . $image->getClientOriginalExtension();
