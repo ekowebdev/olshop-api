@@ -43,7 +43,7 @@ class VariantResource extends JsonResource
                         'slug' => $variant->slug,
                         'quantity' => $variant->quantity,
                         'point' => $variant->point,
-                        'fpoint' => format_money(strval($variant->point)),
+                        'fpoint' => format_money((string) $variant->point),
                         'weight' => $variant->weight,
                         'fweight' => $variant->weight . ' Gram',
                         'variant_images' => ($variant->product_images) ? [
@@ -84,7 +84,7 @@ class VariantResource extends JsonResource
             ],
             'quantity' => $this->quantity,
             'point' => $this->point,
-            'fpoint' => format_money(strval($this->point)),
+            'fpoint' => format_money((string) $this->point),
             'weight' => $this->weight,
             'fweight' => $this->weight . ' Gram',
             'variant_images' => ($this->product_images) ? [

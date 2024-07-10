@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Http\Models\User;
 use App\Mail\BirthDayWish;
 use Illuminate\Console\Command;
+use App\Http\Models\Notification;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Mail;
 use App\Events\RealTimeNotificationEvent;
@@ -38,18 +39,29 @@ class SendBirthDayWish extends Command
             $query->whereMonth('birthdate', '=', date('m'))
                 ->whereDay('birthdate', '=', date('d'));
         })->get();
-        
+
         foreach($users as $user) {
             Mail::to($user->email)->send(new BirthDayWish($user));
-            $data_notification = [
+
+            $dataNotification = [
                 'user_id' => $user->id,
                 'title' => trans('all.notification_birthday_title', ['name' => $user->profile->name]),
                 'text' => trans('all.notification_birthday_text'),
                 'type' => 1,
                 'status_read' => 0,
             ];
-            $notification = store_notification($data_notification);
-            broadcast(new RealTimeNotificationEvent($notification, $user->id));
+
+            $allNotifications = store_notification($dataNotification);
+
+            $results['data'] = $allNotifications->toArray();
+            $results['summary'] = [
+                'total_data' => Notification::where('user_id', $user->id)->count(),
+                'total_read' => Notification::Read()->where('user_id', $user->id)->count(),
+                'total_unread' => Notification::Unread()->where('user_id', $user->id)->count()
+            ];
+
+            broadcast(new RealTimeNotificationEvent($results, $user->id));
+
             $i++;
         }
 

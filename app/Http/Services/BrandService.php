@@ -82,6 +82,7 @@ class BrandService extends BaseService
         );
 
         DB::beginTransaction();
+
         $data_request['slug'] = Str::slug($data_request['name']);
         $image = $data_request['logo'];
         $image_name = time() . '.' . $image->getClientOriginalExtension();
@@ -90,12 +91,14 @@ class BrandService extends BaseService
         $img_thumb = $img->crop(5, 5);
         $img_thumb = $img_thumb->stream()->detach();
         Storage::disk('google')->put('images/brand/thumbnails/' . $image_name, $img_thumb);
+
         $result = $this->model->create([
             'name' => $data_request['name'],
             'slug' => $data_request['slug'],
             'sort' => $data_request['sort'],
             'logo' => $image_name,
         ]);
+
         DB::commit();
 
         return $this->repository->getSingleData($locale, $result->id);

@@ -14,7 +14,7 @@ use App\Http\Repositories\VariantRepository;
 class VariantService extends BaseService
 {
     private $model, $repository;
-    
+
     public function __construct(Variant $model, VariantRepository $repository)
     {
         $this->model = $model;
@@ -45,7 +45,7 @@ class VariantService extends BaseService
             'search_column' => $search_column,
             'sort_column'   => array_merge($search, $search_column),
         ];
-        
+
         return $this->repository->getIndexData($locale, $sortable_and_searchable_column);
     }
 
@@ -97,8 +97,10 @@ class VariantService extends BaseService
 
         try {
             DB::beginTransaction();
+
             $product = Product::find($data_request['product_id']);
             $data_request['slug'] = $product->slug . '-' . Str::slug($data_request['name']);
+
             if($product->variants->count() > 0){
                 $quantity = $product->quantity + $data_request['quantity'];
                 $point = (min($product->variants->pluck('point')->toArray()) > (int) $data_request['point']) ? (int) $data_request['point'] : min($product->variants->pluck('point')->toArray());
@@ -108,12 +110,15 @@ class VariantService extends BaseService
                 $point = $data_request['point'];
                 $weight = $data_request['weight'];
             }
+
             $product->update([
                 'point' => $point,
                 'weight' => $weight,
                 'quantity' => $quantity,
             ]);
+
             $result = $this->model->create($data_request);
+
             DB::commit();
         } catch (QueryException $e) {
             DB::rollBack();
@@ -167,6 +172,7 @@ class VariantService extends BaseService
 
         try {
             DB::beginTransaction();
+
             $product = Product::find($check_data->product_id);
             $data_request['slug'] = $product->slug . '-' . Str::slug($data_request['name']);
             $check_data->update($data_request);
@@ -178,6 +184,7 @@ class VariantService extends BaseService
                 'weight' => $weight,
                 'quantity' => $quantity,
             ]);
+
             DB::commit();
         } catch (QueryException $e) {
             DB::rollback();
@@ -190,9 +197,10 @@ class VariantService extends BaseService
     public function delete($locale, $id)
     {
         $check_data = $this->repository->getSingleData($locale, $id);
-        
+
         try {
             DB::beginTransaction();
+
             $result = $check_data->delete();
             $product = Product::with('variants')->find($check_data->product_id);
             $variants = $product->variants->where('id', '!=', $id);
@@ -203,6 +211,7 @@ class VariantService extends BaseService
                 'weight' => $min_weight ?? 0,
                 'quantity' => $product->quantity - $check_data->quantity,
             ]);
+
             DB::commit();
         } catch (QueryException $e) {
             DB::rollback();

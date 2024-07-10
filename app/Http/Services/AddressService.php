@@ -48,7 +48,7 @@ class AddressService extends BaseService
             'search_column' => $search_column,
             'sort_column'   => array_merge($search, $search_column),
         ];
-        
+
         return $this->repository->getIndexData($locale, $sortable_and_searchable_column);
     }
 
@@ -106,12 +106,15 @@ class AddressService extends BaseService
         );
 
         DB::beginTransaction();
+
         $result = $this->model->create($data_request);
+
         if($this->repository->countDataByUser($data_request['user_id']) == 1) {
             $user = $this->userRepository->getSingleData($locale, $data_request['user_id']);
             $user->main_address_id = $result->id;
             $user->save();
         }
+
         DB::commit();
 
         return $this->repository->getSingleData($locale, $result->id);
@@ -172,7 +175,9 @@ class AddressService extends BaseService
         ]);
 
         DB::beginTransaction();
+
         $check_data->update($data_request);
+
         DB::commit();
 
         return $this->repository->getSingleData($locale, $id);
@@ -181,9 +186,13 @@ class AddressService extends BaseService
     public function delete($locale, $id)
     {
         $check_data = $this->repository->getSingleData($locale, $id);
+
         DB::beginTransaction();
+
         if($this->repository->countDataByUser($check_data->user_id) == 1 || $check_data->is_main == 1) throw new ApplicationException(trans('error.cannot_delete_primary_address'));
+
         $result = $check_data->delete();
+
         DB::commit();
 
         return $result;

@@ -66,11 +66,15 @@ class CartService extends BaseService
             DB::beginTransaction();
             $user = auth()->user();
             $data_request['user_id'] = $user->id;
-            $variant_id = isset($data_request['variant_id']) ? intval($data_request['variant_id']) : null;
+            $variant_id = isset($data_request['variant_id']) ? (int) $data_request['variant_id'] : null;
             $product = Product::lockForUpdate()->find($data_request['product_id']);
+
             if ($product->variants->count() > 0 && !isset($variant_id)) throw new ApplicationException(trans('error.variant_required', ['product_name' => $product->name]));
+
             else if ($product->variants->count() == 0 && isset($variant_id)) throw new ApplicationException(trans('error.variant_not_found_in_products', ['product_name' => $product->name]));
+
             if(!$product || $product->quantity < $data_request['quantity'] || $product->status == 'O') throw new ApplicationException(trans('error.out_of_stock'));
+
             if (!is_null($variant_id)) {
                 $variant = $product->variants()->lockForUpdate()->find($variant_id);
                 $variant_name = Variant::find($variant_id)->name;
@@ -81,21 +85,23 @@ class CartService extends BaseService
             $exists_cart = $this->repository->getByUserProductAndVariant($user->id, $data_request['product_id'], $variant_id)->first();
 
             if(!empty($exists_cart)) {
-                $quantity = $exists_cart->quantity + intval($data_request['quantity']);
+                $quantity = $exists_cart->quantity + (int) $data_request['quantity'];
                 if($product->variants->count() > 0) $real_quantity = $variant->quantity;
                 else $real_quantity = $product->quantity;
                 if ($quantity > $real_quantity) throw new ApplicationException(trans('error.out_of_stock'));
                 $exists_cart->update(['quantity' => $exists_cart->quantity + $data_request['quantity']]);
             } else {
                 $cart = $this->model;
-                $cart->id = strval(Str::uuid());
-                $cart->user_id = intval($user->id);
-                $cart->product_id = intval($data_request['product_id']);
+                $cart->id = Str::uuid();
+                $cart->user_id = (int) $user->id;
+                $cart->product_id = (int) $data_request['product_id'];
                 $cart->variant_id = $variant_id ?? '';
-                $cart->quantity = intval($data_request['quantity']);
+                $cart->quantity = (int) $data_request['quantity'];
                 $cart->save();
             }
+
             DB::commit();
+
             return response()->api(trans('all.success_add_to_cart', ['product_name' => $product->name]));
         } catch (\Exception $e) {
             DB::rollback();
@@ -135,7 +141,7 @@ class CartService extends BaseService
 
         if ($real_quantity < $quantity) throw new ApplicationException(trans('error.out_of_stock'));
 
-        $data_request['quantity'] = intval($data_request['quantity']);
+        $data_request['quantity'] = (int) $data_request['quantity'];
         $check_data->update($data_request);
 
         DB::commit();
@@ -148,7 +154,9 @@ class CartService extends BaseService
         $check_data = $this->repository->getSingleData($locale, $id);
 
         DB::beginTransaction();
+
         $result = $check_data->delete();
+
         DB::commit();
 
         return $result;

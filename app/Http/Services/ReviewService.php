@@ -107,7 +107,6 @@ class ReviewService extends BaseService
         if ($order->status != 'shipped' && $order->status != 'success' && $order->payment_logs == null) throw new ApplicationException(trans('error.order_not_completed', ['order_code' => $order->code]));
 
         $check_rating = $this->repository->getDataByUserOrderAndProduct($locale, $user->id, $data_request['order_id'], $data_request['product_id']);
-
         if (isset($check_rating)) throw new ApplicationException(trans('error.already_reviews', ['order_code' => $order->code, 'product_name' => $product->name]));
 
         $result = Review::create([
@@ -256,8 +255,10 @@ class ReviewService extends BaseService
         );
 
         DB::beginTransaction();
+
         $data_request['rating'] = rounded_rating($data_request['rating']);
         $check_data->update($data_request);
+
         DB::commit();
 
         return $this->repository->getSingleData($locale, $id);
@@ -266,11 +267,15 @@ class ReviewService extends BaseService
     public function delete($locale, $id)
     {
         $check_data = $this->repository->getSingleData($locale, $id);
+
         DB::beginTransaction();
+
         foreach($check_data->review_files as $file) {
             if(Storage::disk('google')->exists('files/reviews/' . $file->file)) Storage::disk('google')->delete('files/reviews/' . $file->file);
         }
+
         $result = $check_data->delete();
+
         DB::commit();
 
         return $result;

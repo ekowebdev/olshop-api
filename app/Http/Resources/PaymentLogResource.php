@@ -58,7 +58,7 @@ class PaymentLogResource extends JsonResource
                             'slug' => $order_product->variants->slug,
                             'quantity' => $order_product->variants->quantity,
                             'point' => $order_product->variants->point,
-                            'fpoint' => format_money(strval($order_product->variants->point)),
+                            'fpoint' => format_money((string) $order_product->variants->point),
                             'weight' => $order_product->variants->weight,
                             'fweight' => $order_product->variants->weight . ' Gram',
                             'variant_images' => ($order_product->variants->product_images) ? [

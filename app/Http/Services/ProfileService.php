@@ -86,6 +86,7 @@ class ProfileService extends BaseService
         );
 
         DB::beginTransaction();
+
         if (isset($data_request['avatar'])) {
             $image = $data_request['avatar'];
             $image_name = time() . '.' . $image->getClientOriginalExtension();
@@ -96,6 +97,7 @@ class ProfileService extends BaseService
             Storage::disk('google')->put('images/avatar/thumbnails/' . $image_name, $img_thumb);
             $data_request['avatar'] = $image_name;
         }
+
         $result = $this->model->create([
             'user_id' => $data_request['user_id'],
             'name' => $data_request['name'],
@@ -103,6 +105,7 @@ class ProfileService extends BaseService
             'phone_number' => $data_request['phone_number'],
             'avatar' => $data_request['avatar'] ?? null,
         ]);
+
         DB::commit();
 
         return $this->repository->getSingleData($locale, $result->id);
@@ -142,9 +145,12 @@ class ProfileService extends BaseService
         ]);
 
         DB::beginTransaction();
+
         if (isset($data_request['avatar'])) {
             if(Storage::disk('google')->exists('images/avatar/' . $check_data->avatar)) Storage::disk('google')->delete('images/avatar/' . $check_data->avatar);
+
             if(Storage::disk('google')->exists('images/avatar/thumbnails/' . $check_data->avatar)) Storage::disk('google')->delete('images/avatar/thumbnails/' . $check_data->avatar);
+
             $image = $data_request['avatar'];
             $image_name = time() . '.' . $image->getClientOriginalExtension();
             Storage::disk('google')->put('images/avatar/' . $image_name, file_get_contents($image));
@@ -152,13 +158,16 @@ class ProfileService extends BaseService
             $img_thumb = $img->crop(5, 5);
             $img_thumb = $img_thumb->stream()->detach();
             Storage::disk('google')->put('images/avatar/thumbnails/' . $image_name, $img_thumb);
+
             $check_data->avatar = $image_name;
         }
+
         $check_data->user_id = $data_request['user_id'] ?? $check_data->user_id;
         $check_data->name = $data_request['name'] ?? $check_data->name;
         $check_data->birthdate = $data_request['birthdate'] ?? $check_data->birthdate;
         $check_data->phone_number = $data_request['phone_number'] ?? $check_data->phone_number;
         $check_data->save();
+
         DB::commit();
 
         return $this->repository->getSingleData($locale, $id);
@@ -167,9 +176,13 @@ class ProfileService extends BaseService
     public function delete($locale, $id)
     {
         $check_data = $this->repository->getSingleData($locale, $id);
+
         DB::beginTransaction();
+
         if(Storage::disk('google')->exists('images/avatar/' . $check_data->avatar)) Storage::disk('google')->delete('images/avatar/' . $check_data->avatar);
+
         $result = $check_data->delete();
+
         DB::commit();
 
         return $result;

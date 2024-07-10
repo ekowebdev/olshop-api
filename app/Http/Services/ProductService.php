@@ -248,7 +248,9 @@ class ProductService extends BaseService
                 ],
             ]
         );
+
         DB::beginTransaction();
+
         $data_request['code'] = Str::random(15);
         $data_request['slug'] = Str::slug($data_request['name']);
         $data_request['point'] = $data_request['point'] ?? null;
@@ -265,6 +267,7 @@ class ProductService extends BaseService
             Storage::disk('google')->put('images/thumbnails/' . $image_name, $img_thumb);
             $result->product_images()->create(['image' => $image_name]);
         }
+
         DB::commit();
 
         return $this->repository->getSingleData($locale, $result->id);

@@ -79,10 +79,12 @@ class UserService extends BaseService
         );
 
         DB::beginTransaction();
+
         $data_request['role'] = isset($data_request['role']) ? $data_request['role'] : 'customer';
         $data_request['password'] = Hash::make($data_request['password']);
         $result = $this->model->create($data_request);
         $result->assignRole($data_request['role']);
+
         DB::commit();
 
         return $this->repository->getSingleData($locale, $result->id);
@@ -125,6 +127,7 @@ class UserService extends BaseService
         ]);
 
         DB::beginTransaction();
+
         $roles = auth()->user()->getRoleNames()->toArray();
 
         if(count($roles) == 1 && in_array('customer', $roles)){
@@ -143,6 +146,7 @@ class UserService extends BaseService
             $roles = Role::whereIn('name', $data_request['role'])->get();
             $check_data->syncRoles($roles);
         }
+
         DB::commit();
 
         return $this->repository->getSingleData($locale, $id);
@@ -151,9 +155,11 @@ class UserService extends BaseService
     public function delete($locale, $id)
     {
         DB::beginTransaction();
+
         $check_data = $this->repository->getSingleData($locale, $id);
         $check_data->roles()->detach();
         $result = $check_data->delete();
+
         DB::commit();
 
         return $result;
@@ -178,9 +184,11 @@ class UserService extends BaseService
         ]);
 
         DB::beginTransaction();
+
         $check_data = $this->repository->getSingleData($locale, $data['user_id']);
         $check_data->main_address_id = $data_request['address_id'];
         $check_data->save();
+
         DB::commit();
 
         return $this->repository->getSingleData($locale, $check_data->id);

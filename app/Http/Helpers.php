@@ -1,7 +1,8 @@
 <?php
 
-use App\Http\Models\Review;
+use DB;
 use Illuminate\Support\Str;
+use App\Http\Models\Review;
 use App\Http\Models\Notification;
 use Illuminate\Support\Collection;
 use Illuminate\Pagination\Paginator;
@@ -33,17 +34,18 @@ function is_multidimensional_array($array) {
     return false;
 }
 
-function store_notification(array $data)
+function store_notification($data = [])
 {
-    \DB::beginTransaction();
+    DB::beginTransaction();
+
     $model = new Notification();
     $check = $model->Unread()->where('user_id', $data['user_id']);
-    $model->id = strval(Str::uuid());
+    $model->id = Str::uuid();
     $model->title = $data['title'];
     $model->text = $data['text'];
-    $model->user_id = intval($data['user_id']);
-    $model->type = intval($data['type']);
-    $model->status_read = intval($data['status_read']);
+    $model->user_id = (int) $data['user_id'];
+    $model->type = (int) $data['type'];
+    $model->status_read = (int) $data['status_read'];
     if($data['type'] == 0){
         $model->url = config('setting.frontend.url') . '/accounts';
         $model->icon = '';
@@ -58,6 +60,7 @@ function store_notification(array $data)
             $model->save();
         }
     }
+
     $notification = $model->where('user_id', $data['user_id'])->orderBy('created_at', 'desc')->with('users')->limit(5)->get();
     $results = collect($notification)->map(function($data) {
         return [
@@ -73,17 +76,19 @@ function store_notification(array $data)
             'users' => (!$data->users) ? null : $data->users->makeHidden(['email_verified_at', 'google_access_token', 'created_at', 'updated_at'])->toArray(),
         ];
     });
-    \DB::commit();
+
+    DB::commit();
+
     return $results;
 }
 
-function is_json($string) {
+function is_json($string = "") {
     if(!is_string($string) || empty($string) || $string == "[]") return false;
     $res = json_decode($string);
     return (json_last_error() == JSON_ERROR_NONE && $res != $string);
 }
 
-function format_json($originalData, $page, $perPage, $options)
+function format_json($originalData, $page = null, $perPage = 10, $options = [])
 {
     $dataCollection = paginate($originalData, $page, $perPage, $options);
 
@@ -116,7 +121,7 @@ function format_json($originalData, $page, $perPage, $options)
     return $results;
 }
 
-function paginate($data, $page = null, $perPage = 15, $options = [])
+function paginate($data, $page = null, $perPage = 10, $options = [])
 {
     $page = $page ?: (Paginator::resolveCurrentPage() ?: 1);
     $data = $data instanceof Collection ? $data : Collection::make($data);
@@ -127,12 +132,12 @@ function format_product_weight($product)
 {
     $weight = $product->variants->pluck('weight')->toArray();
     if (count($weight) == 1) {
-        return strval($weight[0]) . ' Gram';
+        return (string) $weight[0] . ' Gram';
     } elseif (count($weight) > 1) {
         $weight = min($weight);
-        return strval($weight) . ' Gram';
+        return (string) $weight . ' Gram';
     } else {
-        return strval($product->weight ?? 0) . ' Gram';
+        return (string) $product->weight ?? 0 . ' Gram';
     }
 }
 
@@ -140,16 +145,16 @@ function format_product_point($product)
 {
     $points = $product->variants->pluck('point')->toArray();
     if (count($points) == 1) {
-        return format_money(strval($points[0]));
+        return format_money((string) $points[0]);
     } elseif (count($points) > 1) {
         $minValue = min($points);
         $maxValue = max($points);
         if ($minValue === $maxValue) {
-            return format_money(strval($minValue));
+            return format_money((string) $minValue);
         }
         return format_money($minValue) . " ~ " . format_money($maxValue);
     } else {
-        return format_money(strval($product->point ?? 0));
+        return format_money((string) $product->point ?? 0);
     }
 }
 

@@ -37,13 +37,15 @@ class WishlistService extends BaseService
     public function wishlist($locale, $id, $data)
     {
         DB::beginTransaction();
+
         $product = $this->product_repository->getSingleData($locale, $id);
         $user = auth()->user();
+
         $check_wishlist = $this->repository->getDataByUserAndProduct($locale, $product->id)->first();
 
         if(is_null($check_wishlist)) {
             $wishlist = $this->model;
-            $wishlist->id = strval(Str::uuid());
+            $wishlist->id = Str::uuid();
             $wishlist->user_id = $user->id;
             $wishlist->product_id = $product->id;
             $wishlist->save();
@@ -52,6 +54,7 @@ class WishlistService extends BaseService
             $check_wishlist->delete();
             $message = trans('all.success_delete_from_wishlists', ['product_name' => $product->name]);
         }
+
         DB::commit();
 
         return response()->api($message);

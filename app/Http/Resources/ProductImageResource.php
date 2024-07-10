@@ -32,7 +32,7 @@ class ProductImageResource extends JsonResource
                 'slug' => $this->variants->slug,
                 'quantity' => $this->variants->quantity,
                 'point' => $this->variants->point,
-                'fpoint' => format_money(strval($this->variants->point)),
+                'fpoint' => format_money((string) $this->variants->point),
                 'weight' => $this->variants->weight,
                 'fweight' => $this->variants->weight . ' Gram',
             ] : null,

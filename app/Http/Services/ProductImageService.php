@@ -75,12 +75,15 @@ class ProductImageService extends BaseService
         );
 
         DB::beginTransaction();
+
         if(isset($data_request['variant_id'])){
             $variant = Variant::where('id', $data_request['variant_id'])->where('product_id', $data_request['product_id'])->first();
             if(is_null($variant)) throw new ApplicationException(trans('error.variant_not_found_in_products', ['product_name' => $variant->products->name]));
+
             $exists_variant = $this->repository->getSingleDataByProductVariant($locale, $data_request['product_id'], $data_request['variant_id']);
             if(!is_null($exists_variant)) throw new ApplicationException(trans('error.exists_image_variant_products', ['product_name' => $variant->products->name, 'variant_name' => $variant->name]));
         }
+
         $image = $data_request['image'];
         $image_name = time() . '.' . $image->getClientOriginalExtension();
         Storage::disk('google')->put('images/' . $image_name, file_get_contents($image));
@@ -88,11 +91,13 @@ class ProductImageService extends BaseService
         $img_thumb = $img->crop(5, 5);
         $img_thumb = $img_thumb->stream()->detach();
         Storage::disk('google')->put('images/thumbnails/' . $image_name, $img_thumb);
+
         $result = $this->model->create([
             'product_id' => $data_request['product_id'],
             'variant_id' => (isset($data_request['variant_id'])) ? $data_request['variant_id'] : null,
             'image' => $image_name,
         ]);
+
         DB::commit();
 
         return $this->repository->getSingleData($locale, $result->id);
@@ -124,13 +129,17 @@ class ProductImageService extends BaseService
         );
 
         DB::beginTransaction();
+
         if(isset($data_request['variant_id']) && !empty($data_request['variant_id'])){
             $variant = Variant::where('id', $data_request['variant_id'])->where('product_id', isset($data_request['product_id']) ? $data_request['product_id'] : $check_data->product_id)->first();
             if(is_null($variant)) throw new ApplicationException(trans('error.variant_not_found_in_products', ['product_name' => $variant->products->name]));
         }
+
         if (isset($data_request['image'])) {
             if(Storage::disk('google')->exists('images/' . $check_data->image)) Storage::disk('google')->delete('images/' . $check_data->image);
+
             if(Storage::disk('google')->exists('images/' . 'thumbnails/' . $check_data->image)) Storage::disk('google')->delete('images/' . 'thumbnails/' . $check_data->image);
+
             $image = $data_request['image'];
             $image_name = time() . '.' . $image->getClientOriginalExtension();
             Storage::disk('google')->put('images/' . $image_name, file_get_contents($image));
@@ -140,15 +149,18 @@ class ProductImageService extends BaseService
             Storage::disk('google')->put('images/thumbnails/' . $image_name, $img_thumb);
             $check_data->image = $image_name;
         }
+
         if(isset($data_request['variant_id'])) {
             if($data_request['variant_id'] == '') $variant_id = null;
             else $variant_id = $data_request['variant_id'];
         } else {
             $variant_id = $check_data->variant_id;
         }
+
         $check_data->product_id = $data_request['product_id'] ?? $check_data->product_id;
         $check_data->variant_id = $variant_id;
         $check_data->save();
+
         DB::commit();
 
         return $this->repository->getSingleData($locale, $id);

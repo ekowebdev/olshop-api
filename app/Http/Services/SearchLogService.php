@@ -53,8 +53,8 @@ class SearchLogService extends BaseService
         try{
             DB::beginTransaction();
             $data = $this->model;
-            $data->id = strval(Str::uuid());
-            $data->user_id = intval(auth()->user()->id);
+            $data->id = Str::uuid();
+            $data->user_id = (int) auth()->user()->id;
             $data->search_text = strtolower($data_request['search_text']);
             $data->save();
             DB::commit();
@@ -88,7 +88,7 @@ class SearchLogService extends BaseService
         ]);
 
         DB::beginTransaction();
-        $data_request['user_id'] = intval(auth()->user()->id);
+        $data_request['user_id'] = (int) auth()->user()->id;
         $data_request['search_text'] = strtolower($data_request['search_text']);
         $check_data->update($data_request);
         DB::commit();

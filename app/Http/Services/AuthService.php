@@ -124,6 +124,7 @@ class AuthService extends BaseService
         $data = [
             'auth_url' => Socialite::driver('google')->stateless()->redirect()->getTargetUrl(),
         ];
+
         return response()->api(trans('all.success_logout'), $data);
     }
 
@@ -132,8 +133,10 @@ class AuthService extends BaseService
         try {
             $socialite = Socialite::driver('google')->stateless()->user();
             $user = $this->model->where('email', $socialite->email)->first();
+
             if(empty($user)) $url = config('setting.frontend.url') . '/auth-success?is_register=true&name='.$socialite->user['given_name'].'&email='.$socialite->email.'&google_access_token='.$socialite->token;
             else $url = config('setting.frontend.url') . '/auth-success?email='.$socialite->email.'&google_access_token='.$socialite->token;
+
             return redirect()->to($url);
         } catch (\Exception $e) {
             $url = config('setting.frontend.url') . '/login?error='.$e->getMessage();

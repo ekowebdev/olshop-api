@@ -199,8 +199,11 @@ class OrderService extends BaseService
                 if (!is_null($variant_id)) {
                     $variant = $product->variants()->lockForUpdate()->find($variant_id);
                     $variant_name = Variant::find($variant_id)->name;
+
                     if (is_null($variant)) throw new ApplicationException(trans('error.variant_not_available_in_products', ['product_name' => $product->name, 'variant_name' => $variant_name]));
+
                     if ($variant->quantity == 0 || $quantity > $variant->quantity) throw new ApplicationException(trans('error.out_of_stock'));
+
                     if ($variant) {
                         $subtotal = $variant->point * $quantity;
                         $variant->update([
@@ -380,6 +383,7 @@ class OrderService extends BaseService
         );
 
         DB::beginTransaction();
+
         if($check_data->status != 'shipped' && $check_data->status != 'success'){
             $order_products = $check_data->order_products()->get();
             foreach ($order_products as $order_product) {
@@ -401,6 +405,7 @@ class OrderService extends BaseService
         } else {
             $message = trans('error.failed_cancel_order');
         }
+
         DB::commit();
 
         return response()->api($message);
@@ -427,12 +432,14 @@ class OrderService extends BaseService
         );
 
         DB::beginTransaction();
+
         if($check_data->status == 'shipped' && $check_data->shippings->resi != null){
             $shippings = Shipping::where('order_id', $id)->first();
             $shippings->update(['status' => 'delivered']);
             $data_request['status'] = 'success';
             $check_data->update($data_request);
         }
+
         DB::commit();
 
         return response()->api(trans('all.success_receive_order'));
@@ -443,6 +450,7 @@ class OrderService extends BaseService
         $check_data = $this->repository->getSingleData($locale, $id);
 
         DB::beginTransaction();
+
         if($check_data->status != 'cancelled' && $check_data->status != 'shipped' && $check_data->status != 'success'){
             $order_products = $check_data->order_products()->get();
             foreach ($order_products as $order_product) {
@@ -458,9 +466,12 @@ class OrderService extends BaseService
                 }
             }
         }
+
         $shippings = Shipping::where('order_id', $id)->first();
         $shippings->update(['resi' => null]);
+
         $result = $check_data->update(['deleted_at' => now()->format('Y-m-d H:i:s')]);
+
         DB::commit();
 
         return $result;

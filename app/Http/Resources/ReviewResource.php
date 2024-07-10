@@ -63,7 +63,7 @@ class ReviewResource extends JsonResource
                                 'slug' => $order_product->variants->slug,
                                 'quantity' => $order_product->variants->quantity,
                                 'point' => $order_product->variants->point,
-                                'fpoint' => format_money(strval($order_product->variants->point)),
+                                'fpoint' => format_money((string) $order_product->variants->point),
                                 'variant_images' => ($order_product->variants->product_images) ? [
                                     'id' => $order_product->variants->product_images->id,
                                     'image' => $order_product->variants->product_images->image,
@@ -104,7 +104,7 @@ class ReviewResource extends JsonResource
                         'slug' => $variant->slug,
                         'quantity' => $variant->quantity,
                         'point' => $variant->point,
-                        'fpoint' => format_money(strval($variant->point)),
+                        'fpoint' => format_money((string) $variant->point),
                         'weight' => $variant->weight,
                         'fweight' => $variant->weight . ' Gram',
                         'variant_images' => ($variant->product_images) ? [

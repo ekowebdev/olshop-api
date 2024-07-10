@@ -130,6 +130,7 @@ class SliderService extends BaseService
         );
 
         DB::beginTransaction();
+
         $image = $data_request['image'];
         $image_name = time() . '.' . $image->getClientOriginalExtension();
         Storage::disk('google')->put('images/slider/' . $image_name, file_get_contents($image));
@@ -137,6 +138,7 @@ class SliderService extends BaseService
         $img_thumb = $img->crop(5, 5);
         $img_thumb = $img_thumb->stream()->detach();
         Storage::disk('google')->put('images/slider/thumbnails/' . $image_name, $img_thumb);
+
         $result = $this->model->create([
             'title' => $data_request['title'],
             'description' => $data_request['description'],
@@ -146,6 +148,7 @@ class SliderService extends BaseService
             'end_date' => $data_request['end_date'],
             'image' => $image_name,
         ]);
+
         DB::commit();
 
         return $this->repository->getSingleData($locale, $result->id);
@@ -185,13 +188,16 @@ class SliderService extends BaseService
         ]);
 
         DB::beginTransaction();
+
         if (isset($data_request['image'])) {
             if(Storage::disk('google')->exists('images/slider/' . $check_data->image)) {
                 Storage::disk('google')->delete('images/slider/' . $check_data->image);
             }
+
             if(Storage::disk('google')->exists('images/slider/thumbnails/' . $check_data->image)) {
                 Storage::disk('google')->delete('images/slider/thumbnails/' . $check_data->image);
             }
+
             $image = $data_request['image'];
             $image_name = time() . '.' . $image->getClientOriginalExtension();
             Storage::disk('google')->put('images/slider/' . $image_name, file_get_contents($image));
@@ -199,8 +205,10 @@ class SliderService extends BaseService
             $img_thumb = $img->crop(5, 5);
             $img_thumb = $img_thumb->stream()->detach();
             Storage::disk('google')->put('images/slider/thumbnails/' . $image_name, $img_thumb);
+
             $check_data->image = $image_name;
         }
+
         $check_data->title = $data_request['title'] ?? $check_data->title;
         $check_data->description = $data_request['description'] ?? $check_data->description;
         $check_data->link = isset($data_request['link']) ? config('setting.frontend.url') . '/' . $data_request['link'] : $check_data->link;
@@ -208,6 +216,7 @@ class SliderService extends BaseService
         $check_data->start_date = $data_request['start_date'] ?? $check_data->start_date;
         $check_data->end_date = $data_request['end_date'] ?? $check_data->end_date;
         $check_data->save();
+
         DB::commit();
 
         return $this->repository->getSingleData($locale, $id);
@@ -216,11 +225,15 @@ class SliderService extends BaseService
     public function delete($locale, $id)
     {
         $check_data = $this->repository->getSingleData($locale, $id);
+
         DB::beginTransaction();
+
         if(Storage::disk('google')->exists('images/slider/' . $check_data->image)) {
             Storage::disk('google')->delete('images/slider/' . $check_data->image);
         }
+
         $result = $check_data->delete();
+
         DB::commit();
 
         return $result;

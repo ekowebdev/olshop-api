@@ -88,7 +88,7 @@ class WebhookService extends BaseService
                 }
 
                 $detail_data[] = [
-                    'price' => intval($price),
+                    'price' => (int) $price,
                     'quantity' => $order_product->quantity,
                     'name' => $order_product->products->name . $variant_name,
                 ];

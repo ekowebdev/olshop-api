@@ -40,7 +40,7 @@ class NotificationService extends BaseService
 
     public function getDataByUser($locale, $id)
     {
-        $id = intval($id);
+        $id = (int) $id;
         $data = $this->repository->getDataByUser($locale, $id);
         $totalData = $this->model->where('user_id', $id)->count();
         $totalRead = $this->model->where('user_id', $id)->Read()->count();
@@ -109,8 +109,8 @@ class NotificationService extends BaseService
         DB::beginTransaction();
         $data_request['title'] = $data_request['title'];
         $data_request['text'] = $data_request['text'];
-        $data_request['type'] = intval($data_request['type']);
-        $data_request['status_read'] = intval($data_request['status_read']);
+        $data_request['type'] = (int) $data_request['type'];
+        $data_request['status_read'] = (int) $data_request['status_read'];
         $data_request['url'] = $data_request['url'];
         $data_request['icon'] = $data_request['icon'];
         $data_request['background_color'] = $data_request['background_color'];

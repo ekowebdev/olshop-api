@@ -52,7 +52,7 @@ class BaseModel extends Model
 	 * @return void
 	 */
 	public function scopeSetRelationColumn($query, $value = [])
-	{		
+	{
 		$this->relationColumn = $value;
 	}
 
@@ -93,16 +93,16 @@ class BaseModel extends Model
 		if(!empty($request['search_column']) && isset($request['search_text']))
 		{
 			if(is_array($request['search_column']))
-			{				
+			{
 				foreach ($request['search_column'] as $arr_search_column => $value_search_column) {
 					if($request['search_text'][$arr_search_column] != utf8_encode($request['search_text'][$arr_search_column])){
 						throw new \App\Exceptions\AuthenticationException('Periksa text pencarian anda, mungkin mengandung karakter yang tidak kita izinkan!');
 					}
 					$query = $this->searchOperator($query, $request['search_column'][$arr_search_column], $request['search_text'][$arr_search_column], Arr::get($request,'search_operator.'.$arr_search_column,'like'));
-				}	
+				}
 			}
 			else
-			{	
+			{
 				if($request['search_text'] != utf8_encode($request['search_text'])){
 					throw new \App\Exceptions\AuthenticationException('Periksa text pencarian anda, mungkin mengandung karakter yang tidak kita izinkan!');
 				}
@@ -111,18 +111,18 @@ class BaseModel extends Model
 		}
 
 		if(isset($request['search']))
-		{			
+		{
 			if($request['search'] != utf8_encode($request['search'])){
 				throw new \App\Exceptions\AuthenticationException('Periksa text pencarian anda, mungkin mengandung karakter yang tidak kita izinkan!');
 			}
 
 			$query->where(function ($query) use ($search,$request) {
-				foreach ($search as $key => $value) {  
+				foreach ($search as $key => $value) {
                 	if($value)$query->orWhere(\DB::raw($value), 'like', '%'.$request['search'].'%');
 				}
             });
 		}
-        
+
         return $query;
 	}
 
@@ -140,44 +140,44 @@ class BaseModel extends Model
 
 		if(array_key_exists('search_column', $this->sortableAndSearchableColumn)){
 			$search_column = $this->sortableAndSearchableColumn['search_column'];
-		}	
-
-		if( $operator == 'like' )
-			$query->where(\DB::raw($search_column[$column]),'like','%'.$text.'%');
-
-		if( $operator == '=' )
-			$query->where(\DB::raw($search_column[$column]),'=',$text);
-
-		if( $operator == '>=' )
-			$query->where(\DB::raw($search_column[$column]),'>=',$text);
-
-		if( $operator == '<=' )
-			$query->where(\DB::raw($search_column[$column]),'<=',$text);
-
-		if( $operator == '>' )
-			$query->where(\DB::raw($search_column[$column]),'>',$text);
-
-		if( $operator == '<' )
-			$query->where(\DB::raw($search_column[$column]),'<',$text);
-
-		if( $operator == '<>' )
-			$query->where(\DB::raw($search_column[$column]),'<>',$text);
-
-		if( $operator == '!=' )
-			$query->where(\DB::raw($search_column[$column]),'!=',$text);
-
-		if( $operator == 'range' ){
-			$explodeIn = explode(',',$text);
-			$query->whereBetween(\DB::raw($search_column[$column]),$explodeIn);
 		}
-		
-		if( $operator == 'in' ){
-			$explodeIn = explode(',',$text);
+
+		if($operator == 'like')
+			$query->where(\DB::raw($search_column[$column]), 'like', '%'.$text.'%');
+
+		if($operator == '=')
+			$query->where(\DB::raw($search_column[$column]), '=' ,$text);
+
+		if($operator == '>=')
+			$query->where(\DB::raw($search_column[$column]), '>=' ,$text);
+
+		if($operator == '<=')
+			$query->where(\DB::raw($search_column[$column]), '<=', $text);
+
+		if($operator == '>')
+			$query->where(\DB::raw($search_column[$column]), '>', $text);
+
+		if($operator == '<')
+			$query->where(\DB::raw($search_column[$column]), '<', $text);
+
+		if($operator == '<>')
+			$query->where(\DB::raw($search_column[$column]), '<>', $text);
+
+		if($operator == '!=')
+			$query->where(\DB::raw($search_column[$column]), '!=', $text);
+
+		if($operator == 'range'){
+			$explodeIn = explode(',', $text);
+			$query->whereBetween(\DB::raw($search_column[$column]), $explodeIn);
+		}
+
+		if($operator == 'in'){
+			$explodeIn = explode(',', $text);
 			$query->whereIn(\DB::raw($search_column[$column]), $explodeIn);
 		}
 
-		if( $operator == 'notin' ){
-			$explodeNotIn = explode(',',$text);
+		if($operator == 'notin'){
+			$explodeNotIn = explode(',', $text);
 			$query->whereNotIn(\DB::raw($search_column[$column]), $explodeNotIn);
 		}
 
@@ -190,9 +190,8 @@ class BaseModel extends Model
 	 * @return [type]        [description]
 	 */
 	public function getSql($model)
-	{		
-	    $replace = function ($sql, $bindings)
-	    {
+	{
+	    $replace = function ($sql, $bindings) {
 	        $needle = '?';
 	        foreach ($bindings as $replace){
 	            $pos = strpos($sql, $needle);
@@ -205,6 +204,7 @@ class BaseModel extends Model
 	        }
 	        return $sql;
 	    };
+
 	    $sql = $replace($model->toSql(), $model->getBindings());
 
 	    return $sql;
@@ -218,29 +218,29 @@ class BaseModel extends Model
 	 */
 	public function scopeDistinct($query, $data = null)
 	{
-		$request = Request::all();		
-		
+		$request = Request::all();
+
 		$this->validate($request, [
             'distinct_column' => [
                 'filled',
                 new \App\Rules\SortableAndSearchable($this->sortableAndSearchableColumn+$this->relationColumn),
             ],
 		]);
-		
+
 		if(!empty($data)) {
 			$request['distinct_column'] = $data;
 		}
 
-		if( !empty($request['distinct_column']) )
+		if(!empty($request['distinct_column']))
 		{
-			if( is_array($request['distinct_column']) )
+			if(is_array($request['distinct_column']))
 			{
-				$colsDistinct = implode(',',$request['distinct_column']);
-				$query->select(\DB::raw('distinct '.$colsDistinct));
+				$colsDistinct = implode(',', $request['distinct_column']);
+				$query->select(\DB::raw('distinct ' . $colsDistinct));
 			}
 			else
 			{
-				$query->select(\DB::raw('distinct '.$request['distinct_column']));
+				$query->select(\DB::raw('distinct '. $request['distinct_column']));
 			}
 		}
 	}
@@ -259,39 +259,39 @@ class BaseModel extends Model
 			$sort = $this->sortableAndSearchableColumn['sort_column'];
 		}
 
-		if( !empty($request['sort_column']) && !empty($request['sort_type']) )
+		if(!empty($request['sort_column']) && !empty($request['sort_type']))
 		{
-			if( is_array($request['sort_column']) )
-			{			
+			if(is_array($request['sort_column']))
+			{
 				$this->validate($request, [
 					'sort_column.*' => [
 						'required_with:sort_type',
 						new \App\Rules\SortableAndSearchable($sort)
 					],
-					'sort_type.*'   => [
+					'sort_type.*' => [
 						'required_with:sort_column',
 						\Illuminate\Validation\Rule::in(['asc','desc'])
 					],
 				]);
-			
+
 				foreach ($request['sort_column'] as $arr_sort_column => $value_sort_column) {
 					$query->orderBy($sort[$value_sort_column],$request['sort_type'][$arr_sort_column]);
-				}	
+				}
 			}
 			else
-			{	
+			{
 				$this->validate($request, [
 					'sort_column' => [
 						'required_with:sort_type',
 						new \App\Rules\SortableAndSearchable($sort)
 					],
-					'sort_type'   => [
+					'sort_type' => [
 						'required_with:sort_column',
 						\Illuminate\Validation\Rule::in(['asc','desc'])
 					],
 				]);
-				
-				$query->orderBy($sort[$request['sort_column']],$request['sort_type']);
+
+				$query->orderBy($sort[$request['sort_column']], $request['sort_type']);
 			}
 		}
 	}
@@ -317,7 +317,7 @@ class BaseModel extends Model
 	 */
 	public static function validate($data, $rules = [], $messages = [])
 	{
-		$rules = empty($rules) ? self::$rules : $rules;  
+		$rules = empty($rules) ? self::$rules : $rules;
 		if(empty($rules)) return true;
 		$validator = Validator::make($data, $rules, $messages);
 		if($validator->fails()) throw new ValidationException($validator->errors());
@@ -341,7 +341,7 @@ class BaseModel extends Model
      */
     public function getModifiedTimeAttribute($date)
 	{
-	    return \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', (is_null($date) ? '00-00-00 00:00:00' : $date) )->format('Y-m-d H:i:s');
+	    return \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', (is_null($date) ? '00-00-00 00:00:00' : $date))->format('Y-m-d H:i:s');
 	}
 
 	/**
@@ -364,6 +364,6 @@ class BaseModel extends Model
 		$thisClass = get_class($this);
 		$model = new $thisClass;
 
-        return $model->getTable() . '.' . $model->getKeyName(); 
+        return $model->getTable() . '.' . $model->getKeyName();
     }
 }

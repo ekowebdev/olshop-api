@@ -82,6 +82,7 @@ class CategoryService extends BaseService
         );
 
         DB::beginTransaction();
+
         $data_request['code'] = Str::uuid();
         $data_request['slug'] = Str::slug($data_request['name']);
         $image = $data_request['image'];
@@ -91,6 +92,7 @@ class CategoryService extends BaseService
         $img_thumb = $img->crop(5, 5);
         $img_thumb = $img_thumb->stream()->detach();
         Storage::disk('google')->put('images/category/thumbnails/' . $image_name, $img_thumb);
+
         $result = $this->model->create([
             'code' => $data_request['code'],
             'name' => $data_request['name'],
@@ -129,9 +131,12 @@ class CategoryService extends BaseService
         ]);
 
         DB::beginTransaction();
+
         if (isset($data_request['image'])) {
             if(Storage::disk('google')->exists('images/category/' . $check_data->image)) Storage::disk('google')->delete('images/category/' . $check_data->image);
+
             if(Storage::disk('google')->exists('images/category/thumbnails/' . $check_data->image)) Storage::disk('google')->delete('images/category/thumbnails/' . $check_data->image);
+
             $image = $data_request['image'];
             $image_name = time() . '.' . $image->getClientOriginalExtension();
             Storage::disk('google')->put('images/category/' . $image_name, file_get_contents($image));
@@ -141,11 +146,14 @@ class CategoryService extends BaseService
             Storage::disk('google')->put('images/category/thumbnails/' . $image_name, $img_thumb);
             $check_data->image = $image_name;
         }
+
         $data_request['slug'] = Str::slug($data_request['name'] ?? $check_data->name);
+
         $check_data->name = $data_request['name'] ?? $check_data->name;
         $check_data->slug = $data_request['slug'] ?? $check_data->slug;
         $check_data->sort = $data_request['sort'] ?? $check_data->sort;
         $check_data->save();
+
         DB::commit();
 
         return $this->repository->getSingleData($locale, $id);
@@ -154,9 +162,12 @@ class CategoryService extends BaseService
     public function delete($locale, $id)
     {
         $check_data = $this->repository->getSingleData($locale, $id);
+
         DB::beginTransaction();
+
         if(Storage::disk('google')->exists('images/category/' . $check_data->image)) Storage::disk('google')->delete('images/category/' . $check_data->image);
         $result = $check_data->delete();
+
         DB::commit();
 
         return $result;

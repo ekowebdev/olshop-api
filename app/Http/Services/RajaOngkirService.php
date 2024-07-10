@@ -116,7 +116,6 @@ class RajaOngkirService extends BaseService
 
         if($data['rajaongkir']['status']['code'] == 400) throw new ApplicationException($data['rajaongkir']['status']['description']);
 
-
         $collection = collect($data['rajaongkir']['results']);
 
         if($collection->isEmpty()) throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => 'City'], $locale));

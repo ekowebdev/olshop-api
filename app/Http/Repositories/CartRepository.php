@@ -19,8 +19,8 @@ class CartRepository extends BaseRepository
 
     public function getIndexData($locale)
     {
-        $per_page = intval(Request::get('per_page', 10));
-        $page = intval(Request::get('page', 1));
+        $per_page = (int) Request::get('per_page', 10);
+        $page = (int) Request::get('page', 1);
 
         $data = $this->model
             ->query()
@@ -57,9 +57,9 @@ class CartRepository extends BaseRepository
 
     public function getDataByUser($locale, $user_id)
 	{
-        $user_id = intval($user_id);
-        $per_page = intval(Request::get('per_page', 10));
-        $page = intval(Request::get('page', 1));
+        $user_id = (int) $user_id;
+        $per_page = (int) Request::get('per_page', 10);
+        $page = (int) Request::get('page', 1);
 
 		$data = $this->model
                     ->query()
@@ -88,10 +88,10 @@ class CartRepository extends BaseRepository
 
     public function getByUserProductAndVariant($user_id, $product_id, $variant_id)
 	{
-        $variant_id = ($variant_id == null) ? '' : intval($variant_id);
+        $variant_id = ($variant_id == null) ? '' : (int) $variant_id;
 		$result = $this->model
-                  ->where('user_id', '=', intval($user_id))
-                  ->where('product_id', '=', intval($product_id))
+                  ->where('user_id', '=', (int) $user_id)
+                  ->where('product_id', '=', (int) $product_id)
                   ->where('variant_id', '=', $variant_id);
 		return $result;
 	}

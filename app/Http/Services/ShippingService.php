@@ -11,7 +11,7 @@ use App\Http\Repositories\ShippingRepository;
 class ShippingService extends BaseService
 {
     private $model, $repository;
-    
+
     public function __construct(Shipping $model, ShippingRepository $repository)
     {
         $this->model = $model;
@@ -44,7 +44,7 @@ class ShippingService extends BaseService
             'search_column' => $search_column,
             'sort_column'   => array_merge($search, $search_column),
         ];
-        
+
         return $this->repository->getIndexData($locale, $sortable_and_searchable_column);
     }
 
@@ -70,10 +70,13 @@ class ShippingService extends BaseService
         ]);
 
         DB::beginTransaction();
+
         if($check_data->orders->status != 'shipped' && $check_data->orders->status != 'success' && $check_data->orders->payment_logs == null) throw new ApplicationException(trans('error.order_not_completed', ['order_code' => $check_data->orders->code]));
+
         $data_request['resi'] = isset($data_request['resi']) ? $data_request['resi'] : $check_data->resi;
         $data_request['status'] = isset($data_request['resi']) ? 'on delivery' : $check_data->status;
         $check_data->update($data_request);
+
         DB::commit();
 
         return $this->repository->getSingleData($locale, $id);
@@ -82,7 +85,7 @@ class ShippingService extends BaseService
     public function delete($locale, $id)
     {
         $check_data = $this->repository->getSingleData($locale, $id);
-        
+
         DB::beginTransaction();
         $result = $check_data->delete();
         DB::commit();

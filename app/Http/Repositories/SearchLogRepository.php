@@ -20,8 +20,8 @@ class SearchLogRepository extends BaseRepository
 
     public function getIndexData($locale)
     {
-        $per_page = intval(Request::get('per_page', 10));
-        $page = intval(Request::get('page', 1));
+        $per_page = (int) Request::get('per_page', 10);
+        $page = (int) Request::get('page', 1);
 
         $data = $this->model
             ->query()
@@ -59,9 +59,9 @@ class SearchLogRepository extends BaseRepository
 
     public function getDataByUser($locale, $user_id)
 	{
-        $user_id = intval($user_id);
-        $per_page = intval(Request::get('per_page', 10));
-        $page = intval(Request::get('page', 1));
+        $user_id = (int) $user_id;
+        $per_page = (int) Request::get('per_page', 10);
+        $page = (int) Request::get('page', 1);
 
 		$data = $this->model
                     ->query()
