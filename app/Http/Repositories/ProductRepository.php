@@ -26,7 +26,7 @@ class ProductRepository extends BaseRepository
             'per_page' => ['numeric']
         ]);
 
-        $result = Cache::remember('cache_products', 30, function() use ($sortable_and_searchable_column) {
+        $result = Cache::remember('cache_products', 600, function() use ($sortable_and_searchable_column) {
             return $this->model
                     ->getAll()
                     ->setSortableAndSearchableColumn($sortable_and_searchable_column)
