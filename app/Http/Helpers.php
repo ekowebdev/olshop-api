@@ -1,6 +1,5 @@
 <?php
 
-use DB;
 use Illuminate\Support\Str;
 use App\Http\Models\Review;
 use App\Http\Models\Notification;
@@ -36,7 +35,7 @@ function is_multidimensional_array($array) {
 
 function store_notification($data = [])
 {
-    DB::beginTransaction();
+    \DB::beginTransaction();
 
     $model = new Notification();
     $check = $model->Unread()->where('user_id', $data['user_id']);
@@ -77,7 +76,7 @@ function store_notification($data = [])
         ];
     });
 
-    DB::commit();
+    \DB::commit();
 
     return $results;
 }
