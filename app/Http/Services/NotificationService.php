@@ -5,6 +5,7 @@ namespace App\Http\Services;
 use Illuminate\Support\Arr;
 use App\Http\Models\Notification;
 use Illuminate\Support\Facades\DB;
+use App\Http\Resources\NotificationResource;
 use App\Http\Repositories\NotificationRepository;
 
 class NotificationService extends BaseService
@@ -17,9 +18,19 @@ class NotificationService extends BaseService
         $this->repository = $repository;
     }
 
-    public function getIndexData($locale, $data)
+    public function getIndexData($locale, $request)
     {
-        return $this->repository->getIndexData($locale);
+        $data = $this->repository->getIndexData($locale);
+        $totalData = $this->model->count();
+        $totalRead = $this->model->Read()->count();
+        $totalUnread = $this->model->Unread()->count();
+        return (NotificationResource::collection($data))->additional([
+                    'summary' => [
+                        'total_data' => $totalData,
+                        'total_read' => $totalRead,
+                        'total_unread' => $totalUnread
+                    ]
+                ]);
     }
 
     public function getSingleData($locale, $id)
@@ -29,7 +40,18 @@ class NotificationService extends BaseService
 
     public function getDataByUser($locale, $id)
     {
-        return $this->repository->getDataByUser($locale, $id);
+        $id = intval($id);
+        $data = $this->repository->getDataByUser($locale, $id);
+        $totalData = $this->model->where('user_id', $id)->count();
+        $totalRead = $this->model->where('user_id', $id)->Read()->count();
+        $totalUnread = $this->model->where('user_id', $id)->Unread()->count();
+        return (NotificationResource::collection($data))->additional([
+                    'summary' => [
+                        'total_data' => $totalData,
+                        'total_read' => $totalRead,
+                        'total_unread' => $totalUnread
+                    ]
+                ]);
     }
 
     public function update($locale, $id, $data)
@@ -101,7 +123,7 @@ class NotificationService extends BaseService
     public function delete($locale, $id)
     {
         $check_data = $this->repository->getSingleData($locale, $id);
-        
+
         DB::beginTransaction();
         $result = $check_data->delete();
         DB::commit();

@@ -336,7 +336,7 @@ class OrderService extends BaseService
 
             $allNotifications = store_notification($inputNotification);
 
-            $dataNotification['details'] = $allNotifications->toArray();
+            $dataNotification['data'] = $allNotifications->toArray();
             $dataNotification['summary'] = [
                 'total_data' => Notification::where('user_id', $user->id)->count(),
                 'total_read' => Notification::Read()->where('user_id', $user->id)->count(),

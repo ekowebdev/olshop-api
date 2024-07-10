@@ -55,7 +55,7 @@ class TestNotificationController extends Controller
 
         $allNotifications = store_notification($input);
 
-        $results['details'] = $allNotifications->toArray();
+        $results['data'] = $allNotifications->toArray();
         $results['summary'] = [
             'total_data' => Notification::where('user_id', $user->id)->count(),
             'total_read' => Notification::Read()->where('user_id', $user->id)->count(),

@@ -84,8 +84,6 @@ class NotificationRepository extends BaseRepository
             throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => $this->repository_name], $locale));
         }
 
-        $result['total_unread'] = $data->count();
-
         return $result;
 	}
 }

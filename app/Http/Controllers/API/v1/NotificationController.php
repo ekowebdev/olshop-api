@@ -21,11 +21,7 @@ class NotificationController extends BaseController
 
     public function index($locale)
     {
-        $data = $this->service->getIndexData($locale, Request::all());
-        $totalUnread = Notification::Unread()->count();
-        return (NotificationResource::collection($data))->additional([
-                    'total_unread' => $totalUnread
-                ]);
+        return $this->service->getIndexData($locale, Request::all());
     }
 
     public function show($locale, $id)
@@ -36,11 +32,7 @@ class NotificationController extends BaseController
 
     public function showByUser($locale, $id)
     {
-        $data = $this->service->getDataByUser($locale, $id);
-        $totalUnread = Notification::Unread()->where('user_id', intval($id))->count();
-        return (NotificationResource::collection($data))->additional([
-                    'total_unread' => $totalUnread
-                ]);
+        return $this->service->getDataByUser($locale, $id);
     }
 
     public function store($locale)
