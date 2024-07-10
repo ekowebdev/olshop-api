@@ -9,7 +9,7 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\TestNotificationController;
 
 Route::get('/', function(){
-    return 'Baktiweb Olshop API version 1';
+    return 'Olshop API version 1';
     // return redirect('https://baktiweb.my.id');
 });
 

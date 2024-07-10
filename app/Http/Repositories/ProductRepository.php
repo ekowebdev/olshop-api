@@ -5,10 +5,12 @@ namespace App\Http\Repositories;
 use Illuminate\Support\Arr;
 use App\Http\Models\Product;
 use App\Http\Models\SearchLog;
+use Illuminate\Support\Benchmark;
+use Illuminate\Support\Facades\Cache;
 use App\Exceptions\DataEmptyException;
 use Illuminate\Support\Facades\Request;
 
-class ProductRepository extends BaseRepository 
+class ProductRepository extends BaseRepository
 {
     private $repository_name = 'Product';
     private $model;
@@ -23,15 +25,21 @@ class ProductRepository extends BaseRepository
         $this->validate(Request::all(), [
             'per_page' => ['numeric']
         ]);
-        $result = $this->model
+
+        $result = Cache::remember('cache_products', 30, function() use ($sortable_and_searchable_column) {
+            return $this->model
                     ->getAll()
                     ->setSortableAndSearchableColumn($sortable_and_searchable_column)
                     ->search()
                     ->sort()
                     ->orderByDesc('id')
                     ->paginate(Arr::get(Request::all(), 'per_page', 15));
+        });
+
         $result->sortableAndSearchableColumn = $sortable_and_searchable_column;
+
         if($result->total() == 0) throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => $this->repository_name], $locale));
+
         return $result;
     }
 
@@ -42,17 +50,17 @@ class ProductRepository extends BaseRepository
                   ->where($this->model->KeyPrimaryTable, $id)
                   ->first();
 		if($result === null) throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => $this->repository_name], $locale));
-        return $result;	
+        return $result;
 	}
 
     public function getSingleDataBySlug($locale, $slug)
 	{
 		$result = $this->model
                   ->getAll()
-                  ->where('slug', $slug)	
+                  ->where('slug', $slug)
                   ->first();
 		if($result === null) throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => $this->repository_name], $locale));
-        return $result;	
+        return $result;
 	}
 
     public function getSingleDataByCategory($locale, array $sortable_and_searchable_column, $category)
@@ -92,7 +100,7 @@ class ProductRepository extends BaseRepository
                 ->paginate(Arr::get(Request::all(), 'per_page', 15));
         $result->sortableAndSearchableColumn = $sortable_and_searchable_column;
         if($result->total() == 0) throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => $this->repository_name], $locale));
-        return $result;	
+        return $result;
 	}
 
     public function getDataByUserRecomendation($locale, array $sortable_and_searchable_column)
@@ -140,7 +148,7 @@ class ProductRepository extends BaseRepository
         if(count($products) == 0){
             throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => $this->repository_name], $locale));
         }
-        
+
         $result = $this->model
                     ->getAll()
                     ->where(function ($query) use ($products) {
@@ -156,6 +164,6 @@ class ProductRepository extends BaseRepository
                     ->paginate(Arr::get(Request::all(), 'per_page', 15));
         $result->sortableAndSearchableColumn = $sortable_and_searchable_column;
         if($result->total() == 0) throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => $this->repository_name], $locale));
-        return $result;	
+        return $result;
 	}
 }
