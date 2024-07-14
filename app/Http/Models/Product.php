@@ -10,8 +10,9 @@ use App\Http\Models\Category;
 use App\Http\Models\Wishlist;
 use App\Http\Models\BaseModel;
 use App\Http\Models\ProductImage;
-use Illuminate\Support\Facades\DB;
 use App\Http\Models\OrderProduct;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Product extends BaseModel

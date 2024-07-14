@@ -6,7 +6,6 @@ use Illuminate\Support\Arr;
 use App\Http\Models\Product;
 use App\Http\Models\SearchLog;
 use Illuminate\Support\Benchmark;
-use Illuminate\Support\Facades\Cache;
 use App\Exceptions\DataEmptyException;
 use Illuminate\Support\Facades\Request;
 
@@ -26,17 +25,13 @@ class ProductRepository extends BaseRepository
             'per_page' => ['numeric']
         ]);
 
-        $seconds = 600;
-
-        $result = Cache::remember('cache_products', $seconds, function() use ($sortable_and_searchable_column) {
-            return $this->model
-                    ->getAll()
-                    ->setSortableAndSearchableColumn($sortable_and_searchable_column)
-                    ->search()
-                    ->sort()
-                    ->orderByDesc('id')
-                    ->paginate(Arr::get(Request::all(), 'per_page', 15));
-        });
+        $result = $this->model
+                ->getAll()
+                ->setSortableAndSearchableColumn($sortable_and_searchable_column)
+                ->search()
+                ->sort()
+                ->orderByDesc('id')
+                ->paginate(Arr::get(Request::all(), 'per_page', 15));
 
         $result->sortableAndSearchableColumn = $sortable_and_searchable_column;
 

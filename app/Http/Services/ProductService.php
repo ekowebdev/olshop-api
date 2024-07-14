@@ -7,6 +7,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use App\Http\Models\Product;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Repositories\ProductRepository;
 
@@ -55,7 +56,11 @@ class ProductService extends BaseService
             'sort_column'   => array_merge($search, $search_column),
         ];
 
-        return $this->repository->getIndexData($locale, $sortable_and_searchable_column);
+        $result = Cache::remember('products_all', now()->addMinutes(60), function() use ($locale, $sortable_and_searchable_column) {
+            return $this->repository->getIndexData($locale, $sortable_and_searchable_column);
+        });
+
+        return $result;
     }
 
     public function getSingleData($locale, $id)
