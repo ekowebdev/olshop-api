@@ -2,14 +2,17 @@
 
 namespace App\Http\Services;
 
-use Image;
 use App\Http\Models\Review;
 use Illuminate\Support\Arr;
+use App\Http\Models\Product;
 use App\Http\Models\ReviewFile;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Storage;
+use App\Exceptions\ApplicationException;
 use App\Http\Repositories\OrderRepository;
 use App\Http\Repositories\ReviewRepository;
+use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 
 class ReviewService extends BaseService
 {
@@ -93,7 +96,7 @@ class ReviewService extends BaseService
                 'file.*' => [
                     'nullable',
                     'max:10000',
-                    'mimes:jpg,png,mp4,mov',
+                    'mimes:jpg,png',
                 ],
             ]
         );
@@ -118,13 +121,12 @@ class ReviewService extends BaseService
             'date' => date('Y-m-d'),
         ]);
 
-        if(isset($data_request['file'])){
-            foreach ($data_request['file'] as $file) {
-                $file_name = time() . '.' . $file->getClientOriginalExtension();
-                Storage::disk('google')->put('files/reviews/' . $file_name, file_get_contents($file));
+        if(is_array(Request::file('file'))){
+            foreach (Request::file('file') as $file) {
+                $fileName = uploadImagesToCloudinary($file, 'reviews');
                 ReviewFile::create([
                     'review_id' => $result->id,
-                    'file' => $file_name,
+                    'file' => $fileName,
                 ]);
             }
         }
@@ -207,11 +209,10 @@ class ReviewService extends BaseService
 
             if(isset($data_request['file'])){
                 foreach ($data_request['file'][$i] as $file) {
-                    $file_name = time() . '.' . $file->getClientOriginalExtension();
-                    Storage::disk('google')->put('files/reviews/' . $file_name, file_get_contents($file));
+                    $fileName = uploadImagesToCloudinary($file, 'reviews');
                     ReviewFile::create([
                         'review_id' => $result->id,
-                        'file' => $file_name,
+                        'file' => $fileName,
                     ]);
                 }
             }
@@ -240,19 +241,18 @@ class ReviewService extends BaseService
         ]);
 
         $this->repository->validate($data_request, [
-                'text' => [
-                    'string'
-                ],
-                'rating' => [
-                    'numeric',
-                    'between:0.5,5'
-                ],
-                'file' => [
-                    'nullable',
-                    'array',
-                ],
-            ]
-        );
+            'text' => [
+                'string'
+            ],
+            'rating' => [
+                'numeric',
+                'between:0.5,5'
+            ],
+            'file' => [
+                'nullable',
+                'array',
+            ],
+        ]);
 
         DB::beginTransaction();
 
@@ -271,7 +271,10 @@ class ReviewService extends BaseService
         DB::beginTransaction();
 
         foreach($check_data->review_files as $file) {
-            if(Storage::disk('google')->exists('files/reviews/' . $file->file)) Storage::disk('google')->delete('files/reviews/' . $file->file);
+            $folder = config('services.cloudinary.folder');
+            $previousPublicId = explode('.', $file->file)[0];
+            Cloudinary::destroy("$folder/images/reviews/$previousPublicId");
+            Cloudinary::destroy("$folder/images/reviews/thumbnails/$previousPublicId");
         }
 
         $result = $check_data->delete();

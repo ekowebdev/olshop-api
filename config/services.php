@@ -55,5 +55,18 @@ return [
 
     'binderbyte' => [
         'key' => env('BINDERBYTE_API_KEY')
-    ]
+    ],
+
+    'meilisearch' => [
+        'host' => env('MEILISEARCH_HOST', 'http://127.0.0.1:7700'),
+        'key' => env('MEILISEARCH_KEY', null),
+    ],
+
+    'cloudinary' => [
+        'key' => env('CLOUDINARY_API_KEY'),
+        'secret' => env('CLOUDINARY_API_SECRET'),
+        'url' => env('CLOUDINARY_URL'),
+        'path_url' => env('CLOUDINARY_PATH_URL'),
+        'folder' => env('CLOUDINARY_FOLDER'),
+    ],
 ];

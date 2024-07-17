@@ -18,16 +18,20 @@ class Slider extends BaseModel
     public function getImageUrlAttribute()
     {
         if ($this->image != null) {
-            $url = Storage::disk('google')->url('images/slider/' . $this->image);
+            $image = explode('.', $this->image)[0];
+            $url = config('services.cloudinary.path_url') . '/' . config('services.cloudinary.folder') . '/images/sliders/' . $image;
         }
+
         return $url ?? null;
     }
 
     public function getImageThumbnailUrlAttribute()
     {
         if ($this->image != null) {
-            $url = Storage::disk('google')->url('images/slider/thumbnails/' . $this->image);
+            $image = explode('.', $this->image)[0];
+            $url = config('services.cloudinary.path_url') . '/' . config('services.cloudinary.folder') . '/images/sliders/thumbnails/' . $image;
         }
+
         return $url ?? null;
     }
 

@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers\API\v1;
 
+use App\Http\Models\Product;
 use App\Http\Services\ProductService;
 use App\Http\Resources\DeletedResource;
+use App\Http\Resources\ProductResource;
 use Illuminate\Support\Facades\Request;
 use App\Http\Controllers\BaseController;
-use App\Http\Resources\ProductResource;
 
 class ProductController extends BaseController
 {
@@ -64,6 +65,12 @@ class ProductController extends BaseController
                 ->additional([
                     'sortable_and_searchable_column' => $data->sortableAndSearchableColumn,
                 ]);
+    }
+
+    public function search($locale)
+    {
+        $data = $this->service->search($locale);
+        return ProductResource::collection($data);
     }
 
     public function store($locale)

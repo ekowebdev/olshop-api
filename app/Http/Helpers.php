@@ -5,8 +5,10 @@ use App\Http\Models\Review;
 use App\Http\Models\Notification;
 use Illuminate\Support\Collection;
 use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Facades\File;
 use App\Http\Resources\NotificationResource;
 use Illuminate\Pagination\LengthAwarePaginator;
+use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 
 function rounded_rating($rating)
 {
@@ -165,4 +167,24 @@ function is_reviewed($productId, $orderId)
         ->where('order_id', $orderId)
         ->get();
     return (count($reviews) > 0) ? 1 : 0;
+}
+
+function uploadImagesToCloudinary($file, $folder)
+{
+    $customName = time();
+
+    $cloudinaryImage = Cloudinary::upload($file->getRealPath(), ['folder' => config('services.cloudinary.folder') . '/images/'. $folder, 'public_id' => $customName]);
+    $publicImageId = $cloudinaryImage->getPublicId();
+
+    $image = Image::make($file);
+    $imgThumb = $image->crop(5, 5);
+
+    $tempFilePath = tempnam(sys_get_temp_dir(), 'thumbnail') . '.jpg';
+    $imgThumb->save($tempFilePath);
+
+    $cloudinaryThumb = Cloudinary::upload($tempFilePath, ['folder' => config('services.cloudinary.folder') . '/images/'. $folder .'/thumbnails', 'public_id' => $customName . '_thumb']);
+
+    File::delete($tempFilePath);
+
+    return $customName . '.' . strtolower($file->getClientOriginalExtension());
 }

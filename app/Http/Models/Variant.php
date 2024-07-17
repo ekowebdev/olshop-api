@@ -4,14 +4,15 @@ namespace App\Http\Models;
 
 use App\Http\Models\Cart;
 use App\Http\Models\Product;
+use Laravel\Scout\Searchable;
 use App\Http\Models\BaseModel;
-use App\Http\Models\ProductImage;
 use App\Http\Models\OrderProduct;
+use App\Http\Models\ProductImage;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Variant extends BaseModel
 {
-    use HasFactory;
+    use HasFactory, Searchable;
 
     protected $connection = 'mysql';
     protected $table = 'variants';

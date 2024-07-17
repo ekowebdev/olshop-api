@@ -3,13 +3,14 @@
 namespace App\Http\Models;
 
 use App\Http\Models\Product;
+use Laravel\Scout\Searchable;
 use App\Http\Models\BaseModel;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Category extends BaseModel
 {
-    use HasFactory;
+    use HasFactory, Searchable;
 
     protected $connection = 'mysql';
     protected $table = 'categories';
@@ -19,16 +20,20 @@ class Category extends BaseModel
     public function getImageUrlAttribute()
     {
         if ($this->image != null) {
-            $url = Storage::disk('google')->url('images/category/' . $this->image);
+            $image = explode('.', $this->image)[0];
+            $url = config('services.cloudinary.path_url') . '/' . config('services.cloudinary.folder') . '/images/categories/' . $image;
         }
+
         return $url ?? null;
     }
 
     public function getImageThumbnailUrlAttribute()
     {
-        if ($this->image != null) {
-            $url = Storage::disk('google')->url('images/category/thumbnails/' . $this->image);
+        if ($this->image) {
+            $image = explode('.', $this->image)[0];
+            $url = config('services.cloudinary.path_url') . '/' . config('services.cloudinary.folder') . '/images/categories/thumbnails/' . $image . '_thumb';
         }
+
         return $url ?? null;
     }
 
@@ -48,6 +53,17 @@ class Category extends BaseModel
                     'status',
                     'image',
                 ]);
+    }
+
+    public function toSearchableArray()
+    {
+        $data = [
+            'code' => $this->code,
+            'name' => $this->name,
+            'slug' => $this->slug,
+        ];
+
+        return $data;
     }
 }
 

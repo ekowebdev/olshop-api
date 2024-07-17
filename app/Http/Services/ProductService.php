@@ -7,9 +7,11 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use App\Http\Models\Product;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Repositories\ProductRepository;
+use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 
 class ProductService extends BaseService
 {
@@ -187,6 +189,11 @@ class ProductService extends BaseService
         return $this->repository->getDataByUserRecomendation($locale, $sortable_and_searchable_column);
     }
 
+    public function search($locale)
+    {
+        return $this->repository->search($locale);
+    }
+
     public function store($locale, $data)
     {
         $data_request = Arr::only($data, [
@@ -264,13 +271,8 @@ class ProductService extends BaseService
         $data_request['spesification'] = (isset($data_request['spesification'])) ? json_encode($data_request['spesification']) : null;
         $result = $this->model->create($data_request);
         foreach ($data_request['images'] as $image) {
-            $image_name = time() . '.' . $image->getClientOriginalExtension();
-            Storage::disk('google')->put('images/' . $image_name, file_get_contents($image));
-            $img = Image::make($image);
-            $img_thumb = $img->crop(5, 5);
-            $img_thumb = $img_thumb->stream()->detach();
-            Storage::disk('google')->put('images/thumbnails/' . $image_name, $img_thumb);
-            $result->product_images()->create(['image' => $image_name]);
+            $imageName = uploadImagesToCloudinary($image, 'products');
+            $result->product_images()->create(['image' => $imageName]);
         }
 
         DB::commit();
@@ -363,9 +365,11 @@ class ProductService extends BaseService
         $check_data = $this->repository->getSingleData($locale, $id);
 
         DB::beginTransaction();
-        foreach($check_data->images as $image) {
-            if(Storage::disk('google')->exists('images/' . $image->image)) Storage::disk('google')->delete('images/' . $image->image);
-            if(Storage::disk('google')->exists('images/' . 'thumbnails/' . $image->image)) Storage::disk('google')->delete('images/' . 'thumbnails/' . $image->image);
+        foreach($check_data->product_images as $image) {
+            $folder = config('services.cloudinary.folder');
+            $previousPublicId = explode('.', $image->image)[0];
+            Cloudinary::destroy("$folder/images/products/$previousPublicId");
+            Cloudinary::destroy("$folder/images/products/thumbnails/{$previousPublicId}_thumb");
         }
         $result = $check_data->delete();
         DB::commit();

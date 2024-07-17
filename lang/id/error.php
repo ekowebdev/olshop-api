@@ -9,7 +9,7 @@ return [
     "refresh_token_is_invalid" 					  => "Refresh token tidak valid: :error",
 	"out_of_stock"								  => "Stok tidak tersedia",
 	"variant_out_of_stock"						  => "Stok tidak tersedia, product :product_name dengan varian :variant_name",
-	"already_reviews"							  => "Anda sudah memberi review pada order code: :order_code & product :product_name",
+	"already_reviews"							  => "Anda sudah memberi review pada order code: :order_code, product: :product_name",
 	"already_verification"						  => "Email sudah diverifikasi",
 	"failed_verifcation_email"					  => "Gagal verifikasi email",
 	"failed_send_reset_password_link"             => "Gagal kirim link reset password",

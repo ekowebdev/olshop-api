@@ -163,4 +163,20 @@ class ProductRepository extends BaseRepository
         if($result->total() == 0) throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => $this->repository_name], $locale));
         return $result;
 	}
+
+    public function search($locale)
+	{
+        $this->validate(Request::all(), [
+            'search' => ['string'],
+            'per_page' => ['numeric'],
+        ]);
+
+        $result = $this->model
+                    ->search(Request::get('search'))
+                    ->get();
+
+        if(!$result) throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => $this->repository_name], $locale));
+
+        return $result;
+	}
 }

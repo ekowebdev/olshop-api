@@ -2,22 +2,26 @@
 
 namespace App\Http\Models;
 
+use stdClass;
+use Carbon\Carbon;
+use Meilisearch\Client;
 use App\Http\Models\Cart;
 use App\Http\Models\Brand;
 use App\Http\Models\Review;
 use App\Http\Models\Variant;
 use App\Http\Models\Category;
 use App\Http\Models\Wishlist;
+use Laravel\Scout\Searchable;
 use App\Http\Models\BaseModel;
-use App\Http\Models\ProductImage;
 use App\Http\Models\OrderProduct;
+use App\Http\Models\ProductImage;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Product extends BaseModel
 {
-    use HasFactory;
+    use HasFactory, Searchable;
 
     protected $connection = 'mysql';
     protected $primaryKey = 'id';
@@ -129,5 +133,28 @@ class Product extends BaseModel
                 ])
                 ->where('status', 'A')
                 ->from(DB::raw('products FORCE INDEX (index_products)'));
+    }
+
+    public function toSearchableArray()
+    {
+        $data = [
+            'code' => $this->code,
+            'name' => $this->name,
+            'slug' => $this->slug,
+            'description' => $this->description,
+            'spesification' => $this->spesification ? json_decode($this->spesification) : (object)[],
+            'category' => $this->categories ? [
+                'name' => $this->categories->name,
+                'slug' => $this->categories->slug,
+            ] : null,
+            'brand' => $this->brands ? [
+                'name' => $this->brands->name,
+                'slug' => $this->brands->slug,
+            ] : null,
+            'point' => (double) $this->point,
+            'weight' => (float) $this->weight,
+        ];
+
+        return $data;
     }
 }

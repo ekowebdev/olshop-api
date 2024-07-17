@@ -2,13 +2,14 @@
 
 namespace App\Http\Services;
 
-use Image;
 use App\Http\Models\Brand;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Repositories\BrandRepository;
+use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 
 class BrandService extends BaseService
 {
@@ -63,40 +64,36 @@ class BrandService extends BaseService
         ]);
 
         $this->repository->validate($data_request, [
-                'name' => [
-                    'required',
-                    'unique:brands,name',
-                ],
-                'sort' => [
-                    'required',
-                    'integer',
-                    'unique:brands,sort',
-                ],
-                'logo' => [
-                    'required',
-                    'max:1000',
-                    'image',
-                    'mimes:jpg,png',
-                ],
-            ]
-        );
+            'name' => [
+                'required',
+                'unique:brands,name',
+            ],
+            'sort' => [
+                'required',
+                'integer',
+                'unique:brands,sort',
+            ],
+            'logo' => [
+                'required',
+                'max:1000',
+                'image',
+                'mimes:jpg,png',
+            ],
+        ]);
 
         DB::beginTransaction();
 
+        $file = Request::file('logo');
+
+        $imageName = uploadImagesToCloudinary($file, 'brands');
+
         $data_request['slug'] = Str::slug($data_request['name']);
-        $image = $data_request['logo'];
-        $image_name = time() . '.' . $image->getClientOriginalExtension();
-        Storage::disk('google')->put('images/brand/' . $image_name, file_get_contents($image));
-        $img = Image::make($image);
-        $img_thumb = $img->crop(5, 5);
-        $img_thumb = $img_thumb->stream()->detach();
-        Storage::disk('google')->put('images/brand/thumbnails/' . $image_name, $img_thumb);
 
         $result = $this->model->create([
             'name' => $data_request['name'],
             'slug' => $data_request['slug'],
             'sort' => $data_request['sort'],
-            'logo' => $image_name,
+            'logo' => $imageName,
         ]);
 
         DB::commit();
@@ -131,16 +128,18 @@ class BrandService extends BaseService
 
         DB::beginTransaction();
         if (isset($data_request['logo'])) {
-            if(Storage::disk('google')->exists('images/brand/' . $check_data->logo)) Storage::disk('google')->delete('images/brand/' . $check_data->logo);
-            if(Storage::disk('google')->exists('images/brand/thumbnails/' . $check_data->logo)) Storage::disk('google')->delete('images/brand/thumbnails/' . $check_data->logo);
-            $image = $data_request['logo'];
-            $image_name = time() . '.' . $image->getClientOriginalExtension();
-            Storage::disk('google')->put('images/brand/' . $image_name, file_get_contents($image));
-            $img = Image::make($image);
-            $img_thumb = $img->crop(5, 5);
-            $img_thumb = $img_thumb->stream()->detach();
-            Storage::disk('google')->put('images/brand/thumbnails/' . $image_name, $img_thumb);
-            $check_data->logo = $image_name;
+            $file = Request::file('logo');
+
+            if ($check_data->logo) {
+                $folder = config('services.cloudinary.folder');
+                $previousPublicId = explode('.', $check_data->logo)[0];
+                Cloudinary::destroy("$folder/images/brands/$previousPublicId");
+                Cloudinary::destroy("$folder/images/brands/thumbnails/{$previousPublicId}_thumb");
+            }
+
+            $imageName = uploadImagesToCloudinary($file, 'brands');
+
+            $check_data->logo = $imageName;
         }
         $data_request['slug'] = Str::slug($data_request['name'] ?? $check_data->name);
         $check_data->name = $data_request['name'] ?? $check_data->name;
@@ -155,8 +154,14 @@ class BrandService extends BaseService
     public function delete($locale, $id)
     {
         $check_data = $this->repository->getSingleData($locale, $id);
+
         DB::beginTransaction();
-        if(Storage::disk('google')->exists('images/brand/' . $check_data->logo)) Storage::disk('google')->delete('images/brand/' . $check_data->logo);
+        $folder = config('services.cloudinary.folder');
+        $previousPublicId = explode('.', $check_data->logo)[0];
+
+        Cloudinary::destroy("$folder/images/brands/$previousPublicId");
+        Cloudinary::destroy("$folder/images/brands/thumbnails/{$previousPublicId}_thumb");
+
         $result = $check_data->delete();
         DB::commit();
 

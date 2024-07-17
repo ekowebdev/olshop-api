@@ -19,16 +19,20 @@ class Profile extends BaseModel
     public function getAvatarUrlAttribute()
     {
         if ($this->avatar != null) {
-            $url = Storage::disk('google')->url('images/avatar/' . $this->avatar);
+            $image = explode('.', $this->avatar)[0];
+            $url = config('services.cloudinary.path_url') . '/' . config('services.cloudinary.folder') . '/images/profiles/' . $image;
         }
+
         return $url ?? null;
     }
 
     public function getAvatarThumbnailUrlAttribute()
     {
         if ($this->avatar != null) {
-            $url = Storage::disk('google')->url('images/avatar/thumbnails/' . $this->avatar);
+            $image = explode('.', $this->avatar)[0];
+            $url = config('services.cloudinary.path_url') . '/' . config('services.cloudinary.folder') . '/images/profiles/thumbnails/' . $image;
         }
+
         return $url ?? null;
     }
 

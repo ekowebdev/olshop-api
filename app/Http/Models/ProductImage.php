@@ -20,16 +20,20 @@ class ProductImage extends BaseModel
     public function getImageUrlAttribute()
     {
         if ($this->image != null) {
-            $url = Storage::disk('google')->url('images/' . $this->image);
+            $image = explode('.', $this->image)[0];
+            $url = config('services.cloudinary.path_url') . '/' . config('services.cloudinary.folder') . '/images/products/' . $image;
         }
+
         return $url ?? null;
     }
 
     public function getImageThumbnailUrlAttribute()
     {
-        if ($this->image != null) {
-            $url = Storage::disk('google')->url('images/thumbnails/' . $this->image);
+        if ($this->image) {
+            $image = explode('.', $this->image)[0];
+            $url = config('services.cloudinary.path_url') . '/' . config('services.cloudinary.folder') . '/images/products/thumbnails/' . $image . '_thumb';
         }
+
         return $url ?? null;
     }
 

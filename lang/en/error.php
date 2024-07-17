@@ -9,7 +9,7 @@ return [
 	"refresh_token_is_invalid" 					  => "Invalid Refresh token: :error",
 	"out_of_stock"								  => "Out of stock",
 	"variant_out_of_stock"						  => "Out of stock, product :product_name with variant :variant_name",
-	"already_reviews"							  => "You have already given a review on the order code: :order_code & product :product_name",
+	"already_reviews"							  => "You have already given a review on the order code: :order_code, product: :product_name",
 	"already_verification"						  => "Email alraedy verified",
 	"failed_verifcation_email"					  => "Failed verification email",
 	"failed_send_reset_password_link"             => "Failed send reset password link",

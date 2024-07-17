@@ -3,13 +3,14 @@
 namespace App\Http\Models;
 
 use App\Http\Models\Product;
+use Laravel\Scout\Searchable;
 use App\Http\Models\BaseModel;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Brand extends BaseModel
 {
-    use HasFactory;
+    use HasFactory, Searchable;
 
     protected $connection = 'mysql';
     protected $table = 'brands';
@@ -19,16 +20,20 @@ class Brand extends BaseModel
     public function getLogoUrlAttribute()
     {
         if ($this->logo != null) {
-            $url = Storage::disk('google')->url('images/brand/' . $this->logo);
+            $logo = explode('.', $this->logo)[0];
+            $url = config('services.cloudinary.path_url') . '/' . config('services.cloudinary.folder') . '/images/brands/' . $logo;
         }
+
         return $url ?? null;
     }
 
     public function getLogoThumbnailUrlAttribute()
     {
-        if ($this->logo != null) {
-            $url = Storage::disk('google')->url('images/brand/thumbnails/' . $this->logo);
+        if ($this->logo) {
+            $logo = explode('.', $this->logo)[0];
+            $url = config('services.cloudinary.path_url') . '/' . config('services.cloudinary.folder') . '/images/brands/thumbnails/' . $logo . '_thumb';
         }
+
         return $url ?? null;
     }
 
@@ -46,6 +51,16 @@ class Brand extends BaseModel
                     'sort',
                     'logo',
                 ]);
+    }
+
+    public function toSearchableArray()
+    {
+        $data = [
+            'name' => $this->name,
+            'slug' => $this->slug,
+        ];
+
+        return $data;
     }
 }
 

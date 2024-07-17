@@ -2,13 +2,14 @@
 
 namespace App\Http\Services;
 
-use Image;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use App\Http\Models\Category;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Repositories\CategoryRepository;
+use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 
 class CategoryService extends BaseService
 {
@@ -63,42 +64,38 @@ class CategoryService extends BaseService
         ]);
 
         $this->repository->validate($data_request, [
-                'name' => [
-                    'required',
-                    'unique:categories,name',
-                ],
-                'sort' => [
-                    'required',
-                    'integer',
-                    'unique:categories,sort',
-                ],
-                'image' => [
-                    'required',
-                    'max:1000',
-                    'image',
-                    'mimes:jpg,png',
-                ],
-            ]
-        );
+            'name' => [
+                'required',
+                'unique:categories,name',
+            ],
+            'sort' => [
+                'required',
+                'integer',
+                'unique:categories,sort',
+            ],
+            'image' => [
+                'required',
+                'max:1000',
+                'image',
+                'mimes:jpg,png',
+            ],
+        ]);
 
         DB::beginTransaction();
 
+        $file = Request::file('image');
+
+        $imageName = uploadImagesToCloudinary($file, 'categories');
+
         $data_request['code'] = (string) Str::uuid();
         $data_request['slug'] = Str::slug($data_request['name']);
-        $image = $data_request['image'];
-        $image_name = time() . '.' . $image->getClientOriginalExtension();
-        Storage::disk('google')->put('images/category/' . $image_name, file_get_contents($image));
-        $img = Image::make($image);
-        $img_thumb = $img->crop(5, 5);
-        $img_thumb = $img_thumb->stream()->detach();
-        Storage::disk('google')->put('images/category/thumbnails/' . $image_name, $img_thumb);
 
         $result = $this->model->create([
             'code' => $data_request['code'],
             'name' => $data_request['name'],
             'slug' => $data_request['slug'],
             'sort' => $data_request['sort'],
-            'image' => $image_name,
+            'image' => $imageName,
         ]);
         DB::commit();
 
@@ -133,18 +130,18 @@ class CategoryService extends BaseService
         DB::beginTransaction();
 
         if (isset($data_request['image'])) {
-            if(Storage::disk('google')->exists('images/category/' . $check_data->image)) Storage::disk('google')->delete('images/category/' . $check_data->image);
+            $file = Request::file('image');
 
-            if(Storage::disk('google')->exists('images/category/thumbnails/' . $check_data->image)) Storage::disk('google')->delete('images/category/thumbnails/' . $check_data->image);
+            if ($check_data->image) {
+                $folder = config('services.cloudinary.folder');
+                $previousPublicId = explode('.', $check_data->image)[0];
+                Cloudinary::destroy("$folder/images/categories/$previousPublicId");
+                Cloudinary::destroy("$folder/images/categories/thumbnails/{$previousPublicId}_thumb");
+            }
 
-            $image = $data_request['image'];
-            $image_name = time() . '.' . $image->getClientOriginalExtension();
-            Storage::disk('google')->put('images/category/' . $image_name, file_get_contents($image));
-            $img = Image::make($image);
-            $img_thumb = $img->crop(5, 5);
-            $img_thumb = $img_thumb->stream()->detach();
-            Storage::disk('google')->put('images/category/thumbnails/' . $image_name, $img_thumb);
-            $check_data->image = $image_name;
+            $imageName = uploadImagesToCloudinary($file, 'categories');
+
+            $check_data->image = $imageName;
         }
 
         $data_request['slug'] = Str::slug($data_request['name'] ?? $check_data->name);
@@ -164,10 +161,13 @@ class CategoryService extends BaseService
         $check_data = $this->repository->getSingleData($locale, $id);
 
         DB::beginTransaction();
+        $folder = config('services.cloudinary.folder');
+        $previousPublicId = explode('.', $check_data->image)[0];
 
-        if(Storage::disk('google')->exists('images/category/' . $check_data->image)) Storage::disk('google')->delete('images/category/' . $check_data->image);
+        Cloudinary::destroy("$folder/images/categories/$previousPublicId");
+        Cloudinary::destroy("$folder/images/categories/thumbnails/{$previousPublicId}_thumb");
+
         $result = $check_data->delete();
-
         DB::commit();
 
         return $result;

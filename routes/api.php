@@ -52,6 +52,8 @@ Route::middleware(['xssclean', 'throttle:api'])->group(function () {
                 });
                 // Product
                 Route::group(['prefix' => '/products'], function(){
+                    // Search Product
+                    Route::get('/search', '\App\Http\Controllers\API\v1\ProductController@search');
                     // Product Image
                     Route::post('/images', '\App\Http\Controllers\API\v1\ProductImageController@store');
                     Route::post('/images/{id}', '\App\Http\Controllers\API\v1\ProductImageController@update');
@@ -215,6 +217,8 @@ Route::middleware(['xssclean', 'throttle:api'])->group(function () {
         });
         // Product
         Route::group(['prefix' => '/products'], function(){
+            // Search Product
+            Route::get('/search', '\App\Http\Controllers\API\v1\ProductController@search');
             // Product Image
             Route::get('/images', '\App\Http\Controllers\API\v1\ProductImageController@index');
             Route::get('/images/{id}', '\App\Http\Controllers\API\v1\ProductImageController@show');

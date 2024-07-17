@@ -87,23 +87,16 @@ class ProfileService extends BaseService
 
         DB::beginTransaction();
 
-        if (isset($data_request['avatar'])) {
-            $image = $data_request['avatar'];
-            $image_name = time() . '.' . $image->getClientOriginalExtension();
-            Storage::disk('google')->put('images/avatar/' . $image_name, file_get_contents($image));
-            $img = Image::make($image);
-            $img_thumb = $img->crop(5, 5);
-            $img_thumb = $img_thumb->stream()->detach();
-            Storage::disk('google')->put('images/avatar/thumbnails/' . $image_name, $img_thumb);
-            $data_request['avatar'] = $image_name;
-        }
+        $file = Request::file('avatar');
+
+        $imageName = uploadImagesToCloudinary($file, 'profiles');
 
         $result = $this->model->create([
             'user_id' => $data_request['user_id'],
             'name' => $data_request['name'],
             'birthdate' => $data_request['birthdate'],
             'phone_number' => $data_request['phone_number'],
-            'avatar' => $data_request['avatar'] ?? null,
+            'avatar' => $imageName ?? null,
         ]);
 
         DB::commit();
@@ -147,19 +140,18 @@ class ProfileService extends BaseService
         DB::beginTransaction();
 
         if (isset($data_request['avatar'])) {
-            if(Storage::disk('google')->exists('images/avatar/' . $check_data->avatar)) Storage::disk('google')->delete('images/avatar/' . $check_data->avatar);
+            $file = Request::file('avatar');
 
-            if(Storage::disk('google')->exists('images/avatar/thumbnails/' . $check_data->avatar)) Storage::disk('google')->delete('images/avatar/thumbnails/' . $check_data->avatar);
+            if ($check_data->image) {
+                $folder = config('services.cloudinary.folder');
+                $previousPublicId = explode('.', $check_data->avatar)[0];
+                Cloudinary::destroy("$folder/images/profiles/$previousPublicId");
+                Cloudinary::destroy("$folder/images/profiles/thumbnails/{$previousPublicId}_thumb");
+            }
 
-            $image = $data_request['avatar'];
-            $image_name = time() . '.' . $image->getClientOriginalExtension();
-            Storage::disk('google')->put('images/avatar/' . $image_name, file_get_contents($image));
-            $img = Image::make($image);
-            $img_thumb = $img->crop(5, 5);
-            $img_thumb = $img_thumb->stream()->detach();
-            Storage::disk('google')->put('images/avatar/thumbnails/' . $image_name, $img_thumb);
+            $imageName = uploadImagesToCloudinary($file, 'profiles');
 
-            $check_data->avatar = $image_name;
+            $check_data->avatar = $imageName;
         }
 
         $check_data->user_id = $data_request['user_id'] ?? $check_data->user_id;
@@ -178,11 +170,13 @@ class ProfileService extends BaseService
         $check_data = $this->repository->getSingleData($locale, $id);
 
         DB::beginTransaction();
+        $folder = config('services.cloudinary.folder');
+        $previousPublicId = explode('.', $check_data->avatar)[0];
 
-        if(Storage::disk('google')->exists('images/avatar/' . $check_data->avatar)) Storage::disk('google')->delete('images/avatar/' . $check_data->avatar);
+        Cloudinary::destroy("$folder/images/profiles/$previousPublicId");
+        Cloudinary::destroy("$folder/images/profiles/thumbnails/{$previousPublicId}_thumb");
 
         $result = $check_data->delete();
-
         DB::commit();
 
         return $result;

@@ -14,13 +14,25 @@ class ReviewFile extends BaseModel
     protected $connection = 'mysql';
     protected $table = 'review_files';
     protected $fillable = ['review_id', 'file'];
-    protected $appends = ['file_url'];
+    protected $appends = ['file_url', 'file_thumbnail_url'];
 
     public function getFileUrlAttribute()
     {
         if ($this->file != null) {
-            $url = Storage::disk('google')->url('files/review/' . $this->file);
+            $file = explode('.', $this->file)[0];
+            $url = config('services.cloudinary.path_url') . '/' . config('services.cloudinary.folder') . '/images/reviews/' . $file;
         }
+
+        return $url ?? null;
+    }
+
+    public function getFileThumbnailUrlAttribute()
+    {
+        if ($this->file != null) {
+            $file = explode('.', $this->file)[0];
+            $url = config('services.cloudinary.path_url') . '/' . config('services.cloudinary.folder') . '/images/reviews/thumbnails/' . $file;
+        }
+
         return $url ?? null;
     }
 
