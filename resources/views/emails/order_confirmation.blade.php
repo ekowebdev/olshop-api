@@ -27,7 +27,7 @@
             <td bgcolor="#2B00C8" height="120px"></td>
             <td bgcolor="#2B00C8" height="120px">
               <div style="color:#FAFAFA; font-family: poppines; display: flex; align-items: center; justify-content: center; filter: brightness(0) invert(1); gap: 5px;">
-                <img src="https://bakti-shop.s3.ap-southeast-1.amazonaws.com/images/logo/logo.png" style="width: 60px; height: 60px;" />
+                <img src="{{ config('services.cloudinary.path_url') }}/{{ config('services.cloudinary.folder') }}/images/logo_baktiweb" style="width: 60px; height: 60px;" />
                 <span style="font-size: 24px;">
                   Shop
                 </span>
