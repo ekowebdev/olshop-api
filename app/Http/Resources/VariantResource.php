@@ -23,9 +23,9 @@ class VariantResource extends JsonResource
                 'description' => $this->products->description,
                 'spesification' => json_decode($this->products->spesification) ?? [],
                 'point' => $this->products->point ?? 0,
-                'fpoint' => format_product_point($this->products),
+                'fpoint' => formatProductPoint($this->products),
                 'weight' => $this->products->weight ?? 0,
-                'fweight' => format_product_weight($this->products),
+                'fweight' => formatProductWeight($this->products),
                 'quantity' => $this->products->quantity ?? 0,
                 'status' => $this->products->status,
                 'product_images' => $this->products->product_images->map(function ($image) {
@@ -43,7 +43,7 @@ class VariantResource extends JsonResource
                         'slug' => $variant->slug,
                         'quantity' => $variant->quantity,
                         'point' => $variant->point,
-                        'fpoint' => format_money((string) $variant->point),
+                        'fpoint' => formatMoney((string) $variant->point),
                         'weight' => $variant->weight,
                         'fweight' => $variant->weight . ' Gram',
                         'variant_images' => ($variant->product_images) ? [
@@ -84,7 +84,7 @@ class VariantResource extends JsonResource
             ],
             'quantity' => $this->quantity,
             'point' => $this->point,
-            'fpoint' => format_money((string) $this->point),
+            'fpoint' => formatMoney((string) $this->point),
             'weight' => $this->weight,
             'fweight' => $this->weight . ' Gram',
             'variant_images' => ($this->product_images) ? [

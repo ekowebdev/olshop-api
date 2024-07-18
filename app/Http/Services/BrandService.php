@@ -131,10 +131,7 @@ class BrandService extends BaseService
             $file = Request::file('logo');
 
             if ($check_data->logo) {
-                $folder = config('services.cloudinary.folder');
-                $previousPublicId = explode('.', $check_data->logo)[0];
-                Cloudinary::destroy("$folder/images/brands/$previousPublicId");
-                Cloudinary::destroy("$folder/images/brands/thumbnails/{$previousPublicId}_thumb");
+                deleteImagesFromCloudinary($check_data->logo, 'brands');
             }
 
             $imageName = uploadImagesToCloudinary($file, 'brands');
@@ -156,12 +153,7 @@ class BrandService extends BaseService
         $check_data = $this->repository->getSingleData($locale, $id);
 
         DB::beginTransaction();
-        $folder = config('services.cloudinary.folder');
-        $previousPublicId = explode('.', $check_data->logo)[0];
-
-        Cloudinary::destroy("$folder/images/brands/$previousPublicId");
-        Cloudinary::destroy("$folder/images/brands/thumbnails/{$previousPublicId}_thumb");
-
+        deleteImagesFromCloudinary($check_data->logo, 'brands');
         $result = $check_data->delete();
         DB::commit();
 

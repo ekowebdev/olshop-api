@@ -201,7 +201,7 @@ class AccessTokenController extends ApiAuthController
                 );
             });
 
-            if(!is_json($response->getContent())) throw new AuthenticationException($response->getContent());
+            if(!isJson($response->getContent())) throw new AuthenticationException($response->getContent());
 
             $data = json_decode($response->getContent(), true);
 

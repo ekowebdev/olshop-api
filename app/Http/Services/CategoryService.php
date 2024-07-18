@@ -133,10 +133,7 @@ class CategoryService extends BaseService
             $file = Request::file('image');
 
             if ($check_data->image) {
-                $folder = config('services.cloudinary.folder');
-                $previousPublicId = explode('.', $check_data->image)[0];
-                Cloudinary::destroy("$folder/images/categories/$previousPublicId");
-                Cloudinary::destroy("$folder/images/categories/thumbnails/{$previousPublicId}_thumb");
+                deleteImagesFromCloudinary($check_data->image, 'categories');
             }
 
             $imageName = uploadImagesToCloudinary($file, 'categories');
@@ -161,12 +158,7 @@ class CategoryService extends BaseService
         $check_data = $this->repository->getSingleData($locale, $id);
 
         DB::beginTransaction();
-        $folder = config('services.cloudinary.folder');
-        $previousPublicId = explode('.', $check_data->image)[0];
-
-        Cloudinary::destroy("$folder/images/categories/$previousPublicId");
-        Cloudinary::destroy("$folder/images/categories/thumbnails/{$previousPublicId}_thumb");
-
+        deleteImagesFromCloudinary($check_data->image, 'categories');
         $result = $check_data->delete();
         DB::commit();
 

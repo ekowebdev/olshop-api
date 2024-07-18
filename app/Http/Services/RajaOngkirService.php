@@ -66,8 +66,8 @@ class RajaOngkirService extends BaseService
 
         if($collection->isEmpty()) throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => 'Province'], $locale));
 
-        if(is_multidimensional_array($collection->toArray())) {
-            $response = response()->api(null, format_json($collection, $page, $per_page, ['path' => config('app.url') . '/api/v1/' . $locale . '/rajaongkir/provinces'])['data']);
+        if(isMultidimensionalArray($collection->toArray())) {
+            $response = response()->api(null, formatJson($collection, $page, $per_page, ['path' => config('app.url') . '/api/v1/' . $locale . '/rajaongkir/provinces'])['data']);
         } else {
             $response = response()->api(null, $collection);
         }
@@ -120,8 +120,8 @@ class RajaOngkirService extends BaseService
 
         if($collection->isEmpty()) throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => 'City'], $locale));
 
-        if(is_multidimensional_array($collection->toArray())) {
-            $response = response()->api(format_json($collection, $page, $per_page, ['path' => config('app.url') . '/api/v1/' . $locale . '/rajaongkir/get-city'])['data']);
+        if(isMultidimensionalArray($collection->toArray())) {
+            $response = response()->api(formatJson($collection, $page, $per_page, ['path' => config('app.url') . '/api/v1/' . $locale . '/rajaongkir/get-city'])['data']);
         } else {
             $response = response()->api(null, $collection);
         }

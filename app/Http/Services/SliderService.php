@@ -93,41 +93,40 @@ class SliderService extends BaseService
         ]);
 
         $this->repository->validate($data_request, [
-                'title' => [
-                    'nullable',
-                    'string',
-                ],
-                'description' => [
-                    'nullable',
-                    'string',
-                ],
-                'link' => [
-                    'nullable',
-                    'string',
-                ],
-                'sort' => [
-                    'required',
-                    'integer',
-                    'unique:sliders,sort',
-                ],
-                'start_date' => [
-                    'required',
-                    'date'
-                ],
-                'end_date' => [
-                    'required',
-                    'date',
-                    'after:start_date'
-                ],
-                'image' => [
-                    'required',
-                    'max:1000',
-                    'image',
-                    'mimes:jpg,png',
-                    'dimensions:width=100,height=100'
-                ],
-            ]
-        );
+            'title' => [
+                'nullable',
+                'string',
+            ],
+            'description' => [
+                'nullable',
+                'string',
+            ],
+            'link' => [
+                'nullable',
+                'string',
+            ],
+            'sort' => [
+                'required',
+                'integer',
+                'unique:sliders,sort',
+            ],
+            'start_date' => [
+                'required',
+                'date'
+            ],
+            'end_date' => [
+                'required',
+                'date',
+                'after:start_date'
+            ],
+            'image' => [
+                'required',
+                'max:1000',
+                'image',
+                'mimes:jpg,png',
+                'dimensions:width=100,height=100'
+            ],
+        ]);
 
         DB::beginTransaction();
 
@@ -189,10 +188,7 @@ class SliderService extends BaseService
             $file = Request::file('image');
 
             if ($check_data->image) {
-                $folder = config('services.cloudinary.folder');
-                $previousPublicId = explode('.', $check_data->image)[0];
-                Cloudinary::destroy("$folder/images/sliders/$previousPublicId");
-                Cloudinary::destroy("$folder/images/sliders/thumbnails/{$previousPublicId}_thumb");
+                deleteImagesFromCloudinary($check_data->image, 'sliders');
             }
 
             $imageName = uploadImagesToCloudinary($file, 'sliders');
@@ -218,12 +214,7 @@ class SliderService extends BaseService
         $check_data = $this->repository->getSingleData($locale, $id);
 
         DB::beginTransaction();
-        $folder = config('services.cloudinary.folder');
-        $previousPublicId = explode('.', $check_data->image)[0];
-
-        Cloudinary::destroy("$folder/images/sliders/$previousPublicId");
-        Cloudinary::destroy("$folder/images/sliders/thumbnails/{$previousPublicId}_thumb");
-
+        deleteImagesFromCloudinary($check_data->image, 'sliders');
         $result = $check_data->delete();
         DB::commit();
 

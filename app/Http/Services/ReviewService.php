@@ -73,33 +73,32 @@ class ReviewService extends BaseService
         ]);
 
         $this->repository->validate($data_request, [
-                'order_id' => [
-                    'required',
-                    'exists:orders,id',
-                ],
-                'product_id' => [
-                    'required',
-                    'exists:products,id',
-                ],
-                'text' => [
-                    'required'
-                ],
-                'rating' => [
-                    'required',
-                    'numeric',
-                    'between:0.5,5'
-                ],
-                'file' => [
-                    'nullable',
-                    'array',
-                ],
-                'file.*' => [
-                    'nullable',
-                    'max:10000',
-                    'mimes:jpg,png',
-                ],
-            ]
-        );
+            'order_id' => [
+                'required',
+                'exists:orders,id',
+            ],
+            'product_id' => [
+                'required',
+                'exists:products,id',
+            ],
+            'text' => [
+                'required'
+            ],
+            'rating' => [
+                'required',
+                'numeric',
+                'between:0.5,5'
+            ],
+            'file' => [
+                'nullable',
+                'array',
+            ],
+            'file.*' => [
+                'nullable',
+                'max:10000',
+                'mimes:jpg,png',
+            ],
+        ]);
 
         DB::beginTransaction();
 
@@ -117,7 +116,7 @@ class ReviewService extends BaseService
             'order_id' => $data_request['order_id'],
             'product_id' => $data_request['product_id'],
             'text' => $data_request['text'],
-            'rating' => rounded_rating($data_request['rating']),
+            'rating' => roundedRating($data_request['rating']),
             'date' => date('Y-m-d'),
         ]);
 
@@ -203,7 +202,7 @@ class ReviewService extends BaseService
                 'order_id' => $data_request['order_id'][$i],
                 'product_id' => $data_request['product_id'][$i],
                 'text' => $data_request['text'][$i],
-                'rating' => rounded_rating($data_request['rating'][$i]),
+                'rating' => roundedRating($data_request['rating'][$i]),
                 'date' => date('Y-m-d'),
             ]);
 
@@ -256,7 +255,7 @@ class ReviewService extends BaseService
 
         DB::beginTransaction();
 
-        $data_request['rating'] = rounded_rating($data_request['rating']);
+        $data_request['rating'] = roundedRating($data_request['rating']);
         $check_data->update($data_request);
 
         DB::commit();
@@ -271,10 +270,7 @@ class ReviewService extends BaseService
         DB::beginTransaction();
 
         foreach($check_data->review_files as $file) {
-            $folder = config('services.cloudinary.folder');
-            $previousPublicId = explode('.', $file->file)[0];
-            Cloudinary::destroy("$folder/images/reviews/$previousPublicId");
-            Cloudinary::destroy("$folder/images/reviews/thumbnails/$previousPublicId");
+            deleteImagesFromCloudinary($file->file, 'reviews');
         }
 
         $result = $check_data->delete();

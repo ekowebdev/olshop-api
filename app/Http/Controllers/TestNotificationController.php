@@ -53,7 +53,7 @@ class TestNotificationController extends Controller
             'status_read' => 0,
         ];
 
-        $allNotifications = store_notification($input);
+        $allNotifications = storeNotification($input);
 
         $results['data'] = $allNotifications->toArray();
         $results['summary'] = [

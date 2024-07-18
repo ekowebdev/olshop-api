@@ -18,7 +18,7 @@ class OrderResource extends JsonResource
                     'order_id' => $order_product->order_id,
                     'quantity' => $order_product->quantity,
                     'point' => $order_product->point,
-                    'fpoint' => format_money((string) $order_product->point ?? 0),
+                    'fpoint' => formatMoney((string) $order_product->point ?? 0),
                     'products' => [
                         'id' => $order_product->products->id,
                         'code' => $order_product->products->code,
@@ -29,9 +29,9 @@ class OrderResource extends JsonResource
                         'description' => $order_product->products->description,
                         'spesification' => json_decode($order_product->products->spesification) ?? [],
                         'point' => $order_product->products->point ?? 0,
-                        'fpoint' => format_product_point($order_product->products),
+                        'fpoint' => formatProductPoint($order_product->products),
                         'weight' => $order_product->products->weight ?? 0,
-                        'fweight' => format_product_weight($order_product->products),
+                        'fweight' => formatProductWeight($order_product->products),
                         'status' => $order_product->products->status,
                         'product_images' => $order_product->products->product_images->map(function ($image) {
                             return [
@@ -66,7 +66,7 @@ class OrderResource extends JsonResource
                         'total_review' => $order_product->products->total_review,
                         'total_rating' => (float) rtrim($order_product->products->total_rating, '0'),
                         'total_order' => (int) $order_product->products->total_order,
-                        'is_reviewed' => is_reviewed($order_product->products->id, $this->id)
+                        'is_reviewed' => isReviewed($order_product->products->id, $this->id)
                     ],
                     'variants' => ($order_product->variants)
                         ? [
@@ -75,7 +75,7 @@ class OrderResource extends JsonResource
                             'slug' => $order_product->variants->slug,
                             'quantity' => $order_product->variants->quantity,
                             'point' => $order_product->variants->point,
-                            'fpoint' => format_money((string) $order_product->variants->point),
+                            'fpoint' => formatMoney((string) $order_product->variants->point),
                             'weight' => $order_product->variants->weight,
                             'fweight' => $order_product->variants->weight . ' Gram',
                             'variant_images' => ($order_product->variants->product_images) ? [
@@ -88,11 +88,11 @@ class OrderResource extends JsonResource
                 ];
             }),
             'total_point' => $this->total_point,
-            'ftotal_point' => format_money((string) $this->total_point ?? 0),
+            'ftotal_point' => formatMoney((string) $this->total_point ?? 0),
             'shipping_fee' => $this->shipping_fee,
-            'fshipping_fee' => format_money((string) $this->shipping_fee ?? 0),
+            'fshipping_fee' => formatMoney((string) $this->shipping_fee ?? 0),
             'total_amount' => $this->total_amount,
-            'ftotal_amount' => format_money((string) $this->total_amount ?? 0),
+            'ftotal_amount' => formatMoney((string) $this->total_amount ?? 0),
             'note' => $this->note,
             'date' => Carbon::parse($this->created_at)->format('Y-m-d H:i:s'),
             'fdate' => Carbon::parse($this->created_at)->diffForHumans(),

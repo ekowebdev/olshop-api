@@ -70,7 +70,7 @@
                                 <tr>
                                     <td style="border: 1px solid #ddd; padding: 8px;">{{ $item['name'] }}</td>
                                     <td style="border: 1px solid #ddd; padding: 8px;">{{ $item['quantity'] }}</td>
-                                    <td style="border: 1px solid #ddd; padding: 8px;">{{ format_money($item['price']) }}
+                                    <td style="border: 1px solid #ddd; padding: 8px;">{{ formatMoney($item['price']) }}
                                     </td>
                                 </tr>
                             @endforeach
@@ -80,19 +80,19 @@
                                 <th colspan="2" style="border: 1px solid #ddd; padding: 8px; text-align: right;">
                                     Total Price</th>
                                 <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">
-                                    {{ format_money($header_data['total_price']) }}</th>
+                                    {{ formatMoney($header_data['total_price']) }}</th>
                             </tr>
                             <tr>
                                 <th colspan="2" style="border: 1px solid #ddd; padding: 8px; text-align: right;">
                                     Shipping Fee</th>
                                 <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">
-                                    {{ format_money($header_data['shipping_fee']) }}</th>
+                                    {{ formatMoney($header_data['shipping_fee']) }}</th>
                             </tr>
                             <tr>
                                 <th colspan="2" style="border: 1px solid #ddd; padding: 8px; text-align: right;">
                                     Grand Total</th>
                                 <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">
-                                    {{ format_money($header_data['total_amount']) }}</th>
+                                    {{ formatMoney($header_data['total_amount']) }}</th>
                             </tr>
                         </tfoot>
                     </table>

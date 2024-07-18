@@ -10,18 +10,18 @@ use App\Http\Resources\NotificationResource;
 use Illuminate\Pagination\LengthAwarePaginator;
 use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 
-function rounded_rating($rating)
+function roundedRating($rating)
 {
     $roundedRating = round($rating * 2) / 2;
     return number_format($roundedRating, 1);
 }
 
-function format_money($number)
+function formatMoney($number)
 {
     return 'Rp. ' . number_format($number, 2, ",", ".");
 }
 
-function is_multidimensional_array($array) {
+function isMultidimensionalArray($array) {
     if (!is_array($array)) {
         return false;
     }
@@ -35,7 +35,7 @@ function is_multidimensional_array($array) {
     return false;
 }
 
-function store_notification($data = [])
+function storeNotification($data = [])
 {
     \DB::beginTransaction();
 
@@ -83,13 +83,13 @@ function store_notification($data = [])
     return $results;
 }
 
-function is_json($string = "") {
+function isJson($string = "") {
     if(!is_string($string) || empty($string) || $string == "[]") return false;
     $res = json_decode($string);
     return (json_last_error() == JSON_ERROR_NONE && $res != $string);
 }
 
-function format_json($originalData, $page = null, $perPage = 10, $options = [])
+function formatJson($originalData, $page = null, $perPage = 10, $options = [])
 {
     $dataCollection = paginate($originalData, $page, $perPage, $options);
 
@@ -129,7 +129,7 @@ function paginate($data, $page = null, $perPage = 10, $options = [])
     return new LengthAwarePaginator($data->forPage($page, $perPage), $data->count(), $perPage, $page, $options);
 }
 
-function format_product_weight($product)
+function formatProductWeight($product)
 {
     $weight = $product->variants->pluck('weight')->toArray();
     if (count($weight) == 1) {
@@ -142,24 +142,24 @@ function format_product_weight($product)
     }
 }
 
-function format_product_point($product)
+function formatProductPoint($product)
 {
     $points = $product->variants->pluck('point')->toArray();
     if (count($points) == 1) {
-        return format_money((string) $points[0]);
+        return formatMoney((string) $points[0]);
     } elseif (count($points) > 1) {
         $minValue = min($points);
         $maxValue = max($points);
         if ($minValue === $maxValue) {
-            return format_money((string) $minValue);
+            return formatMoney((string) $minValue);
         }
-        return format_money($minValue) . " ~ " . format_money($maxValue);
+        return formatMoney($minValue) . " ~ " . formatMoney($maxValue);
     } else {
-        return format_money((string) $product->point ?? 0);
+        return formatMoney((string) $product->point ?? 0);
     }
 }
 
-function is_reviewed($productId, $orderId)
+function isReviewed($productId, $orderId)
 {
     $userId = (auth()->user()) ? auth()->user()->id : 0;
     $reviews = Review::where('user_id', $userId)
@@ -169,11 +169,11 @@ function is_reviewed($productId, $orderId)
     return (count($reviews) > 0) ? 1 : 0;
 }
 
-function uploadImagesToCloudinary($file, $folder)
+function uploadImagesToCloudinary($file, $path)
 {
     $customName = time();
 
-    $cloudinaryImage = Cloudinary::upload($file->getRealPath(), ['folder' => config('services.cloudinary.folder') . '/images/'. $folder, 'public_id' => $customName]);
+    $cloudinaryImage = Cloudinary::upload($file->getRealPath(), ['folder' => config('services.cloudinary.folder') . '/images/'. $path, 'public_id' => $customName]);
     $publicImageId = $cloudinaryImage->getPublicId();
 
     $image = Image::make($file);
@@ -182,9 +182,17 @@ function uploadImagesToCloudinary($file, $folder)
     $tempFilePath = tempnam(sys_get_temp_dir(), 'thumbnail') . '.jpg';
     $imgThumb->save($tempFilePath);
 
-    $cloudinaryThumb = Cloudinary::upload($tempFilePath, ['folder' => config('services.cloudinary.folder') . '/images/'. $folder .'/thumbnails', 'public_id' => $customName . '_thumb']);
+    $cloudinaryThumb = Cloudinary::upload($tempFilePath, ['folder' => config('services.cloudinary.folder') . '/images/'. $path .'/thumbnails', 'public_id' => $customName . '_thumb']);
 
     File::delete($tempFilePath);
 
     return $customName . '.' . strtolower($file->getClientOriginalExtension());
+}
+
+function deleteImagesFromCloudinary($image, $path)
+{
+    $folder = config('services.cloudinary.folder');
+    $previousPublicId = explode('.', $image)[0];
+    Cloudinary::destroy("$folder/images/$path/$previousPublicId");
+    Cloudinary::destroy("$folder/images/$path/thumbnails/{$previousPublicId}_thumb");
 }

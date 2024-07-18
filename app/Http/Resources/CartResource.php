@@ -21,9 +21,9 @@ class CartResource extends JsonResource
                 'description' => $this->products->description,
                 'spesification' => json_decode($this->products->spesification) ?? [],
                 'point' => $this->products->point ?? 0,
-                'fpoint' => format_product_point($this->products),
+                'fpoint' => formatProductPoint($this->products),
                 'weight' => $this->products->weight ?? 0,
-                'fweight' => format_product_weight($this->products),
+                'fweight' => formatProductWeight($this->products),
                 'status' => $this->products->status,
                 'product_images' => $this->products->product_images->map(function ($image) {
                     return [
@@ -41,7 +41,7 @@ class CartResource extends JsonResource
                     'slug' => $this->variants->slug,
                     'quantity' => $this->variants->quantity,
                     'point' => $this->variants->point,
-                    'fpoint' => format_money((string) $this->variants->point),
+                    'fpoint' => formatMoney((string) $this->variants->point),
                     'weight' => $this->variants->weight,
                     'fweight' => $this->variants->weight . ' Gram',
                     'variant_images' => ($this->variants->product_images) ? [

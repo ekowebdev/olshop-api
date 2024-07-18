@@ -337,7 +337,7 @@ class OrderService extends BaseService
                 'status_read' => 0,
             ];
 
-            $allNotifications = store_notification($inputNotification);
+            $allNotifications = storeNotification($inputNotification);
 
             $dataNotification['data'] = $allNotifications->toArray();
             $dataNotification['summary'] = [

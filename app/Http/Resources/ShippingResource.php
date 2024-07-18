@@ -38,9 +38,9 @@ class ShippingResource extends JsonResource
                             'description' => $order_product->products->description,
                             'spesification' => json_decode($order_product->products->spesification) ?? [],
                             'point' => $order_product->products->point ?? 0,
-                            'fpoint' => format_product_point($order_product->products),
+                            'fpoint' => formatProductPoint($order_product->products),
                             'weight' => $order_product->products->weight ?? 0,
-                            'fweight' => format_product_weight($order_product->products),
+                            'fweight' => formatProductWeight($order_product->products),
                             'status' => $order_product->products->status,
                             'product_images' => $order_product->products->product_images->map(function ($image) {
                                 return [
@@ -57,7 +57,7 @@ class ShippingResource extends JsonResource
                             'slug' => $order_product->variants->slug,
                             'quantity' => $order_product->variants->quantity,
                             'point' => $order_product->variants->point,
-                            'fpoint' => format_money((string) $order_product->variants->point),
+                            'fpoint' => formatMoney((string) $order_product->variants->point),
                             'weight' => $order_product->variants->weight,
                             'fweight' => $order_product->variants->weight . ' Gram',
                             'variant_images' => ($order_product->variants->product_images) ? [

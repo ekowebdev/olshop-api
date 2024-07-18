@@ -58,7 +58,7 @@ class ProductService extends BaseService
             'sort_column'   => array_merge($search, $search_column),
         ];
 
-        $result = Cache::remember('products_all', now()->addMinutes(60), function() use ($locale, $sortable_and_searchable_column) {
+        $result = Cache::remember('products_all_' . time(), now()->addMinutes(5), function() use ($locale, $sortable_and_searchable_column) {
             return $this->repository->getIndexData($locale, $sortable_and_searchable_column);
         });
 
@@ -209,57 +209,56 @@ class ProductService extends BaseService
         ]);
 
         $this->repository->validate($data_request, [
-                'name' => [
-                    'required',
-                    'unique:products,name',
-                ],
-                'category_id' => [
-                    'nullable',
-                    'exists:categories,id',
-                ],
-                'brand_id' => [
-                    'nullable',
-                    'exists:brands,id',
-                ],
-                'description' => [
-                    'required',
-                    'string',
-                ],
-                'spesification' => [
-                    'nullable',
-                    'array',
-                ],
-                'spesification.*.key' => [
-                    'string',
-                    'required_with:spesification.*.value',
-                ],
-                'spesification.*.value' => [
-                    'string',
-                    'required_with:spesification.*.key',
-                ],
-                'point' => [
-                    'nullable',
-                    'numeric',
-                ],
-                'weight' => [
-                    'nullable',
-                    'numeric',
-                ],
-                'quantity' => [
-                    'nullable',
-                    'numeric'
-                ],
-                'images' => [
-                    'required',
-                    'array'
-                ],
-                'images.*' => [
-                    'required',
-                    'max:1000',
-                    'mimes:jpg,png',
-                ],
-            ]
-        );
+            'name' => [
+                'required',
+                'unique:products,name',
+            ],
+            'category_id' => [
+                'nullable',
+                'exists:categories,id',
+            ],
+            'brand_id' => [
+                'nullable',
+                'exists:brands,id',
+            ],
+            'description' => [
+                'required',
+                'string',
+            ],
+            'spesification' => [
+                'nullable',
+                'array',
+            ],
+            'spesification.*.key' => [
+                'string',
+                'required_with:spesification.*.value',
+            ],
+            'spesification.*.value' => [
+                'string',
+                'required_with:spesification.*.key',
+            ],
+            'point' => [
+                'nullable',
+                'numeric',
+            ],
+            'weight' => [
+                'nullable',
+                'numeric',
+            ],
+            'quantity' => [
+                'nullable',
+                'numeric'
+            ],
+            'images' => [
+                'required',
+                'array'
+            ],
+            'images.*' => [
+                'required',
+                'max:1000',
+                'mimes:jpg,png',
+            ],
+        ]);
 
         DB::beginTransaction();
 
@@ -309,46 +308,45 @@ class ProductService extends BaseService
         ]);
 
         $this->repository->validate($data_request, [
-                'name' => [
-                    'string',
-                    'unique:products,name,' . $id,
-                ],
-                'category_id' => [
-                    'nullable',
-                    'exists:categories,id',
-                ],
-                'brand_id' => [
-                    'nullable',
-                    'exists:brands,id',
-                ],
-                'description' => [
-                    'string',
-                ],
-                'spesification' => [
-                    'nullable',
-                    'array',
-                ],
-                'spesification.*.key' => [
-                    'string',
-                    'required_with:spesification.*.value',
-                ],
-                'spesification.*.value' => [
-                    'string',
-                    'required_with:spesification.*.key',
-                ],
-                'point' => [
-                    'nullable',
-                    'numeric',
-                ],
-                'weight' => [
-                    'nullable',
-                    'numeric',
-                ],
-                'quantity' => [
-                    'numeric',
-                ],
-            ]
-        );
+            'name' => [
+                'string',
+                'unique:products,name,' . $id,
+            ],
+            'category_id' => [
+                'nullable',
+                'exists:categories,id',
+            ],
+            'brand_id' => [
+                'nullable',
+                'exists:brands,id',
+            ],
+            'description' => [
+                'string',
+            ],
+            'spesification' => [
+                'nullable',
+                'array',
+            ],
+            'spesification.*.key' => [
+                'string',
+                'required_with:spesification.*.value',
+            ],
+            'spesification.*.value' => [
+                'string',
+                'required_with:spesification.*.key',
+            ],
+            'point' => [
+                'nullable',
+                'numeric',
+            ],
+            'weight' => [
+                'nullable',
+                'numeric',
+            ],
+            'quantity' => [
+                'numeric',
+            ],
+        ]);
 
         DB::beginTransaction();
         $data_request['slug'] = Str::slug($data_request['name']);
@@ -366,10 +364,7 @@ class ProductService extends BaseService
 
         DB::beginTransaction();
         foreach($check_data->product_images as $image) {
-            $folder = config('services.cloudinary.folder');
-            $previousPublicId = explode('.', $image->image)[0];
-            Cloudinary::destroy("$folder/images/products/$previousPublicId");
-            Cloudinary::destroy("$folder/images/products/thumbnails/{$previousPublicId}_thumb");
+            deleteImagesFromCloudinary($image->image, 'products');
         }
         $result = $check_data->delete();
         DB::commit();

@@ -143,10 +143,7 @@ class ProfileService extends BaseService
             $file = Request::file('avatar');
 
             if ($check_data->image) {
-                $folder = config('services.cloudinary.folder');
-                $previousPublicId = explode('.', $check_data->avatar)[0];
-                Cloudinary::destroy("$folder/images/profiles/$previousPublicId");
-                Cloudinary::destroy("$folder/images/profiles/thumbnails/{$previousPublicId}_thumb");
+                deleteImagesFromCloudinary($check_data->avatar, 'profiles');
             }
 
             $imageName = uploadImagesToCloudinary($file, 'profiles');
@@ -170,12 +167,7 @@ class ProfileService extends BaseService
         $check_data = $this->repository->getSingleData($locale, $id);
 
         DB::beginTransaction();
-        $folder = config('services.cloudinary.folder');
-        $previousPublicId = explode('.', $check_data->avatar)[0];
-
-        Cloudinary::destroy("$folder/images/profiles/$previousPublicId");
-        Cloudinary::destroy("$folder/images/profiles/thumbnails/{$previousPublicId}_thumb");
-
+        deleteImagesFromCloudinary($check_data->avatar, 'profiles');
         $result = $check_data->delete();
         DB::commit();
 

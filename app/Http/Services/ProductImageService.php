@@ -136,10 +136,7 @@ class ProductImageService extends BaseService
             $file = Request::file('image');
 
             if ($check_data->image) {
-                $folder = config('services.cloudinary.folder');
-                $previousPublicId = explode('.', $check_data->image)[0];
-                Cloudinary::destroy("$folder/images/products/$previousPublicId");
-                Cloudinary::destroy("$folder/images/products/thumbnails/{$previousPublicId}_thumb");
+                deleteImagesFromCloudinary($check_data->image, 'products');
             }
 
             $imageName = uploadImagesToCloudinary($file, 'products');
@@ -165,14 +162,11 @@ class ProductImageService extends BaseService
 
     public function delete($locale, $id)
     {
-        $data = $this->repository->getSingleData($locale, $id);
+        $check_data = $this->repository->getSingleData($locale, $id);
 
         DB::beginTransaction();
-        $folder = config('services.cloudinary.folder');
-        $previousPublicId = explode('.', $data->image)[0];
-        Cloudinary::destroy("$folder/images/products/$previousPublicId");
-        Cloudinary::destroy("$folder/images/products/thumbnails/{$previousPublicId}_thumb");
-        $result = $data->delete();
+        deleteImagesFromCloudinary($check_data->image, 'products');
+        $result = $check_data->delete();
         DB::commit();
 
         return $result;

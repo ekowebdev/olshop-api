@@ -51,7 +51,7 @@ class SendBirthDayWish extends Command
                 'status_read' => 0,
             ];
 
-            $allNotifications = store_notification($dataNotification);
+            $allNotifications = storeNotification($dataNotification);
 
             $results['data'] = $allNotifications->toArray();
             $results['summary'] = [
