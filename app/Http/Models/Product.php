@@ -2,7 +2,6 @@
 
 namespace App\Http\Models;
 
-use stdClass;
 use Carbon\Carbon;
 use Meilisearch\Client;
 use App\Http\Models\Cart;
@@ -127,9 +126,9 @@ class Product extends BaseModel
                     'weight',
                     'quantity',
                     'status',
-                    // DB::raw('(SELECT COUNT(*) FROM reviews WHERE reviews.product_id = products.id LIMIT 1) AS total_review'),
-                    // DB::raw('(SELECT ROUND(AVG(rating), 1) FROM reviews WHERE reviews.product_id = products.id LIMIT 1) AS total_rating'),
-                    // DB::raw('(SELECT SUM(order_products.quantity) FROM order_products WHERE order_products.product_id = products.id) AS total_order'),
+                    DB::raw('(SELECT COUNT(*) FROM reviews WHERE reviews.product_id = products.id) AS total_review'),
+                    DB::raw('(SELECT ROUND(AVG(rating), 1) FROM reviews WHERE reviews.product_id = products.id) AS total_rating'),
+                    DB::raw('(SELECT SUM(order_products.quantity) FROM order_products WHERE order_products.product_id = products.id) AS total_order'),
                 ])
                 ->where('status', 'A')
                 ->from(DB::raw('products FORCE INDEX (index_products)'));

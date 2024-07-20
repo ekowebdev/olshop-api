@@ -173,7 +173,7 @@ class AccessTokenController extends ApiAuthController
             try {
                 $crypto = \Defuse\Crypto\Crypto::decryptWithPassword($request['refresh_token'], $encriptionKey);
             } catch (\Exception $e){
-                throw new AuthenticationException(trans('error.refresh_token_is_invalid', ['error' => $e->getMessage()]));
+                throw new AuthenticationException(trans('error.refresh_token_failed', ['error' => $e->getMessage()]));
             }
 
             $crypto = json_decode($crypto, true);
@@ -189,7 +189,9 @@ class AccessTokenController extends ApiAuthController
                 ->where('expires_at', '>', Carbon::now())
                 ->first();
 
-            if(empty($refreshToken) || empty($accessToken)) throw new AuthenticationException(trans('error.failed_refresh_token'));
+            if(empty($refreshToken)) throw new AuthenticationException(trans('error.refresh_token_is_invalid'));
+
+            if(empty($accessToken)) throw new AuthenticationException(trans('error.access_token_not_expired'));
 
             $user = User::where('id', $accessToken['user_id'])->first();
 
