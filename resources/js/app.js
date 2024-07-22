@@ -2,7 +2,7 @@ import echo from './echo';
 
 document.addEventListener('DOMContentLoaded', function() {
     echo.channel('PublicChannel')
-        .listen('.public-channel', (e) => {
+        .listen('.public-event', (e) => {
             console.log(e);
             document.getElementById('text').innerText = e.data;
         });
