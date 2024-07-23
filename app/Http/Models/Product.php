@@ -125,7 +125,7 @@ class Product extends BaseModel
             'name' => $this->name,
             'slug' => $this->slug,
             'description' => $this->description,
-            'spesification' => $this->spesification ? json_decode($this->spesification) : (object)[],
+            'spesification' => $this->spesification ? json_decode($this->spesification) : [],
             'category' => $this->categories ? [
                 'name' => $this->categories->name,
                 'slug' => $this->categories->slug,
