@@ -57,6 +57,7 @@ class ProductImageService extends BaseService
             'product_id',
             'variant_id',
             'image',
+            'is_primary',
         ]);
 
         $this->repository->validate($data_request, [
@@ -74,6 +75,10 @@ class ProductImageService extends BaseService
                 'image',
                 'mimes:jpg,png',
             ],
+            'is_primary' => [
+                'required',
+                'in:0,1',
+            ],
         ]);
 
         DB::beginTransaction();
@@ -86,6 +91,17 @@ class ProductImageService extends BaseService
             if(!is_null($exists_variant)) throw new ApplicationException(trans('error.exists_image_variant_products', ['product_name' => $variant->products->name, 'variant_name' => $variant->name]));
         }
 
+        if ($data_request['is_primary']) {
+            $existingPrimary = $this->model
+                ->where('product_id', $data_request['product_id'])
+                ->where('is_primary', 1)
+                ->first();
+
+            if ($existingPrimary) {
+                throw new ApplicationException(trans('error.only_one_primary_image_per_product'));
+            }
+        }
+
         $file = Request::file('image');
 
         $imageName = uploadImagesToCloudinary($file, 'products');
@@ -94,6 +110,7 @@ class ProductImageService extends BaseService
             'product_id' => $data_request['product_id'],
             'variant_id' => (isset($data_request['variant_id'])) ? $data_request['variant_id'] : null,
             'image' => $imageName,
+            'is_primary' => $data_request['is_primary'],
         ]);
 
         DB::commit();
@@ -109,6 +126,7 @@ class ProductImageService extends BaseService
             'product_id',
             'variant_id',
             'image',
+            'is_primary',
         ]);
 
         $this->repository->validate($data_request, [
@@ -123,6 +141,9 @@ class ProductImageService extends BaseService
                 'image',
                 'mimes:jpg,png',
             ],
+            'is_primary' => [
+                'in:0,1',
+            ],
         ]);
 
         DB::beginTransaction();
@@ -130,6 +151,19 @@ class ProductImageService extends BaseService
         if (isset($data_request['variant_id']) && !empty($data_request['variant_id'])) {
             $variant = Variant::where('id', $data_request['variant_id'])->where('product_id', isset($data_request['product_id']) ? $data_request['product_id'] : $check_data->product_id)->first();
             if(is_null($variant)) throw new ApplicationException(trans('error.variant_not_found_in_products', ['product_name' => $variant->products->name]));
+        }
+
+        if ($data_request['is_primary']) {
+            $existingPrimary = $this->model
+                ->where('product_id', $data_request['product_id'])
+                ->where('is_primary', 1)
+                ->first();
+
+            if ($existingPrimary) {
+                if($existingPrimary->id != $id) {
+                    throw new ApplicationException(trans('error.only_one_primary_image_per_product'));
+                }
+            }
         }
 
         if (isset($data_request['image'])) {
@@ -153,6 +187,7 @@ class ProductImageService extends BaseService
 
         $check_data->product_id = $data_request['product_id'] ?? $check_data->product_id;
         $check_data->variant_id = $variant_id;
+        $check_data->is_primary = $data_request['is_primary'] ?? $check_data->is_primary;
         $check_data->save();
 
         DB::commit();

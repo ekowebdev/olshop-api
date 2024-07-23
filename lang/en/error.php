@@ -28,4 +28,5 @@ return [
 	"cannot_delete_primary_address"				  => "You cannot delete data, because the address you chose is the main address",
 	"token_reset_password_is_expired"			  => "This password reset token is expired",
 	"token_reset_password_is_invalid"			  => "This password reset token is invalid",
+    "only_one_primary_image_per_product"          => "Only one primary image is allowed per product",
 ];

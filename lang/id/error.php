@@ -28,4 +28,5 @@ return [
 	"cannot_delete_primary_address"				  => "Tidak bisa hapus data, karena alamat yang anda pilih adalah alamat utama",
 	"token_reset_password_is_expired"			  => "Token reset password ini telah kadaluarsa",
 	"token_reset_password_is_invalid"			  => "Token reset password ini tidak valid",
+    "only_one_primary_image_per_product"          => "Hanya satu gambar utama yang diperbolehkan per produk",
 ];

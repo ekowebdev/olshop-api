@@ -34,6 +34,7 @@ class VariantResource extends JsonResource
                         'variant_id' => $image->variant_id,
                         'image_url' => $image->image_url,
                         'image_thumbnail_url' => $image->image_thumbnail_url,
+                        'is_primary' => $image->is_primary,
                     ];
                 }),
                 'variants' => $this->products->variants->map(function ($variant) {
@@ -51,6 +52,7 @@ class VariantResource extends JsonResource
                             'image' => $variant->product_images->image,
                             'image_url' => $variant->product_images->image_url,
                             'image_thumbnail_url' => $variant->product_images->image_thumbnail_url,
+                            'is_primary' => $variant->product_images->is_primary,
                         ] : null,
                     ];
                 }),
@@ -92,6 +94,7 @@ class VariantResource extends JsonResource
                 'image' => $this->product_images->image,
                 'image_url' => $this->product_images->image_url,
                 'image_thumbnail_url' => $this->product_images->image_thumbnail_url,
+                'is_primary' => $this->product_images->is_primary,
             ] : null,
         ];
     }

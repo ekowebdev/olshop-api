@@ -114,6 +114,8 @@ class Product extends BaseModel
 
     public function toSearchableArray()
     {
+        $image = $this->product_images()->where('is_primary', 1)->first();
+
         $data = [
             'code' => $this->code,
             'name' => $this->name,
@@ -130,6 +132,7 @@ class Product extends BaseModel
             ] : null,
             'point' => (double) $this->point,
             'weight' => (float) $this->weight,
+            'image' => $image ? $image->image_url : null,
         ];
 
         return $data;

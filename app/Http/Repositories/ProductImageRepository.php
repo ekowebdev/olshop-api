@@ -7,7 +7,7 @@ use App\Http\Models\ProductImage;
 use App\Exceptions\DataEmptyException;
 use Illuminate\Support\Facades\Request;
 
-class ProductImageRepository extends BaseRepository 
+class ProductImageRepository extends BaseRepository
 {
     private $repository_name = 'Product Image';
     private $model;
@@ -38,19 +38,29 @@ class ProductImageRepository extends BaseRepository
 	{
 		$result = $this->model
                   ->getAll()
-                  ->where('id', $id)	
+                  ->where('id', $id)
                   ->first();
 		if($result === null) throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => $this->repository_name], $locale));
-        return $result;	
+        return $result;
 	}
 
     public function getSingleDataByProductVariant($locale, $product_id, $variant_id)
 	{
 		$result = $this->model
                   ->getAll()
-                  ->where('product_id', $product_id)	
-                  ->where('variant_id', $variant_id)	
+                  ->where('product_id', $product_id)
+                  ->where('variant_id', $variant_id)
                   ->first();
-		return $result;	
+		return $result;
+	}
+
+    public function countDataByProduct($id)
+	{
+		$result = $this->model
+                  ->getAll()
+                  ->where('product_id', $id)
+                  ->get()
+                  ->count();
+		return $result;
 	}
 }

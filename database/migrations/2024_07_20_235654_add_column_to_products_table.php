@@ -14,8 +14,8 @@ return new class extends Migration
     public function up()
     {
         Schema::table('products', function (Blueprint $table) {
-            $table->integer('total_order')->default(0)->after('quantity');
-            $table->integer('total_review')->default(0)->after('quantity');
+            $table->bigInteger('total_order')->default(0)->after('quantity');
+            $table->bigInteger('total_review')->default(0)->after('quantity');
             $table->decimal('total_rating', 3, 1)->default(0)->after('quantity');
         });
     }

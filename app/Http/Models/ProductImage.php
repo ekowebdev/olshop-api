@@ -14,7 +14,7 @@ class ProductImage extends BaseModel
 
     protected $connection = 'mysql';
     protected $table = 'product_images';
-    protected $fillable = ['product_id', 'variant_id', 'image'];
+    protected $fillable = ['product_id', 'variant_id', 'image', 'is_primary'];
     protected $appends = ['image_url', 'image_thumbnail_url'];
 
     public function getImageUrlAttribute()
@@ -54,6 +54,7 @@ class ProductImage extends BaseModel
                     'product_id',
                     'variant_id',
                     'image',
+                    'is_primary',
                 ]);
     }
 }

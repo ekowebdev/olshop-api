@@ -39,6 +39,7 @@ class OrderResource extends JsonResource
                                 'variant_id' => $image->variant_id,
                                 'image_url' => $image->image_url,
                                 'image_thumbnail_url' => $image->image_thumbnail_url,
+                                'is_primary' => $image->is_primary,
                             ];
                         }),
                         'reviews' => $order_product->products->reviews->map(function ($review) {
@@ -83,6 +84,7 @@ class OrderResource extends JsonResource
                                 'image' => $order_product->variants->product_images->image,
                                 'image_url' => $order_product->variants->product_images->image_url,
                                 'image_thumbnail_url' => $order_product->variants->product_images->image_thumbnail_url,
+                                'is_primary' => $order_product->variants->product_images->is_primary,
                             ] : null,
                         ] : null,
                 ];
