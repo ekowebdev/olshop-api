@@ -26,12 +26,7 @@ class Product extends BaseModel
     protected $primaryKey = 'id';
     protected $table = 'products';
     protected $fillable = ['id', 'code', 'name', 'category_id', 'brand_id', 'slug', 'description', 'spesification', 'point', 'weight', 'quantity', 'status'];
-    protected $appends = [
-        // 'total_review',
-        // 'total_rating',
-        // 'total_order',
-        'is_wishlist'
-    ];
+    protected $appends = ['is_wishlist'];
 
     public function product_images()
     {
@@ -115,7 +110,6 @@ class Product extends BaseModel
         ])
         ->where('status', 'A')
         ->from(DB::raw('products FORCE INDEX (index_products)'));
-
     }
 
     public function toSearchableArray()
@@ -125,7 +119,7 @@ class Product extends BaseModel
             'name' => $this->name,
             'slug' => $this->slug,
             'description' => $this->description,
-            'spesification' => $this->spesification ? json_decode($this->spesification) : (object)[],
+            'spesification' => json_decode($this->spesification) ?? [],
             'category' => $this->categories ? [
                 'name' => $this->categories->name,
                 'slug' => $this->categories->slug,

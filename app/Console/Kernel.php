@@ -20,6 +20,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('delete:searchlogs')->daily();
         $schedule->command('delete:users')->daily();
         $schedule->command('delete:carts')->daily();
+        $schedule->command('update:product-aggregates')->dailyAt('01:00');
     }
 
     /**
