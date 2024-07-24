@@ -143,7 +143,7 @@ class Product extends BaseModel
             ] : null,
             'point' => (double) $this->point,
             'weight' => (float) $this->weight,
-            'main_image' => $this->main_image_url,
+            'image' => $this->main_image_url,
         ];
 
         return $data;
