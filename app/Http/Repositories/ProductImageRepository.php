@@ -44,6 +44,15 @@ class ProductImageRepository extends BaseRepository
         return $result;
 	}
 
+    public function getDataByProduct($locale, $product_id)
+	{
+		$result = $this->model
+                  ->getAll()
+                  ->where('product_id', $product_id)
+                  ->get();
+		return $result;
+	}
+
     public function getSingleDataByProductVariant($locale, $product_id, $variant_id)
 	{
 		$result = $this->model

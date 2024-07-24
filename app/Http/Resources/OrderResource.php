@@ -33,6 +33,7 @@ class OrderResource extends JsonResource
                         'weight' => $order_product->products->weight ?? 0,
                         'fweight' => formatProductWeight($order_product->products),
                         'status' => $order_product->products->status,
+                        'main_image' => $order_product->products->main_image_url,
                         'product_images' => $order_product->products->product_images->map(function ($image) {
                             return [
                                 'product_id' => $image->product_id,

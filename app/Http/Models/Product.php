@@ -25,8 +25,8 @@ class Product extends BaseModel
     protected $connection = 'mysql';
     protected $primaryKey = 'id';
     protected $table = 'products';
-    protected $fillable = ['id', 'code', 'name', 'category_id', 'brand_id', 'slug', 'description', 'spesification', 'point', 'weight', 'quantity', 'status'];
-    protected $appends = ['is_wishlist'];
+    protected $fillable = ['id', 'code', 'name', 'category_id', 'brand_id', 'slug', 'description', 'spesification', 'point', 'weight', 'quantity', 'main_image', 'status'];
+    protected $appends = ['main_image', 'is_wishlist'];
 
     public function product_images()
     {
@@ -78,6 +78,16 @@ class Product extends BaseModel
         return (int) $value;
     }
 
+    public function getMainImageUrlAttribute()
+    {
+        if ($this->main_image != null) {
+            $image = explode('.', $this->main_image)[0];
+            $url = config('services.cloudinary.path_url') . '/' . config('services.cloudinary.folder') . '/images/products/' . $image;
+        }
+
+        return $url ?? null;
+    }
+
     public function getIsWishlistAttribute()
     {
         $user_id = (auth()->user()) ? auth()->user()->id : 0;
@@ -103,6 +113,7 @@ class Product extends BaseModel
             'point',
             'weight',
             'quantity',
+            'main_image',
             'status',
             'total_review',
             'total_rating',
@@ -132,7 +143,7 @@ class Product extends BaseModel
             ] : null,
             'point' => (double) $this->point,
             'weight' => (float) $this->weight,
-            'image' => $image ? $image->image_url : null,
+            'main_image' => $this->main_image_url,
         ];
 
         return $data;

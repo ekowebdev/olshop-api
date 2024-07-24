@@ -25,6 +25,7 @@ class ProductImageResource extends JsonResource
                 'fweight' => formatProductWeight($this->products),
                 'quantity' => $this->products->quantity ?? 0,
                 'status' => $this->products->status,
+                'main_image' => $this->products->main_image_url,
             ],
             'variants' => ($this->variants) ? [
                 'id' => $this->variants->id,

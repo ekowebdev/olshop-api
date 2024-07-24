@@ -26,6 +26,7 @@ class WishlistResource extends JsonResource
                 'fweight' => formatProductWeight($this->products),
                 'quantity' => $this->products->quantity ?? 0,
                 'status' => $this->products->status,
+                'main_image' => $this->products->main_image_url,
                 'product_images' => $this->products->product_images->map(function ($image) {
                     return [
                         'product_id' => $image->product_id,

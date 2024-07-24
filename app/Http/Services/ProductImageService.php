@@ -10,18 +10,20 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Exceptions\ApplicationException;
+use App\Http\Repositories\ProductRepository;
 use App\Http\Repositories\ProductImageRepository;
 use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 
 
 class ProductImageService extends BaseService
 {
-    private $model, $repository;
+    private $model, $repository, $repositoryProduct;
 
-    public function __construct(ProductImage $model, ProductImageRepository $repository)
+    public function __construct(ProductImage $model, ProductImageRepository $repository, ProductRepository $repositoryProduct)
     {
         $this->model = $model;
         $this->repository = $repository;
+        $this->repositoryProduct = $repositoryProduct;
     }
 
     public function getIndexData($locale, $data)
@@ -76,7 +78,6 @@ class ProductImageService extends BaseService
                 'mimes:jpg,png',
             ],
             'is_primary' => [
-                'required',
                 'in:0,1',
             ],
         ]);
@@ -91,15 +92,17 @@ class ProductImageService extends BaseService
             if(!is_null($exists_variant)) throw new ApplicationException(trans('error.exists_image_variant_products', ['product_name' => $variant->products->name, 'variant_name' => $variant->name]));
         }
 
-        if ($data_request['is_primary']) {
-            $existingPrimary = $this->model
-                ->where('product_id', $data_request['product_id'])
-                ->where('is_primary', 1)
-                ->first();
+        $existingPrimary = $this->model->where('product_id', $data_request['product_id']);
+        $isPrimary = $data_request['is_primary'] ?? 0;
 
-            if ($existingPrimary) {
-                throw new ApplicationException(trans('error.only_one_primary_image_per_product'));
+        if ($isPrimary) {
+            if (count($existingPrimary->get()) > 0) {
+                $existingPrimary->update(['is_primary' => 0]);
             }
+        }
+
+        if (count($existingPrimary->get()) == 0) {
+            $isPrimary = 1;
         }
 
         $file = Request::file('image');
@@ -110,8 +113,15 @@ class ProductImageService extends BaseService
             'product_id' => $data_request['product_id'],
             'variant_id' => (isset($data_request['variant_id'])) ? $data_request['variant_id'] : null,
             'image' => $imageName,
-            'is_primary' => $data_request['is_primary'],
+            'is_primary' => $isPrimary,
         ]);
+
+        if ($isPrimary) {
+            $product = $this->repositoryProduct->getSingleData($locale, $data_request['product_id']);
+            $product->update([
+                'main_image' => $imageName
+            ]);
+        }
 
         DB::commit();
 
@@ -153,17 +163,17 @@ class ProductImageService extends BaseService
             if(is_null($variant)) throw new ApplicationException(trans('error.variant_not_found_in_products', ['product_name' => $variant->products->name]));
         }
 
-        if ($data_request['is_primary']) {
-            $existingPrimary = $this->model
-                ->where('product_id', $data_request['product_id'])
-                ->where('is_primary', 1)
-                ->first();
+        $existingPrimary = $this->model->where('product_id', $check_data->product_id);
+        $isPrimary = $data_request['is_primary'] ?? 0;
 
-            if ($existingPrimary) {
-                if($existingPrimary->id != $id) {
-                    throw new ApplicationException(trans('error.only_one_primary_image_per_product'));
-                }
+        if ($isPrimary) {
+            if (count($existingPrimary->get()) > 0) {
+                $existingPrimary->update(['is_primary' => 0]);
             }
+        }
+
+        if (count($existingPrimary->get()) == 0) {
+            $isPrimary = 1;
         }
 
         if (isset($data_request['image'])) {
@@ -187,8 +197,15 @@ class ProductImageService extends BaseService
 
         $check_data->product_id = $data_request['product_id'] ?? $check_data->product_id;
         $check_data->variant_id = $variant_id;
-        $check_data->is_primary = $data_request['is_primary'] ?? $check_data->is_primary;
+        $check_data->is_primary = $isPrimary;
         $check_data->save();
+
+        if ($isPrimary) {
+            $product = $this->repositoryProduct->getSingleData($locale, $check_data->product_id);
+            $product->update([
+                'main_image' => $check_data->image
+            ]);
+        }
 
         DB::commit();
 
@@ -200,6 +217,18 @@ class ProductImageService extends BaseService
         $check_data = $this->repository->getSingleData($locale, $id);
 
         DB::beginTransaction();
+        $existingPrimary = $this->model->where('product_id', $check_data->product_id);
+        if (count($existingPrimary->get()) > 1) {
+            if ($check_data->is_primary) {
+                throw new ApplicationException(trans('error.cannot_delete_main_image'));
+            }
+        }
+        $product = $this->repositoryProduct->getSingleData($locale, $check_data->product_id);
+        if ($check_data->image == $product->main_image) {
+            $product->update([
+                'main_image' => null
+            ]);
+        }
         deleteImagesFromCloudinary($check_data->image, 'products');
         $result = $check_data->delete();
         DB::commit();

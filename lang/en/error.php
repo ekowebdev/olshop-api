@@ -29,4 +29,5 @@ return [
 	"token_reset_password_is_expired"			  => "This password reset token is expired",
 	"token_reset_password_is_invalid"			  => "This password reset token is invalid",
     "only_one_primary_image_per_product"          => "Only one primary image is allowed per product",
+	"cannot_delete_main_image"                    => "Cannot delete main image product",
 ];

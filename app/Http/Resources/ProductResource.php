@@ -25,6 +25,7 @@ class ProductResource extends JsonResource
             'fweight' => formatProductWeight($this),
             'quantity' => $this->quantity ?? 0,
             'status' => $this->status,
+            'main_image' => $this->main_image_url,
             'product_images' => $this->product_images->makeHidden(['created_at', 'updated_at']),
             'variants' => $this->variants->map(function ($variant) {
                 return [

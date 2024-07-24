@@ -29,4 +29,5 @@ return [
 	"token_reset_password_is_expired"			  => "Token reset password ini telah kadaluarsa",
 	"token_reset_password_is_invalid"			  => "Token reset password ini tidak valid",
     "only_one_primary_image_per_product"          => "Hanya satu gambar utama yang diperbolehkan per produk",
+    "cannot_delete_main_image"                    => "Tidak bisa hapus data gambar utama produk",
 ];

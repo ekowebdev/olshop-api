@@ -25,6 +25,7 @@ class CartResource extends JsonResource
                 'weight' => $this->products->weight ?? 0,
                 'fweight' => formatProductWeight($this->products),
                 'status' => $this->products->status,
+                'main_image' => $this->products->main_image_url,
                 'product_images' => $this->products->product_images->map(function ($image) {
                     return [
                         'product_id' => $image->product_id,
