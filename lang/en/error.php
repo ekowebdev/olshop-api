@@ -1,6 +1,7 @@
 <?php
 
 return [
+    "system_error"                                => "System Error",
 	"password_wrong" 							  => "Wrong password",
 	'failed_delete_data'						  => "Failed delete data",
 	"failed_login" 					              => "Login failed, please try again",

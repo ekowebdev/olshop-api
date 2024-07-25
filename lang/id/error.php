@@ -1,7 +1,8 @@
 <?php
 
 return [
-	"password_wrong" 							  => 'Kata sandi salah.',
+    "system_error"                                => "Sistem bermasalah",
+	"password_wrong" 							  => 'Kata sandi salah',
 	'failed_delete_data'						  => "Gagal hapus data",
 	"failed_login" 					              => "Login gagal, silahkan coba lagi",
 	"failed_logout" 					          => "Logout gagal, pemeriksaan otentikasi gagal",
