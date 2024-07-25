@@ -171,7 +171,7 @@ class OrderService extends BaseService
             $check_address = $this->addressRepository->getSingleData($locale, $address_details['id']);
 
             // Create Order entry
-            $order = new Order([
+            $order = $this->model->create([
                 'user_id' => $user->id,
                 'address_id' => (int) $address_details['id'],
                 'code' => $order_code,
