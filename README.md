@@ -6,7 +6,7 @@ Ini merupakan RESTful API untuk pembuatan toko online sederhana, API ini dapat d
 
 -   Language: PHP
 -   Framework: Laravel
--   Web Serve: Nginx
+-   Web Server: Nginx
 -   Kontainerisasi: Docker
 -   Library Utama: MongoDB, Passport, OAuth 2.0, Redis, Cloudinary, Midtrans, RajaOngkir, Websockets, Scout, Meilisearch
 -   Pola Arsitektur: Repository Pattern
