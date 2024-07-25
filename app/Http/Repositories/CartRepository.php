@@ -36,7 +36,7 @@ class CartRepository extends BaseRepository
             $data->count(),
             $per_page,
             $page,
-            ['path' => url('/carts')]
+            ['path' => url('/api/v1/' . $locale. '/carts')]
         );
 
         if ($result->isEmpty()) {
@@ -76,7 +76,7 @@ class CartRepository extends BaseRepository
             $data->count(),
             $per_page,
             $page,
-            ['path' => url('/carts')]
+            ['path' => url('/api/v1/' . $locale. '/carts')]
         );
 
         if ($result->isEmpty()) {

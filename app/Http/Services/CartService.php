@@ -15,11 +15,13 @@ use App\Http\Repositories\CartRepository;
 
 class CartService extends BaseService
 {
-    private $model, $repository;
+    private $model, $modelProduct, $modelVariant, $repository;
 
-    public function __construct(Cart $model, CartRepository $repository)
+    public function __construct(Cart $model, Product $modelProduct, Variant $modelVariant, CartRepository $repository)
     {
         $this->model = $model;
+        $this->modelProduct = $modelProduct;
+        $this->modelVariant = $modelVariant;
         $this->repository = $repository;
     }
 
@@ -67,7 +69,7 @@ class CartService extends BaseService
             $user = auth()->user();
             $data_request['user_id'] = $user->id;
             $variant_id = isset($data_request['variant_id']) ? (int) $data_request['variant_id'] : null;
-            $product = Product::lockForUpdate()->find($data_request['product_id']);
+            $product = $this->modelProduct->lockForUpdate()->find($data_request['product_id']);
 
             if ($product->variants->count() > 0 && !isset($variant_id)) throw new ApplicationException(trans('error.variant_required', ['product_name' => $product->name]));
 
@@ -77,7 +79,7 @@ class CartService extends BaseService
 
             if (!is_null($variant_id)) {
                 $variant = $product->variants()->lockForUpdate()->find($variant_id);
-                $variant_name = Variant::find($variant_id)->name;
+                $variant_name = $this->modelVariant->find($variant_id)->name;
                 if (is_null($variant)) throw new ApplicationException(trans('error.variant_not_available_in_products', ['product_name' => $product->name, 'variant_name' => $variant_name]));
                 if ($variant->quantity == 0 || $data_request['quantity'] > $variant->quantity) throw new ApplicationException(trans('error.out_of_stock'));
             }
@@ -130,10 +132,10 @@ class CartService extends BaseService
         DB::beginTransaction();
 
         $quantity = $data_request['quantity'];
-        $product = Product::find($check_data->product_id);
+        $product = $this->modelProduct->find($check_data->product_id);
 
         if($product->variants->count() > 0){
-            $variant = Variant::where('id', $check_data->variant_id)->where('product_id', $product->id)->first();
+            $variant = $this->modelVariant->where('id', $check_data->variant_id)->where('product_id', $product->id)->first();
             $real_quantity = $variant->quantity;
         } else {
             $real_quantity = $product->quantity;
