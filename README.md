@@ -1,13 +1,14 @@
 # Olshop API
 
-Ini merupakan RESTful API yang dibuat untuk keperluan pembuatan toko online. Aplikasi ini di deploy menggunakan VPS dan dapat diakses dengan link ini `https://api.baktiweb.my.id/`
+Ini merupakan RESTful API untuk pembuatan toko online sederhana, API ini dapat diakses disini `https://api.baktiweb.my.id/`
 
-## Spesifikasi Teknis
+## Spesifikasi
 
+-   Language: PHP
 -   Framework: Laravel
--   Server Web: Nginx
+-   Web Serve: Nginx
 -   Kontainerisasi: Docker
--   Library Utama: Passport, Cloudinary, Midtrans, RajaOngkir, Websockets, Meilisearch
+-   Library Utama: Passport, OAuth 2.0, Redis, Cloudinary, Midtrans, RajaOngkir, Websockets, Scout, Meilisearch
 -   Pola Arsitektur: Repository Pattern
 
 ## Fitur
@@ -20,12 +21,12 @@ Ini merupakan RESTful API yang dibuat untuk keperluan pembuatan toko online. Apl
 -   Multi Hak Akses
 -   dll
 
-## Arsitektur/Modularitas
+## Arsitektur
 
 Aplikasi ini mengadopsi pola arsitektur Repository Pattern untuk memisahkan logika bisnis dari lapisan penyimpanan data. Struktur aplikasi ini memiliki komponen-komponen berikut:
 
--   app: Direktori ini berisi implementasi logika bisnis, termasuk model, controller, dan service dan repository.
--   config: Direktori ini berisi file konfigurasi Laravel, seperti konfigurasi database, file sistem, dan lainnya.
--   database: Direktori ini berisi migrasi dan pengaturan pengisian awal (seeder) database.
--   routes: Direktori ini berisi definisi routing HTTP untuk aplikasi.
--   tests: Direktori ini berisi unit tes dan tes fitur untuk memastikan kualitas dan keandalan kode.
+-   app: Direktori ini berisi implementasi logika bisnis, termasuk model, controller, dan service dan repository
+-   config: Direktori ini berisi file konfigurasi Laravel, seperti konfigurasi database, file sistem, dan lainnya
+-   database: Direktori ini berisi migrasi dan pengaturan pengisian awal (seeder) database
+-   routes: Direktori ini berisi definisi routing HTTP untuk aplikasi
+-   tests: Direktori ini berisi unit tes dan tes fitur untuk memastikan kualitas kode
