@@ -8,7 +8,7 @@ Ini merupakan RESTful API untuk pembuatan toko online sederhana, API ini dapat d
 -   Framework: Laravel
 -   Web Serve: Nginx
 -   Kontainerisasi: Docker
--   Library Utama: Passport, OAuth 2.0, Redis, Cloudinary, Midtrans, RajaOngkir, Websockets, Scout, Meilisearch
+-   Library Utama: MongoDB, Passport, OAuth 2.0, Redis, Cloudinary, Midtrans, RajaOngkir, Websockets, Scout, Meilisearch
 -   Pola Arsitektur: Repository Pattern
 
 ## Fitur
@@ -19,6 +19,7 @@ Ini merupakan RESTful API untuk pembuatan toko online sederhana, API ini dapat d
 -   Pencarian Pintar
 -   Multi Bahasa
 -   Multi Hak Akses
+-   Multi Database (SQL & NoSQL)
 -   dll
 
 ## Arsitektur
