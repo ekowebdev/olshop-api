@@ -46,6 +46,10 @@ jobs:
             php artisan event:clear
             php artisan optimize:clear
             php artisan migrate --force
+            php artisan scout:sync-index-settings
+            php artisan scout:import "App\Http\Models\Product"
+            php artisan scout:import "App\Http\Models\Category"
+            php artisan scout:import "App\Http\Models\Brand"
             php artisan up
           EOF
 

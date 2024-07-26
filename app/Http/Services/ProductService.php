@@ -2,7 +2,6 @@
 
 namespace App\Http\Services;
 
-use Image;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use App\Http\Models\Product;
@@ -58,7 +57,7 @@ class ProductService extends BaseService
             'sort_column'   => array_merge($search, $search_column),
         ];
 
-        $result = Cache::remember('products_all_' . time(), now()->addMinutes(5), function() use ($locale, $sortable_and_searchable_column) {
+        $result = Cache::remember('products_all_' . time(), now()->addMinutes(1), function() use ($locale, $sortable_and_searchable_column) {
             return $this->repository->getIndexData($locale, $sortable_and_searchable_column);
         });
 
@@ -110,7 +109,7 @@ class ProductService extends BaseService
             'sort_column'   => array_merge($search, $search_column),
         ];
 
-        $result = Cache::remember('products_by_category_' . time(), now()->addMinutes(5), function() use ($locale, $sortable_and_searchable_column, $category) {
+        $result = Cache::remember('products_by_category_' . time(), now()->addMinutes(1), function() use ($locale, $sortable_and_searchable_column, $category) {
             return $this->repository->getSingleDataByCategory($locale, $sortable_and_searchable_column, $category);
         });
     }
@@ -150,7 +149,7 @@ class ProductService extends BaseService
             'sort_column'   => array_merge($search, $search_column),
         ];
 
-        $result = Cache::remember('products_by_brand_' . time(), now()->addMinutes(5), function() use ($locale, $sortable_and_searchable_column, $brand) {
+        $result = Cache::remember('products_by_brand_' . time(), now()->addMinutes(1), function() use ($locale, $sortable_and_searchable_column, $brand) {
             return $this->repository->getDataByBrand($locale, $sortable_and_searchable_column, $brand);
         });
     }
@@ -190,7 +189,7 @@ class ProductService extends BaseService
             'sort_column'   => array_merge($search, $search_column),
         ];
 
-        $result = Cache::remember('products_by_recomendation_' . time(), now()->addMinutes(5), function() use ($locale, $sortable_and_searchable_column) {
+        $result = Cache::remember('products_by_recomendation_' . time(), now()->addMinutes(1), function() use ($locale, $sortable_and_searchable_column) {
             return $this->repository->getDataByUserRecomendation($locale, $sortable_and_searchable_column);
         });
     }
