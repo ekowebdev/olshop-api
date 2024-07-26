@@ -38,7 +38,6 @@ class AccessTokenController extends ApiAuthController
 	        'grant_type' =>	'required|in:password,social',
 	        'provider' => 'nullable|required_if:grant_type,social|in:google',
 			'access_token' => 'nullable|required_if:grant_type,social',
-            // 'g-recaptcha-response' => ['nullable', 'required_if:grant_type,password', new ReCaptcha],
             'g-recaptcha-response' => [
                 (!empty($request['g-recaptcha-response']) && $request['g-recaptcha-response'] != config('services.recaptcha.development_key')) ? new ReCaptcha : '',
                 'required_if:grant_type,password',
