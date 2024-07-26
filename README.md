@@ -20,7 +20,6 @@ Ini merupakan RESTful API untuk pembuatan toko online sederhana, API ini dapat d
 -   Multi Bahasa
 -   Multi Hak Akses
 -   Multi Database (SQL & NoSQL)
--   dll
 
 ## Arsitektur
 
