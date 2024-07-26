@@ -16,11 +16,13 @@ use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 
 class ReviewService extends BaseService
 {
-    private $model, $repository, $order_repository;
+    private $model, $modelReviewFile, $modelProduct, $repository, $order_repository;
 
-    public function __construct(Review $model, ReviewRepository $repository, OrderRepository $order_repository)
+    public function __construct(Review $model, ReviewFile $modelReviewFile, Product $modelProduct, ReviewRepository $repository, OrderRepository $order_repository)
     {
         $this->model = $model;
+        $this->modelReviewFile = $modelReviewFile;
+        $this->modelProduct = $modelProduct;
         $this->repository = $repository;
         $this->order_repository = $order_repository;
     }
@@ -104,14 +106,14 @@ class ReviewService extends BaseService
 
         $user = auth()->user();
         $order = $this->order_repository->getSingleData($locale, $data_request['order_id']);
-        $product = Product::find($data_request['product_id']);
+        $product = $this->modelProduct->find($data_request['product_id']);
 
         if ($order->status != 'shipped' && $order->status != 'success' && $order->payment_logs == null) throw new ApplicationException(trans('error.order_not_completed', ['order_code' => $order->code]));
 
         $check_rating = $this->repository->getDataByUserOrderAndProduct($locale, $user->id, $data_request['order_id'], $data_request['product_id']);
         if (isset($check_rating)) throw new ApplicationException(trans('error.already_reviews', ['order_code' => $order->code, 'product_name' => $product->name]));
 
-        $result = Review::create([
+        $result = $this->model->create([
             'user_id' => $user->id,
             'order_id' => $data_request['order_id'],
             'product_id' => $data_request['product_id'],
@@ -123,7 +125,7 @@ class ReviewService extends BaseService
         if(is_array(Request::file('file'))){
             foreach (Request::file('file') as $file) {
                 $fileName = uploadImagesToCloudinary($file, 'reviews');
-                ReviewFile::create([
+                $this->modelReviewFile->create([
                     'review_id' => $result->id,
                     'file' => $fileName,
                 ]);
@@ -197,7 +199,7 @@ class ReviewService extends BaseService
             $check_rating = $this->repository->getDataByUserOrderAndProduct($locale, $user->id, $data_request['order_id'][$i], $data_request['product_id'][$i]);
             if(isset($check_rating)) throw new ApplicationException(trans('error.already_reviews', ['order_code' => $order->code[$i], 'product_name' => $product->name[$i]]));
 
-            $result = Review::create([
+            $result = $this->model->create([
                 'user_id' => $user->id,
                 'order_id' => $data_request['order_id'][$i],
                 'product_id' => $data_request['product_id'][$i],
@@ -209,7 +211,7 @@ class ReviewService extends BaseService
             if(isset($data_request['file'])){
                 foreach ($data_request['file'][$i] as $file) {
                     $fileName = uploadImagesToCloudinary($file, 'reviews');
-                    ReviewFile::create([
+                    $this->modelReviewFile->create([
                         'review_id' => $result->id,
                         'file' => $fileName,
                     ]);

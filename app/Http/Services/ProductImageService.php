@@ -17,11 +17,12 @@ use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 
 class ProductImageService extends BaseService
 {
-    private $model, $repository, $repositoryProduct;
+    private $model, $modelVariant, $repository, $repositoryProduct;
 
-    public function __construct(ProductImage $model, ProductImageRepository $repository, ProductRepository $repositoryProduct)
+    public function __construct(ProductImage $model, Variant $modelVariant, ProductImageRepository $repository, ProductRepository $repositoryProduct)
     {
         $this->model = $model;
+        $this->modelVariant = $modelVariant;
         $this->repository = $repository;
         $this->repositoryProduct = $repositoryProduct;
     }
@@ -85,7 +86,7 @@ class ProductImageService extends BaseService
         DB::beginTransaction();
 
         if (isset($data_request['variant_id'])) {
-            $variant = Variant::where('id', $data_request['variant_id'])->where('product_id', $data_request['product_id'])->first();
+            $variant = $this->modelVariant->where('id', $data_request['variant_id'])->where('product_id', $data_request['product_id'])->first();
             if(is_null($variant)) throw new ApplicationException(trans('error.variant_not_found_in_products', ['product_name' => $variant->products->name]));
 
             $exists_variant = $this->repository->getSingleDataByProductVariant($locale, $data_request['product_id'], $data_request['variant_id']);
@@ -159,7 +160,7 @@ class ProductImageService extends BaseService
         DB::beginTransaction();
 
         if (isset($data_request['variant_id']) && !empty($data_request['variant_id'])) {
-            $variant = Variant::where('id', $data_request['variant_id'])->where('product_id', isset($data_request['product_id']) ? $data_request['product_id'] : $check_data->product_id)->first();
+            $variant = $this->modelVariant->where('id', $data_request['variant_id'])->where('product_id', isset($data_request['product_id']) ? $data_request['product_id'] : $check_data->product_id)->first();
             if(is_null($variant)) throw new ApplicationException(trans('error.variant_not_found_in_products', ['product_name' => $variant->products->name]));
         }
 

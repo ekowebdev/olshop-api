@@ -9,7 +9,6 @@ use App\Http\Models\Product;
 use App\Http\Models\Variant;
 use Illuminate\Support\Facades\DB;
 use App\Http\Resources\CartResource;
-use Illuminate\Database\QueryException;
 use App\Exceptions\ApplicationException;
 use App\Http\Repositories\CartRepository;
 

@@ -7,17 +7,17 @@ use Illuminate\Support\Str;
 use App\Http\Models\Variant;
 use App\Http\Models\Product;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Database\QueryException;
 use App\Exceptions\ApplicationException;
 use App\Http\Repositories\VariantRepository;
 
 class VariantService extends BaseService
 {
-    private $model, $repository;
+    private $model, $modelProduct, $repository;
 
-    public function __construct(Variant $model, VariantRepository $repository)
+    public function __construct(Variant $model, Product $modelProduct, VariantRepository $repository)
     {
         $this->model = $model;
+        $this->modelProduct = $modelProduct;
         $this->repository = $repository;
     }
 
@@ -98,7 +98,7 @@ class VariantService extends BaseService
         try {
             DB::beginTransaction();
 
-            $product = Product::find($data_request['product_id']);
+            $product = $this->modelProduct->find($data_request['product_id']);
             $data_request['slug'] = $product->slug . '-' . Str::slug($data_request['name']);
 
             if($product->variants->count() > 0){
@@ -120,7 +120,7 @@ class VariantService extends BaseService
             $result = $this->model->create($data_request);
 
             DB::commit();
-        } catch (QueryException $e) {
+        } catch (\Exception $e) {
             DB::rollBack();
             throw new ApplicationException(json_encode([$e->getMessage()]));
         }
@@ -173,7 +173,7 @@ class VariantService extends BaseService
         try {
             DB::beginTransaction();
 
-            $product = Product::find($check_data->product_id);
+            $product = $this->modelProduct->find($check_data->product_id);
             $data_request['slug'] = $product->slug . '-' . Str::slug($data_request['name']);
             $check_data->update($data_request);
             $weight = min($check_data->where('product_id', $data_request['product_id'])->pluck('weight')->toArray());
@@ -186,7 +186,7 @@ class VariantService extends BaseService
             ]);
 
             DB::commit();
-        } catch (QueryException $e) {
+        } catch (\Exception $e) {
             DB::rollback();
             throw new ApplicationException(json_encode([$e->getMessage()]));
         }
@@ -202,7 +202,7 @@ class VariantService extends BaseService
             DB::beginTransaction();
 
             $result = $check_data->delete();
-            $product = Product::with('variants')->find($check_data->product_id);
+            $product = $this->modelProduct->with('variants')->find($check_data->product_id);
             $variants = $product->variants->where('id', '!=', $id);
             $min_point = $variants->min('point');
             $min_weight = $variants->min('weight');
@@ -213,7 +213,7 @@ class VariantService extends BaseService
             ]);
 
             DB::commit();
-        } catch (QueryException $e) {
+        } catch (\Exception $e) {
             DB::rollback();
             throw new ApplicationException(json_encode([$e->getMessage()]));
         }

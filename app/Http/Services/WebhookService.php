@@ -2,22 +2,24 @@
 
 namespace App\Http\Services;
 
-use App\Http\Models\Cart;
 use App\Http\Models\Shipping;
 use App\Http\Models\PaymentLog;
 use App\Http\Models\OrderProduct;
 use App\Exceptions\ForbiddenException;
+use App\Exceptions\ApplicationException;
 use App\Http\Repositories\OrderRepository;
-use App\Exceptions\AuthenticationException;
 use App\Jobs\SendEmailOrderConfirmationJob;
 
 class WebhookService extends BaseService
 {
-    private $repository;
+    private $modelPaymentLog, $modelOrderProduct, $modelShipping, $orderRepository;
 
-    public function __construct(OrderRepository $repository)
+    public function __construct(PaymentLog $modelPaymentLog, OrderProduct $modelOrderProduct, Shipping $modelShipping, OrderRepository $orderRepository)
     {
-        $this->repository = $repository;
+        $this->modelPaymentLog = $modelPaymentLog;
+        $this->modelOrderProduct = $modelOrderProduct;
+        $this->modelShipping = $modelShipping;
+        $this->orderRepository = $orderRepository;
     }
 
     public function midtrans_handler($locale, $data)
@@ -33,10 +35,10 @@ class WebhookService extends BaseService
         $server_key = config('services.midtrans.server_key');
         $my_signature_key = hash('sha512', $order_id.$status_code.$gross_amount.$server_key);
 
-        if ($signature_key !== $my_signature_key) throw new AuthenticationException(trans('error.invalid_signature_midtrans'));
+        if ($signature_key !== $my_signature_key) throw new ApplicationException(trans('error.invalid_signature_midtrans'));
 
         $real_order_id = explode('-', $order_id);
-        $order = $this->repository->getSingleData($locale, $real_order_id[0]);
+        $order = $this->orderRepository->getSingleData($locale, $real_order_id[0]);
 
         if ($order->status == 'shipped' && $order->status == 'success') throw new ForbiddenException(trans('error.operation_not_permitted'));
 
@@ -56,13 +58,13 @@ class WebhookService extends BaseService
             $order->status = 'pending';
         }
 
-        $payment_logs_data = [
+        $payment_log_data = [
             'status' => $transaction_status,
             'raw_response' => json_encode($data),
             'order_id' => $real_order_id[0],
             'type' => $type
         ];
-        PaymentLog::create($payment_logs_data);
+        $this->modelPaymentLog->create($payment_log_data);
 
         $order->save();
 
@@ -74,7 +76,7 @@ class WebhookService extends BaseService
                 'total_amount' => $order->total_amount,
             ];
 
-            $order_products = OrderProduct::with(['products', 'variants'])->where('order_id', $order->id)->get();
+            $order_products = $this->modelOrderProduct->with(['products', 'variants'])->where('order_id', $order->id)->get();
 
             $detail_data = [];
 
@@ -94,15 +96,15 @@ class WebhookService extends BaseService
                 ];
             }
 
-            $shippings = Shipping::where('order_id', $order->id)->first();
-            if($shippings->resi == null) $shipping_status = 'on progress';
+            $shipping = $this->modelShipping->where('order_id', $order->id)->first();
+            if($shipping->resi == null) $shipping_status = 'on progress';
             else $shipping_status = 'on delivery';
-            $shippings->update([
+            $shipping->update([
                 'status' => $shipping_status
             ]);
 
-            $payments = PaymentLog::where('order_id', $order->id)->first();
-            $payments->update([
+            $payment = $this->modelPaymentLog->where('order_id', $order->id)->first();
+            $payment->update([
                 'status' => $transaction_status,
                 'raw_response' => json_encode($data)
             ]);
@@ -110,6 +112,6 @@ class WebhookService extends BaseService
             SendEmailOrderConfirmationJob::dispatch($order->users->email, $header_data, $detail_data);
         }
 
-        return response()->api('OK');
+        return response()->noContent();
     }
 }

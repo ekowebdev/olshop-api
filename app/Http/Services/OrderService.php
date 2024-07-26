@@ -14,7 +14,6 @@ use App\Http\Models\Notification;
 use App\Http\Models\OrderProduct;
 use Illuminate\Support\Facades\DB;
 use App\Http\Services\OrderService;
-use Illuminate\Database\QueryException;
 use App\Exceptions\ApplicationException;
 use App\Events\RealTimeNotificationEvent;
 use App\Http\Repositories\CityRepository;
@@ -156,24 +155,24 @@ class OrderService extends BaseService
             DB::beginTransaction();
 
             // Initialize variables
-            $total_point = 0;
-            $metadata_order_products = [];
+            $user = auth()->user();
             $order_code = (string) Str::uuid();
             $item_details = [];
-            $user = auth()->user();
+            $metadata_order_products = [];
             $order_details = $data_request['order_details'];
             $order_products_details = $data_request['order_products_details'];
             $address_details = $data_request['address_details'];
             $shipping_details = $data_request['shipping_details'];
             $cost = (int) $shipping_details['cost'];
-            $city = $this->cityRepository->getSingleData($locale, $address_details['city_id']);
+            $total_point = 0;
 
-            $check_address = $this->addressRepository->getSingleData($locale, $address_details['id']);
+            $address = $this->addressRepository->getSingleData($locale, $address_details['id']);
+            $city = $this->cityRepository->getSingleData($locale, $address->city_id);
 
             // Create Order entry
             $order = $this->model->create([
                 'user_id' => $user->id,
-                'address_id' => (int) $address_details['id'],
+                'address_id' => (int) $address->id,
                 'code' => $order_code,
                 'total_point' => $total_point,
                 'shipping_fee' => $cost,
@@ -221,15 +220,6 @@ class OrderService extends BaseService
 
                 $total_point += $subtotal;
 
-                // Create OrderProduct entry
-                $order_product = new OrderProduct([
-                    'product_id' => (int) $product->id,
-                    'variant_id' => (int) $variant_id == 0 ? null : (int) $variant_id,
-                    'quantity' => (int) $quantity,
-                    'point' => $subtotal,
-                ]);
-
-                $metadata_order_products[] = $order_product->toArray();
                 $item_details[] = [
                     'id' => $product->id,
                     'price' => ($variant_id) ? $variant->point : $product->point,
@@ -240,7 +230,17 @@ class OrderService extends BaseService
                     'merchant_name' => config('app.name'),
                 ];
 
-                $order->order_products()->save($order_product);
+                // Create OrderProduct entry
+                $order_product = [
+                    'product_id' => (int) $product->id,
+                    'variant_id' => (int) $variant_id == 0 ? null : (int) $variant_id,
+                    'quantity' => (int) $quantity,
+                    'point' => $subtotal,
+                ];
+
+                $metadata_order_products[] = $order_product;
+
+                $order->order_products()->create($order_product);
 
                 $product->quantity -= $quantity;
                 $product->save();
@@ -257,11 +257,11 @@ class OrderService extends BaseService
                 'email' => $user->email,
                 'phone' => $user->profile->phone_number,
                 "shipping_address" => [
-                    "first_name" => $address_details['person_name'],
-                    "phone" => $address_details['person_phone'],
-                    "address" => $address_details['street'],
+                    "first_name" => $address->person_name,
+                    "phone" => $address->person_phone,
+                    "address" => $address->street,
                     "city" => $city->name,
-                    "postal_code" => $address_details['postal_code'],
+                    "postal_code" => $address->postal_code,
                     "country_code" => "IDN"
                 ]
             ];
@@ -277,14 +277,14 @@ class OrderService extends BaseService
                 'item_details' => $item_details,
                 'customer_details' => $customer_details
             ];
+            $midtrans_data = $this->createTransactionMidtrans($midtrans_params);
 
             // Update Order and related data
-            $midtrans_data = $this->createTransactionMidtrans($midtrans_params);
 	        $order->snap_token = $midtrans_data->token;
             $order->snap_url = $midtrans_data->redirect_url;
             $order->metadata = [
                 'user_id' => $user->id,
-                'address_id' => (int) $address_details['id'],
+                'address_id' => (int) $address->id,
                 'code' => $order_code,
                 'order_products' => $metadata_order_products,
                 'total_point' => $total_point,
@@ -340,9 +340,7 @@ class OrderService extends BaseService
                 'type' => 0,
                 'status_read' => 0,
             ];
-
             $allNotifications = storeNotification($inputNotification);
-
             $dataNotification['data'] = $allNotifications->toArray();
             $dataNotification['summary'] = [
                 'total_data' => $this->modelNotification->where('user_id', $user->id)->count(),
@@ -360,7 +358,7 @@ class OrderService extends BaseService
             DB::commit();
 
             return response()->api(trans('all.success_order'), $responseData);
-        } catch (QueryException $e) {
+        } catch (\Exception $e) {
             DB::rollback();
             throw new ApplicationException(json_encode([$e->getMessage()]));
         }

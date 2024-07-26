@@ -5,17 +5,18 @@ namespace App\Http\Services;
 use Illuminate\Support\Arr;
 use App\Http\Models\User;
 use Illuminate\Support\Facades\DB;
-use App\Http\Repositories\UserRepository;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
+use App\Http\Repositories\UserRepository;
 
 class UserService extends BaseService
 {
-    private $model, $repository;
+    private $model, $modelRole, $repository;
 
-    public function __construct(User $model, UserRepository $repository)
+    public function __construct(User $model, Role $modelRole, UserRepository $repository)
     {
         $this->model = $model;
+        $this->modelRole = $modelRole;
         $this->repository = $repository;
     }
 
@@ -143,7 +144,7 @@ class UserService extends BaseService
         $check_data->update($data_request);
 
         if(!empty($data_request['role'])){
-            $roles = Role::whereIn('name', $data_request['role'])->get();
+            $roles = $this->modelRole->whereIn('name', $data_request['role'])->get();
             $check_data->syncRoles($roles);
         }
 
