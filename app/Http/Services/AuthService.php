@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\App;
 use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Hash;
 use App\Jobs\SendEmailVerificationJob;
+use App\Exceptions\ConflictException;
 use App\Exceptions\ApplicationException;
 use Illuminate\Support\Facades\Password;
 use Laravel\Socialite\Facades\Socialite;
@@ -58,7 +59,7 @@ class AuthService extends BaseService
 
         $user = $this->repository->getDataByMultipleParam(['email' => $request['email']]);
 
-        if($user->email_verified_at != null) throw new ApplicationException(trans('error.already_verification'));
+        if($user->email_verified_at != null) throw new ConflictException(trans('error.already_verification'));
 
         SendEmailVerificationJob::dispatch($locale, $user);
 

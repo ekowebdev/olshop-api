@@ -29,6 +29,7 @@ class Handler extends ExceptionHandler
         ForbiddenException::class,
         DataEmptyException::class,
         ValidationException::class,
+        ConflictException::class,
     ];
 
     /**

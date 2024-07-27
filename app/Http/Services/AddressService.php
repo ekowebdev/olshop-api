@@ -5,7 +5,7 @@ namespace App\Http\Services;
 use Illuminate\Support\Arr;
 use App\Http\Models\Address;
 use Illuminate\Support\Facades\DB;
-use App\Exceptions\ApplicationException;
+use App\Exceptions\ConflictException;
 use App\Http\Repositories\UserRepository;
 use App\Http\Repositories\AddressRepository;
 
@@ -188,7 +188,7 @@ class AddressService extends BaseService
 
         DB::beginTransaction();
 
-        if($this->repository->countDataByUser($check_data->user_id) == 1 || $check_data->is_main == 1) throw new ApplicationException(trans('error.cannot_delete_primary_address'));
+        if($this->repository->countDataByUser($check_data->user_id) == 1 || $check_data->is_main == 1) throw new ConflictException(trans('error.cannot_delete_primary_address'));
 
         $result = $check_data->delete();
 

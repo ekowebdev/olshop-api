@@ -14,6 +14,7 @@ use App\Http\Models\Notification;
 use App\Http\Models\OrderProduct;
 use Illuminate\Support\Facades\DB;
 use App\Http\Services\OrderService;
+use App\Exceptions\ValidationException;
 use App\Exceptions\ApplicationException;
 use App\Events\RealTimeNotificationEvent;
 use App\Http\Repositories\CityRepository;
@@ -190,9 +191,9 @@ class OrderService extends BaseService
 
                 // Check variant if required
                 if ($product->variants->count() > 0 && !isset($variant_id)) {
-                    throw new ApplicationException(trans('error.variant_required', ['product_name' => $product->name]));
+                    throw new ValidationException(trans('error.variant_required', ['product_name' => $product->name]));
                 } else if ($product->variants->count() == 0 && isset($variant_id)) {
-                    throw new ApplicationException(trans('error.variant_not_found_in_products', ['product_name' => $product->name]));
+                    throw new ValidationException(trans('error.variant_not_found_in_products', ['product_name' => $product->name]));
                 }
 
                 // Check item availability
@@ -204,7 +205,7 @@ class OrderService extends BaseService
                     $variant = $product->variants()->lockForUpdate()->find($variant_id);
                     $variant_name = $this->modelVariant->find($variant_id)->name;
 
-                    if (is_null($variant)) throw new ApplicationException(trans('error.variant_not_available_in_products', ['product_name' => $product->name, 'variant_name' => $variant_name]));
+                    if (is_null($variant)) throw new ValidationException(trans('error.variant_not_available_in_products', ['product_name' => $product->name, 'variant_name' => $variant_name]));
 
                     if ($variant->quantity == 0 || $quantity > $variant->quantity) throw new ApplicationException(trans('error.out_of_stock'));
 
@@ -277,6 +278,7 @@ class OrderService extends BaseService
                 'item_details' => $item_details,
                 'customer_details' => $customer_details
             ];
+
             $midtrans_data = $this->createTransactionMidtrans($midtrans_params);
 
             // Update Order and related data

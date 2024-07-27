@@ -9,6 +9,7 @@ use App\Http\Models\Product;
 use App\Http\Models\Variant;
 use Illuminate\Support\Facades\DB;
 use App\Http\Resources\CartResource;
+use App\Exceptions\ValidationException;
 use App\Exceptions\ApplicationException;
 use App\Http\Repositories\CartRepository;
 
@@ -70,16 +71,16 @@ class CartService extends BaseService
             $variant_id = isset($data_request['variant_id']) ? (int) $data_request['variant_id'] : null;
             $product = $this->modelProduct->lockForUpdate()->find($data_request['product_id']);
 
-            if ($product->variants->count() > 0 && !isset($variant_id)) throw new ApplicationException(trans('error.variant_required', ['product_name' => $product->name]));
+            if ($product->variants->count() > 0 && !isset($variant_id)) throw new ValidationException(trans('error.variant_required', ['product_name' => $product->name]));
 
-            else if ($product->variants->count() == 0 && isset($variant_id)) throw new ApplicationException(trans('error.variant_not_found_in_products', ['product_name' => $product->name]));
+            else if ($product->variants->count() == 0 && isset($variant_id)) throw new ValidationException(trans('error.variant_not_found_in_products', ['product_name' => $product->name]));
 
             if(!$product || $product->quantity < $data_request['quantity'] || $product->status == 'O') throw new ApplicationException(trans('error.out_of_stock'));
 
             if (!is_null($variant_id)) {
                 $variant = $product->variants()->lockForUpdate()->find($variant_id);
                 $variant_name = $this->modelVariant->find($variant_id)->name;
-                if (is_null($variant)) throw new ApplicationException(trans('error.variant_not_available_in_products', ['product_name' => $product->name, 'variant_name' => $variant_name]));
+                if (is_null($variant)) throw new ValidationException(trans('error.variant_not_available_in_products', ['product_name' => $product->name, 'variant_name' => $variant_name]));
                 if ($variant->quantity == 0 || $data_request['quantity'] > $variant->quantity) throw new ApplicationException(trans('error.out_of_stock'));
             }
 

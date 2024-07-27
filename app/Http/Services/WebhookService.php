@@ -5,7 +5,6 @@ namespace App\Http\Services;
 use App\Http\Models\Shipping;
 use App\Http\Models\PaymentLog;
 use App\Http\Models\OrderProduct;
-use App\Exceptions\ForbiddenException;
 use App\Exceptions\ApplicationException;
 use App\Http\Repositories\OrderRepository;
 use App\Jobs\SendEmailOrderConfirmationJob;
@@ -40,7 +39,7 @@ class WebhookService extends BaseService
         $real_order_id = explode('-', $order_id);
         $order = $this->orderRepository->getSingleData($locale, $real_order_id[0]);
 
-        if ($order->status == 'shipped' && $order->status == 'success') throw new ForbiddenException(trans('error.operation_not_permitted'));
+        if ($order->status == 'shipped' && $order->status == 'success') throw new ApplicationException(trans('error.operation_not_permitted'));
 
         if ($transaction_status == 'capture'){
             if ($fraud_status == 'challenge'){

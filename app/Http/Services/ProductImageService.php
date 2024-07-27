@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Storage;
+use App\Exceptions\ValidationException;
 use App\Exceptions\ApplicationException;
 use App\Http\Repositories\ProductRepository;
 use App\Http\Repositories\ProductImageRepository;
@@ -87,10 +88,10 @@ class ProductImageService extends BaseService
 
         if (isset($data_request['variant_id'])) {
             $variant = $this->modelVariant->where('id', $data_request['variant_id'])->where('product_id', $data_request['product_id'])->first();
-            if(is_null($variant)) throw new ApplicationException(trans('error.variant_not_found_in_products', ['product_name' => $variant->products->name]));
+            if(is_null($variant)) throw new ValidationException(trans('error.variant_not_found_in_products', ['product_name' => $variant->products->name]));
 
             $exists_variant = $this->repository->getSingleDataByProductVariant($locale, $data_request['product_id'], $data_request['variant_id']);
-            if(!is_null($exists_variant)) throw new ApplicationException(trans('error.exists_image_variant_products', ['product_name' => $variant->products->name, 'variant_name' => $variant->name]));
+            if(!is_null($exists_variant)) throw new ValidationException(trans('error.exists_image_variant_products', ['product_name' => $variant->products->name, 'variant_name' => $variant->name]));
         }
 
         $existingPrimary = $this->model->where('product_id', $data_request['product_id']);
@@ -161,7 +162,7 @@ class ProductImageService extends BaseService
 
         if (isset($data_request['variant_id']) && !empty($data_request['variant_id'])) {
             $variant = $this->modelVariant->where('id', $data_request['variant_id'])->where('product_id', isset($data_request['product_id']) ? $data_request['product_id'] : $check_data->product_id)->first();
-            if(is_null($variant)) throw new ApplicationException(trans('error.variant_not_found_in_products', ['product_name' => $variant->products->name]));
+            if(is_null($variant)) throw new ValidationException(trans('error.variant_not_found_in_products', ['product_name' => $variant->products->name]));
         }
 
         $existingPrimary = $this->model->where('product_id', $check_data->product_id);

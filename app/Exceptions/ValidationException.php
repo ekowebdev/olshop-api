@@ -8,7 +8,7 @@ class ValidationException extends \Exception
 {
     public $taging;
 
-    public function __construct($message = null, $taging = null , $code = 406, \Exception $previous = null)
+    public function __construct($message = null, $taging = null , $code = 422, \Exception $previous = null)
     {
         parent::__construct($message, $code, $previous);
         $this->taging = $taging;

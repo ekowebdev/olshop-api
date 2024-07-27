@@ -97,6 +97,7 @@ class CategoryService extends BaseService
             'sort' => $data_request['sort'],
             'image' => $imageName,
         ]);
+
         DB::commit();
 
         return $this->repository->getSingleData($locale, $result->id);
