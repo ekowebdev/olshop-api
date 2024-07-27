@@ -10,7 +10,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 class WishlistRepository extends BaseRepository
 {
-    private $repository_name = 'Wishlist';
+    private $repository = 'Wishlist';
     private $model;
 
 	public function __construct(Wishlist $model)
@@ -18,30 +18,27 @@ class WishlistRepository extends BaseRepository
 		$this->model = $model;
 	}
 
-    public function getIndexData($locale)
+    public function index($locale)
     {
-        $per_page = (int) Request::get('per_page', 10);
+        $perPage = (int) Request::get('per_page', 10);
         $page = (int) Request::get('page', 1);
 
-        $data = $this->model
-            ->query()
-            ->orderBy('created_at', 'desc')
-            ->get();
+        $data = $this->model->query()->orderBy('created_at', 'desc')->get();
 
         if ($data->isEmpty()) {
-            throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => $this->repository_name], $locale));
+            throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => $this->repository], $locale));
         }
 
         $result = new LengthAwarePaginator(
-            $data->forPage($page, $per_page),
+            $data->forPage($page, $perPage),
             $data->count(),
-            $per_page,
+            $perPage,
             $page,
             ['path' => url('/api/v1/' . $locale . '/wishlists')]
         );
 
         if ($result->isEmpty()) {
-            throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => $this->repository_name], $locale));
+            throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => $this->repository], $locale));
         }
 
         return $result;
@@ -49,51 +46,44 @@ class WishlistRepository extends BaseRepository
 
 	public function getSingleData($locale, $id)
 	{
-		$result = $this->model
-                    ->all()
-                    ->where('id', $id)
-                    ->first();
-		if($result === null) throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => $this->repository_name], $locale));
+		$result = $this->model->all()->where('id', $id)->first();
+
+		if($result === null) throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => $this->repository], $locale));
+
         return $result;
 	}
 
-    public function getDataByUser($locale, $user_id)
+    public function getDataByUser($locale, $userId)
 	{
-        $user_id = (int) $user_id;
-        $per_page = (int) Request::get('per_page', 10);
+        $userId = (int) $userId;
+        $perPage = (int) Request::get('per_page', 10);
         $page = (int) Request::get('page', 1);
 
-		$data = $this->model
-                    ->query()
-                    ->orderBy('created_at', 'desc')
-                    ->where('user_id', $user_id)
-                    ->get();
+		$data = $this->model->query()->orderBy('created_at', 'desc')->where('user_id', $userId)->get();
 
 		if ($data->isEmpty()) {
-            throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => $this->repository_name], $locale));
+            throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => $this->repository], $locale));
         }
 
         $result = new LengthAwarePaginator(
-            $data->forPage($page, $per_page),
+            $data->forPage($page, $perPage),
             $data->count(),
-            $per_page,
+            $perPage,
             $page,
             ['path' => url('/api/v1/' . $locale . '/wishlists')]
         );
 
         if ($result->isEmpty()) {
-            throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => $this->repository_name], $locale));
+            throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => $this->repository], $locale));
         }
 
         return $result;
 	}
 
-    public function getDataByUserAndProduct($locale, $product_id)
+    public function getDataByUserAndProduct($locale, $productId)
 	{
-        $result = $this->model
-                  ->all()
-                  ->where('user_id', auth()->user()->id)
-                  ->where('product_id', (int) $product_id);
-		return $result;
+        $result = $this->model->all()->where('user_id', auth()->user()->id)->where('product_id', (int) $productId);
+
+        return $result;
 	}
 }

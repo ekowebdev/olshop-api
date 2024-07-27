@@ -19,7 +19,7 @@ class SliderService extends BaseService
         $this->repository = $repository;
     }
 
-    public function getIndexData($locale, $data)
+    public function index($locale, $data)
     {
         $search = [
             'title' => 'title',
@@ -29,7 +29,7 @@ class SliderService extends BaseService
             'end_date' => 'end_date',
         ];
 
-        $search_column = [
+        $searchColumn = [
             'id' => 'id',
             'title' => 'title',
             'link' => 'link',
@@ -38,21 +38,21 @@ class SliderService extends BaseService
             'end_date' => 'end_date',
         ];
 
-        $sortable_and_searchable_column = [
+        $sortableAndSearchableColumn = [
             'search'        => $search,
-            'search_column' => $search_column,
-            'sort_column'   => array_merge($search, $search_column),
+            'search_column' => $searchColumn,
+            'sort_column'   => array_merge($search, $searchColumn),
         ];
 
-        return $this->repository->getIndexData($locale, $sortable_and_searchable_column);
+        return $this->repository->getAllData($locale, $sortableAndSearchableColumn);
     }
 
-    public function getSingleData($locale, $id)
+    public function show($locale, $id)
     {
         return $this->repository->getSingleData($locale, $id);
     }
 
-    public function getListDataByActive($locale, $data)
+    public function showByActive($locale, $data)
     {
         $search = [
             'title' => 'title',
@@ -62,7 +62,7 @@ class SliderService extends BaseService
             'end_date' => 'end_date',
         ];
 
-        $search_column = [
+        $searchColumn = [
             'id' => 'id',
             'title' => 'title',
             'link' => 'link',
@@ -71,18 +71,18 @@ class SliderService extends BaseService
             'end_date' => 'end_date',
         ];
 
-        $sortable_and_searchable_column = [
+        $sortableAndSearchableColumn = [
             'search'        => $search,
-            'search_column' => $search_column,
-            'sort_column'   => array_merge($search, $search_column),
+            'search_column' => $searchColumn,
+            'sort_column'   => array_merge($search, $searchColumn),
         ];
 
-        return $this->repository->getListDataByActive($locale, $sortable_and_searchable_column);
+        return $this->repository->getListDataByActive($locale, $sortableAndSearchableColumn);
     }
 
     public function store($locale, $data)
     {
-        $data_request = Arr::only($data, [
+        $request = Arr::only($data, [
             'title',
             'description',
             'link',
@@ -92,7 +92,7 @@ class SliderService extends BaseService
             'end_date',
         ]);
 
-        $this->repository->validate($data_request, [
+        $this->repository->validate($request, [
             'title' => [
                 'nullable',
                 'string',
@@ -135,12 +135,12 @@ class SliderService extends BaseService
         $imageName = uploadImagesToCloudinary($file, 'sliders');
 
         $result = $this->model->create([
-            'title' => $data_request['title'],
-            'description' => $data_request['description'],
-            'link' => config('setting.frontend.url') . '/' . $data_request['link'],
-            'sort' => $data_request['sort'],
-            'start_date' => $data_request['start_date'],
-            'end_date' => $data_request['end_date'],
+            'title' => $request['title'],
+            'description' => $request['description'],
+            'link' => config('setting.frontend.url') . '/' . $request['link'],
+            'sort' => $request['sort'],
+            'start_date' => $request['start_date'],
+            'end_date' => $request['end_date'],
             'image' => $imageName,
         ]);
 
@@ -151,9 +151,9 @@ class SliderService extends BaseService
 
     public function update($locale, $id, $data)
     {
-        $check_data = $this->repository->getSingleData($locale, $id);
+        $checkData = $this->repository->getSingleData($locale, $id);
 
-        $data_request = Arr::only($data, [
+        $request = Arr::only($data, [
             'title',
             'description',
             'link',
@@ -163,7 +163,7 @@ class SliderService extends BaseService
             'end_date',
         ]);
 
-        $this->repository->validate($data_request, [
+        $this->repository->validate($request, [
             'sort' => [
                 'integer',
                 'unique:sliders,sort,' . $id,
@@ -184,25 +184,25 @@ class SliderService extends BaseService
 
         DB::beginTransaction();
 
-        if (isset($data_request['image'])) {
+        if (isset($request['image'])) {
             $file = Request::file('image');
 
-            if ($check_data->image) {
-                deleteImagesFromCloudinary($check_data->image, 'sliders');
+            if ($checkData->image) {
+                deleteImagesFromCloudinary($checkData->image, 'sliders');
             }
 
             $imageName = uploadImagesToCloudinary($file, 'sliders');
 
-            $check_data->image = $imageName;
+            $checkData->image = $imageName;
         }
 
-        $check_data->title = $data_request['title'] ?? $check_data->title;
-        $check_data->description = $data_request['description'] ?? $check_data->description;
-        $check_data->link = isset($data_request['link']) ? config('setting.frontend.url') . '/' . $data_request['link'] : $check_data->link;
-        $check_data->sort = $data_request['sort'] ?? $check_data->sort;
-        $check_data->start_date = $data_request['start_date'] ?? $check_data->start_date;
-        $check_data->end_date = $data_request['end_date'] ?? $check_data->end_date;
-        $check_data->save();
+        $checkData->title = $request['title'] ?? $checkData->title;
+        $checkData->description = $request['description'] ?? $checkData->description;
+        $checkData->link = isset($request['link']) ? config('setting.frontend.url') . '/' . $request['link'] : $checkData->link;
+        $checkData->sort = $request['sort'] ?? $checkData->sort;
+        $checkData->start_date = $request['start_date'] ?? $checkData->start_date;
+        $checkData->end_date = $request['end_date'] ?? $checkData->end_date;
+        $checkData->save();
 
         DB::commit();
 
@@ -211,11 +211,11 @@ class SliderService extends BaseService
 
     public function delete($locale, $id)
     {
-        $check_data = $this->repository->getSingleData($locale, $id);
+        $checkData = $this->repository->getSingleData($locale, $id);
 
         DB::beginTransaction();
-        deleteImagesFromCloudinary($check_data->image, 'sliders');
-        $result = $check_data->delete();
+        deleteImagesFromCloudinary($checkData->image, 'sliders');
+        $result = $checkData->delete();
         DB::commit();
 
         return $result;

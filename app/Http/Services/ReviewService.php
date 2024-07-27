@@ -17,18 +17,18 @@ use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 
 class ReviewService extends BaseService
 {
-    private $model, $modelReviewFile, $modelProduct, $repository, $order_repository;
+    private $model, $modelReviewFile, $modelProduct, $repository, $orderRepository;
 
-    public function __construct(Review $model, ReviewFile $modelReviewFile, Product $modelProduct, ReviewRepository $repository, OrderRepository $order_repository)
+    public function __construct(Review $model, ReviewFile $modelReviewFile, Product $modelProduct, ReviewRepository $repository, OrderRepository $orderRepository)
     {
         $this->model = $model;
         $this->modelReviewFile = $modelReviewFile;
         $this->modelProduct = $modelProduct;
         $this->repository = $repository;
-        $this->order_repository = $order_repository;
+        $this->orderRepository = $orderRepository;
     }
 
-    public function getIndexData($locale, $data)
+    public function index($locale, $data)
     {
         $search = [
             'user_id' => 'user_id',
@@ -40,7 +40,7 @@ class ReviewService extends BaseService
             'has_files' => 'has_files',
         ];
 
-        $search_column = [
+        $searchColumn = [
             'id' => 'id',
             'user_id' => 'user_id',
             'order_id' => 'order_id',
@@ -51,23 +51,23 @@ class ReviewService extends BaseService
             'has_files' => 'has_files',
         ];
 
-        $sortable_and_searchable_column = [
+        $sortableAndSearchableColumn = [
             'search'        => $search,
-            'search_column' => $search_column,
-            'sort_column'   => array_merge($search, $search_column),
+            'search_column' => $searchColumn,
+            'sort_column'   => array_merge($search, $searchColumn),
         ];
 
-        return $this->repository->getIndexData($locale, $sortable_and_searchable_column);
+        return $this->repository->getAllData($locale, $sortableAndSearchableColumn);
     }
 
-    public function getSingleData($locale, $id)
+    public function show($locale, $id)
     {
         return $this->repository->getSingleData($locale, $id);
     }
 
     public function store($locale, $data)
     {
-        $data_request = Arr::only($data, [
+        $request = Arr::only($data, [
             'order_id',
             'product_id',
             'text',
@@ -75,7 +75,7 @@ class ReviewService extends BaseService
             'file',
         ]);
 
-        $this->repository->validate($data_request, [
+        $this->repository->validate($request, [
             'order_id' => [
                 'required',
                 'exists:orders,id',
@@ -106,20 +106,20 @@ class ReviewService extends BaseService
         DB::beginTransaction();
 
         $user = auth()->user();
-        $order = $this->order_repository->getSingleData($locale, $data_request['order_id']);
-        $product = $this->modelProduct->find($data_request['product_id']);
+        $order = $this->orderRepository->getSingleData($locale, $request['order_id']);
+        $product = $this->modelProduct->find($request['product_id']);
 
         if ($order->status != 'shipped' && $order->status != 'success' && $order->payment_logs == null) throw new ApplicationException(trans('error.order_not_completed', ['order_code' => $order->code]));
 
-        $check_rating = $this->repository->getDataByUserOrderAndProduct($locale, $user->id, $data_request['order_id'], $data_request['product_id']);
-        if (isset($check_rating)) throw new ConflictException;(trans('error.already_reviews', ['order_code' => $order->code, 'product_name' => $product->name]));
+        $checkRating = $this->repository->getDataByUserOrderAndProduct($locale, $user->id, $request['order_id'], $request['product_id']);
+        if (isset($checkRating)) throw new ConflictException;(trans('error.already_reviews', ['order_code' => $order->code, 'product_name' => $product->name]));
 
         $result = $this->model->create([
             'user_id' => $user->id,
-            'order_id' => $data_request['order_id'],
-            'product_id' => $data_request['product_id'],
-            'text' => $data_request['text'],
-            'rating' => roundedRating($data_request['rating']),
+            'order_id' => $request['order_id'],
+            'product_id' => $request['product_id'],
+            'text' => $request['text'],
+            'rating' => roundedRating($request['rating']),
             'date' => date('Y-m-d'),
         ]);
 
@@ -140,9 +140,9 @@ class ReviewService extends BaseService
 
     public function storeBulk($locale, $data)
     {
-        $data_request = $data;
+        $request = $data;
 
-        $this->repository->validate($data_request, [
+        $this->repository->validate($request, [
             'order_id' => [
                 'required',
                 'array',
@@ -189,28 +189,28 @@ class ReviewService extends BaseService
 
         DB::beginTransaction();
 
-        $count_products = count($data_request['product_id']);
+        $countProducts = count($request['product_id']);
 
-        for ($i = 0; $i < $count_products; $i++) {
+        for ($i = 0; $i < $countProducts; $i++) {
             $user = auth()->user();
 
-            $order = $this->order_repository->getSingleData($locale, $data_request['order_id'][$i]);
+            $order = $this->orderRepository->getSingleData($locale, $request['order_id'][$i]);
             if($order->status != 'shipped' && $order->status != 'success' && $order->payment_logs == null) throw new ApplicationException(trans('error.order_not_completed', ['order_code' => $order->code[$i]]));
 
-            $check_rating = $this->repository->getDataByUserOrderAndProduct($locale, $user->id, $data_request['order_id'][$i], $data_request['product_id'][$i]);
-            if(isset($check_rating)) throw new ConflictException(trans('error.already_reviews', ['order_code' => $order->code[$i], 'product_name' => $product->name[$i]]));
+            $checkRating = $this->repository->getDataByUserOrderAndProduct($locale, $user->id, $request['order_id'][$i], $request['product_id'][$i]);
+            if(isset($checkRating)) throw new ConflictException(trans('error.already_reviews', ['order_code' => $order->code[$i], 'product_name' => $product->name[$i]]));
 
             $result = $this->model->create([
                 'user_id' => $user->id,
-                'order_id' => $data_request['order_id'][$i],
-                'product_id' => $data_request['product_id'][$i],
-                'text' => $data_request['text'][$i],
-                'rating' => roundedRating($data_request['rating'][$i]),
+                'order_id' => $request['order_id'][$i],
+                'product_id' => $request['product_id'][$i],
+                'text' => $request['text'][$i],
+                'rating' => roundedRating($request['rating'][$i]),
                 'date' => date('Y-m-d'),
             ]);
 
-            if(isset($data_request['file'])){
-                foreach ($data_request['file'][$i] as $file) {
+            if(isset($request['file'])){
+                foreach ($request['file'][$i] as $file) {
                     $fileName = uploadImagesToCloudinary($file, 'reviews');
                     $this->modelReviewFile->create([
                         'review_id' => $result->id,
@@ -227,22 +227,22 @@ class ReviewService extends BaseService
 
     public function update($locale, $id, $data)
     {
-        $check_data = $this->repository->getSingleData($locale, $id);
+        $checkData = $this->repository->getSingleData($locale, $id);
 
         $data = array_merge([
-            'user_id' => $check_data->user_id,
-            'order_id' => $check_data->order_id,
-            'product_id' => $check_data->product_id,
-            'text' => $check_data->text,
-            'rating' => $check_data->rating,
+            'user_id' => $checkData->user_id,
+            'order_id' => $checkData->order_id,
+            'product_id' => $checkData->product_id,
+            'text' => $checkData->text,
+            'rating' => $checkData->rating,
         ], $data);
 
-        $data_request = Arr::only($data, [
+        $request = Arr::only($data, [
             'text',
             'rating',
         ]);
 
-        $this->repository->validate($data_request, [
+        $this->repository->validate($request, [
             'text' => [
                 'string'
             ],
@@ -258,8 +258,8 @@ class ReviewService extends BaseService
 
         DB::beginTransaction();
 
-        $data_request['rating'] = roundedRating($data_request['rating']);
-        $check_data->update($data_request);
+        $request['rating'] = roundedRating($request['rating']);
+        $checkData->update($request);
 
         DB::commit();
 
@@ -268,15 +268,15 @@ class ReviewService extends BaseService
 
     public function delete($locale, $id)
     {
-        $check_data = $this->repository->getSingleData($locale, $id);
+        $checkData = $this->repository->getSingleData($locale, $id);
 
         DB::beginTransaction();
 
-        foreach($check_data->review_files as $file) {
+        foreach($checkData->review_files as $file) {
             deleteImagesFromCloudinary($file->file, 'reviews');
         }
 
-        $result = $check_data->delete();
+        $result = $checkData->delete();
 
         DB::commit();
 

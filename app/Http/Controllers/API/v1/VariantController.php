@@ -20,22 +20,22 @@ class VariantController extends BaseController
 
     public function index($locale)
     {
-        $data = $this->service->getIndexData($locale, Request::all());
+        $data = $this->service->index($locale, Request::all());
         return (VariantResource::collection($data))
                 ->additional([
-                    'sortable_and_searchable_column' => $data->sortableAndSearchableColumn,
+                    'sortableAndSearchableColumn' => $data->sortableAndSearchableColumn,
                 ]);
     }
 
     public function show($locale, $id)
     {
-        $data = $this->service->getSingleData($locale, $id);
+        $data = $this->service->show($locale, $id);
         return new VariantResource($data);
     }
 
     public function showBySlug($locale, $slug)
     {
-        $data = $this->service->getSingleDataBySlug($locale, $slug);
+        $data = $this->service->showBySlug($locale, $slug);
         return new VariantResource($data);
     }
 

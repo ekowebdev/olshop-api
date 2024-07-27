@@ -19,16 +19,16 @@ class PaymentLogController extends BaseController
 
     public function index($locale)
     {
-        $data = $this->service->getIndexData($locale, Request::all());
+        $data = $this->service->index($locale, Request::all());
         return (PaymentLogResource::collection($data))
                 ->additional([
-                    'sortable_and_searchable_column' => $data->sortableAndSearchableColumn,
+                    'sortableAndSearchableColumn' => $data->sortableAndSearchableColumn,
                 ]);
     }
 
     public function show($locale, $id)
     {
-        $data = $this->service->getSingleData($locale, $id);
+        $data = $this->service->show($locale, $id);
         return new PaymentLogResource($data);
     }
 }

@@ -14,8 +14,7 @@ class BaseRepository
     		$thisClass = get_called_class();
 	    	$thisClass = str_replace('Repositories', 'Services', str_replace('Repository', 'Service', $thisClass));
 	    	$load_service = new $thisClass;
-	        if(method_exists($load_service, $method))
-			{
+	        if (method_exists($load_service, $method)) {
 				return call_user_func_array(array($load_service, $method), $parameters);
 			}
 		}
@@ -25,7 +24,7 @@ class BaseRepository
 	{
 		$rules = empty($rules) ? $this->model->$rules : $rules;
 		$validator = Validator::make($data, $rules, $messages);
-		if($validator->fails()) throw new ValidationException($validator->errors());
+		if ($validator->fails()) throw new ValidationException($validator->errors());
 		return true;
 	}
 
@@ -41,7 +40,6 @@ class BaseRepository
 
 	public function updateOrCreate($where = [], $data = [], $model = 'model')
     {
-        return $this->$model->updateOrCreate($where,$data);
+        return $this->$model->updateOrCreate($where, $data);
     }
-
 }

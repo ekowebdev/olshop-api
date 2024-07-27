@@ -15,18 +15,18 @@ class SendEmailOrderConfirmationJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    protected $email, $header_data, $detail_data, $locale;
+    protected $email, $headerData, $detailData, $locale;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct($email, $header_data, $detail_data, $locale)
+    public function __construct($email, $headerData, $detailData, $locale)
     {
         $this->email = $email;
-        $this->detail_data = $detail_data;
-        $this->header_data = $header_data;
+        $this->detailData = $detailData;
+        $this->headerData = $headerData;
         $this->locale = $locale;
     }
 
@@ -37,6 +37,6 @@ class SendEmailOrderConfirmationJob implements ShouldQueue
      */
     public function handle()
     {
-        Mail::to($this->email)->send(new OrderConfirmation($this->header_data, $this->detail_data, $this->locale));
+        Mail::to($this->email)->send(new OrderConfirmation($this->headerData, $this->detailData, $this->locale));
     }
 }

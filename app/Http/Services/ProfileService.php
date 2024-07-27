@@ -18,7 +18,7 @@ class ProfileService extends BaseService
         $this->repository = $repository;
     }
 
-    public function getIndexData($locale, $data)
+    public function index($locale, $data)
     {
         $search = [
             'user_id' => 'user_id',
@@ -27,7 +27,7 @@ class ProfileService extends BaseService
             'phone_number' => 'phone_number',
         ];
 
-        $search_column = [
+        $searchColumn = [
             'id' => 'id',
             'user_id' => 'user_id',
             'name' => 'name',
@@ -35,23 +35,23 @@ class ProfileService extends BaseService
             'phone_number' => 'phone_number',
         ];
 
-        $sortable_and_searchable_column = [
+        $sortableAndSearchableColumn = [
             'search'        => $search,
-            'search_column' => $search_column,
-            'sort_column'   => array_merge($search, $search_column),
+            'search_column' => $searchColumn,
+            'sort_column'   => array_merge($search, $searchColumn),
         ];
 
-        return $this->repository->getIndexData($locale, $sortable_and_searchable_column);
+        return $this->repository->getAllData($locale, $sortableAndSearchableColumn);
     }
 
-    public function getSingleData($locale, $id)
+    public function show($locale, $id)
     {
         return $this->repository->getSingleData($locale, $id);
     }
 
     public function store($locale, $data)
     {
-        $data_request = Arr::only($data, [
+        $request = Arr::only($data, [
             'user_id',
             'name',
             'birthdate',
@@ -59,7 +59,7 @@ class ProfileService extends BaseService
             'avatar',
         ]);
 
-        $this->repository->validate($data_request, [
+        $this->repository->validate($request, [
                 'user_id' => [
                     'required',
                     'exists:users,id',
@@ -92,10 +92,10 @@ class ProfileService extends BaseService
         $imageName = uploadImagesToCloudinary($file, 'profiles');
 
         $result = $this->model->create([
-            'user_id' => $data_request['user_id'],
-            'name' => $data_request['name'],
-            'birthdate' => $data_request['birthdate'],
-            'phone_number' => $data_request['phone_number'],
+            'user_id' => $request['user_id'],
+            'name' => $request['name'],
+            'birthdate' => $request['birthdate'],
+            'phone_number' => $request['phone_number'],
             'avatar' => $imageName ?? null,
         ]);
 
@@ -106,9 +106,9 @@ class ProfileService extends BaseService
 
     public function update($locale, $id, $data)
     {
-        $check_data = $this->repository->getSingleData($locale, $id);
+        $checkData = $this->repository->getSingleData($locale, $id);
 
-        $data_request = Arr::only($data, [
+        $request = Arr::only($data, [
             'user_id',
             'name',
             'birthdate',
@@ -116,7 +116,7 @@ class ProfileService extends BaseService
             'avatar',
         ]);
 
-        $this->repository->validate($data_request, [
+        $this->repository->validate($request, [
             'user_id' => [
                 'exists:users,id',
                 'unique:profiles,user_id,'.$id,
@@ -139,23 +139,23 @@ class ProfileService extends BaseService
 
         DB::beginTransaction();
 
-        if (isset($data_request['avatar'])) {
+        if (isset($request['avatar'])) {
             $file = Request::file('avatar');
 
-            if ($check_data->image) {
-                deleteImagesFromCloudinary($check_data->avatar, 'profiles');
+            if ($checkData->image) {
+                deleteImagesFromCloudinary($checkData->avatar, 'profiles');
             }
 
             $imageName = uploadImagesToCloudinary($file, 'profiles');
 
-            $check_data->avatar = $imageName;
+            $checkData->avatar = $imageName;
         }
 
-        $check_data->user_id = $data_request['user_id'] ?? $check_data->user_id;
-        $check_data->name = $data_request['name'] ?? $check_data->name;
-        $check_data->birthdate = $data_request['birthdate'] ?? $check_data->birthdate;
-        $check_data->phone_number = $data_request['phone_number'] ?? $check_data->phone_number;
-        $check_data->save();
+        $checkData->user_id = $request['user_id'] ?? $checkData->user_id;
+        $checkData->name = $request['name'] ?? $checkData->name;
+        $checkData->birthdate = $request['birthdate'] ?? $checkData->birthdate;
+        $checkData->phone_number = $request['phone_number'] ?? $checkData->phone_number;
+        $checkData->save();
 
         DB::commit();
 
@@ -164,11 +164,11 @@ class ProfileService extends BaseService
 
     public function delete($locale, $id)
     {
-        $check_data = $this->repository->getSingleData($locale, $id);
+        $checkData = $this->repository->getSingleData($locale, $id);
 
         DB::beginTransaction();
-        deleteImagesFromCloudinary($check_data->avatar, 'profiles');
-        $result = $check_data->delete();
+        deleteImagesFromCloudinary($checkData->avatar, 'profiles');
+        $result = $checkData->delete();
         DB::commit();
 
         return $result;

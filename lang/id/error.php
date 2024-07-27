@@ -34,4 +34,5 @@ return [
     "only_one_primary_image_per_product"          => "Hanya satu gambar utama yang diperbolehkan per produk",
     "cannot_delete_main_image"                    => "Tidak bisa hapus data gambar utama produk",
     "cannot_proccess_data"                        => "Tidak dapat memproses data",
+    "not_allowed_character_text"                  => "Periksa text pencarian anda, mungkin mengandung karakter yang tidak kita izinkan",
 ];

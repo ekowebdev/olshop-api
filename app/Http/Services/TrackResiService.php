@@ -9,36 +9,36 @@ use App\Http\Repositories\OrderRepository;
 
 class TrackResiService extends BaseService
 {
-    private $api_key, $repository;
+    private $apiKey, $repository;
 
     public function __construct(OrderRepository $repository)
     {
-        $this->api_key = config('services.binderbyte.key');
+        $this->apiKey = config('services.binderbyte.key');
         $this->repository = $repository;
     }
 
     public function track($locale, $data)
     {
-        $data_request = Arr::only($data, [
+        $request = Arr::only($data, [
             'user_id',
             'resi',
             'courier',
         ]);
 
-        $this->validate($data_request, [
+        $this->validate($request, [
             'user_id' => 'required|exists:users,id',
             'resi' => 'required',
             'courier' => 'required|in:jne,jnt,pos,tiki,spx',
         ]);
 
-        $check = $this->repository->getDataByIdAndReceipt($data_request['user_id'], $data_request['resi']);
+        $check = $this->repository->getDataByIdAndReceipt($request['user_id'], $request['resi']);
 
         if(!$check) throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => 'Receipt'], $locale));
-        
+
         $body = http_build_query([
             'api_key' => $this->api_key,
-            'awb' => $data_request['resi'],
-            'courier' => $data_request['courier'],
+            'awb' => $request['resi'],
+            'courier' => $request['courier'],
         ]);
 
         $url = 'https://api.binderbyte.com/v1/track?' . $body;
@@ -53,10 +53,10 @@ class TrackResiService extends BaseService
             CURLOPT_TIMEOUT => 30,
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
         ));
-          
+
         $response = curl_exec($curl);
         $err = curl_error($curl);
-          
+
         curl_close($curl);
 
         if($err) throw new ApplicationException('cURL Error #: '. $err);
@@ -68,5 +68,5 @@ class TrackResiService extends BaseService
         $data = $data['data'];
 
         return response()->api(null, $data);
-    }   
+    }
 }

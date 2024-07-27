@@ -23,92 +23,92 @@ class WebhookService extends BaseService
 
     public function midtrans_handler($locale, $data)
     {
-        $signature_key = $data['signature_key'];
-        $order_id = $data['order_id'];
-        $status_code = $data['status_code'];
-        $gross_amount = $data['gross_amount'];
-        $transaction_status = $data['transaction_status'];
+        $signatureKey = $data['signature_key'];
+        $orderId = $data['order_id'];
+        $statusCode = $data['status_code'];
+        $grossAmount = $data['gross_amount'];
+        $transactionStatus = $data['transaction_status'];
         $type = $data['payment_type'];
-        $fraud_status = $data['fraud_status'];
+        $fraudStatus = $data['fraud_status'];
 
-        $server_key = config('services.midtrans.server_key');
-        $my_signature_key = hash('sha512', $order_id.$status_code.$gross_amount.$server_key);
+        $serverKey = config('services.midtrans.server_key');
+        $mySignatureKey = hash('sha512', $orderId.$statusCode.$grossAmount.$serverKey);
 
-        if ($signature_key !== $my_signature_key) throw new ApplicationException(trans('error.invalid_signature_midtrans'));
+        if ($signatureKey !== $mySignatureKey) throw new ApplicationException(trans('error.invalid_signature_midtrans'));
 
-        $real_order_id = explode('-', $order_id);
-        $order = $this->orderRepository->getSingleData($locale, $real_order_id[0]);
+        $realOrderId = explode('-', $orderId);
+        $order = $this->orderRepository->getSingleData($locale, $realOrderId[0]);
 
         if ($order->status == 'shipped' && $order->status == 'success') throw new ApplicationException(trans('error.operation_not_permitted'));
 
-        if ($transaction_status == 'capture'){
-            if ($fraud_status == 'challenge'){
+        if ($transactionStatus == 'capture'){
+            if ($fraudStatus == 'challenge'){
                 $order->status = 'challenge';
-            } else if ($fraud_status == 'accept'){
+            } else if ($fraudStatus == 'accept'){
                 $order->status = 'shipped';
             }
-        } else if ($transaction_status == 'settlement'){
+        } else if ($transactionStatus == 'settlement'){
             $order->status = 'shipped';
-        } else if ($transaction_status == 'cancel' ||
-        $transaction_status == 'deny' ||
-        $transaction_status == 'expire'){
+        } else if ($transactionStatus == 'cancel' ||
+        $transactionStatus == 'deny' ||
+        $transactionStatus == 'expire'){
             $order->status = 'failure';
-        } else if ($transaction_status == 'pending'){
+        } else if ($transactionStatus == 'pending'){
             $order->status = 'pending';
         }
 
-        $payment_log_data = [
-            'status' => $transaction_status,
+        $paymentLogData = [
+            'status' => $transactionStatus,
             'raw_response' => json_encode($data),
-            'order_id' => $real_order_id[0],
+            'order_id' => $realOrderId[0],
             'type' => $type
         ];
-        $this->modelPaymentLog->create($payment_log_data);
+        $this->modelPaymentLog->create($paymentLogData);
 
         $order->save();
 
         if ($order->status == 'shipped') {
-            $header_data = [
+            $headerData = [
                 'code' => $order->code,
                 'total_price' => $order->total_point,
                 'shipping_fee' => $order->shipping_fee,
                 'total_amount' => $order->total_amount,
             ];
 
-            $order_products = $this->modelOrderProduct->with(['products', 'variants'])->where('order_id', $order->id)->get();
+            $orderProducts = $this->modelOrderProduct->with(['products', 'variants'])->where('order_id', $order->id)->get();
 
-            $detail_data = [];
+            $detailData = [];
 
-            foreach ($order_products as $order_product) {
-                $variant_name = '';
-                $price = $order_product->products->point;
+            foreach ($orderProducts as $orderProduct) {
+                $variantName = '';
+                $price = $orderProduct->products->point;
 
-                if ($order_product->variants) {
-                    $variant_name = ' - ' . $order_product->variants->name;
-                    $price = $order_product->variants->point;
+                if ($orderProduct->variants) {
+                    $variantName = ' - ' . $orderProduct->variants->name;
+                    $price = $orderProduct->variants->point;
                 }
 
-                $detail_data[] = [
+                $detailData[] = [
                     'price' => (int) $price,
-                    'quantity' => $order_product->quantity,
-                    'name' => $order_product->products->name . $variant_name,
+                    'quantity' => $orderProduct->quantity,
+                    'name' => $orderProduct->products->name . $variantName,
                 ];
             }
 
             $shipping = $this->modelShipping->where('order_id', $order->id)->first();
-            if($shipping->resi == null) $shipping_status = 'on progress';
-            else $shipping_status = 'on delivery';
+            if($shipping->resi == null) $shippingStatus = 'on progress';
+            else $shippingStatus = 'on delivery';
             $shipping->update([
-                'status' => $shipping_status
+                'status' => $shippingStatus
             ]);
 
             $payment = $this->modelPaymentLog->where('order_id', $order->id)->first();
             $payment->update([
-                'status' => $transaction_status,
+                'status' => $transactionStatus,
                 'raw_response' => json_encode($data)
             ]);
 
-            SendEmailOrderConfirmationJob::dispatch($order->users->email, $header_data, $detail_data);
+            // SendEmailOrderConfirmationJob::dispatch($order->users->email, $headerData, $detailData);
         }
 
         return response()->noContent();

@@ -25,12 +25,12 @@ class CartService extends BaseService
         $this->repository = $repository;
     }
 
-    public function getIndexData($locale, $data)
+    public function index($locale, $data)
     {
-        return $this->repository->getIndexData($locale);
+        return $this->repository->getAllData($locale);
     }
 
-    public function getSingleData($locale, $id)
+    public function show($locale, $id)
     {
         return $this->repository->getSingleData($locale, $id);
     }
@@ -42,13 +42,13 @@ class CartService extends BaseService
 
     public function store($locale, $data)
     {
-        $data_request = Arr::only($data, [
+        $request = Arr::only($data, [
             'product_id',
             'variant_id',
             'quantity',
         ]);
 
-        $this->repository->validate($data_request, [
+        $this->repository->validate($request, [
                 'product_id' => [
                     'required',
                     'exists:products,id',
@@ -67,38 +67,38 @@ class CartService extends BaseService
         try {
             DB::beginTransaction();
             $user = auth()->user();
-            $data_request['user_id'] = $user->id;
-            $variant_id = isset($data_request['variant_id']) ? (int) $data_request['variant_id'] : null;
-            $product = $this->modelProduct->lockForUpdate()->find($data_request['product_id']);
+            $request['user_id'] = $user->id;
+            $variant_id = isset($request['variant_id']) ? (int) $request['variant_id'] : null;
+            $product = $this->modelProduct->lockForUpdate()->find($request['product_id']);
 
             if ($product->variants->count() > 0 && !isset($variant_id)) throw new ValidationException(trans('error.variant_required', ['product_name' => $product->name]));
 
             else if ($product->variants->count() == 0 && isset($variant_id)) throw new ValidationException(trans('error.variant_not_found_in_products', ['product_name' => $product->name]));
 
-            if(!$product || $product->quantity < $data_request['quantity'] || $product->status == 'O') throw new ApplicationException(trans('error.out_of_stock'));
+            if(!$product || $product->quantity < $request['quantity'] || $product->status == 'O') throw new ApplicationException(trans('error.out_of_stock'));
 
             if (!is_null($variant_id)) {
                 $variant = $product->variants()->lockForUpdate()->find($variant_id);
                 $variant_name = $this->modelVariant->find($variant_id)->name;
                 if (is_null($variant)) throw new ValidationException(trans('error.variant_not_available_in_products', ['product_name' => $product->name, 'variant_name' => $variant_name]));
-                if ($variant->quantity == 0 || $data_request['quantity'] > $variant->quantity) throw new ApplicationException(trans('error.out_of_stock'));
+                if ($variant->quantity == 0 || $request['quantity'] > $variant->quantity) throw new ApplicationException(trans('error.out_of_stock'));
             }
 
-            $exists_cart = $this->repository->getByUserProductAndVariant($user->id, $data_request['product_id'], $variant_id)->first();
+            $exists_cart = $this->repository->getByUserProductAndVariant($user->id, $request['product_id'], $variant_id)->first();
 
             if(!empty($exists_cart)) {
-                $quantity = $exists_cart->quantity + (int) $data_request['quantity'];
+                $quantity = $exists_cart->quantity + (int) $request['quantity'];
                 if($product->variants->count() > 0) $real_quantity = $variant->quantity;
                 else $real_quantity = $product->quantity;
                 if ($quantity > $real_quantity) throw new ApplicationException(trans('error.out_of_stock'));
-                $exists_cart->update(['quantity' => $exists_cart->quantity + $data_request['quantity']]);
+                $exists_cart->update(['quantity' => $exists_cart->quantity + $request['quantity']]);
             } else {
                 $cart = $this->model;
                 $cart->id = (string) Str::uuid();
                 $cart->user_id = (int) $user->id;
-                $cart->product_id = (int) $data_request['product_id'];
+                $cart->product_id = (int) $request['product_id'];
                 $cart->variant_id = $variant_id ?? '';
-                $cart->quantity = (int) $data_request['quantity'];
+                $cart->quantity = (int) $request['quantity'];
                 $cart->save();
             }
 
@@ -113,13 +113,13 @@ class CartService extends BaseService
 
     public function update($locale, $id, $data)
     {
-        $check_data = $this->repository->getSingleData($locale, $id);
+        $checkData = $this->repository->getSingleData($locale, $id);
 
         $data = array_merge([
-            'quantity' => $check_data->quantity,
+            'quantity' => $checkData->quantity,
         ], $data);
 
-        $data_request = Arr::only($data, [
+        $request = Arr::only($data, [
             'quantity',
         ]);
 
@@ -131,11 +131,11 @@ class CartService extends BaseService
 
         DB::beginTransaction();
 
-        $quantity = $data_request['quantity'];
-        $product = $this->modelProduct->find($check_data->product_id);
+        $quantity = $request['quantity'];
+        $product = $this->modelProduct->find($checkData->product_id);
 
         if($product->variants->count() > 0){
-            $variant = $this->modelVariant->where('id', $check_data->variant_id)->where('product_id', $product->id)->first();
+            $variant = $this->modelVariant->where('id', $checkData->variant_id)->where('product_id', $product->id)->first();
             $real_quantity = $variant->quantity;
         } else {
             $real_quantity = $product->quantity;
@@ -143,8 +143,8 @@ class CartService extends BaseService
 
         if ($real_quantity < $quantity) throw new ApplicationException(trans('error.out_of_stock'));
 
-        $data_request['quantity'] = (int) $data_request['quantity'];
-        $check_data->update($data_request);
+        $request['quantity'] = (int) $request['quantity'];
+        $checkData->update($request);
 
         DB::commit();
 
@@ -153,11 +153,11 @@ class CartService extends BaseService
 
     public function delete($locale, $id)
     {
-        $check_data = $this->repository->getSingleData($locale, $id);
+        $checkData = $this->repository->getSingleData($locale, $id);
 
         DB::beginTransaction();
 
-        $result = $check_data->delete();
+        $result = $checkData->delete();
 
         DB::commit();
 

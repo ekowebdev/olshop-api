@@ -21,18 +21,18 @@ class NotificationController extends BaseController
 
     public function index($locale)
     {
-        return $this->service->getIndexData($locale, Request::all());
+        return $this->service->index($locale, Request::all());
     }
 
     public function show($locale, $id)
     {
-        $data = $this->service->getSingleData($locale, $id);
+        $data = $this->service->show($locale, $id);
         return new NotificationResource($data);
     }
 
     public function showByUser($locale, $id)
     {
-        return $this->service->getDataByUser($locale, $id);
+        return $this->service->showByUser($locale, $id);
     }
 
     public function store($locale)

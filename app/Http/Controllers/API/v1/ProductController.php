@@ -21,49 +21,49 @@ class ProductController extends BaseController
 
     public function index($locale)
     {
-        $data = $this->service->getIndexData($locale, Request::all());
+        $data = $this->service->index($locale, Request::all());
         return (ProductResource::collection($data))
                 ->additional([
-                    'sortable_and_searchable_column' => $data->sortableAndSearchableColumn,
+                    'sortableAndSearchableColumn' => $data->sortableAndSearchableColumn,
                 ]);
     }
 
     public function show($locale, $id)
     {
-        $data = $this->service->getSingleData($locale, $id);
+        $data = $this->service->show($locale, $id);
         return new ProductResource($data);
     }
 
     public function showBySlug($locale, $slug)
     {
-        $data = $this->service->getSingleDataBySlug($locale, $slug);
+        $data = $this->service->showBySlug($locale, $slug);
         return new ProductResource($data);
     }
 
     public function showByCategory($locale, $category)
     {
-        $data = $this->service->getDataByCategory($locale, $category);
+        $data = $this->service->showByCategory($locale, $category);
         return (ProductResource::collection($data))
                 ->additional([
-                    'sortable_and_searchable_column' => $data->sortableAndSearchableColumn,
+                    'sortableAndSearchableColumn' => $data->sortableAndSearchableColumn,
                 ]);
     }
 
     public function showByBrand($locale, $brand)
     {
-        $data = $this->service->getDataByBrand($locale, $brand);
+        $data = $this->service->showByBrand($locale, $brand);
         return (ProductResource::collection($data))
                 ->additional([
-                    'sortable_and_searchable_column' => $data->sortableAndSearchableColumn,
+                    'sortableAndSearchableColumn' => $data->sortableAndSearchableColumn,
                 ]);
     }
 
     public function showByUserRecomendation($locale)
     {
-        $data = $this->service->getDataByUserRecomendation($locale);
+        $data = $this->service->showByUserRecomendation($locale);
         return (ProductResource::collection($data))
                 ->additional([
-                    'sortable_and_searchable_column' => $data->sortableAndSearchableColumn,
+                    'sortableAndSearchableColumn' => $data->sortableAndSearchableColumn,
                 ]);
     }
 

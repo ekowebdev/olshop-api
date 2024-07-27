@@ -20,16 +20,16 @@ class UserController extends BaseController
 
     public function index($locale)
     {
-        $data = $this->service->getIndexData($locale, Request::all());
+        $data = $this->service->index($locale, Request::all());
         return (UserResource::collection($data))
                 ->additional([
-                    'sortable_and_searchable_column' => $data->sortableAndSearchableColumn,
+                    'sortableAndSearchableColumn' => $data->sortableAndSearchableColumn,
                 ]);
     }
 
     public function show($locale, $id)
     {
-        $data = $this->service->getSingleData($locale, $id);
+        $data = $this->service->show($locale, $id);
         return new UserResource($data);
     }
 
@@ -51,9 +51,9 @@ class UserController extends BaseController
         return new DeletedResource($data);
     }
 
-    public function set_main_address($locale)
+    public function setMainAddress($locale)
     {
-        $data = $this->service->set_main_address($locale, Request::all());
+        $data = $this->service->setMainAddress($locale, Request::all());
         return new UserResource($data);
     }
 }

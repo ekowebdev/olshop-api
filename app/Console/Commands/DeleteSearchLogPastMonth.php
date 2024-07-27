@@ -30,12 +30,12 @@ class DeleteSearchLogPastMonth extends Command
     {
         $i = 0;
         $startDate = now()->subMonth()->format('Y-m-d H:i:s');
-        $search_logs = SearchLog::query()
+        $searchLogs = SearchLog::query()
                         ->where('created_at', '<', $startDate)
                         ->get();
 
-        foreach ($search_logs as $search_log) {
-            $search_log->delete();
+        foreach ($searchLogs as $searchLog) {
+            $searchLog->delete();
             $i++;
         }
 

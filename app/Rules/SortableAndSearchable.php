@@ -16,35 +16,24 @@ class SortableAndSearchable implements Rule
     public function passes($attribute, $value)
     {
         $this->value = $value;
-        if(is_array($value))
-        {
+        if (is_array($value)) {
             foreach ($value as $column) {
                 $this->value = $column;
-                if(!isset($this->sortAbleAndSearchAbleColumn[$column]))
-                {
+                if (!isset($this->sortAbleAndSearchAbleColumn[$column])) {
                     $this->notExist = 1;
                     return false;
-                }
-                else
-                {
-                    if(!$this->sortAbleAndSearchAbleColumn[$column])
-                    {             
+                } else {
+                    if (!$this->sortAbleAndSearchAbleColumn[$column]) {
                         return false;
                     }
                 }
             }
-        }
-        else
-        {
-            if(!isset($this->sortAbleAndSearchAbleColumn[$value]))
-            {
+        } else {
+            if (!isset($this->sortAbleAndSearchAbleColumn[$value])) {
                 $this->notExist = 1;
                 return false;
-            }
-            else
-            {
-                if(!$this->sortAbleAndSearchAbleColumn[$value])
-                {             
+            } else {
+                if (!$this->sortAbleAndSearchAbleColumn[$value]) {
                     return false;
                 }
             }
@@ -55,9 +44,8 @@ class SortableAndSearchable implements Rule
 
     public function message()
     {
-        if(isset($this->notExist))
-        {
-            return trans('validation.attributes.sortable_and_searchable_exist', ['value' => $this->value]);    
+        if (isset($this->notExist)) {
+            return trans('validation.attributes.sortable_and_searchable_exist', ['value' => $this->value]);
         }
 
         return trans('validation.attributes.sortable_and_searchable', ['value' => $this->value]);

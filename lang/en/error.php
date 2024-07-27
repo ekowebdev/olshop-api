@@ -34,4 +34,5 @@ return [
     "only_one_primary_image_per_product"          => "Only one primary image is allowed per product",
 	"cannot_delete_main_image"                    => "Cannot delete main image product",
 	"cannot_proccess_data"                        => "Cannot procces the data",
+    "not_allowed_character_text"                  => "Check your search text, it may contain characters that we do not allow",
 ];

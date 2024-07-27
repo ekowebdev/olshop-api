@@ -21,7 +21,7 @@ class BrandService extends BaseService
         $this->repository = $repository;
     }
 
-    public function getIndexData($locale, $data)
+    public function index($locale, $data)
     {
         $search = [
             'name' => 'name',
@@ -29,41 +29,41 @@ class BrandService extends BaseService
             'sort' => 'sort',
         ];
 
-        $search_column = [
+        $searchColumn = [
             'id' => 'id',
             'name' => 'name',
             'slug' => 'slug',
             'sort' => 'sort',
         ];
 
-        $sortable_and_searchable_column = [
+        $sortableAndSearchableColumn = [
             'search'        => $search,
-            'search_column' => $search_column,
-            'sort_column'   => array_merge($search, $search_column),
+            'search_column' => $searchColumn,
+            'sort_column'   => array_merge($search, $searchColumn),
         ];
 
-        return $this->repository->getIndexData($locale, $sortable_and_searchable_column);
+        return $this->repository->getAllData($locale, $sortableAndSearchableColumn);
     }
 
-    public function getSingleData($locale, $id)
+    public function show($locale, $id)
     {
         return $this->repository->getSingleData($locale, $id);
     }
 
-    public function getSingleDataBySlug($locale, $slug)
+    public function showBySlug($locale, $slug)
     {
         return $this->repository->getSingleDataBySlug($locale, $slug);
     }
 
     public function store($locale, $data)
     {
-        $data_request = Arr::only($data, [
+        $request = Arr::only($data, [
             'name',
             'sort',
             'logo',
         ]);
 
-        $this->repository->validate($data_request, [
+        $this->repository->validate($request, [
             'name' => [
                 'required',
                 'unique:brands,name',
@@ -87,12 +87,12 @@ class BrandService extends BaseService
 
         $imageName = uploadImagesToCloudinary($file, 'brands');
 
-        $data_request['slug'] = Str::slug($data_request['name']);
+        $request['slug'] = Str::slug($request['name']);
 
         $result = $this->model->create([
-            'name' => $data_request['name'],
-            'slug' => $data_request['slug'],
-            'sort' => $data_request['sort'],
+            'name' => $request['name'],
+            'slug' => $request['slug'],
+            'sort' => $request['sort'],
             'logo' => $imageName,
         ]);
 
@@ -103,15 +103,15 @@ class BrandService extends BaseService
 
     public function update($locale, $id, $data)
     {
-        $check_data = $this->repository->getSingleData($locale, $id);
+        $checkData = $this->repository->getSingleData($locale, $id);
 
-        $data_request = Arr::only($data, [
+        $request = Arr::only($data, [
             'name',
             'sort',
             'logo',
         ]);
 
-        $this->repository->validate($data_request, [
+        $this->repository->validate($request, [
             'name' => [
                 'unique:brands,name,' . $id,
             ],
@@ -127,22 +127,26 @@ class BrandService extends BaseService
         ]);
 
         DB::beginTransaction();
-        if (isset($data_request['logo'])) {
+
+        if (isset($request['logo'])) {
             $file = Request::file('logo');
 
-            if ($check_data->logo) {
-                deleteImagesFromCloudinary($check_data->logo, 'brands');
+            if ($checkData->logo) {
+                deleteImagesFromCloudinary($checkData->logo, 'brands');
             }
 
             $imageName = uploadImagesToCloudinary($file, 'brands');
 
-            $check_data->logo = $imageName;
+            $checkData->logo = $imageName;
         }
-        $data_request['slug'] = Str::slug($data_request['name'] ?? $check_data->name);
-        $check_data->name = $data_request['name'] ?? $check_data->name;
-        $check_data->slug = $data_request['slug'] ?? $check_data->slug;
-        $check_data->sort = $data_request['sort'] ?? $check_data->sort;
-        $check_data->save();
+
+        $request['slug'] = Str::slug($request['name'] ?? $checkData->name);
+
+        $checkData->name = $request['name'] ?? $checkData->name;
+        $checkData->slug = $request['slug'] ?? $checkData->slug;
+        $checkData->sort = $request['sort'] ?? $checkData->sort;
+        $checkData->save();
+
         DB::commit();
 
         return $this->repository->getSingleData($locale, $id);
@@ -150,11 +154,14 @@ class BrandService extends BaseService
 
     public function delete($locale, $id)
     {
-        $check_data = $this->repository->getSingleData($locale, $id);
+        $checkData = $this->repository->getSingleData($locale, $id);
 
         DB::beginTransaction();
-        deleteImagesFromCloudinary($check_data->logo, 'brands');
-        $result = $check_data->delete();
+
+        deleteImagesFromCloudinary($checkData->logo, 'brands');
+
+        $result = $checkData->delete();
+
         DB::commit();
 
         return $result;

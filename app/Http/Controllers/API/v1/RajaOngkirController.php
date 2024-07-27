@@ -20,17 +20,17 @@ class RajaOngkirController extends BaseController
     {
         $id = request('id');
         $page = request('page');
-        $per_page = request('per_page');
-        return $this->service->getProvince($locale, $id, $page, $per_page);
+        $perPage = request('per_page');
+        return $this->service->getProvince($locale, $id, $page, $perPage);
     }
 
     public function getCity($locale)
     {
         $id = request('id');
-        $province_id = request('province_id');
+        $provinceId = request('province_id');
         $page = request('page');
-        $per_page = request('per_page');
-        return $this->service->getCity($locale, $id, $province_id, $page, $per_page);
+        $perPage = request('per_page');
+        return $this->service->getCity($locale, $id, $provinceId, $page, $perPage);
     }
 
     public function getCost($locale)

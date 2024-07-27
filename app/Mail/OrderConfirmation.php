@@ -13,17 +13,17 @@ class OrderConfirmation extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $header_data, $detail_data, $locale;
+    public $headerData, $detailData, $locale;
 
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct($header_data, $detail_data, $locale)
+    public function __construct($headerData, $detailData, $locale)
     {
-        $this->header_data = $header_data;
-        $this->detail_data = $detail_data;
+        $this->headerData = $headerData;
+        $this->detailData = $detailData;
         $this->locale = $locale;
     }
 
@@ -49,8 +49,8 @@ class OrderConfirmation extends Mailable
         return new Content(
             view: 'emails.order_confirmation',
             with : [
-                'header_data' => $this->header_data,
-                'detail_data' => $this->detail_data
+                'header_data' => $this->headerData,
+                'detail_data' => $this->detailData
             ]
         );
     }

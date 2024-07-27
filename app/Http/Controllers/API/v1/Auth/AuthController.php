@@ -27,27 +27,27 @@ class AuthController extends BaseController
     }
 
     public function resend($locale, Request $request)
-    {   
+    {
         return $this->service->resend($locale, $request->all());
     }
 
-    public function forget_password($locale, Request $request)
+    public function forgetPassword($locale, Request $request)
     {
-        return $this->service->forget_password($locale, $request);
+        return $this->service->forgetPassword($locale, $request);
     }
 
-    public function reset_password($locale, Request $request)
+    public function resetPassword($locale, Request $request)
     {
-        return $this->service->reset_password($locale, $request);
+        return $this->service->resetPassword($locale, $request);
     }
 
-    public function auth_google($locale)
+    public function authGoogle($locale)
     {
-        return $this->service->auth_google($locale);
+        return $this->service->authGoogle($locale);
     }
 
-    public function auth_google_callback($locale)
+    public function authGoogleCallback($locale)
     {
-        return $this->service->auth_google_callback($locale);
+        return $this->service->authGoogleCallback($locale);
     }
 }

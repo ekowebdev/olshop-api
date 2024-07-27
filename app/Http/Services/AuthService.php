@@ -101,27 +101,27 @@ class AuthService extends BaseService
 
         DB::beginTransaction();
 
-        $password_reset = DB::table('password_resets')->where('token', $request->token)->first();
+        $passwordReset = DB::table('password_resets')->where('token', $request->token)->first();
 
-        if($password_reset == null) throw new ApplicationException(trans('error.token_reset_password_is_invalid'));
+        if($passwordReset == null) throw new ApplicationException(trans('error.token_reset_password_is_invalid'));
 
-        if (strtotime($password_reset->created_at) < strtotime('-60 minutes')) {
+        if (strtotime($passwordReset->created_at) < strtotime('-60 minutes')) {
             DB::table('password_resets')->where('token', $request->token)->delete();
             throw new ApplicationException(trans('error.token_reset_password_is_expired'));
         }
 
-        $user = $this->model->where('email', $password_reset->email)->first();
+        $user = $this->model->where('email', $passwordReset->email)->first();
 
         $user->update(['password' => Hash::make($request->password)]);
 
-        DB::table('password_resets')->where('email', $password_reset->email)->delete();
+        DB::table('password_resets')->where('email', $passwordReset->email)->delete();
 
         DB::commit();
 
         return response()->api(trans('all.success_reset_password'));
     }
 
-    public function auth_google($locale)
+    public function authGoogle($locale)
     {
         $data = [
             'auth_url' => Socialite::driver('google')->stateless()->redirect()->getTargetUrl(),
@@ -130,7 +130,7 @@ class AuthService extends BaseService
         return response()->api(trans('all.success_logout'), $data);
     }
 
-    public function auth_google_callback($locale)
+    public function authGoogleCallback($locale)
     {
         try {
             $socialite = Socialite::driver('google')->stateless()->user();

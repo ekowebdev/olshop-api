@@ -20,71 +20,70 @@ class UserService extends BaseService
         $this->repository = $repository;
     }
 
-    public function getIndexData($locale, $data)
+    public function index($locale, $data)
     {
         $search = [
             'username' => 'username',
             'email' => 'email',
         ];
 
-        $search_column = [
+        $searchColumn = [
             'id' => 'id',
             'username' => 'username',
             'email' => 'email',
         ];
 
-        $sortable_and_searchable_column = [
+        $sortableAndSearchableColumn = [
             'search'        => $search,
-            'search_column' => $search_column,
-            'sort_column'   => array_merge($search, $search_column),
+            'search_column' => $searchColumn,
+            'sort_column'   => array_merge($search, $searchColumn),
         ];
 
-        return $this->repository->getIndexData($locale, $sortable_and_searchable_column);
+        return $this->repository->getAllData($locale, $sortableAndSearchableColumn);
     }
 
-    public function getSingleData($locale, $id)
+    public function show($locale, $id)
     {
         return $this->repository->getSingleData($locale, $id);
     }
 
     public function store($locale, $data)
     {
-        $data_request = Arr::only($data, [
+        $request = Arr::only($data, [
             'username',
             'email',
             'password',
             'role',
         ]);
 
-        $this->repository->validate($data_request, [
-                'username' => [
-                    'required',
-                    'min:5',
-                    'max:20',
-                    'unique:users,username',
-                ],
-                'email' => [
-                    'required',
-                    'email:rfc,dns',
-                    'unique:users,email'
-                ],
-                'password' => [
-                    'required',
-                    'min:6',
-                    'max:20',
-                ],
-                'role' => [
-                    'in:admin,customer',
-                ],
-            ]
-        );
+        $this->repository->validate($request, [
+            'username' => [
+                'required',
+                'min:5',
+                'max:20',
+                'unique:users,username',
+            ],
+            'email' => [
+                'required',
+                'email:rfc,dns',
+                'unique:users,email'
+            ],
+            'password' => [
+                'required',
+                'min:6',
+                'max:20',
+            ],
+            'role' => [
+                'in:admin,customer',
+            ],
+        ]);
 
         DB::beginTransaction();
 
-        $data_request['role'] = isset($data_request['role']) ? $data_request['role'] : 'customer';
-        $data_request['password'] = Hash::make($data_request['password']);
-        $result = $this->model->create($data_request);
-        $result->assignRole($data_request['role']);
+        $request['role'] = isset($request['role']) ? $request['role'] : 'customer';
+        $request['password'] = Hash::make($request['password']);
+        $result = $this->model->create($request);
+        $result->assignRole($request['role']);
 
         DB::commit();
 
@@ -93,29 +92,29 @@ class UserService extends BaseService
 
     public function update($locale, $id, $data)
     {
-        $check_data = $this->repository->getSingleData($locale, $id);
+        $checkData = $this->repository->getSingleData($locale, $id);
 
         $data = array_merge([
-            'username' => $check_data->username,
-            'email' => $check_data->email,
+            'username' => $checkData->username,
+            'email' => $checkData->email,
         ], $data);
 
-        $data_request = Arr::only($data, [
+        $request = Arr::only($data, [
             'username',
             'email',
             'password',
             'role',
         ]);
 
-        $this->repository->validate($data_request, [
+        $this->repository->validate($request, [
             'username' => [
                 'min:5',
                 'max:20',
-                'unique:users,username,'.$check_data->id,
+                'unique:users,username,'.$checkData->id,
             ],
             'email' => [
                 'email',
-                'unique:users,email,'.$check_data->id,
+                'unique:users,email,'.$checkData->id,
             ],
             'password' => [
                 'sometimes',
@@ -132,20 +131,20 @@ class UserService extends BaseService
         $roles = auth()->user()->getRoleNames()->toArray();
 
         if(count($roles) == 1 && in_array('customer', $roles)){
-            unset($data_request['role']);
+            unset($request['role']);
         }
 
-        if(!empty($data_request['password'])){
-            $data_request['password'] = Hash::make($data_request['password']);
+        if(!empty($request['password'])){
+            $request['password'] = Hash::make($request['password']);
         } else {
-            unset($data_request['password']);
+            unset($request['password']);
         }
 
-        $check_data->update($data_request);
+        $checkData->update($request);
 
-        if(!empty($data_request['role'])){
-            $roles = $this->modelRole->whereIn('name', $data_request['role'])->get();
-            $check_data->syncRoles($roles);
+        if(!empty($request['role'])){
+            $roles = $this->modelRole->whereIn('name', $request['role'])->get();
+            $checkData->syncRoles($roles);
         }
 
         DB::commit();
@@ -157,23 +156,23 @@ class UserService extends BaseService
     {
         DB::beginTransaction();
 
-        $check_data = $this->repository->getSingleData($locale, $id);
-        $check_data->roles()->detach();
-        $result = $check_data->delete();
+        $checkData = $this->repository->getSingleData($locale, $id);
+        $checkData->roles()->detach();
+        $result = $checkData->delete();
 
         DB::commit();
 
         return $result;
     }
 
-    public function set_main_address($locale, $data)
+    public function setMainAddress($locale, $data)
     {
-        $data_request = Arr::only($data, [
+        $request = Arr::only($data, [
             'user_id',
             'address_id',
         ]);
 
-        $this->repository->validate($data_request, [
+        $this->repository->validate($request, [
             'user_id' => [
                 'required',
                 'exists:users,id',
@@ -186,12 +185,12 @@ class UserService extends BaseService
 
         DB::beginTransaction();
 
-        $check_data = $this->repository->getSingleData($locale, $data['user_id']);
-        $check_data->main_address_id = $data_request['address_id'];
-        $check_data->save();
+        $checkData = $this->repository->getSingleData($locale, $data['user_id']);
+        $checkData->main_address_id = $request['address_id'];
+        $checkData->save();
 
         DB::commit();
 
-        return $this->repository->getSingleData($locale, $check_data->id);
+        return $this->repository->getSingleData($locale, $checkData->id);
     }
 }

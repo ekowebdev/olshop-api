@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace App\Http\Repositories;
 
@@ -8,32 +8,32 @@ use App\Http\Models\OauthRefreshToken;
 
 class OauthRepository extends BaseRepository {
 
-    private $repository_name = 'Oauth';
-    private $model_access_token, $model_refresh_token;
+    private $repository = 'Oauth';
+    private $modelAccessToken, $modelRefreshToken;
 
-	public function __construct(OauthAccessToken $model_access_token, OauthRefreshToken $model_refresh_token)
+	public function __construct(OauthAccessToken $modelAccessToken, OauthRefreshToken $modelRefreshToken)
 	{
-        $this->model_access_token = $model_access_token;
-        $this->model_refresh_token = $model_refresh_token;
+        $this->modelAccessToken = $modelAccessToken;
+        $this->modelRefreshToken = $modelRefreshToken;
 	}
-   
+
     public function checkRefreshToken($refreshToken, $accessToken)
     {
-        $data = $this->model_refresh_token
+        $data = $this->modelRefreshToken
                     ->where('id', $refreshToken)
-                    ->where('access_token_id', $accessToken)    
+                    ->where('access_token_id', $accessToken)
                     ->where('revoked', 0)
-                    ->where('expires_at', '>', Carbon::now())                    
+                    ->where('expires_at', '>', Carbon::now())
                     ->first();
         return $data;
     }
 
     public function checkAccessToken($accessToken)
     {
-        $data = $this->model_access_token
+        $data = $this->modelAccessToken
                     ->where('id', $accessToken)
                     ->where('revoked', 0)
-                    ->where('expires_at', '<' , Carbon::now())                    
+                    ->where('expires_at', '<' , Carbon::now())
                     ->first();
         return $data;
     }

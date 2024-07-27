@@ -233,8 +233,11 @@ class AccessTokenController extends ApiAuthController
         if($data === null) return false;
 
         \DB::beginTransaction();
+
         if($data->google_id === null) $data->update(['google_id' => json_decode($response->getBody())->user_id]);
+
         $data->update(['google_access_token' => $accessToken]);
+
         \DB::commit();
 
         return $data;

@@ -16,8 +16,8 @@ class WebhookController extends BaseController
         $this->service = $service;
     }
 
-    public function midtrans_handler($locale)
+    public function midtransHandler($locale)
     {
-        return $this->service->midtrans_handler($locale, Request::all());
+        return $this->service->midtransHandler($locale, Request::all());
     }
 }

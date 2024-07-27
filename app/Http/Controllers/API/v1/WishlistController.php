@@ -19,19 +19,19 @@ class WishlistController extends BaseController
 
     public function index($locale)
     {
-        $data = $this->service->getIndexData($locale, Request::all());
+        $data = $this->service->index($locale, Request::all());
         return (WishlistResource::collection($data));
     }
 
     public function show($locale, $id)
     {
-        $data = $this->service->getSingleData($locale, $id);
+        $data = $this->service->show($locale, $id);
         return new WishlistResource($data);
     }
 
     public function showByUser($locale, $id)
     {
-        $data = $this->service->getDataByUser($locale, $id);
+        $data = $this->service->showByUser($locale, $id);
         return (WishlistResource::collection($data));
     }
 

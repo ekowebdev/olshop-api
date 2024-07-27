@@ -22,7 +22,7 @@ class ProductService extends BaseService
         $this->repository = $repository;
     }
 
-    public function getIndexData($locale, $data)
+    public function index($locale, $data)
     {
         $search = [
             'name' => 'name',
@@ -37,7 +37,7 @@ class ProductService extends BaseService
             'total_order' => 'total_order',
         ];
 
-        $search_column = [
+        $searchColumn = [
             'id' => 'id',
             'name' => 'name',
             'category_id' => 'category_id',
@@ -51,30 +51,30 @@ class ProductService extends BaseService
             'total_order' => 'total_order',
         ];
 
-        $sortable_and_searchable_column = [
+        $sortableAndSearchableColumn = [
             'search'        => $search,
-            'search_column' => $search_column,
-            'sort_column'   => array_merge($search, $search_column),
+            'search_column' => $searchColumn,
+            'sort_column'   => array_merge($search, $searchColumn),
         ];
 
-        $result = Cache::remember('products_all_' . time(), now()->addMinutes(1), function() use ($locale, $sortable_and_searchable_column) {
-            return $this->repository->getIndexData($locale, $sortable_and_searchable_column);
+        $result = Cache::remember('products_all_' . time(), now()->addMinutes(1), function() use ($locale, $sortableAndSearchableColumn) {
+            return $this->repository->getAllData($locale, $sortableAndSearchableColumn);
         });
 
         return $result;
     }
 
-    public function getSingleData($locale, $id)
+    public function show($locale, $id)
     {
         return $this->repository->getSingleData($locale, $id);
     }
 
-    public function getSingleDataBySlug($locale, $slug)
+    public function showBySlug($locale, $slug)
     {
         return $this->repository->getSingleDataBySlug($locale, $slug);
     }
 
-    public function getDataByCategory($locale, $category)
+    public function showByCategory($locale, $category)
     {
         $search = [
             'name' => 'name',
@@ -89,7 +89,7 @@ class ProductService extends BaseService
             'total_order' => 'total_order',
         ];
 
-        $search_column = [
+        $searchColumn = [
             'id' => 'id',
             'name' => 'name',
             'category_id' => 'category_id',
@@ -103,18 +103,18 @@ class ProductService extends BaseService
             'total_order' => 'total_order',
         ];
 
-        $sortable_and_searchable_column = [
+        $sortableAndSearchableColumn = [
             'search'        => $search,
-            'search_column' => $search_column,
-            'sort_column'   => array_merge($search, $search_column),
+            'search_column' => $searchColumn,
+            'sort_column'   => array_merge($search, $searchColumn),
         ];
 
-        $result = Cache::remember('products_by_category_' . time(), now()->addMinutes(1), function() use ($locale, $sortable_and_searchable_column, $category) {
-            return $this->repository->getSingleDataByCategory($locale, $sortable_and_searchable_column, $category);
+        $result = Cache::remember('products_by_category_' . time(), now()->addMinutes(1), function() use ($locale, $sortableAndSearchableColumn, $category) {
+            return $this->repository->getSingleDataByCategory($locale, $sortableAndSearchableColumn, $category);
         });
     }
 
-    public function getDataByBrand($locale, $brand)
+    public function showByBrand($locale, $brand)
     {
         $search = [
             'name' => 'name',
@@ -129,7 +129,7 @@ class ProductService extends BaseService
             'total_order' => 'total_order',
         ];
 
-        $search_column = [
+        $searchColumn = [
             'id' => 'id',
             'name' => 'name',
             'category_id' => 'category_id',
@@ -143,18 +143,18 @@ class ProductService extends BaseService
             'total_order' => 'total_order',
         ];
 
-        $sortable_and_searchable_column = [
+        $sortableAndSearchableColumn = [
             'search'        => $search,
-            'search_column' => $search_column,
-            'sort_column'   => array_merge($search, $search_column),
+            'search_column' => $searchColumn,
+            'sort_column'   => array_merge($search, $searchColumn),
         ];
 
-        $result = Cache::remember('products_by_brand_' . time(), now()->addMinutes(1), function() use ($locale, $sortable_and_searchable_column, $brand) {
-            return $this->repository->getDataByBrand($locale, $sortable_and_searchable_column, $brand);
+        $result = Cache::remember('products_by_brand_' . time(), now()->addMinutes(1), function() use ($locale, $sortableAndSearchableColumn, $brand) {
+            return $this->repository->getDataByBrand($locale, $sortableAndSearchableColumn, $brand);
         });
     }
 
-    public function getDataByUserRecomendation($locale)
+    public function showByUserRecomendation($locale)
     {
         $search = [
             'name' => 'name',
@@ -169,7 +169,7 @@ class ProductService extends BaseService
             'total_order' => 'total_order',
         ];
 
-        $search_column = [
+        $searchColumn = [
             'id' => 'id',
             'name' => 'name',
             'category_id' => 'category_id',
@@ -183,14 +183,14 @@ class ProductService extends BaseService
             'total_order' => 'total_order',
         ];
 
-        $sortable_and_searchable_column = [
+        $sortableAndSearchableColumn = [
             'search'        => $search,
-            'search_column' => $search_column,
-            'sort_column'   => array_merge($search, $search_column),
+            'search_column' => $searchColumn,
+            'sort_column'   => array_merge($search, $searchColumn),
         ];
 
-        $result = Cache::remember('products_by_recomendation_' . time(), now()->addMinutes(1), function() use ($locale, $sortable_and_searchable_column) {
-            return $this->repository->getDataByUserRecomendation($locale, $sortable_and_searchable_column);
+        $result = Cache::remember('products_by_recomendation_' . time(), now()->addMinutes(1), function() use ($locale, $sortableAndSearchableColumn) {
+            return $this->repository->getDataByUserRecomendation($locale, $sortableAndSearchableColumn);
         });
     }
 
@@ -201,7 +201,7 @@ class ProductService extends BaseService
 
     public function store($locale, $data)
     {
-        $data_request = Arr::only($data, [
+        $request = Arr::only($data, [
             'name',
             'category_id',
             'brand_id',
@@ -213,7 +213,7 @@ class ProductService extends BaseService
             'spesification',
         ]);
 
-        $this->repository->validate($data_request, [
+        $this->repository->validate($request, [
             'name' => [
                 'required',
                 'unique:products,name',
@@ -267,14 +267,14 @@ class ProductService extends BaseService
 
         DB::beginTransaction();
 
-        $data_request['code'] = Str::random(15);
-        $data_request['slug'] = Str::slug($data_request['name']);
-        $data_request['point'] = $data_request['point'] ?? null;
-        $data_request['weight'] = $data_request['weight'] ?? null;
-        $data_request['quantity'] = $data_request['quantity'] ?? null;
-        $data_request['spesification'] = (isset($data_request['spesification'])) ? json_encode($data_request['spesification']) : null;
-        $result = $this->model->create($data_request);
-        foreach ($data_request['images'] as $image) {
+        $request['code'] = Str::random(15);
+        $request['slug'] = Str::slug($request['name']);
+        $request['point'] = $request['point'] ?? null;
+        $request['weight'] = $request['weight'] ?? null;
+        $request['quantity'] = $request['quantity'] ?? null;
+        $request['spesification'] = (isset($request['spesification'])) ? json_encode($request['spesification']) : null;
+        $result = $this->model->create($request);
+        foreach ($request['images'] as $image) {
             $imageName = uploadImagesToCloudinary($image, 'products');
             $result->product_images()->create(['image' => $imageName]);
         }
@@ -286,21 +286,21 @@ class ProductService extends BaseService
 
     public function update($locale, $id, $data)
     {
-        $check_data = $this->repository->getSingleData($locale, $id);
+        $checkData = $this->repository->getSingleData($locale, $id);
 
         $data = array_merge([
-            'name' => $check_data->name,
-            'category_id' => $check_data->category_id,
-            'brand_id' => $check_data->brand_id,
-            'slug' => $check_data->slug,
-            'description' => $check_data->description,
-            'point' => $check_data->point,
-            'weight' => $check_data->weight,
-            'quantity' => $check_data->quantity,
-            'spesification' => json_decode($check_data->spesification),
+            'name' => $checkData->name,
+            'category_id' => $checkData->category_id,
+            'brand_id' => $checkData->brand_id,
+            'slug' => $checkData->slug,
+            'description' => $checkData->description,
+            'point' => $checkData->point,
+            'weight' => $checkData->weight,
+            'quantity' => $checkData->quantity,
+            'spesification' => json_decode($checkData->spesification),
         ], $data);
 
-        $data_request = Arr::only($data, [
+        $request = Arr::only($data, [
             'name',
             'category_id',
             'brand_id',
@@ -312,7 +312,7 @@ class ProductService extends BaseService
             'spesification',
         ]);
 
-        $this->repository->validate($data_request, [
+        $this->repository->validate($request, [
             'name' => [
                 'string',
                 'unique:products,name,' . $id,
@@ -354,10 +354,10 @@ class ProductService extends BaseService
         ]);
 
         DB::beginTransaction();
-        $data_request['slug'] = Str::slug($data_request['name']);
-        $data_request['point'] = ($check_data->variants->count() > 0) ? min($check_data->variants->pluck('variant_point')->toArray()) : $data_request['point'];
-        $data_request['spesification'] = (isset($data_request['spesification'])) ? json_encode($data_request['spesification']) : null;
-        $check_data->update($data_request);
+        $request['slug'] = Str::slug($request['name']);
+        $request['point'] = ($checkData->variants->count() > 0) ? min($checkData->variants->pluck('variant_point')->toArray()) : $request['point'];
+        $request['spesification'] = (isset($request['spesification'])) ? json_encode($request['spesification']) : null;
+        $checkData->update($request);
         DB::commit();
 
         return $this->repository->getSingleData($locale, $id);
@@ -365,13 +365,13 @@ class ProductService extends BaseService
 
     public function delete($locale, $id)
     {
-        $check_data = $this->repository->getSingleData($locale, $id);
+        $checkData = $this->repository->getSingleData($locale, $id);
 
         DB::beginTransaction();
-        foreach($check_data->product_images as $image) {
+        foreach($checkData->product_images as $image) {
             deleteImagesFromCloudinary($image->image, 'products');
         }
-        $result = $check_data->delete();
+        $result = $checkData->delete();
         DB::commit();
 
         return $result;

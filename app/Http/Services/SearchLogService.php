@@ -19,29 +19,29 @@ class SearchLogService extends BaseService
         $this->repository = $repository;
     }
 
-    public function getIndexData($locale)
+    public function index($locale)
     {
-        return $this->repository->getIndexData($locale);
+        return $this->repository->getAllData($locale);
     }
 
-    public function getSingleData($locale, $id)
+    public function show($locale, $id)
     {
         return $this->repository->getSingleData($locale, $id);
     }
 
-    public function getDataByUser($locale, $id)
+    public function showByUser($locale, $id)
     {
         return $this->repository->getDataByUser($locale, $id);
     }
 
     public function store($locale, $data)
     {
-        $data_request = Arr::only($data, [
+        $request = Arr::only($data, [
             'user_id',
             'search_text',
         ]);
 
-        $this->repository->validate($data_request, [
+        $this->repository->validate($request, [
                 'search_text' => [
                     'required',
                     'min:3',
@@ -55,7 +55,7 @@ class SearchLogService extends BaseService
             $data = $this->model;
             $data->id = (string) Str::uuid();
             $data->user_id = (int) auth()->user()->id;
-            $data->search_text = strtolower($data_request['search_text']);
+            $data->search_text = strtolower($request['search_text']);
             $data->save();
             DB::commit();
         } catch (\Exception $e) {
@@ -68,19 +68,19 @@ class SearchLogService extends BaseService
 
     public function update($locale, $id, $data)
     {
-        $check_data = $this->repository->getSingleData($locale, $id);
+        $checkData = $this->repository->getSingleData($locale, $id);
 
         $data = array_merge([
-            'user_id' => $check_data->user_id,
-            'search_text' => $check_data->search_text,
+            'user_id' => $checkData->user_id,
+            'search_text' => $checkData->search_text,
         ], $data);
 
-        $data_request = Arr::only($data, [
+        $request = Arr::only($data, [
             'user_id',
             'search_text',
         ]);
 
-        $this->repository->validate($data_request, [
+        $this->repository->validate($request, [
             'search_text' => [
                 'string',
                 'min:3',
@@ -88,9 +88,9 @@ class SearchLogService extends BaseService
         ]);
 
         DB::beginTransaction();
-        $data_request['user_id'] = (int) auth()->user()->id;
-        $data_request['search_text'] = strtolower($data_request['search_text']);
-        $check_data->update($data_request);
+        $request['user_id'] = (int) auth()->user()->id;
+        $request['search_text'] = strtolower($request['search_text']);
+        $checkData->update($request);
         DB::commit();
 
         return $this->repository->getSingleData($locale, $id);
@@ -98,9 +98,9 @@ class SearchLogService extends BaseService
 
     public function delete($locale, $id)
     {
-        $check_data = $this->repository->getSingleData($locale, $id);
+        $checkData = $this->repository->getSingleData($locale, $id);
         DB::beginTransaction();
-        $result = $check_data->delete();
+        $result = $checkData->delete();
         DB::commit();
 
         return $result;

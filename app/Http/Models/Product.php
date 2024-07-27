@@ -90,9 +90,9 @@ class Product extends BaseModel
 
     public function getIsWishlistAttribute()
     {
-        $user_id = (auth()->user()) ? auth()->user()->id : 0;
+        $userId = (auth()->user()) ? auth()->user()->id : 0;
 
-        $wishlists = Wishlist::where('user_id', $user_id)
+        $wishlists = Wishlist::where('user_id', $userId)
             ->where('product_id', $this->getKey())
             ->get();
 

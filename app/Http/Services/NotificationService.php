@@ -18,9 +18,9 @@ class NotificationService extends BaseService
         $this->repository = $repository;
     }
 
-    public function getIndexData($locale, $request)
+    public function index($locale, $request)
     {
-        $data = $this->repository->getIndexData($locale);
+        $data = $this->repository->getAllData($locale);
         $totalData = $this->model->count();
         $totalRead = $this->model->Read()->count();
         $totalUnread = $this->model->Unread()->count();
@@ -33,18 +33,21 @@ class NotificationService extends BaseService
                 ]);
     }
 
-    public function getSingleData($locale, $id)
+    public function show($locale, $id)
     {
         return $this->repository->getSingleData($locale, $id);
     }
 
-    public function getDataByUser($locale, $id)
+    public function showByUser($locale, $id)
     {
         $id = (int) $id;
+
         $data = $this->repository->getDataByUser($locale, $id);
+
         $totalData = $this->model->where('user_id', $id)->count();
         $totalRead = $this->model->where('user_id', $id)->Read()->count();
         $totalUnread = $this->model->where('user_id', $id)->Unread()->count();
+
         return (NotificationResource::collection($data))->additional([
                     'summary' => [
                         'total_data' => $totalData,
@@ -56,20 +59,20 @@ class NotificationService extends BaseService
 
     public function update($locale, $id, $data)
     {
-        $check_data = $this->repository->getSingleData($locale, $id);
+        $checkData = $this->repository->getSingleData($locale, $id);
 
         $data = array_merge([
-            'user_id' => $check_data->user_id,
-            'title' => $check_data->title,
-            'text' => $check_data->text,
-            'type' => $check_data->type,
-            'url' => $check_data->url,
-            'icon' => $check_data->icon,
-            'background_color' => $check_data->background_color,
-            'status_read' => $check_data->status_read,
+            'user_id' => $checkData->user_id,
+            'title' => $checkData->title,
+            'text' => $checkData->text,
+            'type' => $checkData->type,
+            'url' => $checkData->url,
+            'icon' => $checkData->icon,
+            'background_color' => $checkData->background_color,
+            'status_read' => $checkData->status_read,
         ], $data);
 
-        $data_request = Arr::only($data, [
+        $request = Arr::only($data, [
             'title',
             'text',
             'url',
@@ -80,7 +83,7 @@ class NotificationService extends BaseService
             'status_read',
         ]);
 
-        $this->repository->validate($data_request, [
+        $this->repository->validate($request, [
             'user_id' => [
                 'exists:users,id',
             ],
@@ -107,14 +110,11 @@ class NotificationService extends BaseService
         ]);
 
         DB::beginTransaction();
-        $data_request['title'] = $data_request['title'];
-        $data_request['text'] = $data_request['text'];
-        $data_request['type'] = (int) $data_request['type'];
-        $data_request['status_read'] = (int) $data_request['status_read'];
-        $data_request['url'] = $data_request['url'];
-        $data_request['icon'] = $data_request['icon'];
-        $data_request['background_color'] = $data_request['background_color'];
-        $check_data->update($data_request);
+
+        $request['type'] = (int) $request['type'];
+        $request['status_read'] = (int) $request['status_read'];
+        $checkData->update($request);
+
         DB::commit();
 
         return $this->repository->getSingleData($locale, $id);
@@ -122,10 +122,12 @@ class NotificationService extends BaseService
 
     public function delete($locale, $id)
     {
-        $check_data = $this->repository->getSingleData($locale, $id);
+        $checkData = $this->repository->getSingleData($locale, $id);
 
         DB::beginTransaction();
-        $result = $check_data->delete();
+
+        $result = $checkData->delete();
+
         DB::commit();
 
         return $result;

@@ -7,7 +7,6 @@ use Illuminate\Support\Str;
 use App\Http\Models\Category;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Request;
-use Illuminate\Support\Facades\Storage;
 use App\Http\Repositories\CategoryRepository;
 use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 
@@ -21,7 +20,7 @@ class CategoryService extends BaseService
         $this->repository = $repository;
     }
 
-    public function getIndexData($locale, $data)
+    public function index($locale, $data)
     {
         $search = [
             'name' => 'name',
@@ -29,41 +28,41 @@ class CategoryService extends BaseService
             'sort' => 'sort',
         ];
 
-        $search_column = [
+        $searchColumn = [
             'id' => 'id',
             'name' => 'name',
             'slug' => 'slug',
             'sort' => 'sort',
         ];
 
-        $sortable_and_searchable_column = [
+        $sortableAndSearchableColumn = [
             'search'        => $search,
-            'search_column' => $search_column,
-            'sort_column'   => array_merge($search, $search_column),
+            'search_column' => $searchColumn,
+            'sort_column'   => array_merge($search, $searchColumn),
         ];
 
-        return $this->repository->getIndexData($locale, $sortable_and_searchable_column);
+        return $this->repository->getAllData($locale, $sortableAndSearchableColumn);
     }
 
-    public function getSingleData($locale, $id)
+    public function show($locale, $id)
     {
         return $this->repository->getSingleData($locale, $id);
     }
 
-    public function getSingleDataBySlug($locale, $slug)
+    public function showBySlug($locale, $slug)
     {
         return $this->repository->getSingleDataBySlug($locale, $slug);
     }
 
     public function store($locale, $data)
     {
-        $data_request = Arr::only($data, [
+        $request = Arr::only($data, [
             'name',
             'sort',
             'image',
         ]);
 
-        $this->repository->validate($data_request, [
+        $this->repository->validate($request, [
             'name' => [
                 'required',
                 'unique:categories,name',
@@ -87,14 +86,14 @@ class CategoryService extends BaseService
 
         $imageName = uploadImagesToCloudinary($file, 'categories');
 
-        $data_request['code'] = (string) Str::uuid();
-        $data_request['slug'] = Str::slug($data_request['name']);
+        $request['code'] = (string) Str::uuid();
+        $request['slug'] = Str::slug($request['name']);
 
         $result = $this->model->create([
-            'code' => $data_request['code'],
-            'name' => $data_request['name'],
-            'slug' => $data_request['slug'],
-            'sort' => $data_request['sort'],
+            'code' => $request['code'],
+            'name' => $request['name'],
+            'slug' => $request['slug'],
+            'sort' => $request['sort'],
             'image' => $imageName,
         ]);
 
@@ -105,15 +104,15 @@ class CategoryService extends BaseService
 
     public function update($locale, $id, $data)
     {
-        $check_data = $this->repository->getSingleData($locale, $id);
+        $checkData = $this->repository->getSingleData($locale, $id);
 
-        $data_request = Arr::only($data, [
+        $request = Arr::only($data, [
             'name',
             'sort',
             'image',
         ]);
 
-        $this->repository->validate($data_request, [
+        $this->repository->validate($request, [
             'name' => [
                 'unique:categories,name,' . $id,
             ],
@@ -130,24 +129,24 @@ class CategoryService extends BaseService
 
         DB::beginTransaction();
 
-        if (isset($data_request['image'])) {
+        if (isset($request['image'])) {
             $file = Request::file('image');
 
-            if ($check_data->image) {
-                deleteImagesFromCloudinary($check_data->image, 'categories');
+            if ($checkData->image) {
+                deleteImagesFromCloudinary($checkData->image, 'categories');
             }
 
             $imageName = uploadImagesToCloudinary($file, 'categories');
 
-            $check_data->image = $imageName;
+            $checkData->image = $imageName;
         }
 
-        $data_request['slug'] = Str::slug($data_request['name'] ?? $check_data->name);
+        $request['slug'] = Str::slug($request['name'] ?? $checkData->name);
 
-        $check_data->name = $data_request['name'] ?? $check_data->name;
-        $check_data->slug = $data_request['slug'] ?? $check_data->slug;
-        $check_data->sort = $data_request['sort'] ?? $check_data->sort;
-        $check_data->save();
+        $checkData->name = $request['name'] ?? $checkData->name;
+        $checkData->slug = $request['slug'] ?? $checkData->slug;
+        $checkData->sort = $request['sort'] ?? $checkData->sort;
+        $checkData->save();
 
         DB::commit();
 
@@ -156,11 +155,14 @@ class CategoryService extends BaseService
 
     public function delete($locale, $id)
     {
-        $check_data = $this->repository->getSingleData($locale, $id);
+        $checkData = $this->repository->getSingleData($locale, $id);
 
         DB::beginTransaction();
-        deleteImagesFromCloudinary($check_data->image, 'categories');
-        $result = $check_data->delete();
+
+        deleteImagesFromCloudinary($checkData->image, 'categories');
+
+        $result = $checkData->delete();
+
         DB::commit();
 
         return $result;

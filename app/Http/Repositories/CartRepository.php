@@ -9,7 +9,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 class CartRepository extends BaseRepository
 {
-    private $repository_name = 'Cart';
+    private $repository = 'Cart';
     private $model;
 
 	public function __construct(Cart $model)
@@ -17,9 +17,9 @@ class CartRepository extends BaseRepository
 		$this->model = $model;
 	}
 
-    public function getIndexData($locale)
+    public function index($locale)
     {
-        $per_page = (int) Request::get('per_page', 10);
+        $perPage = (int) Request::get('per_page', 10);
         $page = (int) Request::get('page', 1);
 
         $data = $this->model
@@ -28,19 +28,19 @@ class CartRepository extends BaseRepository
             ->get();
 
         if ($data->isEmpty()) {
-            throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => $this->repository_name], $locale));
+            throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => $this->repository], $locale));
         }
 
         $result = new LengthAwarePaginator(
-            $data->forPage($page, $per_page),
+            $data->forPage($page, $perPage),
             $data->count(),
-            $per_page,
+            $perPage,
             $page,
             ['path' => url('/api/v1/' . $locale. '/carts')]
         );
 
         if ($result->isEmpty()) {
-            throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => $this->repository_name], $locale));
+            throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => $this->repository], $locale));
         }
 
         return $result;
@@ -51,48 +51,50 @@ class CartRepository extends BaseRepository
 		$result = $this->model
                     ->where('id', $id)
                     ->first();
-		if($result === null) throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => $this->repository_name], $locale));
+
+		if($result === null) throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => $this->repository], $locale));
+
         return $result;
 	}
 
-    public function getDataByUser($locale, $user_id)
+    public function getDataByUser($locale, $userId)
 	{
-        $user_id = (int) $user_id;
-        $per_page = (int) Request::get('per_page', 10);
+        $userId = (int) $userId;
+        $perPage = (int) Request::get('per_page', 10);
         $page = (int) Request::get('page', 1);
 
 		$data = $this->model
                     ->query()
-                    ->where('user_id', $user_id)
+                    ->where('user_id', $userId)
                     ->orderBy('created_at', 'desc')
                     ->get();
 
 		if ($data->isEmpty()) {
-            throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => $this->repository_name], $locale));
+            throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => $this->repository], $locale));
         }
 
         $result = new LengthAwarePaginator(
-            $data->forPage($page, $per_page),
+            $data->forPage($page, $perPage),
             $data->count(),
-            $per_page,
+            $perPage,
             $page,
             ['path' => url('/api/v1/' . $locale. '/carts')]
         );
 
         if ($result->isEmpty()) {
-            throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => $this->repository_name], $locale));
+            throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => $this->repository], $locale));
         }
 
         return $result;
 	}
 
-    public function getByUserProductAndVariant($user_id, $product_id, $variant_id)
+    public function getByUserProductAndVariant($userId, $productId, $variantId)
 	{
-        $variant_id = ($variant_id == null) ? '' : (int) $variant_id;
+        $variantId = ($variantId == null) ? '' : (int) $variantId;
 		$result = $this->model
-                  ->where('user_id', '=', (int) $user_id)
-                  ->where('product_id', '=', (int) $product_id)
-                  ->where('variant_id', '=', $variant_id);
+                  ->where('user_id', '=', (int) $userId)
+                  ->where('product_id', '=', (int) $productId)
+                  ->where('variant_id', '=', $variantId);
 		return $result;
 	}
 }

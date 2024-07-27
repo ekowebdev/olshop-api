@@ -20,7 +20,7 @@ class AddressService extends BaseService
         $this->userRepository = $userRepository;
     }
 
-    public function getIndexData($locale, $data)
+    public function index($locale, $data)
     {
         $search = [
             'user_id' => 'user_id',
@@ -32,7 +32,7 @@ class AddressService extends BaseService
             'street' => 'street',
         ];
 
-        $search_column = [
+        $searchColumn = [
             'id' => 'id',
             'user_id' => 'user_id',
             'person_name' => 'person_name',
@@ -43,23 +43,23 @@ class AddressService extends BaseService
             'street' => 'street',
         ];
 
-        $sortable_and_searchable_column = [
+        $sortableAndSearchableColumn = [
             'search'        => $search,
-            'search_column' => $search_column,
-            'sort_column'   => array_merge($search, $search_column),
+            'search_column' => $searchColumn,
+            'sort_column'   => array_merge($search, $searchColumn),
         ];
 
-        return $this->repository->getIndexData($locale, $sortable_and_searchable_column);
+        return $this->repository->getAllData($locale, $sortableAndSearchableColumn);
     }
 
-    public function getSingleData($locale, $id)
+    public function show($locale, $id)
     {
         return $this->repository->getSingleData($locale, $id);
     }
 
     public function store($locale, $data)
     {
-        $data_request = Arr::only($data, [
+        $request = Arr::only($data, [
             'user_id',
             'person_name',
             'person_phone',
@@ -70,7 +70,7 @@ class AddressService extends BaseService
             'street',
         ]);
 
-        $this->repository->validate($data_request, [
+        $this->repository->validate($request, [
             'user_id' => [
                 'required',
                 'exists:users,id',
@@ -106,10 +106,10 @@ class AddressService extends BaseService
 
         DB::beginTransaction();
 
-        $result = $this->model->create($data_request);
+        $result = $this->model->create($request);
 
-        if($this->repository->countDataByUser($data_request['user_id']) == 1) {
-            $user = $this->userRepository->getSingleData($locale, $data_request['user_id']);
+        if($this->repository->countDataByUser($request['user_id']) == 1) {
+            $user = $this->userRepository->getSingleData($locale, $request['user_id']);
             $user->main_address_id = $result->id;
             $user->save();
         }
@@ -121,20 +121,20 @@ class AddressService extends BaseService
 
     public function update($locale, $id, $data)
     {
-        $check_data = $this->repository->getSingleData($locale, $id);
+        $checkData = $this->repository->getSingleData($locale, $id);
 
         $data = array_merge([
-            'user_id' => $check_data->user_id,
-            'person_name' => $check_data->person_name,
-            'person_phone' => $check_data->person_phone,
-            'province_id' => $check_data->province_id,
-            'city_id' => $check_data->city_id,
-            'subdistrict_id' => $check_data->subdistrict_id,
-            'postal_code' => $check_data->postal_code,
-            'street' => $check_data->street,
+            'user_id' => $checkData->user_id,
+            'person_name' => $checkData->person_name,
+            'person_phone' => $checkData->person_phone,
+            'province_id' => $checkData->province_id,
+            'city_id' => $checkData->city_id,
+            'subdistrict_id' => $checkData->subdistrict_id,
+            'postal_code' => $checkData->postal_code,
+            'street' => $checkData->street,
         ], $data);
 
-        $data_request = Arr::only($data, [
+        $request = Arr::only($data, [
             'user_id',
             'person_name',
             'person_phone',
@@ -145,7 +145,7 @@ class AddressService extends BaseService
             'street',
         ]);
 
-        $this->repository->validate($data_request, [
+        $this->repository->validate($request, [
             'user_id' => [
                 'exists:users,id',
             ],
@@ -175,7 +175,7 @@ class AddressService extends BaseService
 
         DB::beginTransaction();
 
-        $check_data->update($data_request);
+        $checkData->update($request);
 
         DB::commit();
 
@@ -184,13 +184,13 @@ class AddressService extends BaseService
 
     public function delete($locale, $id)
     {
-        $check_data = $this->repository->getSingleData($locale, $id);
+        $checkData = $this->repository->getSingleData($locale, $id);
 
         DB::beginTransaction();
 
-        if($this->repository->countDataByUser($check_data->user_id) == 1 || $check_data->is_main == 1) throw new ConflictException(trans('error.cannot_delete_primary_address'));
+        if($this->repository->countDataByUser($checkData->user_id) == 1 || $checkData->is_main == 1) throw new ConflictException(trans('error.cannot_delete_primary_address'));
 
-        $result = $check_data->delete();
+        $result = $checkData->delete();
 
         DB::commit();
 

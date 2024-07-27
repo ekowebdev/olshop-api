@@ -18,7 +18,7 @@ class ShippingService extends BaseService
         $this->repository = $repository;
     }
 
-    public function getIndexData($locale, $data)
+    public function index($locale, $data)
     {
         $search = [
             'origin' => 'origin',
@@ -29,7 +29,7 @@ class ShippingService extends BaseService
             'status' => 'status',
         ];
 
-        $search_column = [
+        $searchColumn = [
             'id' => 'id',
             'origin' => 'origin',
             'destination' => 'destination',
@@ -39,30 +39,30 @@ class ShippingService extends BaseService
             'status' => 'status',
         ];
 
-        $sortable_and_searchable_column = [
+        $sortableAndSearchableColumn = [
             'search'        => $search,
-            'search_column' => $search_column,
-            'sort_column'   => array_merge($search, $search_column),
+            'search_column' => $searchColumn,
+            'sort_column'   => array_merge($search, $searchColumn),
         ];
 
-        return $this->repository->getIndexData($locale, $sortable_and_searchable_column);
+        return $this->repository->getAllData($locale, $sortableAndSearchableColumn);
     }
 
-    public function getSingleData($locale, $id)
+    public function show($locale, $id)
     {
         return $this->repository->getSingleData($locale, $id);
     }
 
     public function update($locale, $id, $data)
     {
-        $check_data = $this->repository->getSingleData($locale, $id);
+        $checkData = $this->repository->getSingleData($locale, $id);
 
-        $data_request = Arr::only($data, [
+        $request = Arr::only($data, [
             'resi',
             'status',
         ]);
 
-        $this->repository->validate($data_request, [
+        $this->repository->validate($request, [
             'resi' => [
                 'string',
                 'unique:shippings,resi,'.$id
@@ -71,11 +71,11 @@ class ShippingService extends BaseService
 
         DB::beginTransaction();
 
-        if($check_data->orders->status != 'shipped' && $check_data->orders->status != 'success' && $check_data->orders->payment_logs == null) throw new ApplicationException(trans('error.order_not_completed', ['order_code' => $check_data->orders->code]));
+        if($checkData->orders->status != 'shipped' && $checkData->orders->status != 'success' && $checkData->orders->payment_logs == null) throw new ApplicationException(trans('error.order_not_completed', ['order_code' => $checkData->orders->code]));
 
-        $data_request['resi'] = isset($data_request['resi']) ? $data_request['resi'] : $check_data->resi;
-        $data_request['status'] = isset($data_request['resi']) ? 'on delivery' : $check_data->status;
-        $check_data->update($data_request);
+        $request['resi'] = isset($request['resi']) ? $request['resi'] : $checkData->resi;
+        $request['status'] = isset($request['resi']) ? 'on delivery' : $checkData->status;
+        $checkData->update($request);
 
         DB::commit();
 
@@ -84,10 +84,10 @@ class ShippingService extends BaseService
 
     public function delete($locale, $id)
     {
-        $check_data = $this->repository->getSingleData($locale, $id);
+        $checkData = $this->repository->getSingleData($locale, $id);
 
         DB::beginTransaction();
-        $result = $check_data->delete();
+        $result = $checkData->delete();
         DB::commit();
 
         return $result;

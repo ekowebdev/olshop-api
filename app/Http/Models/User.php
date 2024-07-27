@@ -121,21 +121,21 @@ class User extends Authenticable implements MustVerifyEmail
 	{
 		$request = Request::all();
 
-		$search        = $this->sortableAndSearchableColumn;
-		$search_column = $this->sortableAndSearchableColumn;
+		$search       = $this->sortableAndSearchableColumn;
+		$searchColumn = $this->sortableAndSearchableColumn;
 
-		if(array_key_exists('search', $this->sortableAndSearchableColumn)){
+		if (array_key_exists('search', $this->sortableAndSearchableColumn)) {
 			$search = $this->sortableAndSearchableColumn['search'];
 		}
 
-		if(array_key_exists('search_column', $this->sortableAndSearchableColumn)){
-			$search_column = $this->sortableAndSearchableColumn['search_column'];
+		if (array_key_exists('search_column', $this->sortableAndSearchableColumn)) {
+			$searchColumn = $this->sortableAndSearchableColumn['search_column'];
 		}
 
 		$this->validate($request, [
             'search_column' => [
                 'required_with:search_text',
-                new \App\Rules\SortableAndSearchable($search_column)
+                new \App\Rules\SortableAndSearchable($searchColumn)
             ],
             'search_text' => ['required_with:search_column'],
         ]);
@@ -146,35 +146,35 @@ class User extends Authenticable implements MustVerifyEmail
 		$model->sortableAndSearchableColumn = $this->sortableAndSearchableColumn;
 		$query = $model->setTable(\DB::raw('('.$queryOld.') as myTable'))->whereRaw("1=1");
 
-		if(!empty($request['search_column']) && isset($request['search_text']))
+		if (!empty($request['search_column']) && isset($request['search_text']))
 		{
-			if(is_array($request['search_column']))
+			if (is_array($request['search_column']))
 			{
 				foreach ($request['search_column'] as $arr_search_column => $value_search_column) {
-					if($request['search_text'][$arr_search_column] != utf8_encode($request['search_text'][$arr_search_column])){
-						throw new \App\Exceptions\AuthenticationException('Periksa text pencarian anda, mungkin mengandung karakter yang tidak izinkan');
+					if ($request['search_text'][$arr_search_column] != utf8_encode($request['search_text'][$arr_search_column])) {
+						throw new \App\Exceptions\ApplicationException(trans('error.not_allowed_character_text'));
 					}
 					$query = $this->searchOperator($query, $request['search_column'][$arr_search_column], $request['search_text'][$arr_search_column], Arr::get($request,'search_operator.'.$arr_search_column,'like'));
 				}
 			}
 			else
 			{
-				if($request['search_text'] != utf8_encode($request['search_text'])){
-					throw new \App\Exceptions\AuthenticationException('Periksa text pencarian anda, mungkin mengandung karakter yang tidak izinkan');
+				if ($request['search_text'] != utf8_encode($request['search_text'])) {
+					throw new \App\Exceptions\ApplicationException(trans('error.not_allowed_character_text'));
 				}
 				$query = $this->searchOperator($query, $request['search_column'], $request['search_text'], Arr::get($request,'search_operator','like'));
 			}
 		}
 
-		if(isset($request['search']))
+		if (isset($request['search']))
 		{
-			if($request['search'] != utf8_encode($request['search'])){
-				throw new \App\Exceptions\AuthenticationException('Periksa text pencarian anda, mungkin mengandung karakter yang tidak izinkan');
+			if ($request['search'] != utf8_encode($request['search'])) {
+				throw new \App\Exceptions\ApplicationException(trans('error.not_allowed_character_text'));
 			}
 
 			$query->where(function ($query) use ($search,$request) {
 				foreach ($search as $key => $value) {
-                	if($value)$query->orWhere(\DB::raw($value), 'like', '%'.$request['search'].'%');
+                	if ($value) $query->orWhere(\DB::raw($value), 'like', '%'.$request['search'].'%');
 				}
             });
 		}
@@ -184,49 +184,49 @@ class User extends Authenticable implements MustVerifyEmail
 
     public function searchOperator($query, $column, $text, $operator = 'like')
 	{
-		$search_column = $this->sortableAndSearchableColumn;
+		$searchColumn = $this->sortableAndSearchableColumn;
 
-		if(array_key_exists('search_column', $this->sortableAndSearchableColumn)){
-			$search_column = $this->sortableAndSearchableColumn['search_column'];
+		if (array_key_exists('search_column', $this->sortableAndSearchableColumn)) {
+			$searchColumn = $this->sortableAndSearchableColumn['search_column'];
 		}
 
-		if( $operator == 'like' )
-			$query->where(\DB::raw($search_column[$column]),'like','%'.$text.'%');
+		if ($operator == 'like' )
+			$query->where(\DB::raw($searchColumn[$column]),'like','%'.$text.'%');
 
-		if( $operator == '=' )
-			$query->where(\DB::raw($search_column[$column]),'=',$text);
+		if ($operator == '=' )
+			$query->where(\DB::raw($searchColumn[$column]),'=',$text);
 
-		if( $operator == '>=' )
-			$query->where(\DB::raw($search_column[$column]),'>=',$text);
+		if ($operator == '>=' )
+			$query->where(\DB::raw($searchColumn[$column]),'>=',$text);
 
-		if( $operator == '<=' )
-			$query->where(\DB::raw($search_column[$column]),'<=',$text);
+		if ($operator == '<=' )
+			$query->where(\DB::raw($searchColumn[$column]),'<=',$text);
 
-		if( $operator == '>' )
-			$query->where(\DB::raw($search_column[$column]),'>',$text);
+		if ($operator == '>' )
+			$query->where(\DB::raw($searchColumn[$column]),'>',$text);
 
-		if( $operator == '<' )
-			$query->where(\DB::raw($search_column[$column]),'<',$text);
+		if ($operator == '<' )
+			$query->where(\DB::raw($searchColumn[$column]),'<',$text);
 
-		if( $operator == '<>' )
-			$query->where(\DB::raw($search_column[$column]),'<>',$text);
+		if ($operator == '<>' )
+			$query->where(\DB::raw($searchColumn[$column]),'<>',$text);
 
-		if( $operator == '!=' )
-			$query->where(\DB::raw($search_column[$column]),'!=',$text);
+		if ($operator == '!=' )
+			$query->where(\DB::raw($searchColumn[$column]),'!=',$text);
 
-		if( $operator == 'range' ){
+		if ($operator == 'range' ){
 			$explodeIn = explode(',',$text);
-			$query->whereBetween(\DB::raw($search_column[$column]),$explodeIn);
+			$query->whereBetween(\DB::raw($searchColumn[$column]),$explodeIn);
 		}
 
-		if( $operator == 'in' ){
+		if ($operator == 'in' ){
 			$explodeIn = explode(',',$text);
-			$query->whereIn(\DB::raw($search_column[$column]), $explodeIn);
+			$query->whereIn(\DB::raw($searchColumn[$column]), $explodeIn);
 		}
 
-		if( $operator == 'notin' ){
+		if ($operator == 'notin' ){
 			$explodeNotIn = explode(',',$text);
-			$query->whereNotIn(\DB::raw($search_column[$column]), $explodeNotIn);
+			$query->whereNotIn(\DB::raw($searchColumn[$column]), $explodeNotIn);
 		}
 
 		return $query;
@@ -259,13 +259,13 @@ class User extends Authenticable implements MustVerifyEmail
 
 		$sort = $this->sortableAndSearchableColumn;
 
-		if(array_key_exists('sort_column', $this->sortableAndSearchableColumn)){
+		if (array_key_exists('sort_column', $this->sortableAndSearchableColumn)){
 			$sort = $this->sortableAndSearchableColumn['sort_column'];
 		}
 
-		if( !empty($request['sort_column']) && !empty($request['sort_type']) )
+		if (!empty($request['sort_column']) && !empty($request['sort_type']) )
 		{
-			if( is_array($request['sort_column']) )
+			if (is_array($request['sort_column']) )
 			{
 				$this->validate($request, [
 					'sort_column.*' => [
@@ -303,9 +303,9 @@ class User extends Authenticable implements MustVerifyEmail
 	public static function validate($data, $rules = [], $messages = [])
 	{
 		$rules = empty($rules) ? self::$rules : $rules;
-		if(empty($rules)) return true;
+		if (empty($rules)) return true;
 		$validator = Validator::make($data, $rules, $messages);
-		if($validator->fails()) throw new ValidationException($validator->errors());
+		if ($validator->fails()) throw new ValidationException($validator->errors());
 		return true;
 	}
 }

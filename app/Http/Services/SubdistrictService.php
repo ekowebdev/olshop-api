@@ -15,29 +15,29 @@ class SubdistrictService extends BaseService
         $this->repository = $repository;
     }
 
-    public function getIndexData($locale, $data)
+    public function index($locale, $data)
     {
         $search = [
             'city_id' => 'city_id',
             'name' => 'name',
         ];
 
-        $search_column = [
+        $searchColumn = [
             'id' => 'id',
             'city_id' => 'city_id',
             'name' => 'name',
         ];
 
-        $sortable_and_searchable_column = [
+        $sortableAndSearchableColumn = [
             'search'        => $search,
-            'search_column' => $search_column,
-            'sort_column'   => array_merge($search, $search_column),
+            'search_column' => $searchColumn,
+            'sort_column'   => array_merge($search, $searchColumn),
         ];
-        
-        return $this->repository->getIndexData($locale, $sortable_and_searchable_column);
+
+        return $this->repository->getAllData($locale, $sortableAndSearchableColumn);
     }
 
-    public function getSingleData($locale, $id)
+    public function show($locale, $id)
     {
         return $this->repository->getSingleData($locale, $id);
     }

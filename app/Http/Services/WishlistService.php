@@ -10,26 +10,26 @@ use App\Http\Repositories\WishlistRepository;
 
 class WishlistService extends BaseService
 {
-    private $model, $repository, $product_repository;
+    private $model, $repository, $productRepository;
 
-    public function __construct(Wishlist $model, WishlistRepository $repository, ProductRepository $product_repository)
+    public function __construct(Wishlist $model, WishlistRepository $repository, ProductRepository $productRepository)
     {
         $this->model = $model;
         $this->repository = $repository;
-        $this->product_repository = $product_repository;
+        $this->productRepository = $productRepository;
     }
 
-    public function getIndexData($locale, $data)
+    public function index($locale, $data)
     {
-        return $this->repository->getIndexData($locale);
+        return $this->repository->getAllData($locale);
     }
 
-    public function getSingleData($locale, $id)
+    public function show($locale, $id)
     {
         return $this->repository->getSingleData($locale, $id);
     }
 
-    public function getDataByUser($locale, $id)
+    public function showByUser($locale, $id)
     {
         return $this->repository->getDataByUser($locale, $id);
     }
@@ -38,12 +38,12 @@ class WishlistService extends BaseService
     {
         DB::beginTransaction();
 
-        $product = $this->product_repository->getSingleData($locale, $id);
+        $product = $this->productRepository->getSingleData($locale, $id);
         $user = auth()->user();
 
-        $check_wishlist = $this->repository->getDataByUserAndProduct($locale, $product->id)->first();
+        $checkWishlist = $this->repository->getDataByUserAndProduct($locale, $product->id)->first();
 
-        if(is_null($check_wishlist)) {
+        if(is_null($checkWishlist)) {
             $wishlist = $this->model;
             $wishlist->id = (string) Str::uuid();
             $wishlist->user_id = $user->id;
@@ -51,7 +51,7 @@ class WishlistService extends BaseService
             $wishlist->save();
             $message = trans('all.success_add_to_wishlists', ['product_name' => $product->name]);
         } else {
-            $check_wishlist->delete();
+            $checkWishlist->delete();
             $message = trans('all.success_delete_from_wishlists', ['product_name' => $product->name]);
         }
 

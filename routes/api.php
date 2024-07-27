@@ -13,15 +13,15 @@ Route::middleware(['xssclean', 'throttle:api'])->group(function () {
         Route::post('/oauth/token/register', '\App\Http\Controllers\API\v1\Auth\AccessTokenController@issueTokenRegister');
         Route::post('/oauth/token/client', '\App\Http\Controllers\API\v1\Auth\AccessTokenController@issueTokenSystem');
         // Auth With Google
-        Route::get('/auth/google', '\App\Http\Controllers\API\v1\Auth\AuthController@auth_google');
-        Route::get('/auth/google/callback', '\App\Http\Controllers\API\v1\Auth\AuthController@auth_google_callback');
+        Route::get('/auth/google', '\App\Http\Controllers\API\v1\Auth\AuthController@authGoogle');
+        Route::get('/auth/google/callback', '\App\Http\Controllers\API\v1\Auth\AuthController@authGoogleCallback');
         // Email Verification
         Route::post('/email/resend', '\App\Http\Controllers\API\v1\Auth\AuthController@resend')->name('verification.resend');
         // Forgot Password
-        Route::post('/forget/password', '\App\Http\Controllers\API\v1\Auth\AuthController@forget_password');
-        Route::post('/reset/password', '\App\Http\Controllers\API\v1\Auth\AuthController@reset_password');
+        Route::post('/forget/password', '\App\Http\Controllers\API\v1\Auth\AuthController@forgetPassword');
+        Route::post('/reset/password', '\App\Http\Controllers\API\v1\Auth\AuthController@resetPassword');
         // Webhook
-        Route::post('/webhook/midtrans', '\App\Http\Controllers\API\v1\WebhookController@midtrans_handler');
+        Route::post('/webhook/midtrans', '\App\Http\Controllers\API\v1\WebhookController@midtransHandler');
         // Only User Authenticated
         Route::group(['middleware' => ['auth:api']], function () {
             // Only User Role Admin
@@ -118,7 +118,7 @@ Route::middleware(['xssclean', 'throttle:api'])->group(function () {
                         Route::delete('/{id}', '\App\Http\Controllers\API\v1\AddressController@delete');
                     });
                     // User
-                    Route::post('/main-address', '\App\Http\Controllers\API\v1\UserController@set_main_address');
+                    Route::post('/main-address', '\App\Http\Controllers\API\v1\UserController@setMainAddress');
                     Route::get('/{id}', '\App\Http\Controllers\API\v1\UserController@show');
                     Route::patch('/{id}', '\App\Http\Controllers\API\v1\UserController@update');
                 });
