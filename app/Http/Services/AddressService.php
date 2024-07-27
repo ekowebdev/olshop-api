@@ -71,39 +71,38 @@ class AddressService extends BaseService
         ]);
 
         $this->repository->validate($data_request, [
-                'user_id' => [
-                    'required',
-                    'exists:users,id',
-                ],
-                'person_name' => [
-                    'required',
-                    'string',
-                ],
-                'person_phone' => [
-                    'required',
-                ],
-                'province_id' => [
-                    'required',
-                    'integer',
-                ],
-                'city_id' => [
-                    'required',
-                    'integer',
-                ],
-                'subdistrict_id' => [
-                    'nullable',
-                    'integer',
-                ],
-                'postal_code' => [
-                    'required',
-                    'numeric',
-                ],
-                'street' => [
-                    'required',
-                    'string',
-                ],
-            ]
-        );
+            'user_id' => [
+                'required',
+                'exists:users,id',
+            ],
+            'person_name' => [
+                'required',
+                'string',
+            ],
+            'person_phone' => [
+                'required',
+            ],
+            'province_id' => [
+                'required',
+                'integer',
+            ],
+            'city_id' => [
+                'required',
+                'integer',
+            ],
+            'subdistrict_id' => [
+                'nullable',
+                'integer',
+            ],
+            'postal_code' => [
+                'required',
+                'numeric',
+            ],
+            'street' => [
+                'required',
+                'string',
+            ],
+        ]);
 
         DB::beginTransaction();
 

@@ -61,7 +61,6 @@ class Handler extends ExceptionHandler
         }
 
         if ($request->ajax() || $request->wantsJson()) {
-            // dd(method_exists($exception, 'getStatusCode'));
             $exception = $this->prepareException($exception);
 
             if ($exception instanceof \Illuminate\Http\Exception\HttpResponseException) {
