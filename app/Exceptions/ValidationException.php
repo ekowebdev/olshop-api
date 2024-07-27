@@ -1,11 +1,11 @@
-<?php 
+<?php
 
 namespace App\Exceptions;
 
 use Illuminate\Support\Facades\Response;
 
 class ValidationException extends \Exception
-{	
+{
     public $taging;
 
     public function __construct($message = null, $taging = null , $code = 406, \Exception $previous = null)
@@ -15,16 +15,16 @@ class ValidationException extends \Exception
     }
 
 	public function responseJson()
-	{				
+	{
 		return Response::json(
 	        [
 	            'error' => [
-	                'message' => (json_decode($this->message, true)) ? array_values(json_decode($this->message, true))[0][0] : 'Error Found.', 
-					'status_code' => 406,
+	                'message' => (json_decode($this->message, true)) ? array_values(json_decode($this->message, true))[0][0] : 'Error Found.',
+					'status_code' => $this->code,
 					'error_tagging' => $this->taging,
 	                'error' => 1
 	            ]
-	        ], 406
+	        ], $this->code
         );
 	}
 }

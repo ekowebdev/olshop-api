@@ -2,6 +2,8 @@
 
 return [
     "system_error"                                => "System Error",
+    "bad_request"                                 => "The request cannot be processed",
+    "data_not_exists"                             => "Data does not exist",
 	"password_wrong" 							  => "Wrong password",
 	'failed_delete_data'						  => "Failed delete data",
 	"failed_login" 					              => "Login failed, please try again",

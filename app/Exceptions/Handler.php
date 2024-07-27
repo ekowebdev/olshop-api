@@ -3,6 +3,7 @@
 namespace App\Exceptions;
 
 use Throwable;
+use Illuminate\Support\Facades\Log;
 use Spatie\Permission\Exceptions\UnauthorizedException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 
@@ -23,7 +24,11 @@ class Handler extends ExceptionHandler
      * @var array<int, class-string<\Throwable>>
      */
     protected $dontReport = [
-        //
+        ApplicationException::class,
+        AuthenticationException::class,
+        ForbiddenException::class,
+        DataEmptyException::class,
+        ValidationException::class,
     ];
 
     /**
@@ -50,26 +55,23 @@ class Handler extends ExceptionHandler
      * @return \Illuminate\Http\Response
      */
     public function render($request, Throwable $exception)
-    {  
-        if( method_exists($exception,'responseJson'))
-        {            
+    {
+        if (method_exists($exception, 'responseJson')) {
             return $exception->responseJson();
         }
-        
-        if($request->ajax() || $request->wantsJson())
-        {
-            // this part is from render function in Illuminate\Foundation\Exceptions\Handler.php
-            // works well for json
+
+        if ($request->ajax() || $request->wantsJson()) {
+            // dd(method_exists($exception, 'getStatusCode'));
             $exception = $this->prepareException($exception);
 
             if ($exception instanceof \Illuminate\Http\Exception\HttpResponseException) {
                 return $exception->getResponse();
             }
-            
+
             if ($exception instanceof \Illuminate\Auth\AuthenticationException) {
                 return $this->unauthenticated($request, $exception);
             }
-            
+
             if ($exception instanceof \Illuminate\Validation\ValidationException) {
                 return $this->convertValidationExceptionToResponse($exception, $request);
             }
@@ -84,32 +86,29 @@ class Handler extends ExceptionHandler
                 ]);
             }
 
-            // we prepare custom response for other situation such as modelnotfound
-            $response = [];
-            $response['error'] = [
-                'message' => $exception->getMessage(), 
-                'status_code' => 500,
-                'error' => 1
-            ];
+            $statusCode = method_exists($exception, 'getStatusCode') ? $exception->getStatusCode() : 500;
 
-            // we look for assigned status code if there isn't we assign 500
-            $statusCode = method_exists($exception, 'getStatusCode') 
-                            ? $exception->getStatusCode()
-                            : 500;
+            $response = [
+                'error' => [
+                    'message' => $exception->getMessage(),
+                    'status_code' => $statusCode,
+                    'error' => 1
+                ]
+            ];
 
             if(config('app.debug')) {
                 $response['error']['message'] = $exception->getMessage();
                 $response['error']['line'] = $exception->getLine();
                 $response['error']['file'] = $exception->getFile();
                 $response['error']['class'] = get_class($exception);
-                // $response['error']['trace'] = $exception->getTrace();
+                $response['error']['trace'] = $exception->getTrace();
                 $response['error']['code'] = $exception->getCode();
                 $response['error']['status_code'] = $statusCode;
             }
 
             return response()->json($response, $statusCode);
         }
-        
+
         return parent::render($request, $exception);
     }
 
@@ -121,6 +120,6 @@ class Handler extends ExceptionHandler
      */
     protected function unauthenticated($request, \Illuminate\Auth\AuthenticationException $exception)
     {
-        throw new AuthenticationException(trans('auth.failed'));        
+        throw new AuthenticationException(trans('auth.failed'));
     }
 }

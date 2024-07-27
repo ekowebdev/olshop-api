@@ -2,7 +2,9 @@
 
 return [
     "system_error"                                => "Sistem bermasalah",
-	"password_wrong" 							  => 'Kata sandi salah',
+    "bad_request"                                 => "Permintaan tdiak dapat diproses",
+    "data_not_exists"                             => "Data tidak ditemukan",
+	"password_wrong" 							  => "Kata sandi salah",
 	'failed_delete_data'						  => "Gagal hapus data",
 	"failed_login" 					              => "Login gagal, silahkan coba lagi",
 	"failed_logout" 					          => "Logout gagal, pemeriksaan otentikasi gagal",

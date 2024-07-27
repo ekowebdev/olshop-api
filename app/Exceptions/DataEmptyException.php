@@ -5,7 +5,15 @@ namespace App\Exceptions;
 use Illuminate\Support\Facades\Response;
 
 class DataEmptyException extends \Exception
-{	
+{
+    public $taging;
+
+    public function __construct($message = null, $taging = null, $code = 404, \Exception $previous = null)
+    {
+        parent::__construct($message, $code, $previous);
+        $this->taging = $taging;
+    }
+
 	public function responseJson()
 	{
 		if(empty($this->code) && (request('search_column') || request('search'))) {
@@ -15,11 +23,11 @@ class DataEmptyException extends \Exception
 		return Response::json(
 	        [
 	            'error' => [
-	                'message' => (!empty($this->message)) ? $this->message : 'Data does not exist', 
-					'status_code' => 404,
+	                'message' => (!empty($this->message)) ? $this->message : trans('error.data_not_exists'),
+					'status_code' => $this->code,
 	                'error' => 1
 	            ]
-	        ], 404
+	        ], $this->code
 		);
 	}
 }

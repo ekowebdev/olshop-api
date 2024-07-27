@@ -57,7 +57,7 @@ class AuthService extends BaseService
 
         $user = $this->repository->getDataByMultipleParam(['email' => $request['email']]);
 
-        if($user->email_verified_at != null) throw new ApplicationException(trans('error.already_verification'));
+        if($user->email_verified_at != null) throw new ApplicationException(trans('error.already_verification'), 406);
 
         SendEmailVerificationJob::dispatch($locale, $user);
 
