@@ -17,7 +17,7 @@ class NotificationRepository extends BaseRepository
 		$this->model = $model;
 	}
 
-    public function index($locale)
+    public function getAllData($locale)
     {
         $perPage = (int) Request::get('per_page', 10);
         $page = (int) Request::get('page', 1);
@@ -43,7 +43,7 @@ class NotificationRepository extends BaseRepository
         return $result;
     }
 
-	public function show($locale, $id)
+	public function getSingleData($locale, $id)
 	{
 		$result = $this->model->all()->where('id', $id)->first();
 

@@ -17,7 +17,7 @@ class UserRepository extends BaseRepository
 		$this->model = $model;
 	}
 
-    public function index($locale, array $sortableAndSearchableColumn)
+    public function getAllData($locale, array $sortableAndSearchableColumn)
     {
         $this->validate(Request::all(), [
             'per_page' => ['numeric']
@@ -38,7 +38,7 @@ class UserRepository extends BaseRepository
         return $result;
     }
 
-	public function show($locale, $id)
+	public function getSingleData($locale, $id)
 	{
 		$result = $this->model->getAll()->where('id', $id)->first();
 

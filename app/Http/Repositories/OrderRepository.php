@@ -17,7 +17,7 @@ class OrderRepository extends BaseRepository
 		$this->model = $model;
 	}
 
-    public function index($locale, array $sortableAndSearchableColumn)
+    public function getAllData($locale, array $sortableAndSearchableColumn)
     {
         $this->validate(Request::all(), [
             'per_page' => ['numeric']

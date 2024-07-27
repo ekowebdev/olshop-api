@@ -35,7 +35,7 @@ class CartService extends BaseService
         return $this->repository->getSingleData($locale, $id);
     }
 
-    public function getDataByUser($locale, $id)
+    public function showByUser($locale, $id)
     {
         return $this->repository->getDataByUser($locale, $id);
     }

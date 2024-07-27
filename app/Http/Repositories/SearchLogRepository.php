@@ -18,7 +18,7 @@ class SearchLogRepository extends BaseRepository
 		$this->model = $model;
 	}
 
-    public function index($locale)
+    public function getAllData($locale)
     {
         $perPage = (int) Request::get('per_page', 10);
         $page = (int) Request::get('page', 1);
