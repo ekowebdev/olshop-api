@@ -47,6 +47,20 @@ class OrderRepository extends BaseRepository
         return $result;
 	}
 
+    public function getSingleDataByIdAndReceipt($userId, $resi)
+	{
+		$result = $this->model
+                  ->getAll()
+                  ->with('shippings')
+                  ->where('user_id', $userId)
+                  ->whereHas('shippings', function ($query) use ($resi) {
+                    $query->where('resi', $resi);
+                  })
+                  ->first();
+
+		return $result;
+	}
+
     public function getDataByUser($locale, array $sortableAndSearchableColumn, $id)
     {
         $this->validate(Request::all(), [
@@ -68,27 +82,4 @@ class OrderRepository extends BaseRepository
 
         return $result;
     }
-
-    public function getSingleDataStatusNotSuccess($locale, $id)
-	{
-		$result = $this->model->getAll()->where($this->model->KeyPrimaryTable, $id)->where('status', '!=', 'success')->first();
-
-        if($result === null) throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => $this->repository], $locale));
-
-        return $result;
-	}
-
-    public function getDataByIdAndReceipt($userId, $resi)
-	{
-		$result = $this->model
-                  ->getAll()
-                  ->with('shippings')
-                  ->where('user_id', $userId)
-                  ->whereHas('shippings', function ($query) use ($resi) {
-                    $query->where('resi', $resi);
-                  })
-                  ->first();
-
-		return $result;
-	}
 }

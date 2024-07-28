@@ -22,10 +22,7 @@ class CartRepository extends BaseRepository
         $perPage = (int) Request::get('per_page', 10);
         $page = (int) Request::get('page', 1);
 
-        $data = $this->model
-            ->query()
-            ->orderBy('created_at', 'desc')
-            ->get();
+        $data = $this->model->query()->orderBy('created_at', 'desc')->get();
 
         if ($data->isEmpty()) {
             throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => $this->repository], $locale));
@@ -48,9 +45,7 @@ class CartRepository extends BaseRepository
 
 	public function getSingleData($locale, $id)
 	{
-		$result = $this->model
-                    ->where('id', $id)
-                    ->first();
+		$result = $this->model->where('id', $id)->first();
 
 		if($result === null) throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => $this->repository], $locale));
 
@@ -88,13 +83,12 @@ class CartRepository extends BaseRepository
         return $result;
 	}
 
-    public function getByUserProductAndVariant($userId, $productId, $variantId)
+    public function getDataByUserProductAndVariant($userId, $productId, $variantId)
 	{
         $variantId = ($variantId == null) ? '' : (int) $variantId;
-		$result = $this->model
-                  ->where('user_id', '=', (int) $userId)
-                  ->where('product_id', '=', (int) $productId)
-                  ->where('variant_id', '=', $variantId);
+
+		$result = $this->model->where('user_id', '=', (int) $userId)->where('product_id', '=', (int) $productId)->where('variant_id', '=', $variantId);
+
 		return $result;
 	}
 }

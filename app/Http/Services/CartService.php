@@ -68,36 +68,36 @@ class CartService extends BaseService
             DB::beginTransaction();
             $user = auth()->user();
             $request['user_id'] = $user->id;
-            $variant_id = isset($request['variant_id']) ? (int) $request['variant_id'] : null;
+            $variantId = isset($request['variant_id']) ? (int) $request['variant_id'] : null;
             $product = $this->modelProduct->lockForUpdate()->find($request['product_id']);
 
-            if ($product->variants->count() > 0 && !isset($variant_id)) throw new ValidationException(trans('error.variant_required', ['product_name' => $product->name]));
+            if ($product->variants->count() > 0 && !isset($variantId)) throw new ValidationException(trans('error.variant_required', ['product_name' => $product->name]));
 
-            else if ($product->variants->count() == 0 && isset($variant_id)) throw new ValidationException(trans('error.variant_not_found_in_products', ['product_name' => $product->name]));
+            else if ($product->variants->count() == 0 && isset($variantId)) throw new ValidationException(trans('error.variant_not_found_in_products', ['product_name' => $product->name]));
 
             if(!$product || $product->quantity < $request['quantity'] || $product->status == 'O') throw new ApplicationException(trans('error.out_of_stock'));
 
-            if (!is_null($variant_id)) {
-                $variant = $product->variants()->lockForUpdate()->find($variant_id);
-                $variant_name = $this->modelVariant->find($variant_id)->name;
-                if (is_null($variant)) throw new ValidationException(trans('error.variant_not_available_in_products', ['product_name' => $product->name, 'variant_name' => $variant_name]));
+            if (!is_null($variantId)) {
+                $variant = $product->variants()->lockForUpdate()->find($variantId);
+                $variantName = $this->modelVariant->find($variantId)->name;
+                if (is_null($variant)) throw new ValidationException(trans('error.variant_not_available_in_products', ['product_name' => $product->name, 'variant_name' => $variantName]));
                 if ($variant->quantity == 0 || $request['quantity'] > $variant->quantity) throw new ApplicationException(trans('error.out_of_stock'));
             }
 
-            $exists_cart = $this->repository->getByUserProductAndVariant($user->id, $request['product_id'], $variant_id)->first();
+            $existsCart = $this->repository->getDataByUserProductAndVariant($user->id, $request['product_id'], $variantId)->first();
 
-            if(!empty($exists_cart)) {
-                $quantity = $exists_cart->quantity + (int) $request['quantity'];
-                if($product->variants->count() > 0) $real_quantity = $variant->quantity;
-                else $real_quantity = $product->quantity;
-                if ($quantity > $real_quantity) throw new ApplicationException(trans('error.out_of_stock'));
-                $exists_cart->update(['quantity' => $exists_cart->quantity + $request['quantity']]);
+            if(!empty($existsCart)) {
+                $quantity = $existsCart->quantity + (int) $request['quantity'];
+                if($product->variants->count() > 0) $realQuantity = $variant->quantity;
+                else $realQuantity = $product->quantity;
+                if ($quantity > $realQuantity) throw new ApplicationException(trans('error.out_of_stock'));
+                $existsCart->update(['quantity' => $existsCart->quantity + $request['quantity']]);
             } else {
                 $cart = $this->model;
                 $cart->id = (string) Str::uuid();
                 $cart->user_id = (int) $user->id;
                 $cart->product_id = (int) $request['product_id'];
-                $cart->variant_id = $variant_id ?? '';
+                $cart->variant_id = $variantId ?? '';
                 $cart->quantity = (int) $request['quantity'];
                 $cart->save();
             }
@@ -136,12 +136,12 @@ class CartService extends BaseService
 
         if($product->variants->count() > 0){
             $variant = $this->modelVariant->where('id', $checkData->variant_id)->where('product_id', $product->id)->first();
-            $real_quantity = $variant->quantity;
+            $realQuantity = $variant->quantity;
         } else {
-            $real_quantity = $product->quantity;
+            $realQuantity = $product->quantity;
         }
 
-        if ($real_quantity < $quantity) throw new ApplicationException(trans('error.out_of_stock'));
+        if ($realQuantity < $quantity) throw new ApplicationException(trans('error.out_of_stock'));
 
         $request['quantity'] = (int) $request['quantity'];
         $checkData->update($request);

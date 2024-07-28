@@ -67,7 +67,7 @@ class AuthService extends BaseService
 
     }
 
-    public function forget_password($locale, $request)
+    public function forgetPassword($locale, $request)
     {
         $request->validate([
             'email' => 'required|email|exists:users,email',
@@ -92,7 +92,7 @@ class AuthService extends BaseService
         return response()->api(trans('all.success_send_reset_password_link'));
     }
 
-    public function reset_password($locale, $request)
+    public function resetPassword($locale, $request)
     {
         $request->validate([
             'token' => 'required',

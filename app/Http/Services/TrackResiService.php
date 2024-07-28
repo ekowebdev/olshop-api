@@ -31,7 +31,7 @@ class TrackResiService extends BaseService
             'courier' => 'required|in:jne,jnt,pos,tiki,spx',
         ]);
 
-        $check = $this->repository->getDataByIdAndReceipt($request['user_id'], $request['resi']);
+        $check = $this->repository->getSingleDataByIdAndReceipt($request['user_id'], $request['resi']);
 
         if(!$check) throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => 'Receipt'], $locale));
 

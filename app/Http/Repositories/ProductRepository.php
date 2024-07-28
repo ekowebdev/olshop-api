@@ -180,9 +180,7 @@ class ProductRepository extends BaseRepository
             'per_page' => ['numeric'],
         ]);
 
-        $result = $this->model
-                    ->search(Request::get('search'))
-                    ->get();
+        $result = $this->model->search(Request::get('search'))->get();
 
         if(!$result) throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => $this->repository], $locale));
 
