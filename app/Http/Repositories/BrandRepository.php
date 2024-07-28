@@ -38,7 +38,7 @@ class BrandRepository extends BaseRepository
         return $result;
     }
 
-	public function show($locale, $id)
+	public function getSingleData($locale, $id)
 	{
 		$result = $this->model->getAll()->where('id', $id)->first();
 

@@ -47,7 +47,7 @@ class SliderRepository extends BaseRepository
         return $result;
 	}
 
-    public function getListDataByActive($locale, array $sortableAndSearchableColumn)
+    public function getDataByActive($locale, array $sortableAndSearchableColumn)
     {
         $this->validate(Request::all(), [
             'per_page' => ['numeric']

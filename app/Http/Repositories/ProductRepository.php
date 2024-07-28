@@ -58,7 +58,7 @@ class ProductRepository extends BaseRepository
         return $result;
 	}
 
-    public function getSingleDataByCategory($locale, array $sortableAndSearchableColumn, $category)
+    public function getDataByCategory($locale, array $sortableAndSearchableColumn, $category)
 	{
         $this->validate(Request::all(), [
             'per_page' => ['numeric']

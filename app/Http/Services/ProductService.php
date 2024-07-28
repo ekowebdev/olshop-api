@@ -110,7 +110,7 @@ class ProductService extends BaseService
         ];
 
         $result = Cache::remember('products_by_category_' . time(), now()->addMinutes(1), function() use ($locale, $sortableAndSearchableColumn, $category) {
-            return $this->repository->getSingleDataByCategory($locale, $sortableAndSearchableColumn, $category);
+            return $this->repository->getDataByCategory($locale, $sortableAndSearchableColumn, $category);
         });
     }
 

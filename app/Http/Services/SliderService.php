@@ -77,7 +77,7 @@ class SliderService extends BaseService
             'sort_column'   => array_merge($search, $searchColumn),
         ];
 
-        return $this->repository->getListDataByActive($locale, $sortableAndSearchableColumn);
+        return $this->repository->getDataByActive($locale, $sortableAndSearchableColumn);
     }
 
     public function store($locale, $data)
