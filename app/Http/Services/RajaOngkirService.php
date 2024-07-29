@@ -47,7 +47,7 @@ class RajaOngkirService extends BaseService
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_CUSTOMREQUEST => "GET",
             CURLOPT_HTTPHEADER => array(
-                "key: " . $this->api_key
+                "key: " . $this->apiKey
             ),
         ));
 
@@ -101,7 +101,7 @@ class RajaOngkirService extends BaseService
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_CUSTOMREQUEST => "GET",
             CURLOPT_HTTPHEADER => array(
-                "key: " . $this->api_key
+                "key: " . $this->apiKey
             ),
         ));
 
@@ -164,7 +164,7 @@ class RajaOngkirService extends BaseService
             CURLOPT_POSTFIELDS => $body,
             CURLOPT_HTTPHEADER => array(
                 "content-type: application/x-www-form-urlencoded",
-                "key: " . $this->api_key
+                "key: " . $this->apiKey
             ),
         ));
 
