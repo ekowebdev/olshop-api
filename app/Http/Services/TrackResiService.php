@@ -4,7 +4,7 @@ namespace App\Http\Services;
 
 use Illuminate\Support\Arr;
 use App\Exceptions\DataEmptyException;
-use App\Exceptions\ApplicationException;
+use App\Exceptions\SystemException;
 use App\Http\Repositories\OrderRepository;
 
 class TrackResiService extends BaseService
@@ -36,7 +36,7 @@ class TrackResiService extends BaseService
         if(!$check) throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => 'Receipt'], $locale));
 
         $body = http_build_query([
-            'api_key' => $this->api_key,
+            'api_key' => $this->apiKey,
             'awb' => $request['resi'],
             'courier' => $request['courier'],
         ]);
@@ -59,7 +59,7 @@ class TrackResiService extends BaseService
 
         curl_close($curl);
 
-        if($err) throw new ApplicationException('cURL Error #: '. $err);
+        if($err) throw new SystemException('cURL Error #: '. $err);
 
         $data = json_decode($response, true);
 

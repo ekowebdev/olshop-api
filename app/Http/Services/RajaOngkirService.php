@@ -5,6 +5,7 @@ namespace App\Http\Services;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Pagination\Paginator;
+use App\Exceptions\SystemException;
 use App\Exceptions\DataEmptyException;
 use App\Exceptions\ApplicationException;
 use App\Http\Repositories\CityRepository;
@@ -56,7 +57,7 @@ class RajaOngkirService extends BaseService
 
         curl_close($curl);
 
-        if($err) throw new ApplicationException('cURL Error #: '. $err);
+        if($err) throw new SystemException('cURL Error #: '. $err);
 
         $data = json_decode($response, true);
 
@@ -110,7 +111,7 @@ class RajaOngkirService extends BaseService
 
         curl_close($curl);
 
-        if($err) throw new ApplicationException('cURL Error #: '. $err);
+        if($err) throw new SystemException('cURL Error #: '. $err);
 
         $data = json_decode($response, true);
 
@@ -173,7 +174,7 @@ class RajaOngkirService extends BaseService
 
         curl_close($curl);
 
-        if($err) throw new ApplicationException('cURL Error #: '. $err);
+        if($err) throw new SystemException('cURL Error #: '. $err);
 
         $data = json_decode($response, true);
 
