@@ -67,7 +67,7 @@ Route::middleware(['xssclean', 'throttle:api'])->group(function () {
                 // Cart
                 Route::get('/carts', '\App\Http\Controllers\API\v1\CartController@index');
                 // Search Log
-                Route::group(['prefix' => '/search-logs'], function(){
+                Route::group(['prefix' => '/search/logs'], function(){
                     Route::get('/', '\App\Http\Controllers\API\v1\SearchLogController@index');
                     Route::get('/{id}', '\App\Http\Controllers\API\v1\SearchLogController@show');
                     Route::put('/{id}', '\App\Http\Controllers\API\v1\SearchLogController@update');
@@ -79,7 +79,7 @@ Route::middleware(['xssclean', 'throttle:api'])->group(function () {
                     Route::delete('/{id}', '\App\Http\Controllers\API\v1\VariantController@delete');
                 });
                 // Payment Log
-                Route::group(['prefix' => '/payment-logs'], function(){
+                Route::group(['prefix' => '/payment/logs'], function(){
                     Route::get('/', '\App\Http\Controllers\API\v1\PaymentLogController@index');
                     Route::get('/{id}', '\App\Http\Controllers\API\v1\PaymentLogController@show');
                 });
@@ -118,7 +118,7 @@ Route::middleware(['xssclean', 'throttle:api'])->group(function () {
                         Route::delete('/{id}', '\App\Http\Controllers\API\v1\AddressController@delete');
                     });
                     // User
-                    Route::post('/main-address', '\App\Http\Controllers\API\v1\UserController@setMainAddress');
+                    Route::post('/main/address', '\App\Http\Controllers\API\v1\UserController@setMainAddress');
                     Route::get('/{id}', '\App\Http\Controllers\API\v1\UserController@show');
                     Route::patch('/{id}', '\App\Http\Controllers\API\v1\UserController@update');
                 });
@@ -161,7 +161,7 @@ Route::middleware(['xssclean', 'throttle:api'])->group(function () {
                     Route::delete('/{id}', '\App\Http\Controllers\API\v1\CartController@delete');
                 });
                 // Search Log
-                Route::group(['prefix' => '/search-logs'], function(){
+                Route::group(['prefix' => '/search/logs'], function(){
                     Route::post('/', '\App\Http\Controllers\API\v1\SearchLogController@store');
                     Route::get('/users/{userId}', '\App\Http\Controllers\API\v1\SearchLogController@showByUser');
                     Route::delete('/{id}', '\App\Http\Controllers\API\v1\SearchLogController@delete');
@@ -174,9 +174,9 @@ Route::middleware(['xssclean', 'throttle:api'])->group(function () {
                     Route::delete('/{id}', '\App\Http\Controllers\API\v1\NotificationController@delete');
                 });
                 // RajaOngkir Cek Ongkir
-                Route::post('/rajaongkir/checking-costs', '\App\Http\Controllers\API\v1\RajaOngkirController@getCost');
+                Route::post('/rajaongkir/costs', '\App\Http\Controllers\API\v1\RajaOngkirController@getCost');
                 // Binderbyte Lacak Resi
-                Route::post('/binderbyte/tracking-receipts', '\App\Http\Controllers\API\v1\TrackResiController@track');
+                Route::post('/binderbyte/tracking/receipts', '\App\Http\Controllers\API\v1\TrackResiController@track');
             });
             // Logout
             Route::post('/logout', '\App\Http\Controllers\API\v1\Auth\AuthController@logout');
