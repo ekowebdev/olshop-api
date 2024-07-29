@@ -47,16 +47,16 @@ class OrderRepository extends BaseRepository
         return $result;
 	}
 
-    public function getSingleDataByIdAndReceipt($userId, $resi)
+    public function getSingleDataByUserAndReceipt($userId, $receipt)
 	{
 		$result = $this->model
-                  ->getAll()
-                  ->with('shippings')
-                  ->where('user_id', $userId)
-                  ->whereHas('shippings', function ($query) use ($resi) {
-                    $query->where('resi', $resi);
-                  })
-                  ->first();
+                    ->getAll()
+                    ->with('shippings')
+                    ->where('user_id', $userId)
+                    ->whereHas('shippings', function ($query) use ($receipt) {
+                        $query->where('resi', $receipt);
+                    })
+                    ->first();
 
 		return $result;
 	}

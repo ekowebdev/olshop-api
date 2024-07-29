@@ -173,10 +173,10 @@ Route::middleware(['xssclean', 'throttle:api'])->group(function () {
                     Route::get('/{id}', '\App\Http\Controllers\API\v1\NotificationController@show');
                     Route::delete('/{id}', '\App\Http\Controllers\API\v1\NotificationController@delete');
                 });
-                // RajaOngkir Cek Ongkir
-                Route::post('/rajaongkir/costs', '\App\Http\Controllers\API\v1\RajaOngkirController@getCost');
-                // Binderbyte Lacak Resi
-                Route::post('/binderbyte/tracking/receipts', '\App\Http\Controllers\API\v1\TrackResiController@track');
+                // Checking Costs
+                Route::post('/checking/costs', '\App\Http\Controllers\API\v1\RajaOngkirController@getCost');
+                // Tracking Receipts
+                Route::post('/tracking/receipts', '\App\Http\Controllers\API\v1\TrackReceiptController');
             });
             // Logout
             Route::post('/logout', '\App\Http\Controllers\API\v1\Auth\AuthController@logout');

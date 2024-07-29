@@ -7,7 +7,7 @@ use App\Exceptions\DataEmptyException;
 use App\Exceptions\SystemException;
 use App\Http\Repositories\OrderRepository;
 
-class TrackResiService extends BaseService
+class TrackReceiptService extends BaseService
 {
     private $apiKey, $repository;
 
@@ -21,23 +21,23 @@ class TrackResiService extends BaseService
     {
         $request = Arr::only($data, [
             'user_id',
-            'resi',
+            'receipt_no',
             'courier',
         ]);
 
         $this->validate($request, [
             'user_id' => 'required|exists:users,id',
-            'resi' => 'required',
+            'receipt_no' => 'required',
             'courier' => 'required|in:jne,jnt,pos,tiki,spx',
         ]);
 
-        $check = $this->repository->getSingleDataByIdAndReceipt($request['user_id'], $request['resi']);
+        $check = $this->repository->getSingleDataByUserAndReceipt($request['user_id'], $request['receipt_no']);
 
         if(!$check) throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => 'Receipt'], $locale));
 
         $body = http_build_query([
             'api_key' => $this->apiKey,
-            'awb' => $request['resi'],
+            'awb' => $request['receipt_no'],
             'courier' => $request['courier'],
         ]);
 
