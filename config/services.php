@@ -69,4 +69,10 @@ return [
         'path_url' => env('CLOUDINARY_PATH_URL'),
         'folder' => env('CLOUDINARY_FOLDER'),
     ],
+
+    'xendit' => [
+        'secret_key' => env('XENDIT_SECRET_KEY'),
+        'public_key' => env('XENDIT_PUBLIC_KEY'),
+        'webhook_verification_token' => env('XENDIT_WEBHOOK_VERIFICATION_TOKEN'),
+    ],
 ];
