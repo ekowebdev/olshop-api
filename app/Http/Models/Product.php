@@ -91,13 +91,8 @@ class Product extends BaseModel
     public function getIsWishlistAttribute()
     {
         $userId = auth()->id() ?: 0;
-        $cacheKey = "user_{$userId}_wishlist_product_{$this->getKey()}";
 
-        return Cache::remember($cacheKey, now()->addMinutes(10), function () use ($userId) {
-            return Wishlist::where('user_id', $userId)
-                ->where('product_id', $this->getKey())
-                ->exists() ? 1 : 0;
-        });
+        return Wishlist::where('user_id', $userId)->where('product_id', $this->getKey())->exists() ? 1 : 0;
     }
 
     public function scopeGetAll($query)
