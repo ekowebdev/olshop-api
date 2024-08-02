@@ -89,11 +89,17 @@ class Product extends BaseModel
 
     public function getIsWishlistAttribute()
     {
-        $userId = auth()->id() ?: 0;
+        $userId = auth()->id();
 
-        $wishlistProductIds = Wishlist::where('user_id', $userId)->pluck('product_id')->toArray();
+        if (!$userId) {
+            return 0;
+        }
 
-        return in_array($this->getKey(), $wishlistProductIds) ? 1 : 0;
+        $isInWishlist = Wishlist::where('user_id', $userId)
+                                ->where('product_id', $this->getKey())
+                                ->exists() ? 1 : 0;
+
+        return $isInWishlist;
     }
 
     public function scopeGetAll($query)
