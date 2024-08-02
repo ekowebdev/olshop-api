@@ -8,6 +8,7 @@ use App\Http\Resources\DeletedResource;
 use App\Http\Resources\ProductResource;
 use Illuminate\Support\Facades\Request;
 use App\Http\Controllers\BaseController;
+use App\Http\Repositories\WishlistRepository;
 
 class ProductController extends BaseController
 {
@@ -22,9 +23,10 @@ class ProductController extends BaseController
     public function index($locale)
     {
         $data = $this->service->index($locale, Request::all());
+
         return (ProductResource::collection($data))
                 ->additional([
-                    'sortableAndSearchableColumn' => $data->sortableAndSearchableColumn,
+                    'sortableAndSearchableColumn' => $data->sortableAndSearchableColumn
                 ]);
     }
 

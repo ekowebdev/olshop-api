@@ -82,7 +82,7 @@ class WishlistRepository extends BaseRepository
 
     public function getDataByUserAndProduct($locale, $productId)
 	{
-        $result = $this->model->All()->where('user_id', auth()->user()->id)->where('product_id', (int) $productId);
+        $result = $this->model->all()->where('user_id', auth()->user()->id)->where('product_id', (int) $productId);
 
         return $result;
 	}

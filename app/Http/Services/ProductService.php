@@ -2,12 +2,14 @@
 
 namespace App\Http\Services;
 
+use Meilisearch\Client;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use App\Http\Models\Product;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Cache;
+use Meilisearch\Contracts\SearchQuery;
+use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Repositories\ProductRepository;
 use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;

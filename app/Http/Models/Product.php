@@ -3,7 +3,6 @@
 namespace App\Http\Models;
 
 use Carbon\Carbon;
-use Meilisearch\Client;
 use App\Http\Models\Cart;
 use App\Http\Models\Brand;
 use App\Http\Models\Review;
@@ -26,7 +25,7 @@ class Product extends BaseModel
     protected $primaryKey = 'id';
     protected $table = 'products';
     protected $fillable = ['id', 'code', 'name', 'category_id', 'brand_id', 'slug', 'description', 'spesification', 'point', 'weight', 'quantity', 'main_image', 'status'];
-    protected $appends = ['main_image', 'is_wishlist'];
+    protected $appends = ['main_image_url', 'is_wishlist'];
 
     public function product_images()
     {
@@ -92,7 +91,9 @@ class Product extends BaseModel
     {
         $userId = auth()->id() ?: 0;
 
-        return Wishlist::where('user_id', $userId)->where('product_id', $this->getKey())->exists() ? 1 : 0;
+        $wishlistProductIds = Wishlist::where('user_id', $userId)->pluck('product_id')->toArray();
+
+        return in_array($this->getKey(), $wishlistProductIds) ? 1 : 0;
     }
 
     public function scopeGetAll($query)
@@ -116,13 +117,11 @@ class Product extends BaseModel
             'total_order'
         ])
         ->where('status', 'A')
-        ->from(DB::raw('products FORCE INDEX (index_products)'));
+        ->useIndex('index_products');
     }
 
     public function toSearchableArray()
     {
-        $image = $this->product_images()->where('is_primary', 1)->first();
-
         $data = [
             'code' => $this->code,
             'name' => $this->name,
