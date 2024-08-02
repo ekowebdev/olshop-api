@@ -45,7 +45,7 @@ class WishlistService extends BaseService
         $checkWishlist = $this->repository->getDataByUserAndProduct($locale, $product->id)->first();
 
         if(is_null($checkWishlist)) {
-            $wishlist = new Wishlist();
+            $wishlist = $this->model;
             $wishlist->id = (string) Str::uuid();
             $wishlist->user_id = $user->id;
             $wishlist->product_id = $product->id;

@@ -2,13 +2,11 @@
 
 namespace App\Http\Repositories;
 
-use Meilisearch\Client;
 use Illuminate\Support\Arr;
 use App\Http\Models\Product;
 use App\Http\Models\SearchLog;
 use Illuminate\Support\Benchmark;
 use App\Exceptions\DataEmptyException;
-use Meilisearch\Contracts\SearchQuery;
 use Illuminate\Support\Facades\Request;
 
 class ProductRepository extends BaseRepository
@@ -29,12 +27,10 @@ class ProductRepository extends BaseRepository
 
         $result = $this->model
                 ->getAll()
-                // ->getAllNew()
                 ->setSortableAndSearchableColumn($sortableAndSearchableColumn)
                 ->search()
                 ->sort()
-                ->orderBy('id')
-                // ->orderByDesc('id')
+                ->orderByDesc('id')
                 ->paginate(Arr::get(Request::all(), 'per_page', 15));
 
         $result->sortableAndSearchableColumn = $sortableAndSearchableColumn;
