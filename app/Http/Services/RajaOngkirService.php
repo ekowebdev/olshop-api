@@ -15,15 +15,15 @@ use App\Http\Repositories\SubdistrictRepository;
 
 class RajaOngkirService extends BaseService
 {
-    private $apiKey, $provinceRepository, $cityRepository, $subdistrictRepository, $origin;
+    private $apiKey, $origin, $provinceRepository, $cityRepository, $subdistrictRepository;
 
     public function __construct(ProvinceRepository $provinceRepository, CityRepository $cityRepository, SubdistrictRepository $subdistrictRepository)
     {
         $this->apiKey = config('services.rajaongkir.key');
+        $this->origin = config('setting.shipping.origin_id');
         $this->provinceRepository = $provinceRepository;
         $this->cityRepository = $cityRepository;
         $this->subdistrictRepository = $subdistrictRepository;
-        $this->origin = config('setting.shipping.origin_id');
     }
 
     public function getProvince($locale, $id, $page, $perPage)
@@ -122,7 +122,7 @@ class RajaOngkirService extends BaseService
         if($collection->isEmpty()) throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => 'City'], $locale));
 
         if(isMultidimensionalArray($collection->toArray())) {
-            $response = response()->api(formatJson($collection, $page, $perPage, ['path' => config('app.url') . '/api/v1/' . $locale . '/rajaongkir/get-city'])['data']);
+            $response = response()->api(null, formatJson($collection, $page, $perPage, ['path' => config('app.url') . '/api/v1/' . $locale . '/rajaongkir/get-city'])['data']);
         } else {
             $response = response()->api(null, $collection);
         }

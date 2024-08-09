@@ -6,10 +6,11 @@ use App\Http\Models\Review;
 use Illuminate\Support\Arr;
 use App\Http\Models\Product;
 use App\Http\Models\ReviewFile;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use App\Exceptions\ConflictException;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Storage;
-use App\Exceptions\ConflictException;
 use App\Exceptions\ApplicationException;
 use App\Http\Repositories\OrderRepository;
 use App\Http\Repositories\ReviewRepository;
@@ -189,36 +190,76 @@ class ReviewService extends BaseService
 
         DB::beginTransaction();
 
-        $countProducts = count($request['product_id']);
+        // $countProducts = count($request['product_id']);
 
-        for ($i = 0; $i < $countProducts; $i++) {
-            $user = auth()->user();
+        // for ($i = 0; $i < $countProducts; $i++) {
+        //     $user = auth()->user();
 
-            $order = $this->orderRepository->getSingleData($locale, $request['order_id'][$i]);
-            if($order->status != 'shipped' && $order->status != 'success' && $order->payment_logs == null) throw new ApplicationException(trans('error.order_not_completed', ['order_code' => $order->code[$i]]));
+        //     $order = $this->orderRepository->getSingleData($locale, $request['order_id'][$i]);
+        //     if($order->status != 'shipped' && $order->status != 'success' && $order->payment_logs == null) throw new ApplicationException(trans('error.order_not_completed', ['order_code' => $order->code[$i]]));
 
-            $checkRating = $this->repository->getDataByUserOrderAndProduct($locale, $user->id, $request['order_id'][$i], $request['product_id'][$i]);
-            if(isset($checkRating)) throw new ConflictException(trans('error.already_reviews', ['order_code' => $order->code[$i], 'product_name' => $product->name[$i]]));
+        //     $checkRating = $this->repository->getDataByUserOrderAndProduct($locale, $user->id, $request['order_id'][$i], $request['product_id'][$i]);
+        //     if(isset($checkRating)) throw new ConflictException(trans('error.already_reviews', ['order_code' => $order->code[$i], 'product_name' => $product->name[$i]]));
 
-            $result = $this->model->create([
-                'user_id' => $user->id,
-                'order_id' => $request['order_id'][$i],
-                'product_id' => $request['product_id'][$i],
-                'text' => $request['text'][$i],
-                'rating' => roundedRating($request['rating'][$i]),
-                'date' => date('Y-m-d'),
-            ]);
+        //     $result = $this->model->create([
+        //         'user_id' => $user->id,
+        //         'order_id' => $request['order_id'][$i],
+        //         'product_id' => $request['product_id'][$i],
+        //         'text' => $request['text'][$i],
+        //         'rating' => roundedRating($request['rating'][$i]),
+        //         'date' => date('Y-m-d'),
+        //     ]);
 
-            if(isset($request['file'])){
-                foreach ($request['file'][$i] as $file) {
-                    $fileName = uploadImagesToCloudinary($file, 'reviews');
-                    $this->modelReviewFile->create([
-                        'review_id' => $result->id,
-                        'file' => $fileName,
+        //     if(isset($request['file'])){
+        //         foreach ($request['file'][$i] as $file) {
+        //             $fileName = uploadImagesToCloudinary($file, 'reviews');
+        //             $this->modelReviewFile->create([
+        //                 'review_id' => $result->id,
+        //                 'file' => $fileName,
+        //             ]);
+        //         }
+        //     }
+        // }
+
+        $user = auth()->user();
+        $products = collect($request['product_id']);
+
+        $products->chunk(100)->each(function (Collection $productChunk) use ($request, $user, $locale) {
+            DB::transaction(function () use ($productChunk, $request, $user, $locale) {
+                foreach ($productChunk as $index => $productId) {
+                    $orderId = $request['order_id'][$index];
+
+                    $order = $this->orderRepository->getSingleData($locale, $orderId);
+                    if ($order->status != 'shipped' && $order->status != 'success' && $order->payment_logs == null) {
+                        throw new ApplicationException(trans('error.order_not_completed', ['order_code' => $order->code]));
+                    }
+
+                    $checkRating = $this->repository->getDataByUserOrderAndProduct($locale, $user->id, $orderId, $productId);
+                    if (isset($checkRating)) {
+                        throw new ConflictException(trans('error.already_reviews', ['order_code' => $order->code, 'product_name' => $product->name]));
+                    }
+
+                    $result = $this->model->create([
+                        'user_id' => $user->id,
+                        'order_id' => $orderId,
+                        'product_id' => $productId,
+                        'text' => $request['text'][$index],
+                        'rating' => roundedRating($request['rating'][$index]),
+                        'date' => date('Y-m-d'),
                     ]);
+
+                    if (isset($request['file'][$index])) {
+                        foreach ($request['file'][$index] as $file) {
+                            $fileName = uploadImagesToCloudinary($file, 'reviews');
+                            $this->modelReviewFile->create([
+                                'review_id' => $result->id,
+                                'file' => $fileName,
+                            ]);
+                        }
+                    }
                 }
-            }
-        }
+            });
+        });
 
         DB::commit();
 

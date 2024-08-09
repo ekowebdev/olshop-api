@@ -9,6 +9,7 @@ use App\Http\Models\Product;
 use App\Http\Models\Variant;
 use Illuminate\Support\Facades\DB;
 use App\Http\Resources\CartResource;
+use App\Exceptions\SystemException;
 use App\Exceptions\ValidationException;
 use App\Exceptions\ApplicationException;
 use App\Http\Repositories\CartRepository;
@@ -80,7 +81,9 @@ class CartService extends BaseService
             if (!is_null($variantId)) {
                 $variant = $product->variants()->lockForUpdate()->find($variantId);
                 $variantName = $this->modelVariant->find($variantId)->name;
+
                 if (is_null($variant)) throw new ValidationException(trans('error.variant_not_available_in_products', ['product_name' => $product->name, 'variant_name' => $variantName]));
+
                 if ($variant->quantity == 0 || $request['quantity'] > $variant->quantity) throw new ApplicationException(trans('error.out_of_stock'));
             }
 
@@ -88,9 +91,12 @@ class CartService extends BaseService
 
             if(!empty($existsCart)) {
                 $quantity = $existsCart->quantity + (int) $request['quantity'];
+
                 if($product->variants->count() > 0) $realQuantity = $variant->quantity;
                 else $realQuantity = $product->quantity;
+
                 if ($quantity > $realQuantity) throw new ApplicationException(trans('error.out_of_stock'));
+
                 $existsCart->update(['quantity' => $existsCart->quantity + $request['quantity']]);
             } else {
                 $cart = $this->model;
@@ -107,7 +113,7 @@ class CartService extends BaseService
             return response()->api(trans('all.success_add_to_cart', ['product_name' => $product->name]));
         } catch (\Exception $e) {
             DB::rollback();
-            throw new ApplicationException(json_encode([$e->getMessage()]));
+            throw new SystemException(json_encode([$e->getMessage()]));
         }
     }
 

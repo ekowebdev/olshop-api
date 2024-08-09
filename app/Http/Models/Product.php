@@ -95,9 +95,7 @@ class Product extends BaseModel
             return 0;
         }
 
-        $isInWishlist = Wishlist::where('user_id', $userId)
-                                ->where('product_id', $this->getKey())
-                                ->exists() ? 1 : 0;
+        $isInWishlist = Wishlist::where('user_id', $userId)->where('product_id', $this->getKey())->exists() ? 1 : 0;
 
         return $isInWishlist;
     }

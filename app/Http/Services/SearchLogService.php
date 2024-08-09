@@ -6,6 +6,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use App\Http\Models\SearchLog;
 use Illuminate\Support\Facades\DB;
+use App\Exceptions\SystemException;
 use App\Exceptions\ApplicationException;
 use App\Http\Repositories\SearchLogRepository;
 
@@ -60,7 +61,7 @@ class SearchLogService extends BaseService
             DB::commit();
         } catch (\Exception $e) {
             DB::rollback();
-            throw new ApplicationException(json_encode([$e->getMessage()]));
+            throw new SystemException(json_encode([$e->getMessage()]));
         }
 
         return $this->repository->getSingleData($locale, $data->id);

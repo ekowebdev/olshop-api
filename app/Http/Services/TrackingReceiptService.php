@@ -7,7 +7,7 @@ use App\Exceptions\DataEmptyException;
 use App\Exceptions\SystemException;
 use App\Http\Repositories\OrderRepository;
 
-class TrackReceiptService extends BaseService
+class TrackingReceiptService extends BaseService
 {
     private $apiKey, $repository;
 

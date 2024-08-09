@@ -176,7 +176,7 @@ Route::middleware(['xssclean', 'throttle:api'])->group(function () {
                 // Checking Costs
                 Route::post('/checking/costs', '\App\Http\Controllers\API\v1\RajaOngkirController@getCost');
                 // Tracking Receipts
-                Route::post('/tracking/receipts', '\App\Http\Controllers\API\v1\TrackReceiptController');
+                Route::post('/tracking/receipts', '\App\Http\Controllers\API\v1\TrackingReceiptController');
             });
             // Logout
             Route::post('/logout', '\App\Http\Controllers\API\v1\Auth\AuthController@logout');

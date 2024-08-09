@@ -7,6 +7,7 @@ use Illuminate\Support\Str;
 use App\Http\Models\Variant;
 use App\Http\Models\Product;
 use Illuminate\Support\Facades\DB;
+use App\Exceptions\SystemException;
 use App\Exceptions\ApplicationException;
 use App\Http\Repositories\VariantRepository;
 
@@ -122,7 +123,7 @@ class VariantService extends BaseService
             DB::commit();
         } catch (\Exception $e) {
             DB::rollBack();
-            throw new ApplicationException(json_encode([$e->getMessage()]));
+            throw new SystemException(json_encode([$e->getMessage()]));
         }
 
         return $this->repository->getSingleData($locale, $result->id);
@@ -187,7 +188,7 @@ class VariantService extends BaseService
             DB::commit();
         } catch (\Exception $e) {
             DB::rollback();
-            throw new ApplicationException(json_encode([$e->getMessage()]));
+            throw new SystemException(json_encode([$e->getMessage()]));
         }
 
         return $this->repository->getSingleData($locale, $id);
@@ -214,7 +215,7 @@ class VariantService extends BaseService
             DB::commit();
         } catch (\Exception $e) {
             DB::rollback();
-            throw new ApplicationException(json_encode([$e->getMessage()]));
+            throw new SystemException(json_encode([$e->getMessage()]));
         }
 
         return $result;

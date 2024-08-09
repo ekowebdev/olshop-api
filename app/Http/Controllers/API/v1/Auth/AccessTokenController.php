@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\App;
 use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Models\OauthAccessToken;
+use App\Exceptions\SystemException;
 use App\Exceptions\DataEmptyException;
 use App\Http\Models\OauthRefreshToken;
 use App\Jobs\SendEmailVerificationJob;
@@ -143,7 +144,7 @@ class AccessTokenController extends ApiAuthController
             return response()->api($message, $responseData);
         } catch (\Exception $e){
             \DB::rollback();
-            throw new AuthenticationException($e->getMessage());
+            throw new SystemException($e->getMessage());
         }
     }
 

@@ -15,6 +15,7 @@ use App\Http\Models\OrderProduct;
 use Illuminate\Support\Facades\DB;
 use App\Http\Services\OrderService;
 use App\Exceptions\ValidationException;
+use App\Exceptions\SystemException;
 use App\Exceptions\ApplicationException;
 use App\Events\RealTimeNotificationEvent;
 use App\Http\Repositories\CityRepository;
@@ -38,7 +39,6 @@ class OrderService extends BaseService
         $this->productRepository = $productRepository;
         $this->cityRepository = $cityRepository;
         $this->addressRepository = $addressRepository;
-        $this->origin = config('setting.shipping.origin_id');
     }
 
     public function index($locale, $data)
@@ -101,61 +101,59 @@ class OrderService extends BaseService
         $request = $data;
 
         $this->repository->validate($request, [
-                'order_products_details' => [
-                    'required',
-                ],
-                'order_products_details.*.product_id' => [
-                    'required',
-                    'exists:products,id',
-                ],
-                'order_products_details.*.variant_id' => [
-                    'nullable',
-                    'exists:variants,id',
-                ],
-                'order_products_details.*.quantity' => [
-                    'required',
-                    'numeric',
-                    'min:1',
-                ],
-                'shipping_details' => [
-                    'required',
-                ],
-                'shipping_details.destination' => [
-                    'required',
-                    'string',
-                ],
-                'shipping_details.weight' => [
-                    'required',
-                    'numeric',
-                ],
-                'shipping_details.courier' => [
-                    'required',
-                    'in:jne,pos,tiki',
-                ],
-                'shipping_details.cost' => [
-                    'required',
-                    'numeric',
-                ],
-                'address_details' => [
-                    'required',
-                ],
-                'address_details.id' => [
-                    'required',
-                ],
-                'address_details.person_name' => [
-                    'required',
-                    'string',
-                ],
-                'address_details.person_phone' => [
-                    'required',
-                ],
-            ]
-        );
+            'order_products_details' => [
+                'required',
+            ],
+            'order_products_details.*.product_id' => [
+                'required',
+                'exists:products,id',
+            ],
+            'order_products_details.*.variant_id' => [
+                'nullable',
+                'exists:variants,id',
+            ],
+            'order_products_details.*.quantity' => [
+                'required',
+                'numeric',
+                'min:1',
+            ],
+            'shipping_details' => [
+                'required',
+            ],
+            'shipping_details.destination' => [
+                'required',
+                'string',
+            ],
+            'shipping_details.weight' => [
+                'required',
+                'numeric',
+            ],
+            'shipping_details.courier' => [
+                'required',
+                'in:jne,pos,tiki',
+            ],
+            'shipping_details.cost' => [
+                'required',
+                'numeric',
+            ],
+            'address_details' => [
+                'required',
+            ],
+            'address_details.id' => [
+                'required',
+            ],
+            'address_details.person_name' => [
+                'required',
+                'string',
+            ],
+            'address_details.person_phone' => [
+                'required',
+            ],
+        ]);
+
+        DB::beginTransaction();
 
         try {
-            DB::beginTransaction();
-
-            // Initialize variables
             $user = auth()->user();
             $orderCode = (string) Str::uuid();
             $itemDetails = [];
@@ -170,7 +168,6 @@ class OrderService extends BaseService
             $address = $this->addressRepository->getSingleData($locale, $addressDetails['id']);
             $city = $this->cityRepository->getSingleData($locale, $address->city_id);
 
-            // Create Order entry
             $order = $this->model->create([
                 'user_id' => $user->id,
                 'address_id' => (int) $address->id,
@@ -182,24 +179,20 @@ class OrderService extends BaseService
                 'note' => $orderDetails['note'],
             ]);
 
-            // Process Orders
             foreach ($orderProductsDetails as $orderProducts) {
                 $quantity = $orderProducts['quantity'];
                 $variantId = ($orderProducts['variant_id'] == '') ? null : $orderProducts['variant_id'];
 
                 $product = $this->modelProduct->lockForUpdate()->find($orderProducts['product_id']);
 
-                // Check variant if required
                 if ($product->variants->count() > 0 && !isset($variantId)) {
                     throw new ValidationException(trans('error.variant_required', ['product_name' => $product->name]));
                 } else if ($product->variants->count() == 0 && isset($variantId)) {
                     throw new ValidationException(trans('error.variant_not_found_in_products', ['product_name' => $product->name]));
                 }
 
-                // Check item availability
                 if (!$product || $product->quantity < $quantity || $product->status == 'O') throw new ApplicationException(trans('error.out_of_stock'));
 
-                // Process the chosen variant (if any)
                 $subtotal = 0;
                 if (!is_null($variantId)) {
                     $variant = $product->variants()->lockForUpdate()->find($variantId);
@@ -231,7 +224,6 @@ class OrderService extends BaseService
                     'merchant_name' => config('app.name'),
                 ];
 
-                // Create OrderProduct entry
                 $orderProduct = [
                     'product_id' => (int) $product->id,
                     'variant_id' => (int) $variantId == 0 ? null : (int) $variantId,
@@ -247,7 +239,6 @@ class OrderService extends BaseService
                 $product->save();
             }
 
-            // Create shipping and transaction details
             $transactionDetails = [
                 'order_id' => $order->id . '-' . Str::random(5),
                 'gross_amount' => $totalPoint + $cost,
@@ -281,7 +272,6 @@ class OrderService extends BaseService
 
             $midtransData = $this->createTransactionMidtrans($midtransParams);
 
-            // Update Order and related data
 	        $order->snap_token = $midtransData->token;
             $order->snap_url = $midtransData->redirect_url;
             $order->metadata = [
@@ -300,10 +290,9 @@ class OrderService extends BaseService
             $order->total_amount = $totalPoint + $cost;
             $order->save();
 
-            // Create shipping record
             $shipping = $this->modelShipping->create([
                 'order_id' => $order->id,
-                'origin' => $this->origin,
+                'origin' => config('setting.shipping.origin_id'),
                 'destination' => $shippingDetails['destination'],
                 'weight' => $shippingDetails['weight'],
                 'courier' => $shippingDetails['courier'],
@@ -314,7 +303,6 @@ class OrderService extends BaseService
                 'status' => 'on progress',
             ]);
 
-            //Delete product in cart
             if($order->metadata != null){
                 $metadata = $order->metadata;
                 $metadataOrderProducts = $metadata['order_products'];
@@ -334,7 +322,6 @@ class OrderService extends BaseService
                 }
             }
 
-            // Create and broadcast a notification
             $inputNotification = [
                 'user_id' => $user->id,
                 'title' => trans('all.notification_transaction_title'),
@@ -342,7 +329,9 @@ class OrderService extends BaseService
                 'type' => 0,
                 'status_read' => 0,
             ];
+
             $allNotifications = storeNotification($inputNotification);
+
             $dataNotification['data'] = $allNotifications->toArray();
             $dataNotification['summary'] = [
                 'total_data' => $this->modelNotification->where('user_id', $user->id)->count(),
@@ -362,7 +351,8 @@ class OrderService extends BaseService
             return response()->api(trans('all.success_order'), $responseData);
         } catch (\Exception $e) {
             DB::rollback();
-            throw new ApplicationException(json_encode([$e->getMessage()]));
+
+            throw new SystemException(json_encode([$e->getMessage()]));
         }
     }
 
@@ -402,8 +392,10 @@ class OrderService extends BaseService
                     $variant->save();
                 }
             }
+
             $shipping = $this->modelShipping->where('order_id', $id)->first();
             $shipping->update(['status' => 'cancelled']);
+
             $checkData->update($request);
             $message = trans('all.success_cancel_order');
         } else {
@@ -428,18 +420,18 @@ class OrderService extends BaseService
         ]);
 
         $this->repository->validate($request, [
-                'status' => [
-                    'required',
-                    'in:received'
-                ],
-            ]
-        );
+            'status' => [
+                'required',
+                'in:received'
+            ],
+        ]);
 
         DB::beginTransaction();
 
         if($checkData->status == 'shipped' && $checkData->shippings->resi != null){
             $shipping = $this->modelShipping->where('order_id', $id)->first();
             $shipping->update(['status' => 'delivered']);
+
             $request['status'] = 'success';
             $checkData->update($request);
         }
@@ -488,6 +480,7 @@ class OrderService extends BaseService
         \Midtrans\Config::$is3ds = (bool) config('services.midtrans.3ds');
 
         $result = \Midtrans\Snap::createTransaction($params);
+
         return $result;
     }
 }
