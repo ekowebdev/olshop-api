@@ -4,7 +4,7 @@ Ini merupakan RESTful API untuk pembuatan toko online sederhana, API ini dapat d
 
 ## Spesifikasi
 
--   Language: PHP
+-   Bahasa: PHP
 -   Framework: Laravel
 -   Web Server: Nginx
 -   Kontainerisasi: Docker
