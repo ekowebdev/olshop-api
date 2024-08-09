@@ -1,4 +1,4 @@
-# Olshop API
+# Onlie Shop API
 
 Ini merupakan RESTful API untuk pembuatan toko online sederhana, API ini dapat diakses disini `https://api.baktiweb.my.id/`
 
@@ -9,7 +9,6 @@ Ini merupakan RESTful API untuk pembuatan toko online sederhana, API ini dapat d
 -   Web Server: Nginx
 -   Kontainerisasi: Docker
 -   Library Utama: MongoDB, Passport, OAuth 2.0, Redis, Cloudinary, Midtrans, RajaOngkir, Websockets, Scout, Meilisearch
--   Pola Arsitektur: Repository Pattern
 
 ## Fitur
 
