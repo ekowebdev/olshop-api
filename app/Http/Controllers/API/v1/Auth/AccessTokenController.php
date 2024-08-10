@@ -7,11 +7,11 @@ use Carbon\Carbon;
 use GuzzleHttp\Client;
 use App\Rules\ReCaptcha;
 use App\Http\Models\User;
+use App\Exceptions\SystemException;
 use Illuminate\Support\Facades\App;
 use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Models\OauthAccessToken;
-use App\Exceptions\SystemException;
 use App\Exceptions\DataEmptyException;
 use App\Http\Models\OauthRefreshToken;
 use App\Jobs\SendEmailVerificationJob;
@@ -40,7 +40,7 @@ class AccessTokenController extends ApiAuthController
 	        'provider' => 'nullable|required_if:grant_type,social|in:google',
 			'access_token' => 'nullable|required_if:grant_type,social',
             'g-recaptcha-response' => [
-                (!empty($request['g-recaptcha-response']) && $request['g-recaptcha-response'] != config('services.recaptcha.development_key')) ? new ReCaptcha : '',
+                (!empty($request['g-recaptcha-response']) && $request['g-recaptcha-response'] != config('services.recaptcha.bypass_code')) ? new ReCaptcha : '',
                 'required_if:grant_type,password',
             ],
         ]);
@@ -92,7 +92,7 @@ class AccessTokenController extends ApiAuthController
 	        'provider' => 'nullable|required_if:grant_type,social|in:google',
 			'access_token' => 'nullable|required_if:grant_type,social',
             'g-recaptcha-response' => [
-                (!empty($request['g-recaptcha-response']) && $request['g-recaptcha-response'] != config('services.recaptcha.development_key')) ? new ReCaptcha : '',
+                (!empty($request['g-recaptcha-response']) && $request['g-recaptcha-response'] != config('services.recaptcha.bypass_code')) ? new ReCaptcha : '',
                 'required_if:grant_type,password',
             ],
         ]);

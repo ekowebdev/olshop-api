@@ -138,7 +138,7 @@ function formatProductWeight($product)
         $weight = min($weight);
         return (string) $weight . ' Gram';
     } else {
-        return (string) $product->weight ?? 0 . ' Gram';
+        return (string) $product->weight . ' Gram';
     }
 }
 
@@ -155,7 +155,7 @@ function formatProductPoint($product)
         }
         return formatMoney($minValue) . " ~ " . formatMoney($maxValue);
     } else {
-        return formatMoney((string) $product->point ?? 0);
+        return formatMoney((string) $product->point);
     }
 }
 

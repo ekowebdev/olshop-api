@@ -22,74 +22,51 @@ class ProductController extends BaseController
 
     public function index($locale)
     {
-        $data = $this->service->index($locale, Request::all());
-
-        return (ProductResource::collection($data))
-                ->additional([
-                    'sortableAndSearchableColumn' => $data->sortableAndSearchableColumn
-                ]);
+        return $this->service->index($locale, Request::all());
     }
 
     public function show($locale, $id)
     {
-        $data = $this->service->show($locale, $id);
-        return new ProductResource($data);
+        return $this->service->show($locale, $id);
     }
 
     public function showBySlug($locale, $slug)
     {
-        $data = $this->service->showBySlug($locale, $slug);
-        return new ProductResource($data);
+        return $this->service->showBySlug($locale, $slug);
     }
 
     public function showByCategory($locale, $category)
     {
-        $data = $this->service->showByCategory($locale, $category);
-        return (ProductResource::collection($data))
-                ->additional([
-                    'sortableAndSearchableColumn' => $data->sortableAndSearchableColumn,
-                ]);
+        return $this->service->showByCategory($locale, $category);
     }
 
     public function showByBrand($locale, $brand)
     {
-        $data = $this->service->showByBrand($locale, $brand);
-        return (ProductResource::collection($data))
-                ->additional([
-                    'sortableAndSearchableColumn' => $data->sortableAndSearchableColumn,
-                ]);
+        return $this->service->showByBrand($locale, $brand);
     }
 
     public function showByUserRecomendation($locale)
     {
-        $data = $this->service->showByUserRecomendation($locale);
-        return (ProductResource::collection($data))
-                ->additional([
-                    'sortableAndSearchableColumn' => $data->sortableAndSearchableColumn,
-                ]);
+        return $this->service->showByUserRecomendation($locale);
     }
 
     public function search($locale)
     {
-        $data = $this->service->search($locale);
-        return ProductResource::collection($data);
+        return $this->service->search($locale);
     }
 
     public function store($locale)
     {
-        $data = $this->service->store($locale, Request::all());
-        return new ProductResource($data);
+        return $this->service->store($locale, Request::all());
     }
 
     public function update($locale, $id)
     {
-        $data = $this->service->update($locale, $id, Request::all());
-        return new ProductResource($data);
+        return $this->service->update($locale, $id, Request::all());
     }
 
     public function delete($locale, $id)
     {
-        $data = $this->service->delete($locale, $id, Request::all());
-        return new DeletedResource($data);
+        return $this->service->delete($locale, $id, Request::all());
     }
 }

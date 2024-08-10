@@ -3,7 +3,6 @@
 namespace App\Exceptions;
 
 use Throwable;
-use Illuminate\Support\Facades\Log;
 use Spatie\Permission\Exceptions\UnauthorizedException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 
@@ -48,7 +47,7 @@ class Handler extends ExceptionHandler
         if ($exception instanceof \League\OAuth2\Server\Exception\OAuthServerException && $exception->getCode() == 9) {
             return;
         }
-        
+
         parent::report($exception);
     }
 

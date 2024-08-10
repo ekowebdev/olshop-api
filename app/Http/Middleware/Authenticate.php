@@ -40,10 +40,13 @@ class Authenticate
         $isGuest = Config::get('setting.guest');
         $user = $this->auth->guard('api')->user();
         // $user = $this->auth->guard('web')->user();
+
         if (empty($user) AND $isGuest === false) {
             throw new AuthenticationException();
         }
+
         Config::set('setting.user', $user);
+
         return $next($request);
     }
 }

@@ -9,6 +9,8 @@ use App\Http\Models\Product;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
 use Meilisearch\Contracts\SearchQuery;
+use App\Http\Resources\DeletedResource;
+use App\Http\Resources\ProductResource;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Repositories\ProductRepository;
@@ -63,17 +65,20 @@ class ProductService extends BaseService
             return $this->repository->getAllData($locale, $sortableAndSearchableColumn);
         });
 
-        return $result;
+        return (ProductResource::collection($result))
+                ->additional([
+                    'sortableAndSearchableColumn' => $result->sortableAndSearchableColumn
+                ]);
     }
 
     public function show($locale, $id)
     {
-        return $this->repository->getSingleData($locale, $id);
+        return new ProductResource($this->repository->getSingleData($locale, $id));
     }
 
     public function showBySlug($locale, $slug)
     {
-        return $this->repository->getSingleDataBySlug($locale, $slug);
+        return new ProductResource($this->repository->getSingleDataBySlug($locale, $slug));
     }
 
     public function showByCategory($locale, $category)
@@ -114,6 +119,11 @@ class ProductService extends BaseService
         $result = Cache::remember('products_by_category_' . time(), now()->addMinutes(1), function() use ($locale, $sortableAndSearchableColumn, $category) {
             return $this->repository->getDataByCategory($locale, $sortableAndSearchableColumn, $category);
         });
+
+        return (ProductResource::collection($result))
+                ->additional([
+                    'sortableAndSearchableColumn' => $result->sortableAndSearchableColumn
+                ]);
     }
 
     public function showByBrand($locale, $brand)
@@ -154,6 +164,11 @@ class ProductService extends BaseService
         $result = Cache::remember('products_by_brand_' . time(), now()->addMinutes(1), function() use ($locale, $sortableAndSearchableColumn, $brand) {
             return $this->repository->getDataByBrand($locale, $sortableAndSearchableColumn, $brand);
         });
+
+        return (ProductResource::collection($result))
+                ->additional([
+                    'sortableAndSearchableColumn' => $result->sortableAndSearchableColumn,
+                ]);
     }
 
     public function showByUserRecomendation($locale)
@@ -194,11 +209,16 @@ class ProductService extends BaseService
         $result = Cache::remember('products_by_recomendation_' . time(), now()->addMinutes(1), function() use ($locale, $sortableAndSearchableColumn) {
             return $this->repository->getDataByUserRecomendation($locale, $sortableAndSearchableColumn);
         });
+
+        return (ProductResource::collection($result))
+                ->additional([
+                    'sortableAndSearchableColumn' => $result->sortableAndSearchableColumn,
+                ]);
     }
 
     public function search($locale)
     {
-        return $this->repository->search($locale);
+        return ProductResource::collection($this->repository->search($locale));
     }
 
     public function store($locale, $data)
@@ -276,14 +296,25 @@ class ProductService extends BaseService
         $request['quantity'] = $request['quantity'] ?? null;
         $request['spesification'] = (isset($request['spesification'])) ? json_encode($request['spesification']) : null;
         $result = $this->model->create($request);
-        foreach ($request['images'] as $image) {
+
+        $mainImage = null;
+
+        foreach ($request['images'] as $index => $image) {
             $imageName = uploadImagesToCloudinary($image, 'products');
-            $result->product_images()->create(['image' => $imageName]);
+            $isPrimary = $index === 0 ? 1 : 0;
+
+            $result->product_images()->create(['image' => $imageName, 'is_primary' => $isPrimary]);
+
+            if ($index === 0) {
+                $mainImage = $imageName;
+            }
         }
+
+        $result->update(['main_image' => $mainImage]);
 
         DB::commit();
 
-        return $this->repository->getSingleData($locale, $result->id);
+        return new ProductResource($this->repository->getSingleData($locale, $result->id));
     }
 
     public function update($locale, $id, $data)
@@ -362,7 +393,7 @@ class ProductService extends BaseService
         $checkData->update($request);
         DB::commit();
 
-        return $this->repository->getSingleData($locale, $id);
+        return new ProductResource($this->repository->getSingleData($locale, $id));
     }
 
     public function delete($locale, $id)
@@ -370,12 +401,15 @@ class ProductService extends BaseService
         $checkData = $this->repository->getSingleData($locale, $id);
 
         DB::beginTransaction();
+
         foreach($checkData->product_images as $image) {
             deleteImagesFromCloudinary($image->image, 'products');
         }
+
         $result = $checkData->delete();
+
         DB::commit();
 
-        return $result;
+        return new DeletedResource($result);
     }
 }
