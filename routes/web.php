@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TestNotificationController;
 
 Route::get('/', function() {
-    return 'Olshop API version 1';
+    return 'Online Shop API version 1';
     // return redirect('https://baktiweb.my.id');
 });
 

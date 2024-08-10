@@ -1,4 +1,4 @@
-# Onlie Shop API
+# Online Shop API
 
 Ini merupakan RESTful API untuk pembuatan toko online sederhana, API ini dapat diakses disini `https://api.baktiweb.my.id/`
 
