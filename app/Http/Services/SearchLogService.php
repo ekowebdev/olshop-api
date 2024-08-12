@@ -51,13 +51,15 @@ class SearchLogService extends BaseService
             ]
         );
 
-        try{
-            DB::beginTransaction();
+        DB::beginTransaction();
+
+        try {
             $data = $this->model;
             $data->id = (string) Str::uuid();
             $data->user_id = (int) auth()->user()->id;
             $data->search_text = strtolower($request['search_text']);
             $data->save();
+
             DB::commit();
         } catch (\Exception $e) {
             DB::rollback();
@@ -89,9 +91,11 @@ class SearchLogService extends BaseService
         ]);
 
         DB::beginTransaction();
+
         $request['user_id'] = (int) auth()->user()->id;
         $request['search_text'] = strtolower($request['search_text']);
         $checkData->update($request);
+
         DB::commit();
 
         return $this->repository->getSingleData($locale, $id);
@@ -100,8 +104,11 @@ class SearchLogService extends BaseService
     public function delete($locale, $id)
     {
         $checkData = $this->repository->getSingleData($locale, $id);
+
         DB::beginTransaction();
+
         $result = $checkData->delete();
+
         DB::commit();
 
         return $result;

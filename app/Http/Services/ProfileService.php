@@ -60,30 +60,29 @@ class ProfileService extends BaseService
         ]);
 
         $this->repository->validate($request, [
-                'user_id' => [
-                    'required',
-                    'exists:users,id',
-                    'unique:profiles,user_id',
-                ],
-                'name' => [
-                    'required',
-                    'string',
-                ],
-                'birthdate' => [
-                    'required',
-                    'date',
-                ],
-                'phone_number' => [
-                    'required',
-                    'numeric',
-                ],
-                'avatar' => [
-                    'max:1000',
-                    'image',
-                    'mimes:jpg,png',
-                ],
-            ]
-        );
+            'user_id' => [
+                'required',
+                'exists:users,id',
+                'unique:profiles,user_id',
+            ],
+            'name' => [
+                'required',
+                'string',
+            ],
+            'birthdate' => [
+                'required',
+                'date',
+            ],
+            'phone_number' => [
+                'required',
+                'numeric',
+            ],
+            'avatar' => [
+                'max:1000',
+                'image',
+                'mimes:jpg,png',
+            ],
+        ]);
 
         DB::beginTransaction();
 
@@ -167,8 +166,11 @@ class ProfileService extends BaseService
         $checkData = $this->repository->getSingleData($locale, $id);
 
         DB::beginTransaction();
+
         deleteImagesFromCloudinary($checkData->avatar, 'profiles');
+
         $result = $checkData->delete();
+
         DB::commit();
 
         return $result;

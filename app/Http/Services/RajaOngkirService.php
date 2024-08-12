@@ -31,6 +31,7 @@ class RajaOngkirService extends BaseService
         $id = $id ?? null;
 
         $params = [];
+
         if (!is_null($id)) {
             $params['id'] = $id;
         }
@@ -82,9 +83,11 @@ class RajaOngkirService extends BaseService
         $provinceId = $provinceId ?? null;
 
         $params = [];
+
         if (!is_null($id)) {
             $params['id'] = $id;
         }
+
         if (!is_null($provinceId)) {
             $params['province'] = $provinceId;
         }
@@ -139,11 +142,10 @@ class RajaOngkirService extends BaseService
         ]);
 
         $this->validate($request, [
-                'destination_city' => 'required',
-                'weight' => 'required|integer',
-                'courier' => 'required|in:jne,pos,tiki',
-            ]
-        );
+            'destination_city' => 'required',
+            'weight' => 'required|integer',
+            'courier' => 'required|in:jne,pos,tiki',
+        ]);
 
         $body = http_build_query([
             'origin' => $this->origin,

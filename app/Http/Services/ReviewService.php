@@ -14,19 +14,21 @@ use Illuminate\Support\Facades\Storage;
 use App\Exceptions\ApplicationException;
 use App\Http\Repositories\OrderRepository;
 use App\Http\Repositories\ReviewRepository;
+use App\Http\Repositories\ProductRepository;
 use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 
 class ReviewService extends BaseService
 {
-    private $model, $modelReviewFile, $modelProduct, $repository, $orderRepository;
+    private $model, $modelReviewFile, $modelProduct, $repository, $orderRepository, $productRepository;
 
-    public function __construct(Review $model, ReviewFile $modelReviewFile, Product $modelProduct, ReviewRepository $repository, OrderRepository $orderRepository)
+    public function __construct(Review $model, ReviewFile $modelReviewFile, Product $modelProduct, ReviewRepository $repository, OrderRepository $orderRepository, ProductRepository $productRepository)
     {
         $this->model = $model;
         $this->modelReviewFile = $modelReviewFile;
         $this->modelProduct = $modelProduct;
         $this->repository = $repository;
         $this->orderRepository = $orderRepository;
+        $this->productRepository = $productRepository;
     }
 
     public function index($locale, $data)
@@ -108,11 +110,12 @@ class ReviewService extends BaseService
 
         $user = auth()->user();
         $order = $this->orderRepository->getSingleData($locale, $request['order_id']);
-        $product = $this->modelProduct->find($request['product_id']);
+        // $product = $this->modelProduct->find($request['product_id']);
+        $product = $this->productRepository->getSingleData($locale, $request['product_id']);
 
         if ($order->status != 'shipped' && $order->status != 'success' && $order->payment_logs == null) throw new ApplicationException(trans('error.order_not_completed', ['order_code' => $order->code]));
 
-        $checkRating = $this->repository->getDataByUserOrderAndProduct($locale, $user->id, $request['order_id'], $request['product_id']);
+        $checkRating = $this->repository->getDataByUserIdOrderIdAndProductId($locale, $user->id, $request['order_id'], $request['product_id']);
         if (isset($checkRating)) throw new ConflictException;(trans('error.already_reviews', ['order_code' => $order->code, 'product_name' => $product->name]));
 
         $result = $this->model->create([
@@ -198,7 +201,7 @@ class ReviewService extends BaseService
         //     $order = $this->orderRepository->getSingleData($locale, $request['order_id'][$i]);
         //     if($order->status != 'shipped' && $order->status != 'success' && $order->payment_logs == null) throw new ApplicationException(trans('error.order_not_completed', ['order_code' => $order->code[$i]]));
 
-        //     $checkRating = $this->repository->getDataByUserOrderAndProduct($locale, $user->id, $request['order_id'][$i], $request['product_id'][$i]);
+        //     $checkRating = $this->repository->getDataByUserIdOrderIdAndProductId($locale, $user->id, $request['order_id'][$i], $request['product_id'][$i]);
         //     if(isset($checkRating)) throw new ConflictException(trans('error.already_reviews', ['order_code' => $order->code[$i], 'product_name' => $product->name[$i]]));
 
         //     $result = $this->model->create([
@@ -234,7 +237,7 @@ class ReviewService extends BaseService
                         throw new ApplicationException(trans('error.order_not_completed', ['order_code' => $order->code]));
                     }
 
-                    $checkRating = $this->repository->getDataByUserOrderAndProduct($locale, $user->id, $orderId, $productId);
+                    $checkRating = $this->repository->getDataByUserIdOrderIdAndProductId($locale, $user->id, $orderId, $productId);
                     if (isset($checkRating)) {
                         throw new ConflictException(trans('error.already_reviews', ['order_code' => $order->code, 'product_name' => $product->name]));
                     }

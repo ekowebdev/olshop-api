@@ -13,21 +13,23 @@ use App\Http\Models\Shipping;
 use App\Http\Models\Notification;
 use App\Http\Models\OrderProduct;
 use Illuminate\Support\Facades\DB;
+use App\Exceptions\SystemException;
 use App\Http\Services\OrderService;
 use App\Exceptions\ValidationException;
-use App\Exceptions\SystemException;
 use App\Exceptions\ApplicationException;
 use App\Events\RealTimeNotificationEvent;
+use App\Http\Repositories\CartRepository;
 use App\Http\Repositories\CityRepository;
 use App\Http\Repositories\OrderRepository;
 use App\Http\Repositories\AddressRepository;
 use App\Http\Repositories\ProductRepository;
+use App\Http\Repositories\ShippingRepository;
 
 class OrderService extends BaseService
 {
-    private $model, $modelProduct, $modelVariant, $modelCart, $modelNotification, $modelShipping, $repository, $productRepository, $cityRepository, $addressRepository;
+    private $model, $modelProduct, $modelVariant, $modelCart, $modelNotification, $modelShipping, $repository, $productRepository, $cityRepository, $addressRepository, $cartRepository, $shippingRepository;
 
-    public function __construct(Order $model, Product $modelProduct, Variant $modelVariant, Cart $modelCart, Notification $modelNotification, Shipping $modelShipping, OrderRepository $repository, ProductRepository $productRepository, CityRepository $cityRepository, AddressRepository $addressRepository)
+    public function __construct(Order $model, Product $modelProduct, Variant $modelVariant, Cart $modelCart, Notification $modelNotification, Shipping $modelShipping, OrderRepository $repository, ProductRepository $productRepository, CityRepository $cityRepository, AddressRepository $addressRepository, CartRepository $cartRepository, ShippingRepository $shippingRepository)
     {
         $this->model = $model;
         $this->modelProduct = $modelProduct;
@@ -39,6 +41,8 @@ class OrderService extends BaseService
         $this->productRepository = $productRepository;
         $this->cityRepository = $cityRepository;
         $this->addressRepository = $addressRepository;
+        $this->cartRepository = $cartRepository;
+        $this->shippingRepository = $shippingRepository;
     }
 
     public function index($locale, $data)
@@ -193,7 +197,7 @@ class OrderService extends BaseService
 
                 if (!$product || $product->quantity < $quantity || $product->status == 'O') throw new ApplicationException(trans('error.out_of_stock'));
 
-                $subtotal = 0;
+                $subTotal = 0;
                 if (!is_null($variantId)) {
                     $variant = $product->variants()->lockForUpdate()->find($variantId);
                     $variantName = $this->modelVariant->find($variantId)->name;
@@ -203,16 +207,16 @@ class OrderService extends BaseService
                     if ($variant->quantity == 0 || $quantity > $variant->quantity) throw new ApplicationException(trans('error.out_of_stock'));
 
                     if ($variant) {
-                        $subtotal = $variant->point * $quantity;
+                        $subTotal = $variant->point * $quantity;
                         $variant->update([
                             'quantity' => $variant->quantity - $quantity,
                         ]);
                     }
                 } else {
-                    $subtotal = $product->point * $quantity;
+                    $subTotal = $product->point * $quantity;
                 }
 
-                $totalPoint += $subtotal;
+                $totalPoint += $subTotal;
 
                 $itemDetails[] = [
                     'id' => $product->id,
@@ -228,7 +232,7 @@ class OrderService extends BaseService
                     'product_id' => (int) $product->id,
                     'variant_id' => (int) $variantId == 0 ? null : (int) $variantId,
                     'quantity' => (int) $quantity,
-                    'point' => $subtotal,
+                    'point' => $subTotal,
                 ];
 
                 $metadataOrderProducts[] = $orderProduct;
@@ -312,13 +316,8 @@ class OrderService extends BaseService
                     $variantId = ($product['variant_id'] == null) ? '' : (int) $product['variant_id'];
                     $quantity = (int) $product['quantity'];
 
-                    $carts = $this->modelCart->where('user_id', '=', $user_id)
-                        ->where('product_id', '=', $product_id)
-                        ->where('variant_id', '=', $variantId)
-                        ->where('quantity', '=', $quantity)
-                        ->first();
-
-                    if(!is_null($carts)) $carts->delete();
+                    $cart = $this->cartRepository->getSingleDataByMultipleParam(['product_id' => $product_id, 'variant_id' => $variantId, 'quantity' => $quantity]);
+                    if(!is_null($cart)) $cart->delete();
                 }
             }
 
@@ -351,7 +350,6 @@ class OrderService extends BaseService
             return response()->api(trans('all.success_order'), $responseData);
         } catch (\Exception $e) {
             DB::rollback();
-
             throw new SystemException(json_encode([$e->getMessage()]));
         }
     }
@@ -393,7 +391,8 @@ class OrderService extends BaseService
                 }
             }
 
-            $shipping = $this->modelShipping->where('order_id', $id)->first();
+            // $shipping = $this->modelShipping->where('order_id', $id)->first();
+            $shipping = $this->shippingRepository->getSingleDataByOrderId($id);
             $shipping->update(['status' => 'cancelled']);
 
             $checkData->update($request);
@@ -429,7 +428,8 @@ class OrderService extends BaseService
         DB::beginTransaction();
 
         if($checkData->status == 'shipped' && $checkData->shippings->resi != null){
-            $shipping = $this->modelShipping->where('order_id', $id)->first();
+            // $shipping = $this->modelShipping->where('order_id', $id)->first();
+            $shipping = $this->shippingRepository->getSingleDataByOrderId($id);
             $shipping->update(['status' => 'delivered']);
 
             $request['status'] = 'success';
@@ -463,7 +463,8 @@ class OrderService extends BaseService
             }
         }
 
-        $shipping = $this->modelShipping->where('order_id', $id)->first();
+        // $shipping = $this->modelShipping->where('order_id', $id)->first();
+        $shipping = $this->shippingRepository->getSingleDataByOrderId($id);
         $shipping->update(['resi' => null]);
 
         $result = $checkData->update(['deleted_at' => now()->format('Y-m-d H:i:s')]);

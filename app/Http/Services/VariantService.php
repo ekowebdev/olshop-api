@@ -4,22 +4,24 @@ namespace App\Http\Services;
 
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
-use App\Http\Models\Variant;
 use App\Http\Models\Product;
+use App\Http\Models\Variant;
 use Illuminate\Support\Facades\DB;
 use App\Exceptions\SystemException;
 use App\Exceptions\ApplicationException;
+use App\Http\Repositories\ProductRepository;
 use App\Http\Repositories\VariantRepository;
 
 class VariantService extends BaseService
 {
-    private $model, $modelProduct, $repository;
+    private $model, $modelProduct, $repository, $productRepository;
 
-    public function __construct(Variant $model, Product $modelProduct, VariantRepository $repository)
+    public function __construct(Variant $model, Product $modelProduct, VariantRepository $repository, ProductRepository $productRepository)
     {
         $this->model = $model;
         $this->modelProduct = $modelProduct;
         $this->repository = $repository;
+        $this->productRepository = $productRepository;
     }
 
     public function index($locale, $data)
@@ -72,34 +74,34 @@ class VariantService extends BaseService
         ]);
 
         $this->repository->validate($request, [
-                'product_id' => [
-                    'required',
-                    'exists:products,id',
-                ],
-                'name' => [
-                    'required',
-                    'string',
-                    'unique:variants,name',
-                ],
-                'point' => [
-                    'required',
-                    'numeric',
-                ],
-                'weight' => [
-                    'required',
-                    'numeric',
-                ],
-                'quantity' => [
-                    'required',
-                    'numeric',
-                ],
-            ]
-        );
+            'product_id' => [
+                'required',
+                'exists:products,id',
+            ],
+            'name' => [
+                'required',
+                'string',
+                'unique:variants,name',
+            ],
+            'point' => [
+                'required',
+                'numeric',
+            ],
+            'weight' => [
+                'required',
+                'numeric',
+            ],
+            'quantity' => [
+                'required',
+                'numeric',
+            ],
+        ]);
+
+        DB::beginTransaction();
 
         try {
-            DB::beginTransaction();
-
-            $product = $this->modelProduct->find($request['product_id']);
+            // $product = $this->modelProduct->find($request['product_id']);
+            $product = $this->productRepository->getSingleData($locale, $request['product_id']);
             $request['slug'] = $product->slug . '-' . Str::slug($request['name']);
 
             if($product->variants->count() > 0){
@@ -170,19 +172,50 @@ class VariantService extends BaseService
             ],
         ]);
 
-        try {
-            DB::beginTransaction();
+        DB::beginTransaction();
 
-            $product = $this->modelProduct->find($checkData->product_id);
+        // try {
+        //     // $product = $this->modelProduct->find($checkData->product_id);
+        //     $product = $this->productRepository->getSingleData($locale, $checkData->product_id);
+
+        //     $request['slug'] = $product->slug . '-' . Str::slug($request['name']);
+
+        //     $checkData->update($request);
+
+        //     $weight = min($checkData->where('product_id', $request['product_id'])->pluck('weight')->toArray());
+        //     $point = min($checkData->where('product_id', $request['product_id'])->pluck('point')->toArray());
+        //     $quantity = array_sum($checkData->where('product_id', $request['product_id'])->pluck('quantity')->toArray());
+
+        //     $product->update([
+        //         'point' => $point,
+        //         'weight' => $weight,
+        //         'quantity' => $quantity,
+        //     ]);
+
+        //     DB::commit();
+        // } catch (\Exception $e) {
+        //     DB::rollback();
+        //     throw new SystemException(json_encode([$e->getMessage()]));
+        // }
+
+        try {
+            $product = $this->productRepository->getSingleData($locale, $checkData->product_id);
+
             $request['slug'] = $product->slug . '-' . Str::slug($request['name']);
             $checkData->update($request);
-            $weight = min($checkData->where('product_id', $request['product_id'])->pluck('weight')->toArray());
-            $point = min($checkData->where('product_id', $request['product_id'])->pluck('point')->toArray());
-            $quantity = array_sum($checkData->where('product_id', $request['product_id'])->pluck('quantity')->toArray());
+
+            $productData = $checkData->where('product_id', $request['product_id'])
+                                      ->selectRaw('
+                                        MIN(weight) as weight,
+                                        MIN(point) as point,
+                                        SUM(quantity) as quantity
+                                      ')
+                                      ->first();
+
             $product->update([
-                'point' => $point,
-                'weight' => $weight,
-                'quantity' => $quantity,
+                'point' => $productData->point,
+                'weight' => $productData->weight,
+                'quantity' => $productData->quantity,
             ]);
 
             DB::commit();
@@ -198,17 +231,22 @@ class VariantService extends BaseService
     {
         $checkData = $this->repository->getSingleData($locale, $id);
 
-        try {
-            DB::beginTransaction();
+        DB::beginTransaction();
 
+        try {
             $result = $checkData->delete();
-            $product = $this->modelProduct->with('variants')->find($checkData->product_id);
+
+            // $product = $this->modelProduct->with('variants')->find($checkData->product_id);
+            $product = $this->productRepository->getSingleData($locale, $checkData->product_id);
+
             $variants = $product->variants->where('id', '!=', $id);
-            $minPoint = $variants->min('point');
-            $minWeight = $variants->min('weight');
+
+            $minPoint = $variants->min('point') ?? 0;
+            $minWeight = $variants->min('weight') ?? 0;
+
             $product->update([
-                'point' => $minPoint ?? 0,
-                'weight' => $minWeight ?? 0,
+                'point' => $minPoint,
+                'weight' => $minWeight,
                 'quantity' => $product->quantity - $checkData->quantity,
             ]);
 

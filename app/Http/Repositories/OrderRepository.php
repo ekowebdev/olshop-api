@@ -38,30 +38,7 @@ class OrderRepository extends BaseRepository
         return $result;
     }
 
-    public function getSingleData($locale, $id)
-	{
-		$result = $this->model->getAll()->where($this->model->KeyPrimaryTable, $id)->first();
-
-		if($result === null) throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => $this->repository], $locale));
-
-        return $result;
-	}
-
-    public function getSingleDataByUserAndReceipt($userId, $receipt)
-	{
-		$result = $this->model
-                    ->getAll()
-                    ->with('shippings')
-                    ->where('user_id', $userId)
-                    ->whereHas('shippings', function ($query) use ($receipt) {
-                        $query->where('resi', $receipt);
-                    })
-                    ->first();
-
-		return $result;
-	}
-
-    public function getDataByUser($locale, array $sortableAndSearchableColumn, $id)
+    public function getDataByUser($locale, array $sortableAndSearchableColumn, $userId)
     {
         $this->validate(Request::all(), [
             'per_page' => ['numeric']
@@ -69,7 +46,7 @@ class OrderRepository extends BaseRepository
 
         $result = $this->model
                     ->getAll()
-                    ->where('user_id', $id)
+                    ->where('user_id', $userId)
                     ->setSortableAndSearchableColumn($sortableAndSearchableColumn)
                     ->search()
                     ->sort()
@@ -82,4 +59,27 @@ class OrderRepository extends BaseRepository
 
         return $result;
     }
+
+    public function getSingleData($locale, $id)
+	{
+		$result = $this->model->getAll()->where($this->model->KeyPrimaryTable, $id)->first();
+
+		if($result === null) throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => $this->repository], $locale));
+
+        return $result;
+	}
+
+    public function getSingleDataByUserIdAndReceipt($userId, $receipt)
+	{
+		$result = $this->model
+                    ->getAll()
+                    ->with('shippings')
+                    ->where('user_id', $userId)
+                    ->whereHas('shippings', function ($query) use ($receipt) {
+                        $query->where('resi', $receipt);
+                    })
+                    ->first();
+
+		return $result;
+	}
 }

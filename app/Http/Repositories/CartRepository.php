@@ -83,11 +83,24 @@ class CartRepository extends BaseRepository
         return $result;
 	}
 
-    public function getDataByUserProductAndVariant($userId, $productId, $variantId)
+    public function getDataByUserIdProductIdAndVariantId($userId, $productId, $variantId)
 	{
         $variantId = ($variantId == null) ? '' : (int) $variantId;
 
 		$result = $this->model->where('user_id', '=', (int) $userId)->where('product_id', '=', (int) $productId)->where('variant_id', '=', $variantId);
+
+		return $result;
+	}
+
+    public function getSingleDataByMultipleParam(array $params)
+	{
+        $query = $this->model->query();
+
+        foreach ($params as $key => $param) {
+            $query->where($key, '=', $param);
+        }
+
+        $result = $query->first();
 
 		return $result;
 	}

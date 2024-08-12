@@ -47,9 +47,15 @@ class UserRepository extends BaseRepository
         return $result;
 	}
 
-    public function getDataByMultipleParam($param)
+    public function getSingleDataByMultipleParam(array $params)
 	{
-		$result = $this->model->getAll()->where('email', $param['email'])->first();
+        $query = $this->model->getAll();
+
+        foreach ($params as $key => $param) {
+            $query->where($key, $param);
+        }
+
+        $result = $query->first();
 
 		return $result;
 	}

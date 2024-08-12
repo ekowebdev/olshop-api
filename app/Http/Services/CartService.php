@@ -8,22 +8,24 @@ use Illuminate\Support\Str;
 use App\Http\Models\Product;
 use App\Http\Models\Variant;
 use Illuminate\Support\Facades\DB;
-use App\Http\Resources\CartResource;
 use App\Exceptions\SystemException;
+use App\Http\Resources\CartResource;
 use App\Exceptions\ValidationException;
 use App\Exceptions\ApplicationException;
 use App\Http\Repositories\CartRepository;
+use App\Http\Repositories\VariantRepository;
 
 class CartService extends BaseService
 {
-    private $model, $modelProduct, $modelVariant, $repository;
+    private $model, $modelProduct, $modelVariant, $repository, $variantRepository;
 
-    public function __construct(Cart $model, Product $modelProduct, Variant $modelVariant, CartRepository $repository)
+    public function __construct(Cart $model, Product $modelProduct, Variant $modelVariant, CartRepository $repository, VariantRepository $variantRepository)
     {
         $this->model = $model;
         $this->modelProduct = $modelProduct;
         $this->modelVariant = $modelVariant;
         $this->repository = $repository;
+        $this->variantRepository = $variantRepository;
     }
 
     public function index($locale, $data)
@@ -50,20 +52,19 @@ class CartService extends BaseService
         ]);
 
         $this->repository->validate($request, [
-                'product_id' => [
-                    'required',
-                    'exists:products,id',
-                ],
-                'variant_id' => [
-                    'nullable',
-                    'exists:variants,id',
-                ],
-                'quantity' => [
-                    'required',
-                    'numeric',
-                ],
-            ]
-        );
+            'product_id' => [
+                'required',
+                'exists:products,id',
+            ],
+            'variant_id' => [
+                'nullable',
+                'exists:variants,id',
+            ],
+            'quantity' => [
+                'required',
+                'numeric',
+            ],
+        ]);
 
         try {
             DB::beginTransaction();
@@ -87,7 +88,7 @@ class CartService extends BaseService
                 if ($variant->quantity == 0 || $request['quantity'] > $variant->quantity) throw new ApplicationException(trans('error.out_of_stock'));
             }
 
-            $existsCart = $this->repository->getDataByUserProductAndVariant($user->id, $request['product_id'], $variantId)->first();
+            $existsCart = $this->repository->getDataByUserIdProductIdAndVariantId($user->id, $request['product_id'], $variantId)->first();
 
             if(!empty($existsCart)) {
                 $quantity = $existsCart->quantity + (int) $request['quantity'];
@@ -141,7 +142,8 @@ class CartService extends BaseService
         $product = $this->modelProduct->find($checkData->product_id);
 
         if($product->variants->count() > 0){
-            $variant = $this->modelVariant->where('id', $checkData->variant_id)->where('product_id', $product->id)->first();
+            // $variant = $this->modelVariant->where('id', $checkData->variant_id)->where('product_id', $product->id)->first();
+            $variant = $this->variantRepository->getSingleDataByIdAndProductId($id, $product->id);
             $realQuantity = $variant->quantity;
         } else {
             $realQuantity = $product->quantity;

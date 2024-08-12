@@ -47,17 +47,8 @@ class ReviewRepository extends BaseRepository
         return $result;
 	}
 
-    public function getDataByUserOrder($locale, $userId, $orderId)
+    public function getDataByUserIdOrderIdAndProductId($userId, $orderId, $productId)
 	{
-		$result = $this->model->getAll()->where('reviews.user_id', $userId)->where('reviews.order_id', $orderId)->first();
-
-        return $result;
-	}
-
-    public function getDataByUserOrderAndProduct($locale, $userId, $orderId, $productId)
-	{
-		$result = $this->model->getAll()->where('reviews.user_id', $userId)->where('reviews.order_id', $orderId)->where('reviews.product_id', $productId)->first();
-
-		return $result;
+		return $this->model->getAll()->where('reviews.user_id', $userId)->where('reviews.order_id', $orderId)->where('reviews.product_id', $productId)->first();
 	}
 }

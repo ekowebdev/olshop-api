@@ -87,7 +87,9 @@ class ShippingService extends BaseService
         $checkData = $this->repository->getSingleData($locale, $id);
 
         DB::beginTransaction();
+
         $result = $checkData->delete();
+
         DB::commit();
 
         return $result;

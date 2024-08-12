@@ -214,8 +214,11 @@ class SliderService extends BaseService
         $checkData = $this->repository->getSingleData($locale, $id);
 
         DB::beginTransaction();
+
         deleteImagesFromCloudinary($checkData->image, 'sliders');
+
         $result = $checkData->delete();
+
         DB::commit();
 
         return $result;

@@ -30,4 +30,17 @@ class OrderProduct extends BaseModel
     {
         return $this->belongsTo(Variant::class, 'variant_id');
     }
+
+    public function scopeGetAll($query)
+    {
+        return $query->select([
+                    'order_id',
+                    'product_id',
+                    'variant_id',
+                    'quantity',
+                    'point',
+                    'created_at',
+                    'updated_at',
+                ]);
+    }
 }

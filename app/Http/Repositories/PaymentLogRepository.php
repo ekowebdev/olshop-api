@@ -46,4 +46,9 @@ class PaymentLogRepository extends BaseRepository
 
         return $result;
 	}
+
+    public function getSingleDataByOrderId($orderId)
+	{
+		return $this->model->getAll()->where('order_id', $orderId)->first();
+	}
 }

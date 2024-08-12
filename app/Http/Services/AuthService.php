@@ -42,7 +42,7 @@ class AuthService extends BaseService
     {
         if(!$request->hasValidSignature()) throw new ApplicationException(trans('error.failed_verification_email'));
 
-        $user = $this->model->find($id);
+        $user = $this->repository->getSingleDataByMultipleParam(['id' => $id]);
 
         if(!$user->hasVerifiedEmail()) $user->markEmailAsVerified();
 
@@ -57,7 +57,7 @@ class AuthService extends BaseService
             'email' => 'required|string|email:rfc,dns|exists:users,email',
         ]);
 
-        $user = $this->repository->getDataByMultipleParam(['email' => $request['email']]);
+        $user = $this->repository->getSingleDataByMultipleParam(['email' => $request['email']]);
 
         if($user->email_verified_at != null) throw new ConflictException(trans('error.already_verification'));
 
@@ -110,7 +110,8 @@ class AuthService extends BaseService
             throw new ApplicationException(trans('error.token_reset_password_is_expired'));
         }
 
-        $user = $this->model->where('email', $passwordReset->email)->first();
+        // $user = $this->model->where('email', $passwordReset->email)->first();
+        $user = $this->repository->getSingleDataByMultipleParam(['email' => $passwordReset->email]);
 
         $user->update(['password' => Hash::make($request->password)]);
 
@@ -134,7 +135,8 @@ class AuthService extends BaseService
     {
         try {
             $socialite = Socialite::driver('google')->stateless()->user();
-            $user = $this->model->where('email', $socialite->email)->first();
+            // $user = $this->model->where('email', $socialite->email)->first();
+            $user = $this->repository->getSingleDataByMultipleParam(['email' => $socialite->email]);
 
             if(empty($user)) $url = config('setting.frontend.url') . '/auth-success?is_register=true&name='.$socialite->user['given_name'].'&email='.$socialite->email.'&google_access_token='.$socialite->token;
             else $url = config('setting.frontend.url') . '/auth-success?email='.$socialite->email.'&google_access_token='.$socialite->token;

@@ -47,24 +47,13 @@ class ProductImageRepository extends BaseRepository
         return $result;
 	}
 
-    public function getDataByProduct($locale, $productId)
+    public function getSingleDataByProductIdAndVariantId($productId, $variantId)
 	{
-		$result = $this->model->getAll()->where('product_id', $producId)->get();
-
-        return $result;
+		return $this->model->getAll()->where('product_id', $productId)->where('variant_id', $variantId)->first();
 	}
 
-    public function getSingleDataByProductVariant($locale, $producId, $variantId)
-	{
-		$result = $this->model->getAll()->where('product_id', $producId)->where('variant_id', $variantId)->first();
-
-        return $result;
-	}
-
-    public function countDataByProduct($producId)
-	{
-		$result = $this->model->getAll()->where('product_id', $producId)->get()->count();
-
-        return $result;
-	}
+    public function queryByProductId($productId)
+    {
+        return $this->model->getAll()->where('product_id', $productId);
+    }
 }

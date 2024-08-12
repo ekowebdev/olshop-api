@@ -55,4 +55,9 @@ class VariantRepository extends BaseRepository
 
         return $result;
 	}
+
+    public function getSingleDataByIdAndProductId($id, $productId)
+	{
+		return $this->model->getAll()->where('id', $id)->where('product_id', $productId)->first();
+	}
 }
