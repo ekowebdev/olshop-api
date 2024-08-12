@@ -46,7 +46,7 @@ class WishlistRepository extends BaseRepository
 
 	public function getSingleData($locale, $id)
 	{
-		$result = $this->model->all()->where('id', $id)->first();
+		$result = $this->model->query()->where('id', $id)->first();
 
 		if($result === null) throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => $this->repository], $locale));
 
@@ -82,6 +82,6 @@ class WishlistRepository extends BaseRepository
 
     public function queryByUserIdAndProductId($productId)
 	{
-        return $this->model->all()->where('user_id', auth()->user()->id)->where('product_id', (int) $productId);
+        return $this->model->query()->where('user_id', (int) auth()->user()->id)->where('product_id', (int) $productId);
 	}
 }
