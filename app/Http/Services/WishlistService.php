@@ -5,6 +5,7 @@ namespace App\Http\Services;
 use Illuminate\Support\Str;
 use App\Http\Models\Wishlist;
 use Illuminate\Support\Facades\DB;
+use App\Exceptions\SystemException;
 use App\Http\Repositories\ProductRepository;
 use App\Http\Repositories\WishlistRepository;
 
@@ -72,11 +73,11 @@ class WishlistService extends BaseService
             $checkWishlist = $this->repository->queryByUserIdAndProductId($product->id)->first();
 
             if (is_null($checkWishlist)) {
-                $this->model->create([
-                    'id' => (string) Str::uuid(),
-                    'user_id' => $userId,
-                    'product_id' => $product->id,
-                ]);
+                $wishlist = $this->model;
+                $wishlist->id = (string) Str::uuid();
+                $wishlist->user_id = $user->id;
+                $wishlist->product_id = $product->id;
+                $wishlist->save();
                 $message = trans('all.success_add_to_wishlists', ['product_name' => $product->name]);
             } else {
                 $checkWishlist->delete();
