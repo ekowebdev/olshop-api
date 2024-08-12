@@ -88,7 +88,7 @@ class CartService extends BaseService
                 if ($variant->quantity == 0 || $request['quantity'] > $variant->quantity) throw new ApplicationException(trans('error.out_of_stock'));
             }
 
-            $existsCart = $this->repository->getDataByUserIdProductIdAndVariantId($user->id, $request['product_id'], $variantId)->first();
+            $existsCart = $this->repository->queryByUserIdProductIdAndVariantId($user->id, $request['product_id'], $variantId)->first();
 
             if(!empty($existsCart)) {
                 $quantity = $existsCart->quantity + (int) $request['quantity'];

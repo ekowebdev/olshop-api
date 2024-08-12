@@ -6,6 +6,8 @@ use App\Http\Models\Brand;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
+use App\Http\Resources\BrandResource;
+use App\Http\Resources\DeletedResource;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Repositories\BrandRepository;
@@ -42,17 +44,22 @@ class BrandService extends BaseService
             'sort_column'   => array_merge($search, $searchColumn),
         ];
 
-        return $this->repository->getAllData($locale, $sortableAndSearchableColumn);
+        $result = $this->repository->getAllData($locale, $sortableAndSearchableColumn);
+
+        return (BrandResource::collection($result))
+                ->additional([
+                    'sortableAndSearchableColumn' => $result->sortableAndSearchableColumn,
+                ]);
     }
 
     public function show($locale, $id)
     {
-        return $this->repository->getSingleData($locale, $id);
+        return new BrandResource($this->repository->getSingleData($locale, $id));
     }
 
     public function showBySlug($locale, $slug)
     {
-        return $this->repository->getSingleDataBySlug($locale, $slug);
+        return new BrandResource($this->repository->getSingleDataBySlug($locale, $slug));
     }
 
     public function store($locale, $data)
@@ -98,7 +105,7 @@ class BrandService extends BaseService
 
         DB::commit();
 
-        return $this->repository->getSingleData($locale, $result->id);
+        return new BrandResource($this->repository->getSingleData($locale, $result->id));
     }
 
     public function update($locale, $id, $data)
@@ -149,7 +156,7 @@ class BrandService extends BaseService
 
         DB::commit();
 
-        return $this->repository->getSingleData($locale, $id);
+        return new BrandResource($this->repository->getSingleData($locale, $id));
     }
 
     public function delete($locale, $id)
@@ -164,6 +171,6 @@ class BrandService extends BaseService
 
         DB::commit();
 
-        return $result;
+        return new DeletedResource($result);
     }
 }

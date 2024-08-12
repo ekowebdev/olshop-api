@@ -44,22 +44,13 @@ class WishlistRepository extends BaseRepository
         return $result;
     }
 
-	public function getSingleData($locale, $id)
-	{
-		$result = $this->model->query()->where('id', $id)->first();
-
-		if($result === null) throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => $this->repository], $locale));
-
-        return $result;
-	}
-
     public function getDataByUser($locale, $userId)
 	{
         $userId = (int) $userId;
         $perPage = (int) Request::get('per_page', 10);
         $page = (int) Request::get('page', 1);
 
-		$data = $this->model->query()->orderBy('created_at', 'desc')->where('user_id', $userId)->get();
+		$data = $this->model->query()->where('user_id', $userId)->orderBy('created_at', 'desc')->get();
 
 		if ($data->isEmpty()) {
             throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => $this->repository], $locale));
@@ -76,6 +67,15 @@ class WishlistRepository extends BaseRepository
         if ($result->isEmpty()) {
             throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => $this->repository], $locale));
         }
+
+        return $result;
+	}
+
+	public function getSingleData($locale, $id)
+	{
+		$result = $this->model->query()->where('id', $id)->first();
+
+		if($result === null) throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => $this->repository], $locale));
 
         return $result;
 	}

@@ -20,40 +20,31 @@ class BrandController extends BaseController
 
     public function index($locale)
     {
-        $data = $this->service->index($locale, Request::all());
-        return (BrandResource::collection($data))
-                ->additional([
-                    'sortableAndSearchableColumn' => $data->sortableAndSearchableColumn,
-                ]);
+        return $this->service->index($locale, Request::all());
     }
 
     public function show($locale, $id)
     {
-        $data = $this->service->show($locale, $id);
-        return new BrandResource($data);
+        return $this->service->show($locale, $id);
     }
 
     public function showBySlug($locale, $slug)
     {
-        $data = $this->service->showBySlug($locale, $slug);
-        return new BrandResource($data);
+        return $this->service->showBySlug($locale, $slug);
     }
 
     public function store($locale)
     {
-        $data = $this->service->store($locale, Request::all());
-        return new BrandResource($data);
+        return $this->service->store($locale, Request::all());
     }
 
     public function update($locale, $id)
     {
-        $data = $this->service->update($locale, $id, Request::all());
-        return new BrandResource($data);
+        return $this->service->update($locale, $id, Request::all());
     }
 
     public function delete($locale, $id)
     {
-        $data = $this->service->delete($locale, $id, Request::all());
-        return new DeletedResource($data);
+        return $this->service->delete($locale, $id, Request::all());
     }
 }

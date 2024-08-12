@@ -45,7 +45,7 @@ class NotificationRepository extends BaseRepository
 
 	public function getSingleData($locale, $id)
 	{
-		$result = $this->model->all()->where('id', $id)->first();
+		$result = $this->model->query()->where('id', $id)->first();
 
 		if($result === null) throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => $this->repository], $locale));
 

@@ -6,6 +6,8 @@ use Illuminate\Support\Arr;
 use App\Http\Models\Address;
 use Illuminate\Support\Facades\DB;
 use App\Exceptions\ConflictException;
+use App\Http\Resources\AddressResource;
+use App\Http\Resources\DeletedResource;
 use App\Http\Repositories\UserRepository;
 use App\Http\Repositories\AddressRepository;
 
@@ -49,12 +51,17 @@ class AddressService extends BaseService
             'sort_column'   => array_merge($search, $searchColumn),
         ];
 
-        return $this->repository->getAllData($locale, $sortableAndSearchableColumn);
+        $result = $this->repository->getAllData($locale, $sortableAndSearchableColumn);
+
+        return (AddressResource::collection($result))
+                ->additional([
+                    'sortableAndSearchableColumn' => $result->sortableAndSearchableColumn,
+                ]);
     }
 
     public function show($locale, $id)
     {
-        return $this->repository->getSingleData($locale, $id);
+        return new AddressResource($this->repository->getSingleData($locale, $id));
     }
 
     public function store($locale, $data)
@@ -116,7 +123,7 @@ class AddressService extends BaseService
 
         DB::commit();
 
-        return $this->repository->getSingleData($locale, $result->id);
+        return new AddressResource($this->repository->getSingleData($locale, $result->id));
     }
 
     public function update($locale, $id, $data)
@@ -179,7 +186,7 @@ class AddressService extends BaseService
 
         DB::commit();
 
-        return $this->repository->getSingleData($locale, $id);
+        return new AddressResource($this->repository->getSingleData($locale, $id));
     }
 
     public function delete($locale, $id)
@@ -194,6 +201,6 @@ class AddressService extends BaseService
 
         DB::commit();
 
-        return $result;
+        return new DeletedResource($result);
     }
 }

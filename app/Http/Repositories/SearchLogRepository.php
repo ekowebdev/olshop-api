@@ -23,10 +23,7 @@ class SearchLogRepository extends BaseRepository
         $perPage = (int) Request::get('per_page', 10);
         $page = (int) Request::get('page', 1);
 
-        $data = $this->model
-            ->query()
-            ->orderBy('created_at', 'desc')
-            ->get();
+        $data = $this->model->query()->orderBy('created_at', 'desc')->get();
 
         if ($data->isEmpty()) {
             throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => $this->repository], $locale));
@@ -46,15 +43,6 @@ class SearchLogRepository extends BaseRepository
 
         return $result;
     }
-
-	public function getSingleData($locale, $id)
-	{
-		$result = $this->model->all()->where('id', $id)->first();
-
-		if($result === null) throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => $this->repository], $locale));
-
-        return $result;
-	}
 
     public function getDataByUser($locale, $userId)
 	{
@@ -79,6 +67,15 @@ class SearchLogRepository extends BaseRepository
         if ($result->isEmpty()) {
             throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => $this->repository], $locale));
         }
+
+        return $result;
+	}
+
+	public function getSingleData($locale, $id)
+	{
+		$result = $this->model->query()->where('id', $id)->first();
+
+		if($result === null) throw new DataEmptyException(trans('validation.attributes.data_not_exist', ['attr' => $this->repository], $locale));
 
         return $result;
 	}

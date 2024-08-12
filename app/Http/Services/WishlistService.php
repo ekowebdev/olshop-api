@@ -35,33 +35,6 @@ class WishlistService extends BaseService
         return $this->repository->getDataByUser($locale, $id);
     }
 
-    // public function wishlist($locale, $id, $data)
-    // {
-    //     DB::beginTransaction();
-
-    //     $product = $this->productRepository->getSingleData($locale, $id);
-
-    //     $user = auth()->user();
-
-    //     $checkWishlist = $this->repository->queryByUserIdAndProductId($product->id)->first();
-
-    //     if(is_null($checkWishlist)) {
-    //         $wishlist = $this->model;
-    //         $wishlist->id = (string) Str::uuid();
-    //         $wishlist->user_id = $user->id;
-    //         $wishlist->product_id = $product->id;
-    //         $wishlist->save();
-    //         $message = trans('all.success_add_to_wishlists', ['product_name' => $product->name]);
-    //     } else {
-    //         $checkWishlist->delete();
-    //         $message = trans('all.success_delete_from_wishlists', ['product_name' => $product->name]);
-    //     }
-
-    //     DB::commit();
-
-    //     return response()->api($message);
-    // }
-
     public function wishlist($locale, $id, $data)
     {
         DB::beginTransaction();
@@ -72,10 +45,10 @@ class WishlistService extends BaseService
 
             $checkWishlist = $this->repository->queryByUserIdAndProductId($product->id)->first();
 
-            if (is_null($checkWishlist)) {
+            if (empty($checkWishlist)) {
                 $wishlist = $this->model;
                 $wishlist->id = (string) Str::uuid();
-                $wishlist->user_id = $user->id;
+                $wishlist->user_id = $userId;
                 $wishlist->product_id = $product->id;
                 $wishlist->save();
                 $message = trans('all.success_add_to_wishlists', ['product_name' => $product->name]);
