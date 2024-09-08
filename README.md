@@ -1,31 +1,31 @@
 # Online Shop API
 
-Ini merupakan RESTful API untuk pembuatan toko online sederhana, API ini dapat diakses disini `https://api.baktiweb.my.id/`
+This is a RESTful API for building a simple online shop. The API can be accessed at `https://api.baktiweb.my.id/`
 
-## Spesifikasi
+## Specifications
 
--   Bahasa: PHP
+-   Language: PHP
 -   Framework: Laravel
 -   Web Server: Nginx
--   Kontainerisasi: Docker
--   Library Utama: MongoDB, Passport, OAuth 2.0, Redis, Cloudinary, Midtrans, RajaOngkir, Websockets, Scout, Meilisearch
+-   Containerization: Docker
+-   Core Libraries: MongoDB, Passport, OAuth 2.0, Redis, Cloudinary, Midtrans, RajaOngkir, Websockets, Scout, Meilisearch
 
-## Fitur
+## Features
 
 -   Payment Gateway
--   Sistem Cek Ongkir
--   Realtime Notifikasi
--   Pencarian Pintar
--   Multi Bahasa
--   Multi Hak Akses
--   Multi Database (SQL & NoSQL)
+-   Shipping Cost Checker
+-   Realtime Notifications
+-   Smart Search
+-   Multilingual
+-   Multiple Access Roles
+-   Multi-database (SQL & NoSQL)
 
-## Arsitektur
+## Architecture
 
-Aplikasi ini mengadopsi pola arsitektur Repository Pattern untuk memisahkan logika bisnis dari lapisan penyimpanan data. Struktur aplikasi ini memiliki komponen-komponen berikut:
+This application adopts the Repository Pattern architecture to separate business logic from the data storage layer. The application structure has the following components:
 
--   app: Direktori ini berisi implementasi logika bisnis, termasuk model, controller, dan service dan repository
--   config: Direktori ini berisi file konfigurasi Laravel, seperti konfigurasi database, file sistem, dan lainnya
--   database: Direktori ini berisi migrasi dan pengaturan pengisian awal (seeder) database
--   routes: Direktori ini berisi definisi routing HTTP untuk aplikasi
--   tests: Direktori ini berisi unit tes dan tes fitur untuk memastikan kualitas kode
+-   app: This directory contains the implementation of business logic, including models, controllers, services, and repositories.
+-   config: This directory contains Laravel configuration files, such as database configuration, file system, and others.
+-   database: This directory contains migrations and seeders for the database.
+-   routes: This directory contains HTTP routing definitions for the application.
+-   tests: This directory contains unit tests and feature tests to ensure code quality.
